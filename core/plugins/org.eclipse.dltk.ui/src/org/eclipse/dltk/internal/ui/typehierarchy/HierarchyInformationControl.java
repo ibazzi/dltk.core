@@ -11,13 +11,13 @@ package org.eclipse.dltk.internal.ui.typehierarchy;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.dltk.core.ScriptModelUtil;
 import org.eclipse.dltk.core.IMember;
 import org.eclipse.dltk.core.IMethod;
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.IType;
 import org.eclipse.dltk.core.ITypeHierarchy;
 import org.eclipse.dltk.core.ModelException;
+import org.eclipse.dltk.core.ScriptModelUtil;
 import org.eclipse.dltk.internal.core.util.MethodOverrideTester;
 import org.eclipse.dltk.internal.corext.util.Messages;
 import org.eclipse.dltk.internal.ui.text.AbstractInformationControl;
@@ -287,11 +287,7 @@ public abstract class HierarchyInformationControl extends AbstractInformationCon
 		treeViewer.setContentProvider(fOtherContentProvider);
 
 		treeViewer.refresh();
-		if (fOtherExpandedElements != null) {
-			treeViewer.setExpandedElements(fOtherExpandedElements);
-		} else {
-			treeViewer.expandAll();
-		}
+		treeViewer.expandAll();
 		
 		treeViewer.getTree().setRedraw(true);
 		
