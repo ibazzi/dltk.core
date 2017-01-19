@@ -8,38 +8,26 @@
  *******************************************************************************/
 package org.eclipse.dltk.ui;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.dltk.core.BuildpathContainerInitializer;
 import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.core.DLTKLanguageManager;
 import org.eclipse.dltk.core.IBuildpathContainer;
 import org.eclipse.dltk.core.IDLTKLanguageToolkit;
-import org.eclipse.dltk.core.IField;
 import org.eclipse.dltk.core.IImportDeclaration;
-import org.eclipse.dltk.core.ILocalVariable;
-import org.eclipse.dltk.core.IMethod;
 import org.eclipse.dltk.core.IModelElement;
-import org.eclipse.dltk.core.INamespace;
-import org.eclipse.dltk.core.IParameter;
 import org.eclipse.dltk.core.IProjectFragment;
-import org.eclipse.dltk.core.IScriptFolder;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.ISearchPatternProcessor;
-import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.IType;
 import org.eclipse.dltk.core.ModelException;
-import org.eclipse.dltk.core.environment.EnvironmentManager;
-import org.eclipse.dltk.core.environment.EnvironmentPathUtils;
-import org.eclipse.dltk.core.environment.IEnvironment;
-import org.eclipse.dltk.internal.core.BuiltinProjectFragment;
-import org.eclipse.dltk.internal.core.ExternalProjectFragment;
+import org.eclipse.dltk.internal.corext.util.Strings;
 import org.eclipse.dltk.internal.ui.UIModelProviderManager;
+import org.eclipse.dltk.ui.viewsupport.ScriptElementLabelComposer;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
@@ -278,9 +266,9 @@ public class ScriptElementLabels {
 	 * Default options (M_PARAMETER_TYPES, M_APP_TYPE_PARAMETERS &
 	 * T_TYPE_PARAMETERS enabled)
 	 */
-	public final static long ALL_DEFAULT = Long.valueOf(M_PARAMETER_NAMES
-			| T_TYPE_PARAMETERS | M_PARAMETER_INITIALIZERS | M_APP_RETURNTYPE)
-			.longValue();
+	public final static long ALL_DEFAULT = new Long(
+			M_PARAMETER_TYPES | M_APP_TYPE_PARAMETERS | T_TYPE_PARAMETERS)
+					.longValue();
 
 	public final static long F_CATEGORY = 1L << 49;
 
@@ -293,6 +281,12 @@ public class ScriptElementLabels {
 	 * Prepend first category (if any) to type.
 	 */
 	public final static long T_CATEGORY = 1L << 51;
+
+	/**
+	 * Specifies to apply color styles to labels. This flag only applies to
+	 * methods taking or returning a {@link StyledString}.
+	 */
+	public final static long COLORIZE = 1L << 55;
 
 	public final static long ALL_CATEGORY = Long.valueOf(
 			ScriptElementLabels.F_CATEGORY | ScriptElementLabels.M_CATEGORY
@@ -344,7 +338,7 @@ public class ScriptElementLabels {
 	/**
 	 * @since 2.0
 	 */
-	protected final static long QUALIFIER_FLAGS = P_COMPRESSED | USE_RESOLVED;
+	public final static long QUALIFIER_FLAGS = P_COMPRESSED | USE_RESOLVED;
 
 	private static ScriptElementLabels sInstanceO = new ScriptElementLabels() {
 	};
@@ -401,6 +395,35 @@ public class ScriptElementLabels {
 		@Override
 		protected void getTypeLabel(IType type, long flags, StringBuffer buf) {
 			getLabels(type).getTypeLabel(type, flags, buf);
+		}
+
+		@Override
+		public StyledString getStyledTextLabel(Object obj, long flags) {
+			if (obj instanceof IModelElement) {
+				return getStyledElementLabel((IModelElement) obj, flags);
+
+			} else {
+				return super.getStyledTextLabel(obj, flags);
+			}
+		}
+
+		/**
+		 * Returns the styled label for a Java element with the flags as defined
+		 * by this class.
+		 * 
+		 * @param element
+		 *            the element to render
+		 * @param flags
+		 *            the rendering flags
+		 * @return the label of the Java element
+		 * 
+		 * @since 3.4
+		 */
+		@Override
+		public StyledString getStyledElementLabel(IModelElement element,
+				long flags) {
+			return getLabels(element).getStyledTextLabel(element, flags);
+
 		}
 	};
 
@@ -522,9 +545,27 @@ public class ScriptElementLabels {
 				}
 			}
 		}
-		StringBuffer buf = new StringBuffer(61);
+		StyledString buf = new StyledString();
 		getElementLabel(element, flags, buf);
 		return buf.toString();
+	}
+
+	/**
+	 * Returns the styled label for a Java element with the flags as defined by
+	 * this class.
+	 * 
+	 * @param element
+	 *            the element to render
+	 * @param flags
+	 *            the rendering flags
+	 * @param result
+	 *            the buffer to append the resulting label to
+	 * 
+	 * @since 3.4
+	 */
+	public void getElementLabel(IModelElement element, long flags,
+			StyledString result) {
+		getScriptElementLabelComposer(result).getElementLabel(element, flags);
 	}
 
 	/**
@@ -540,532 +581,12 @@ public class ScriptElementLabels {
 	 */
 	public void getElementLabel(IModelElement element, long flags,
 			StringBuffer buf) {
-
-		int type = element.getElementType();
-		IProjectFragment root = null;
-
-		IScriptProject project = element.getScriptProject();
-
-		if (type != IModelElement.SCRIPT_MODEL
-				&& type != IModelElement.SCRIPT_PROJECT
-				&& type != IModelElement.PROJECT_FRAGMENT) {
-			IResource resource = element.getResource();
-			if (resource != null) {
-				root = project.getProjectFragment(resource);
-			}
-			if (root == null) {
-				root = findProjectFragment(element);
-			}
-		}
-		if (root != null && getFlag(flags, PREPEND_ROOT_PATH)) {
-			getProjectFragmentLabel(root, ROOT_QUALIFIED, buf);
-			buf.append(CONCAT_STRING);
-		}
-
-		switch (type) {
-		case IModelElement.METHOD:
-			getMethodLabel((IMethod) element, flags, buf);
-			break;
-		case IModelElement.FIELD:
-			getFieldLabel((IField) element, flags, buf);
-			break;
-		case IModelElement.TYPE:
-			getTypeLabel((IType) element, flags, buf);
-			break;
-		case IModelElement.SOURCE_MODULE:
-			getSourceModule((ISourceModule) element, flags, buf);
-			break;
-		case IModelElement.SCRIPT_PROJECT:
-		case IModelElement.SCRIPT_MODEL:
-			buf.append(element.getElementName());
-			break;
-		case IModelElement.IMPORT_CONTAINER:
-			getImportContainerLabel(element, flags, buf);
-			break;
-		case IModelElement.IMPORT_DECLARATION:
-			getImportDeclarationLabel(element, flags, buf);
-			break;
-		case IModelElement.PACKAGE_DECLARATION:
-			getDeclarationLabel(element, flags, buf);
-			break;
-		case IModelElement.SCRIPT_FOLDER:
-			getScriptFolderLabel((IScriptFolder) element, flags, buf);
-			break;
-		case IModelElement.PROJECT_FRAGMENT:
-			getProjectFragmentLabel((IProjectFragment) element, flags, buf);
-			break;
-		case IModelElement.LOCAL_VARIABLE:
-			getLocalVariableLabel((ILocalVariable) element, flags, buf);
-			break;
-		default:
-			buf.append(element.getElementName());
-		}
-
-		ISourceModule sourceModule = (ISourceModule) element
-				.getAncestor(IModelElement.SOURCE_MODULE);
-		if (sourceModule != null && getFlag(flags, APPEND_FILE)) {
-			buf.append(CONCAT_STRING);
-			getSourceModule(sourceModule, flags, buf);
-		}
-
-		if (root != null && getFlag(flags, APPEND_ROOT_PATH)) {
-			buf.append(CONCAT_STRING);
-			getProjectFragmentLabel(root, ROOT_QUALIFIED, buf);
-		}
-	}
-
-	protected IProjectFragment findProjectFragment(IModelElement element) {
-		while (element != null
-				&& element.getElementType() != IModelElement.PROJECT_FRAGMENT) {
-			element = element.getParent();
-		}
-		return (IProjectFragment) element;
-	}
-
-	protected void getScriptFolderLabel(IScriptFolder folder, StringBuffer buf) {
-		buf.append(folder.getElementName()/*
-										 * .replace(IScriptFolder.PACKAGE_DELIMITER
-										 * , '.')
-										 */);
-	}
-
-	protected void getScriptFolderLabel(IScriptFolder folder, long flags,
-			StringBuffer buf) {
-		if (getFlag(flags, P_QUALIFIED)) {
-			getProjectFragmentLabel((IProjectFragment) folder.getParent(),
-					ROOT_QUALIFIED, buf);
-			buf.append('/');
-		}
-		// refreshPackageNamePattern();
-		if (folder.isRootFolder()) {
-			buf.append(DEFAULT_PACKAGE);
-		} else if (getFlag(flags, P_COMPRESSED) && fgPkgNameLength >= 0) {
-			String name = folder.getElementName();
-			int start = 0;
-			int dot = name.indexOf(IScriptFolder.PACKAGE_DELIMITER, start);
-			while (dot > 0) {
-				if (dot - start > fgPkgNameLength - 1) {
-					buf.append(fgPkgNamePrefix);
-					if (fgPkgNameChars > 0)
-						buf.append(name.substring(start,
-								Math.min(start + fgPkgNameChars, dot)));
-					buf.append(fgPkgNamePostfix);
-				} else
-					buf.append(name.substring(start, dot + 1));
-				start = dot + 1;
-				dot = name.indexOf(IScriptFolder.PACKAGE_DELIMITER, start);
-			}
-			buf.append(name.substring(start));
-		} else {
-			getScriptFolderLabel(folder, buf);
-		}
-		if (getFlag(flags, P_POST_QUALIFIED)) {
-			buf.append(CONCAT_STRING);
-			getProjectFragmentLabel((IProjectFragment) folder.getParent(),
-					ROOT_QUALIFIED, buf);
-		}
-	}
-
-	/**
-	 * @since 2.0
-	 */
-	protected void getSourceModule(ISourceModule module, long flags,
-			StringBuffer buf) {
-		if (getFlag(flags, CU_QUALIFIED)) {
-			IScriptFolder pack = (IScriptFolder) module.getParent();
-
-			getScriptFolderLabel(pack, (flags & QUALIFIER_FLAGS), buf);
-			buf.append(getTypeDelimiter(module));
-		}
-		buf.append(module.getElementName());
-
-		if (getFlag(flags, CU_POST_QUALIFIED)
-				&& !((IScriptFolder) module.getParent()).isRootFolder()) {
-			buf.append(CONCAT_STRING);
-			getScriptFolderLabel((IScriptFolder) module.getParent(), flags
-					& QUALIFIER_FLAGS, buf);
-		}
-	}
-
-	protected void appendTypeQualification(IType type, long flags,
-			StringBuffer buf) {
-		try {
-			final INamespace namespace = type.getNamespace();
-			if (namespace != null) {
-				// TODO customize separator
-				buf.append(namespace.getQualifiedName("."));
-				buf.append(".");
-				return;
-			}
-		} catch (ModelException e) {
-			// ignore
-			return;
-		}
-		IResource resource = type.getResource();
-		IProjectFragment pack = null;
-		if (resource != null) {
-			IScriptProject project = type.getScriptProject();
-			pack = project.getProjectFragment(resource);
-		} else {
-			pack = findProjectFragment(type);
-		}
-		if (pack == null) {
-			pack = findProjectFragment(type);
-		}
-		getScriptFolderLabel(pack, (flags & QUALIFIER_FLAGS), buf);
-	}
-
-	protected void getTypeLabel(IType type, long flags, StringBuffer buf) {
-
-		if (getFlag(flags, T_FULLY_QUALIFIED)) {
-			appendTypeQualification(type, flags, buf);
-		}
-
-		if (getFlag(flags, T_FULLY_QUALIFIED | T_CONTAINER_QUALIFIED)) {
-			IModelElement elem = type.getParent();
-			IType declaringType = (elem instanceof IType) ? (IType) elem : null;
-			if (declaringType != null) {
-				getTypeLabel(declaringType, T_CONTAINER_QUALIFIED
-						| (flags & QUALIFIER_FLAGS), buf);
-				buf.append(getTypeDelimiter(elem));
-			}
-			int parentType = type.getParent().getElementType();
-			if (parentType == IModelElement.METHOD
-					|| parentType == IModelElement.FIELD) { // anonymous
-				// or
-				// local
-				getElementLabel(type.getParent(),
-						(parentType == IModelElement.METHOD ? M_FULLY_QUALIFIED
-								: F_FULLY_QUALIFIED)
-								| (flags & QUALIFIER_FLAGS), buf);
-				buf.append(getTypeDelimiter(elem));
-			}
-		}
-
-		String typeName = type.getElementName();
-		if (typeName.length() == 0) { // anonymous
-			try {
-				if (type.getParent() instanceof IField) {
-					typeName = '{' + ELLIPSIS_STRING + '}';
-				} else {
-					String[] superNames = type.getSuperClasses();
-					if (superNames != null) {
-						int count = 0;
-						typeName += DECL_STRING;
-						for (int i = 0; i < superNames.length; ++i) {
-
-							if (count > 0) {
-								typeName += COMMA_STRING + " "; //$NON-NLS-1$
-							}
-							typeName += superNames[i];
-							count++;
-						}
-					}
-				}
-			} catch (ModelException e) {
-				// ignore
-				typeName = ""; //$NON-NLS-1$
-			}
-		}
-
-		buf.append(typeName);
-
-		// post qualification
-		if (getFlag(flags, T_POST_QUALIFIED)) {
-			IModelElement elem = type.getParent();
-			IType declaringType = (elem instanceof IType) ? (IType) elem : null;
-			if (declaringType != null) {
-				buf.append(CONCAT_STRING);
-				getTypeLabel(declaringType, T_FULLY_QUALIFIED
-						| (flags & QUALIFIER_FLAGS), buf);
-				int parentType = type.getParent().getElementType();
-				if (parentType == IModelElement.METHOD
-						|| parentType == IModelElement.FIELD) { // anonymous
-					// or
-					// local
-					buf.append(getTypeDelimiter(elem));
-					getElementLabel(type.getParent(), 0, buf);
-				}
-			}
-			int parentType = type.getParent().getElementType();
-			if (parentType == IModelElement.METHOD
-					|| parentType == IModelElement.FIELD) { // anonymous
-				// or
-				// local
-				buf.append(CONCAT_STRING);
-				getElementLabel(type.getParent(),
-						(parentType == IModelElement.METHOD ? M_FULLY_QUALIFIED
-								: F_FULLY_QUALIFIED)
-								| (flags & QUALIFIER_FLAGS), buf);
-			}
-		}
-	}
-
-	protected void getFieldLabel(IField field, long flags, StringBuffer buf) {
-		// qualification
-		if (getFlag(flags, F_FULLY_QUALIFIED)) {
-			IType type = field.getDeclaringType();
-			if (type != null) {
-				getTypeLabel(type, T_FULLY_QUALIFIED
-						| (flags & QUALIFIER_FLAGS), buf);
-				buf.append(getTypeDelimiter(type));
-			}
-		}
-		buf.append(field.getElementName());
-		if (getFlag(flags, ScriptElementLabels.F_APP_TYPE_SIGNATURE)
-				&& field.exists()) {
-			try {
-				String type = field.getType();
-				if (type != null) {
-					buf.append(ScriptElementLabels.DECL_STRING);
-					buf.append(type);
-				}
-			} catch (CoreException e) {
-				DLTKCore.error("Failed to append type name to field", e);
-			}
-		}
-		// post qualification
-		if (getFlag(flags, M_POST_QUALIFIED)) {
-			IType declaringType = field.getDeclaringType();
-			if (declaringType != null) {
-				buf.append(CONCAT_STRING);
-				getTypeLabel(declaringType, T_FULLY_QUALIFIED
-						| (flags & QUALIFIER_FLAGS), buf);
-			}
-		}
-	}
-
-	protected void getLocalVariableLabel(ILocalVariable field, long flags,
-			StringBuffer buf) {
-		// qualification
-		buf.append(field.getElementName());
-		if (getFlag(flags, ScriptElementLabels.F_APP_TYPE_SIGNATURE)
-				&& field.exists()) {
-			String type = field.getType();
-			if (type != null) {
-				buf.append(ScriptElementLabels.DECL_STRING);
-				buf.append(type);
-			}
-		}
-	}
-
-	protected void getMethodLabel(IMethod method, long flags, StringBuffer buf) {
-
-		try {
-			// qualification
-			if (getFlag(flags, M_FULLY_QUALIFIED)) {
-				IType type = method.getDeclaringType();
-				if (type != null) {
-					getTypeLabel(type, T_FULLY_QUALIFIED
-							| (flags & QUALIFIER_FLAGS), buf);
-					buf.append(getTypeDelimiter(type));
-				}
-			}
-
-			final String methodName = method.getElementName();
-			if (methodName.length() != 0) {
-				buf.append(methodName);
-			} else {
-				buf.append("function"); // TODO language specific
-			}
-
-			// parameters
-			buf.append('(');
-			getMethodParameters(method, flags, buf);
-			buf.append(')');
-
-			if (getFlag(flags, ScriptElementLabels.M_APP_RETURNTYPE)
-					&& method.exists() && !method.isConstructor()) {
-				final String type = method.getType();
-				if (type != null) {
-					// int offset = buf.length();
-					buf.append(ScriptElementLabels.DECL_STRING);
-					buf.append(type);
-				}
-			}
-
-			// post qualification
-			if (getFlag(flags, M_POST_QUALIFIED)) {
-				IType declaringType = method.getDeclaringType();
-				if (declaringType != null) {
-					buf.append(CONCAT_STRING);
-					getTypeLabel(declaringType, T_FULLY_QUALIFIED
-							| (flags & QUALIFIER_FLAGS), buf);
-				}
-			}
-		} catch (ModelException e) {
-			e.printStackTrace();
-		}
-	}
-
-	protected void getMethodParameters(IMethod method, long flags,
-			StringBuffer buf) throws ModelException {
-		if (getFlag(flags, M_PARAMETER_TYPES | M_PARAMETER_NAMES)) {
-			if (method.exists()) {
-				final boolean bNames = getFlag(flags, M_PARAMETER_NAMES);
-				final boolean bTypes = getFlag(flags, M_PARAMETER_TYPES);
-				final boolean bInitializers = getFlag(flags,
-						M_PARAMETER_INITIALIZERS);
-				final IParameter[] params = method.getParameters();
-				for (int i = 0, nParams = params.length; i < nParams; i++) {
-					if (i > 0) {
-						buf.append(COMMA_STRING);
-					}
-					if (bNames) {
-						buf.append(params[i].getName());
-					}
-					if (bTypes) {
-						if (params[i].getType() != null) {
-							if (bNames) {
-								buf.append(':');
-							}
-							buf.append(params[i].getType());
-						} else if (!bNames) {
-							buf.append(params[i].getName());
-						}
-					}
-					if (bInitializers && params[i].getDefaultValue() != null) {
-						buf.append("=");
-						buf.append(params[i].getDefaultValue());
-					}
-				}
-			}
-		} else if (method.getParameters().length > 0) {
-			buf.append(ELLIPSIS_STRING);
-		}
+		getScriptElementLabelComposer(buf).getElementLabel(element, flags);
 	}
 
 	public void getProjectFragmentLabel(IProjectFragment root, long flags,
 			StringBuffer buf) {
-		if (root.isArchive())
-			getArchiveLabel(root, flags, buf);
-		else {
-			if (root.isBuiltin()) {
-				buf.append(BUILTINS_FRAGMENT);
-			} else if (root.isExternal() && !root.isBinary()) {
-				getExternalFolderLabel(root, flags, buf);
-			} else {
-				getFolderLabel(root, flags, buf);
-			}
-		}
-
-	}
-
-	protected void getArchiveLabel(IProjectFragment root, long flags,
-			StringBuffer buf) {
-		// Handle variables different
-		boolean external = root.isExternal();
-		if (external)
-			getExternalArchiveLabel(root, flags, buf);
-		else
-			getInternalArchiveLabel(root, flags, buf);
-	}
-
-	protected void getExternalArchiveLabel(IProjectFragment root, long flags,
-			StringBuffer buf) {
-		IPath path = root.getPath();
-		path = EnvironmentPathUtils.getLocalPath(path);
-		IEnvironment env = EnvironmentManager.getEnvironment(root);
-		if (getFlag(flags, REFERENCED_ARCHIVE_POST_QUALIFIED)) {
-			int segements = path.segmentCount();
-			if (segements > 0) {
-				buf.append(path.segment(segements - 1));
-				if (segements > 1 || path.getDevice() != null) {
-					buf.append(CONCAT_STRING);
-					buf.append(env.convertPathToString(path
-							.removeLastSegments(1)));
-				}
-			} else {
-				buf.append(env.convertPathToString(path));
-			}
-		} else {
-			buf.append(env.convertPathToString(path));
-		}
-	}
-
-	/**
-	 * Returns <code>true</code> if the given package fragment root is
-	 * referenced. This means it is own by a different project but is referenced
-	 * by the root's parent. Returns <code>false</code> if the given root
-	 * doesn't have an underlying resource.
-	 * 
-	 * 
-	 */
-	protected boolean isReferenced(IProjectFragment root) {
-		IResource resource = root.getResource();
-		if (resource != null) {
-			IProject archiveProject = resource.getProject();
-			IProject container = root.getScriptProject().getProject();
-			return !container.equals(archiveProject);
-		}
-		return false;
-	}
-
-	protected void getInternalArchiveLabel(IProjectFragment root, long flags,
-			StringBuffer buf) {
-		IResource resource = root.getResource();
-		boolean rootQualified = getFlag(flags, ROOT_QUALIFIED);
-		boolean referencedQualified = getFlag(flags,
-				REFERENCED_ARCHIVE_POST_QUALIFIED) && isReferenced(root);
-		if (rootQualified) {
-			buf.append(EnvironmentPathUtils.getLocalPath(root.getPath())
-					.makeRelative().toString());
-		} else {
-			buf.append(root.getElementName());
-			if (referencedQualified) {
-				buf.append(CONCAT_STRING);
-				buf.append(resource.getParent().getFullPath().makeRelative()
-						.toString());
-			} else if (getFlag(flags, ROOT_POST_QUALIFIED)) {
-				buf.append(CONCAT_STRING);
-				buf.append(EnvironmentPathUtils
-						.getLocalPath(root.getParent().getPath())
-						.makeRelative().toString());
-			}
-		}
-	}
-
-	protected void getFolderLabel(IProjectFragment root, long flags,
-			StringBuffer buf) {
-
-		IResource resource = root.getResource();
-		boolean rootQualified = getFlag(flags, ROOT_QUALIFIED);
-		boolean referencedQualified = getFlag(flags,
-				REFERENCED_ROOT_POST_QUALIFIED) && resource != null;
-		if (rootQualified) {
-			buf.append(EnvironmentPathUtils.getLocalPath(root.getPath())
-					.makeRelative().toString());
-		} else {
-			if (resource != null)
-				buf.append(resource.getProjectRelativePath().toString());
-			else
-				buf.append(root.getElementName());
-			if (referencedQualified) {
-				buf.append(CONCAT_STRING);
-				buf.append(resource.getProject().getName());
-			} else if (getFlag(flags, ROOT_POST_QUALIFIED)) {
-				buf.append(CONCAT_STRING);
-				buf.append(root.getParent().getElementName());
-			}
-		}
-	}
-
-	protected void getExternalFolderLabel(IProjectFragment root, long flags,
-			StringBuffer buf) {
-
-		boolean rootQualified = getFlag(flags, ROOT_QUALIFIED);
-		boolean referencedQualified = getFlag(flags,
-				REFERENCED_ROOT_POST_QUALIFIED);
-		buf.append(EnvironmentPathUtils.getLocalPathString(root.getPath()));
-		if (!rootQualified) {
-			if (referencedQualified) {
-				buf.append(CONCAT_STRING);
-				buf.append(root.getScriptProject().getElementName());
-			} else if (getFlag(flags, ROOT_POST_QUALIFIED)) {
-				buf.append(CONCAT_STRING);
-				buf.append(root.getParent().getElementName());
-			}
-		}
+		getScriptElementLabelComposer(buf).getProjectFragmentLabel(root, flags);
 	}
 
 	/**
@@ -1083,50 +604,7 @@ public class ScriptElementLabels {
 	public void getScriptFolderLabel(IProjectFragment pack, long flags,
 			StringBuffer buf) {
 
-		if (getFlag(flags, P_QUALIFIED)) {
-			getProjectFragmentLabel((IProjectFragment) pack.getParent(),
-					ROOT_QUALIFIED, buf);
-			buf.append('/');
-		}
-		// refreshPackageNamePattern();
-
-		// if (getFlag(flags, P_COMPRESSED) && fgPkgNameLength >= 0) {
-		// String name = pack.getElementName();
-		// int start = 0;
-		// int dot = name.indexOf(getTypeDelimiter(), start);
-		// while (dot > 0) {
-		// if (dot - start > fgPkgNameLength - 1) {
-		// buf.append(fgPkgNamePrefix);
-		// if (fgPkgNameChars > 0)
-		// buf.append(name.substring(start, Math.min(start + fgPkgNameChars,
-		// dot)));
-		// buf.append(fgPkgNamePostfix);
-		// } else
-		// buf.append(name.substring(start, dot + 1));
-		// start = dot + 1;
-		// dot = name.indexOf(getTypeDelimiter(), start);
-		// }
-		// buf.append(name.substring(start));
-		// } else {
-		if (pack instanceof ExternalProjectFragment) {
-			buf.append(pack.getElementName().replace(
-					ExternalProjectFragment.JEM_SKIP_DELIMETER, Path.SEPARATOR)
-					+ " "); //$NON-NLS-1$
-		} else {
-			if (pack instanceof BuiltinProjectFragment) {
-				buf.append(BUILTINS_FRAGMENT + " "); //$NON-NLS-1$
-			} else {
-				if (pack != null) {
-					buf.append(pack.getElementName() + " "); //$NON-NLS-1$
-				}
-			}
-		}
-		// }
-		if (getFlag(flags, P_POST_QUALIFIED)) {
-			buf.append(CONCAT_STRING);
-			getProjectFragmentLabel((IProjectFragment) pack.getParent(),
-					ROOT_QUALIFIED, buf);
-		}
+		getScriptElementLabelComposer(buf).getScriptFolderLabel(pack, flags);
 	}
 
 	/**
@@ -1155,6 +633,10 @@ public class ScriptElementLabels {
 		return containerPath.toString();
 	}
 
+	protected void getTypeLabel(IType type, long flags, StringBuffer buf) {
+		getScriptElementLabelComposer(buf).getTypeLabel(type, flags);
+	}
+
 	/**
 	 * Appends the label for a import container, import or package declaration
 	 * to a {@link StringBuffer}. Considers the D_* flags.
@@ -1169,28 +651,71 @@ public class ScriptElementLabels {
 	 */
 	public void getDeclarationLabel(IModelElement declaration, long flags,
 			StringBuffer buf) {
-		if (getFlag(flags, D_QUALIFIED)) {
-			IModelElement openable = declaration.getOpenable();
-			if (openable != null) {
-				buf.append(getElementLabel(openable, CF_QUALIFIED
-						| CU_QUALIFIED | (flags & QUALIFIER_FLAGS)));
-				buf.append('/');
+		getScriptElementLabelComposer(buf).getDeclarationLabel(declaration,
+				flags);
+	}
+
+	/**
+	 * @since 2.0 Returns the styled label of the given object. The object must
+	 *        be of type {@link IJavaElement} or adapt to
+	 *        {@link IWorkbenchAdapter}. If the element type is not known, the
+	 *        empty string is returned. The returned label is BiDi-processed
+	 *        with {@link TextProcessor#process(String, String)}.
+	 * 
+	 * @param obj
+	 *            object to get the label for
+	 * @param flags
+	 *            the rendering flags
+	 * @return the label or the empty string if the object type is not supported
+	 * 
+	 * @since 3.4
+	 * 
+	 */
+	public StyledString getStyledTextLabel(Object obj, long flags) {
+		if (obj instanceof IModelElement) {
+			return getStyledElementLabel((IModelElement) obj, flags);
+
+		} else if (obj instanceof IAdaptable) {
+			IWorkbenchAdapter wbadapter = (IWorkbenchAdapter) ((IAdaptable) obj)
+					.getAdapter(IWorkbenchAdapter.class);
+			if (wbadapter != null) {
+				return Strings
+						.markLTR(new StyledString(wbadapter.getLabel(obj)));
 			}
 		}
-		// if (declaration.getElementType() == IModelElement.IMPORT_CONTAINER) {
-		// buf.append(JavaUIMessages.ModelElementLabels_import_container);
-		// } else {
-		buf.append(declaration.getElementName());
-		// }
-		// post qualification
-		if (getFlag(flags, D_POST_QUALIFIED)) {
-			IModelElement openable = declaration.getOpenable();
-			if (openable != null) {
-				buf.append(CONCAT_STRING);
-				buf.append(getElementLabel(openable, CF_QUALIFIED
-						| CU_QUALIFIED | (flags & QUALIFIER_FLAGS)));
-			}
-		}
+		return new StyledString();
+	}
+
+	/**
+	 * Returns the styled label for a Java element with the flags as defined by
+	 * this class.
+	 * 
+	 * @param element
+	 *            the element to render
+	 * @param flags
+	 *            the rendering flags
+	 * @return the label of the Java element
+	 * 
+	 * @since 3.4
+	 */
+	public StyledString getStyledElementLabel(IModelElement element,
+			long flags) {
+		StyledString result = new StyledString();
+		getElementLabel(element, flags, result);
+		return Strings.markLTR(result,
+				ScriptElementLabelComposer.ADDITIONAL_DELIMITERS);
+
+	}
+
+	protected ScriptElementLabelComposer getScriptElementLabelComposer(
+			StringBuffer buf) {
+
+		return new ScriptElementLabelComposer(buf);
+	}
+
+	protected ScriptElementLabelComposer getScriptElementLabelComposer(
+			StyledString buf) {
+		return new ScriptElementLabelComposer(buf);
 	}
 
 	/**

@@ -27,6 +27,7 @@ import org.eclipse.dltk.ui.DLTKUIPlugin;
 import org.eclipse.dltk.ui.ProblemsLabelDecorator;
 import org.eclipse.dltk.ui.ScriptElementLabels;
 import org.eclipse.dltk.ui.actions.IScriptEditorActionDefinitionIds;
+import org.eclipse.dltk.ui.viewsupport.ColoringLabelProvider;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -138,7 +139,7 @@ public abstract class HierarchyInformationControl extends AbstractInformationCon
 
 		fLabelProvider.setTextFlags(ScriptElementLabels.ALL_DEFAULT | ScriptElementLabels.T_POST_QUALIFIED);
 		fLabelProvider.addLabelDecorator(new ProblemsLabelDecorator(null));
-		treeViewer.setLabelProvider(fLabelProvider);
+		treeViewer.setLabelProvider(new ColoringLabelProvider(fLabelProvider));
 		
 		treeViewer.getTree().addKeyListener(getKeyAdapter());	
 		

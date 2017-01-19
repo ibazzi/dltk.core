@@ -714,7 +714,7 @@ public abstract class ScriptCompletionProposalCollector extends
 			scriptProposal = createScriptCompletionProposal(completion, start,
 					length, image, label, relevance, false);
 		} else {
-			String label = getLabelProvider()
+			StyledString label = getLabelProvider()
 					.createFieldProposalLabel(proposal);
 			scriptProposal = createScriptCompletionProposal(completion, start,
 					length, image, label, relevance, false);
@@ -747,7 +747,7 @@ public abstract class ScriptCompletionProposalCollector extends
 			scriptProposal = createScriptCompletionProposal(completion, start,
 					length, image, label, relevance, false);
 		} else {
-			String label = getLabelProvider().createKeywordLabel(proposal);
+			StyledString label = getLabelProvider().createKeywordLabel(proposal);
 			scriptProposal = createScriptCompletionProposal(completion, start,
 					length, image, label, relevance, false);
 		}
@@ -780,7 +780,7 @@ public abstract class ScriptCompletionProposalCollector extends
 			scriptProposal = createScriptCompletionProposal(completion, start,
 					length, image, label, relevance, false);
 		} else {
-			String label = getLabelProvider().createSimpleLabel(proposal);
+			StyledString label = getLabelProvider().createSimpleLabelWithType(proposal);
 			scriptProposal = createScriptCompletionProposal(completion, start,
 					length, image, label, relevance, false);
 		}
@@ -806,7 +806,7 @@ public abstract class ScriptCompletionProposalCollector extends
 			scriptProposal = createScriptCompletionProposal(completion, start,
 					length, null, label, relevance, false);
 		} else {
-			String label = getLabelProvider().createSimpleLabel(proposal);
+			StyledString label = getLabelProvider().createSimpleLabel(proposal);
 			scriptProposal = createScriptCompletionProposal(completion, start,
 					length, null, label, relevance, false);
 		}
@@ -833,7 +833,8 @@ public abstract class ScriptCompletionProposalCollector extends
 			scriptProposal = createScriptCompletionProposal(completion, start,
 					length, image, label, relevance, false);
 		} else {
-			String label = getLabelProvider().createSimpleLabelWithType(
+			StyledString label = getLabelProvider()
+					.createSimpleLabelWithType(
 					proposal);
 			scriptProposal = createScriptCompletionProposal(completion, start,
 					length, image, label, relevance, false);
@@ -874,7 +875,7 @@ public abstract class ScriptCompletionProposalCollector extends
 					fSourceModule, name, paramTypes, start, length, label,
 					String.valueOf(proposal.getCompletion()));
 		} else {
-			String label = labelProvider
+			StyledString label = labelProvider
 					.createOverrideMethodProposalLabel(proposal);
 			scriptProposal = createOverrideCompletionProposal(fScriptProject,
 					fSourceModule, name, paramTypes, start, length, label,
@@ -938,7 +939,7 @@ public abstract class ScriptCompletionProposalCollector extends
 			scriptProposal = createScriptCompletionProposal(completion, start,
 					length, image, label, relevance, false);
 		} else {
-			String label = getLabelProvider().createTypeProposalLabel(proposal);
+			StyledString label = getLabelProvider().createTypeProposalLabel(proposal);
 			scriptProposal = createScriptCompletionProposal(completion, start,
 					length, image, label, relevance, false);
 		}
