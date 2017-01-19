@@ -19,10 +19,13 @@ import org.eclipse.dltk.core.IMethod;
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.IType;
 import org.eclipse.dltk.core.ModelException;
+import org.eclipse.dltk.internal.corext.util.Strings;
 import org.eclipse.dltk.ui.DLTKPluginImages;
 import org.eclipse.dltk.ui.ScriptElementImageDescriptor;
 import org.eclipse.dltk.ui.ScriptElementImageProvider;
+import org.eclipse.dltk.ui.ScriptElementLabels;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.StyledString;
 
 /**
  * Provides labels forscriptcontent assist proposals. The functionality is
@@ -31,6 +34,10 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * 
  */
 public class CompletionProposalLabelProvider {
+
+	private static final String QUALIFIER_SEPARATOR = ScriptElementLabels.CONCAT_STRING;
+	private static final String RETURN_TYPE_SEPARATOR = ScriptElementLabels.DECL_STRING;
+	private static final String VAR_TYPE_SEPARATOR = ScriptElementLabels.DECL_STRING;
 
 	/**
 	 * The completion context.
@@ -63,7 +70,9 @@ public class CompletionProposalLabelProvider {
 	 */
 	public String createParameterList(CompletionProposal methodProposal) {
 		Assert.isTrue(methodProposal.getKind() == CompletionProposal.METHOD_REF);
-		return appendParameterList(new StringBuffer(), methodProposal)
+		return Strings
+				.markScriptElementLabelLTR(
+						appendParameterList(new StyledString(), methodProposal))
 				.toString();
 	}
 
@@ -77,7 +86,7 @@ public class CompletionProposalLabelProvider {
 	 *            the method proposal
 	 * @return the modified <code>buffer</code>
 	 */
-	protected StringBuffer appendParameterList(StringBuffer buffer,
+	protected StyledString appendParameterList(StyledString buffer,
 			CompletionProposal methodProposal) {
 		String[] parameterNames = methodProposal.findParameterNames(null);
 		String[] parameterTypes = null;
@@ -112,7 +121,7 @@ public class CompletionProposalLabelProvider {
 	 * @return the display string of the parameter list defined by the passed
 	 *         arguments
 	 */
-	protected StringBuffer appendParameterSignature(StringBuffer buffer,
+	protected StyledString appendParameterSignature(StyledString buffer,
 			String[] parameterTypes, String[] parameterNames) {
 		if (parameterNames != null) {
 			for (int i = 0; i < parameterNames.length; i++) {
@@ -148,8 +157,9 @@ public class CompletionProposalLabelProvider {
 	 *            the method proposal to display
 	 * @return the display label for the given method proposal
 	 */
-	protected String createMethodProposalLabel(CompletionProposal methodProposal) {
-		StringBuffer buffer = new StringBuffer();
+	protected StyledString createMethodProposalLabel(
+			CompletionProposal methodProposal) {
+		StyledString buffer = new StyledString();
 
 		// method name
 		buffer.append(methodProposal.getName());
@@ -179,12 +189,12 @@ public class CompletionProposalLabelProvider {
 			}
 		}
 
-		return buffer.toString();
+		return buffer;
 	}
 
-	protected String createOverrideMethodProposalLabel(
+	protected StyledString createOverrideMethodProposalLabel(
 			CompletionProposal methodProposal) {
-		StringBuffer nameBuffer = new StringBuffer();
+		StyledString nameBuffer = new StyledString();
 
 		// method name
 		nameBuffer.append(methodProposal.getName());
@@ -192,9 +202,29 @@ public class CompletionProposalLabelProvider {
 		// parameters
 		nameBuffer.append('(');
 		appendParameterList(nameBuffer, methodProposal);
-		nameBuffer.append(")  "); //$NON-NLS-1$
+		nameBuffer.append(')');
 
-		return nameBuffer.toString();
+		// nameBuffer.append(RETURN_TYPE_SEPARATOR);
+
+		// // return type
+		// // TODO remove SignatureUtil.fix83600 call when bugs are fixed
+		// char[] returnType = createTypeDisplayName(SignatureUtil
+		// .getUpperBound(Signature.getReturnType(SignatureUtil
+		// .fix83600(methodProposal.getSignature()))));
+		// nameBuffer.append(returnType);
+		//
+		// // declaring type
+		// nameBuffer.append(QUALIFIER_SEPARATOR,
+		// StyledString.QUALIFIER_STYLER);
+		//
+		// String declaringType = extractDeclaringTypeFQN(methodProposal);
+		// declaringType = Signature.getSimpleName(declaringType);
+		// nameBuffer.append(Messages.format(
+		// JavaTextMessages.ResultCollector_overridingmethod,
+		// BasicElementLabels.getJavaElementName(declaringType)),
+		// StyledString.QUALIFIER_STYLER);
+
+		return nameBuffer;
 	}
 
 	/**
@@ -214,15 +244,29 @@ public class CompletionProposalLabelProvider {
 	 *            the method proposal to display
 	 * @return the display label for the given type proposal
 	 */
-	public String createTypeProposalLabel(CompletionProposal typeProposal) {
-		return createTypeProposalLabel(typeProposal.getName());
+	public StyledString createTypeProposalLabel(
+			CompletionProposal typeProposal) {
+		return createTypeProposalLabel(typeProposal.getName().toCharArray());
 	}
 
-	protected String createTypeProposalLabel(String fullName) {
-		return fullName;
+	protected StyledString createTypeProposalLabel(char[] fullName) {
+		int qIndex = findSimpleNameStart(fullName);
+
+		StyledString buf = new StyledString();
+		buf.append(new String(fullName, qIndex, fullName.length - qIndex));
+		if (qIndex > 0) {
+			buf.append(ScriptElementLabels.CONCAT_STRING,
+					StyledString.QUALIFIER_STYLER);
+			buf.append(new String(fullName, 0, qIndex - 1),
+					StyledString.QUALIFIER_STYLER);
+		}
+		return Strings.markScriptElementLabelLTR(buf);
 	}
 
-	protected String createSimpleLabelWithType(CompletionProposal proposal) {
+	protected StyledString createSimpleLabelWithType(
+			CompletionProposal proposal) {
+		StyledString buf = new StyledString();
+		buf.append(proposal.getName());
 		IModelElement element = proposal.getModelElement();
 		if (element != null
 				&& element.getElementType() == IModelElement.LOCAL_VARIABLE
@@ -230,13 +274,17 @@ public class CompletionProposalLabelProvider {
 			final ILocalVariable var = (ILocalVariable) element;
 			String type = var.getType();
 			if (type != null) {
-				return proposal.getName() + getReturnTypeSeparator() + type;
+				buf.append(VAR_TYPE_SEPARATOR);
+				buf.append(type);
 			}
 		}
-		return proposal.getName();
+		return Strings.markScriptElementLabelLTR(buf);
 	}
 
-	protected String createFieldProposalLabel(CompletionProposal proposal) {
+	protected StyledString createFieldProposalLabel(
+			CompletionProposal proposal) {
+		StyledString buf = new StyledString();
+		buf.append(proposal.getName());
 		IModelElement element = proposal.getModelElement();
 		if (element != null && element.getElementType() == IModelElement.FIELD
 				&& element.exists()) {
@@ -244,21 +292,24 @@ public class CompletionProposalLabelProvider {
 			try {
 				String type = field.getType();
 				if (type != null) {
-					return proposal.getName() + getReturnTypeSeparator() + type;
+					buf.append(VAR_TYPE_SEPARATOR);
+					buf.append(type);
 				}
 			} catch (ModelException e) {
 				// ignore
 			}
 		}
-		return proposal.getName();
+		return Strings.markScriptElementLabelLTR(buf);
 	}
 
-	public String createSimpleLabel(CompletionProposal proposal) {
-		return String.valueOf(proposal.getName());
+	public StyledString createSimpleLabel(CompletionProposal proposal) {
+		return Strings.markScriptElementLabelLTR(
+				new StyledString(String.valueOf(proposal.getName())));
 	}
 
-	public String createKeywordLabel(CompletionProposal proposal) {
-		return String.valueOf(proposal.getName());
+	public StyledString createKeywordLabel(CompletionProposal proposal) {
+		return Strings.markScriptElementLabelLTR(
+				new StyledString(String.valueOf(proposal.getName())));
 	}
 
 	/**
@@ -269,6 +320,20 @@ public class CompletionProposalLabelProvider {
 	 * @return the display label for <code>proposal</code>
 	 */
 	public String createLabel(CompletionProposal proposal) {
+		return createStyledLabel(proposal).getString();
+	}
+
+	/**
+	 * Creates a display label with styles for a given
+	 * <code>CompletionProposal</code>.
+	 * 
+	 * @param proposal
+	 *            the completion proposal to create the display label for
+	 * @return the display label for <code>proposal</code>
+	 * 
+	 * @since 3.4
+	 */
+	public StyledString createStyledLabel(CompletionProposal proposal) {
 		switch (proposal.getKind()) {
 		case CompletionProposal.METHOD_NAME_REFERENCE:
 		case CompletionProposal.METHOD_REF:
@@ -421,6 +486,19 @@ public class CompletionProposalLabelProvider {
 
 		return new ScriptElementImageDescriptor(descriptor, adornmentFlags,
 				ScriptElementImageProvider.SMALL_SIZE);
+	}
+
+	private int findSimpleNameStart(char[] array) {
+		int lastDot = 0;
+		for (int i = 0, len = array.length; i < len; i++) {
+			char ch = array[i];
+			if (ch == '<') {
+				return lastDot;
+			} else if (ch == '.') {
+				lastDot = i + 1;
+			}
+		}
+		return lastDot;
 	}
 
 	/**

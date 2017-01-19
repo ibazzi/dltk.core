@@ -23,9 +23,12 @@ import org.eclipse.dltk.ui.viewsupport.AppearanceAwareLabelProvider;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
+import org.eclipse.jface.viewers.StyledCellLabelProvider;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.Match;
@@ -251,5 +254,26 @@ public abstract class SearchLabelProvider extends AppearanceAwareLabelProvider {
 	private RGB getPotentialMatchForegroundColor() {
 		return PreferenceConverter.getColor(fSearchPreferences,
 				POTENTIAL_MATCH_FG_COLOR);
+	}
+
+	protected final StyledString getColoredLabelWithCounts(Object element,
+			StyledString coloredName) {
+		String name = coloredName.getString();
+		String decorated = getLabelWithCounts(element, name);
+		if (decorated.length() > name.length()) {
+			StyledCellLabelProvider.styleDecoratedString(decorated,
+					StyledString.COUNTER_STYLER, coloredName);
+		}
+		return coloredName;
+	}
+
+	protected StyledString getStyledParticipantText(Object element) {
+		ILabelProvider labelProvider = getLabelProvider(element);
+		if (labelProvider instanceof IStyledLabelProvider)
+			return ((IStyledLabelProvider) labelProvider)
+					.getStyledText(element);
+		if (labelProvider != null)
+			return new StyledString(labelProvider.getText(element));
+		return new StyledString();
 	}
 }
