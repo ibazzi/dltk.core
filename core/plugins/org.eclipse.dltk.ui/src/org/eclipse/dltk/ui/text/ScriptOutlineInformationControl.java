@@ -236,7 +236,7 @@ public class ScriptOutlineInformationControl
 			tree.setRedraw(false);
 			fShowInheritedMembers = !fShowInheritedMembers;
 			getTreeViewer().refresh();
-			getTreeViewer().expandToLevel(4);
+			getTreeViewer().expandAll();
 
 			// reveal selection
 			Object selectedElement = getSelectedElement();
@@ -476,7 +476,7 @@ public class ScriptOutlineInformationControl
 		gd.heightHint = tree.getItemHeight() * 12;
 		tree.setLayoutData(gd);
 
-		final TreeViewer treeViewer = new OutlineTreeViewer(tree);
+		final TreeViewer treeViewer = new TreeViewer(tree);
 
 		// Hard-coded filters
 		treeViewer.addFilter(new NamePatternFilter());

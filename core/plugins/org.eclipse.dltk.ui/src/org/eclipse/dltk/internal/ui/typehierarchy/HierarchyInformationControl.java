@@ -312,11 +312,7 @@ public abstract class HierarchyInformationControl
 		treeViewer.setContentProvider(fOtherContentProvider);
 
 		treeViewer.refresh();
-		if (fOtherExpandedElements != null) {
-			treeViewer.setExpandedElements(fOtherExpandedElements);
-		} else {
-			treeViewer.expandAll();
-		}
+		treeViewer.expandAll();
 
 		treeViewer.getTree().setRedraw(true);
 
