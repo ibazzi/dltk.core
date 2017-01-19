@@ -35,8 +35,8 @@ import org.eclipse.dltk.ui.DLTKUIPlugin;
 import org.eclipse.dltk.ui.ProblemsLabelDecorator;
 import org.eclipse.dltk.ui.ScriptElementLabels;
 import org.eclipse.dltk.ui.viewsupport.AppearanceAwareLabelProvider;
+import org.eclipse.dltk.ui.viewsupport.ColoringLabelProvider;
 import org.eclipse.dltk.ui.viewsupport.MemberFilter;
-import org.eclipse.dltk.ui.viewsupport.StyledDecoratingModelLabelProvider;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
@@ -483,7 +483,7 @@ public class ScriptOutlineInformationControl
 		treeViewer.addFilter(new MemberFilter());
 
 		fForegroundColor = parent.getDisplay()
-				.getSystemColor(SWT.COLOR_DARK_GRAY);
+				.getSystemColor(SWT.COLOR_DARK_BLUE);
 
 		fInnerLabelProvider = new OutlineLabelProvider();
 		fInnerLabelProvider.addLabelDecorator(new ProblemsLabelDecorator(null));
@@ -497,7 +497,7 @@ public class ScriptOutlineInformationControl
 		 */
 
 		treeViewer.setLabelProvider(
-				new StyledDecoratingModelLabelProvider(fInnerLabelProvider));
+				new ColoringLabelProvider(fInnerLabelProvider));
 
 		fLexicalSortingAction = new LexicalSortingAction(treeViewer);
 		fSortByDefiningTypeAction = new SortByDefiningTypeAction(treeViewer);
