@@ -19,6 +19,7 @@ import org.eclipse.dltk.compiler.CharOperation;
 import org.eclipse.dltk.core.CompletionRequestor;
 import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.core.DLTKLanguageManager;
+import org.eclipse.dltk.core.IBuildpathEntry;
 import org.eclipse.dltk.core.IField;
 import org.eclipse.dltk.core.IMethod;
 import org.eclipse.dltk.core.IModelElement;
@@ -476,21 +477,45 @@ public class SourceType extends NamedMember implements IType {
 	private IDLTKSearchScope createReferencingProjectsScope() {
 
 		IScriptProject scriptProject = getScriptProject();
-		IProject project = scriptProject.getProject();
-		IProject[] referencingProjects = project.getReferencingProjects();
+		IProject[] projects = scriptProject.getProject().getWorkspace()
+				.getRoot().getProjects();
+		List<IProject> result = new ArrayList<IProject>(projects.length);
+		for (int i = 0; i < projects.length; i++) {
+			IProject project = projects[i];
+			if (!project.isAccessible())
+				continue;
+			IScriptProject p = DLTKCore.create(project);
+			if (p.equals(scriptProject)) {
+				result.add(project);
+				continue;
+			}
+			IBuildpathEntry[] references;
+			try {
+				references = p.getRawBuildpath();
+				for (int j = 0; j < references.length; j++) {
+					if (references[j].getPath()
+							.equals(scriptProject.getPath())) {
+						result.add(projects[i]);
+						break;
+					}
+				}
+			} catch (ModelException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 
 		List<IScriptProject> scriptProjects = new ArrayList<IScriptProject>(
-				referencingProjects.length + 1);
-		scriptProjects.add(scriptProject);
+				result.size());
+		for (int i = 0; i < result.size(); ++i) {
+			IProject p = result.get(i);
 
-		for (int i = 0; i < referencingProjects.length; ++i) {
-			IProject p = referencingProjects[i];
 			if (p.isAccessible()) {
 				scriptProjects.add(DLTKCore.create(p));
 			}
 		}
 		return SearchEngine.createSearchScope(scriptProjects
-				.toArray(new IModelElement[scriptProjects.size()]), false,
+				.toArray(new IModelElement[scriptProjects.size()]),
 				DLTKLanguageManager.getLanguageToolkit(this));
 	}
 
