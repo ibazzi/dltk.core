@@ -14,6 +14,7 @@ import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.IType;
 import org.eclipse.dltk.ui.ScriptElementLabels;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.Image;
 
 public class PostfixLabelProvider extends SearchLabelProvider {
@@ -79,6 +80,49 @@ public class PostfixLabelProvider extends SearchLabelProvider {
 			}
 		}
 		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.jdt.internal.ui.viewsupport.JavaUILabelProvider#getStyledText
+	 * (java.lang.Object)
+	 */
+	@Override
+	public StyledString getStyledText(Object element) {
+		StyledString styledString = getColoredLabelWithCounts(element,
+				internalGetStyledText(element));
+		styledString.append(getQualification(element),
+				StyledString.QUALIFIER_STYLER);
+		return styledString;
+	}
+
+	private StyledString internalGetStyledText(Object element) {
+		StyledString text = super.getStyledText(element);
+		if (text != null && text.length() > 0)
+			return text;
+		return getStyledParticipantText(element);
+	}
+
+	private String getQualification(Object element) {
+		StringBuffer res = new StringBuffer();
+
+		ITreeContentProvider provider = (ITreeContentProvider) fPage.getViewer()
+				.getContentProvider();
+		Object visibleParent = provider.getParent(element);
+		Object realParent = fContentProvider.getParent(element);
+		Object lastElement = element;
+		while (realParent != null && !(realParent instanceof IScriptModel)
+				&& !realParent.equals(visibleParent)) {
+			if (!isSameInformation(realParent, lastElement)) {
+				res.append(ScriptElementLabels.CONCAT_STRING)
+						.append(internalGetText(realParent));
+			}
+			lastElement = realParent;
+			realParent = fContentProvider.getParent(realParent);
+		}
+		return res.toString();
 	}
 
 }

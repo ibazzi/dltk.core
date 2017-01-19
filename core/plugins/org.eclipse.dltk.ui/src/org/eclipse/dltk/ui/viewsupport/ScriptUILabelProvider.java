@@ -348,7 +348,7 @@ public class ScriptUILabelProvider implements ILabelProvider, IColorProvider,  I
 			}
 		}
 		if (result == null) {
-			result = new StyledString(ScriptElementLabels.getDefault().getTextLabel(element, evaluateTextFlags(element)));
+			result = ScriptElementLabels.getDefault().getStyledTextLabel(element, evaluateTextFlags(element) | ScriptElementLabels.COLORIZE);
 		}
 
 		if (result.length() == 0 && (element instanceof IStorage)) {

@@ -31,8 +31,11 @@ public class ScriptTypeCompletionProposal extends ScriptCompletionProposal {
 	/** The fully qualified type name. */
 	private final String fFullyQualifiedTypeName;
 
-	public ScriptTypeCompletionProposal(String replacementString, ISourceModule cu, int replacementOffset, int replacementLength, Image image, String displayString, int relevance) {
-		this(replacementString, cu, replacementOffset, replacementLength, image, displayString, relevance, null);
+	public ScriptTypeCompletionProposal(String replacementString,
+			ISourceModule cu, int replacementOffset, int replacementLength,
+			Image image, StyledString displayString, int relevance) {
+		this(replacementString, cu, replacementOffset, replacementLength, image,
+				displayString, relevance, null);
 	}
 
 	public ScriptTypeCompletionProposal(String replacementString,
