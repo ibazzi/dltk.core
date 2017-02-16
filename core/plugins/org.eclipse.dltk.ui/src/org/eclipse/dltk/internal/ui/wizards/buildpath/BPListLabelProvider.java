@@ -18,7 +18,9 @@ import org.eclipse.dltk.core.IAccessRule;
 import org.eclipse.dltk.core.IBuildpathContainer;
 import org.eclipse.dltk.core.IBuildpathEntry;
 import org.eclipse.dltk.core.ModelException;
+import org.eclipse.dltk.core.environment.EnvironmentManager;
 import org.eclipse.dltk.core.environment.EnvironmentPathUtils;
+import org.eclipse.dltk.core.environment.IEnvironment;
 import org.eclipse.dltk.internal.corext.util.Messages;
 import org.eclipse.dltk.internal.ui.wizards.NewWizardMessages;
 import org.eclipse.dltk.ui.DLTKPluginImages;
@@ -249,12 +251,16 @@ public class BPListLabelProvider extends LabelProvider {
 			} else if (ArchiveFileFilter.isArchivePath(path)) {
 				return getPathString(path, resource == null);
 			}
-			// should not get here
-			if (!cpentry.isExternalFolder()) {
-				return path.makeRelative().toString();
+			IEnvironment env = EnvironmentManager
+					.getEnvironment(cpentry.getScriptProject());
+			StringBuffer buf = new StringBuffer(path.lastSegment());
+			buf.append(ScriptElementLabels.CONCAT_STRING);
+			if (path.getDevice() != null) {
+				buf.append(env.convertPathToString(path.removeLastSegments(1)));
 			} else {
-				return path.toString();
+				buf.append(path.removeLastSegments(1).makeRelative());
 			}
+			return buf.toString();
 		}
 		case IBuildpathEntry.BPE_PROJECT:
 			return path.lastSegment();
