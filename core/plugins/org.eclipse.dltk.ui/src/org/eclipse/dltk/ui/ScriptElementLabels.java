@@ -236,6 +236,13 @@ public class ScriptElementLabels {
 	public final static long REFERENCED_ARCHIVE_POST_QUALIFIED = 1L << 46;
 
 	/**
+	 * Post qualify referenced external fragment roots.
+	 * 
+	 * @since 2.0
+	 */
+	public final static long REFERENCED_EXTERNAL_POST_QUALIFIED = 1L << 47;
+
+	/**
 	 * Specified to use the resolved information of a IType, IMethod or IField.
 	 * See {@link IType#isResolved()}. If resolved information is available,
 	 * types will be rendered with type parameters of the instantiated type.

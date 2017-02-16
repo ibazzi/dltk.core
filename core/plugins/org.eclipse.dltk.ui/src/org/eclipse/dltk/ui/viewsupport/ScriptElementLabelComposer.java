@@ -552,6 +552,7 @@ public class ScriptElementLabelComposer {
 					.makeRelative().toString());
 		} else {
 			fBuffer.append(root.getElementName());
+			int offset = fBuffer.length();
 			if (referencedQualified) {
 				fBuffer.append(ScriptElementLabels.CONCAT_STRING);
 				fBuffer.append(resource.getParent().getFullPath().makeRelative()
@@ -562,6 +563,10 @@ public class ScriptElementLabelComposer {
 				fBuffer.append(EnvironmentPathUtils
 						.getLocalPath(root.getParent().getPath()).makeRelative()
 						.toString());
+			}
+			if (getFlag(flags, ScriptElementLabels.COLORIZE)) {
+				fBuffer.setStyle(offset, fBuffer.length() - offset,
+						QUALIFIER_STYLE);
 			}
 		}
 	}
@@ -594,21 +599,40 @@ public class ScriptElementLabelComposer {
 	}
 
 	protected void getExternalFolderLabel(IProjectFragment root, long flags) {
-
+		IPath path = EnvironmentPathUtils.getLocalPath(root.getPath());
+		IEnvironment env = EnvironmentManager.getEnvironment(root);
 		boolean rootQualified = getFlag(flags,
 				ScriptElementLabels.ROOT_QUALIFIED);
 		boolean referencedQualified = getFlag(flags,
-				ScriptElementLabels.REFERENCED_ROOT_POST_QUALIFIED);
-		fBuffer.append(EnvironmentPathUtils.getLocalPathString(root.getPath()));
+				ScriptElementLabels.REFERENCED_EXTERNAL_POST_QUALIFIED);
 		if (!rootQualified) {
 			if (referencedQualified) {
-				fBuffer.append(ScriptElementLabels.CONCAT_STRING);
-				fBuffer.append(root.getScriptProject().getElementName());
+				int segements = path.segmentCount();
+				if (segements > 0) {
+					fBuffer.append(path.lastSegment());
+					if (segements > 1 || path.getDevice() != null) {
+						int offset = fBuffer.length();
+						fBuffer.append(ScriptElementLabels.CONCAT_STRING);
+						fBuffer.append(env.convertPathToString(
+								path.removeLastSegments(1)));
+						if (getFlag(flags, ScriptElementLabels.COLORIZE)) {
+							fBuffer.setStyle(offset, fBuffer.length() - offset,
+									QUALIFIER_STYLE);
+						}
+					}
+				} else {
+					fBuffer.append(env.convertPathToString(path));
+				}
 			} else if (getFlag(flags,
 					ScriptElementLabels.ROOT_POST_QUALIFIED)) {
+				fBuffer.append(EnvironmentPathUtils
+						.getLocalPathString(root.getPath()));
 				fBuffer.append(ScriptElementLabels.CONCAT_STRING);
 				fBuffer.append(root.getParent().getElementName());
 			}
+		} else {
+			fBuffer.append(
+					EnvironmentPathUtils.getLocalPathString(root.getPath()));
 		}
 	}
 

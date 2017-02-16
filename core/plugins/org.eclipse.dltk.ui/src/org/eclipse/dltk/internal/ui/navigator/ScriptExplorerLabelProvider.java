@@ -47,6 +47,7 @@ public class ScriptExplorerLabelProvider extends AppearanceAwareLabelProvider {
 			IPreferenceStore store) {
 		super(DEFAULT_TEXTFLAGS | ScriptElementLabels.P_COMPRESSED
 				| ScriptElementLabels.REFERENCED_ARCHIVE_POST_QUALIFIED
+				| ScriptElementLabels.REFERENCED_EXTERNAL_POST_QUALIFIED
 				| ScriptElementLabels.ALL_CATEGORY,
 				DEFAULT_IMAGEFLAGS | ScriptElementImageProvider.SMALL_ICONS,
 				store);
