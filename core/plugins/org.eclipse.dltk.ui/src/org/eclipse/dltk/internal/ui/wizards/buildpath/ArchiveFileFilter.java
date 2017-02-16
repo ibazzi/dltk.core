@@ -29,9 +29,10 @@ import org.eclipse.jface.viewers.ViewerFilter;
 public class ArchiveFileFilter extends ViewerFilter
 {
 
-	public static final String[] FILTER_EXTENSIONS = new String [] { "*.zip" }; //$NON-NLS-1$
+	public static final String[] FILTER_EXTENSIONS = new String[] { "*.zip", //$NON-NLS-1$
+			"*.phar" };
 
-	private static final String[] fgArchiveExtensions = { "zip" }; //$NON-NLS-1$ 
+	private static final String[] fgArchiveExtensions = { "zip", "phar" }; //$NON-NLS-1$
 
 	private List fExcludes;
 
