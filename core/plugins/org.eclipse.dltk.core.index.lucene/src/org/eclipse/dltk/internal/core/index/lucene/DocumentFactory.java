@@ -128,20 +128,7 @@ public final class DocumentFactory {
 	}
 
 	private static void addCCNameEntry(Document doc, String name) {
-		String camelCaseName = null;
-		StringBuilder camelCaseNameBuf = new StringBuilder();
-		for (int i = 0; i < name.length(); ++i) {
-			char ch = name.charAt(i);
-			if (Character.isUpperCase(ch)) {
-				camelCaseNameBuf.append(ch);
-			} else if (i == 0) {
-				// Not applicable for camel case search
-				break;
-			}
-		}
-		camelCaseName = camelCaseNameBuf.length() > 0
-				? camelCaseNameBuf.toString() : null;
-		addStringEntry(doc, F_CC_NAME, camelCaseName, false);
+		addStringEntry(doc, F_CC_NAME, Utils.getCamelCaseName(name), false);
 	}
 
 	private static void addBinaryEntry(Document doc, String category,

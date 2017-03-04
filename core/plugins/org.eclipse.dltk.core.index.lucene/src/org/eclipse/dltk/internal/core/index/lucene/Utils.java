@@ -51,4 +51,21 @@ public final class Utils {
 		});
 	}
 
+	public static String getCamelCaseName(String name) {
+		String camelCaseName = null;
+		StringBuilder camelCaseNameBuf = new StringBuilder();
+		for (int i = 0; i < name.length(); ++i) {
+			char ch = name.charAt(i);
+			if (Character.isUpperCase(ch)) {
+				camelCaseNameBuf.append(ch);
+			} else if (i == 0) {
+				// Not applicable for camel case search
+				break;
+			}
+		}
+		camelCaseName = camelCaseNameBuf.length() > 0
+				? camelCaseNameBuf.toString() : null;
+		return camelCaseName;
+	}
+
 }
