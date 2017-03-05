@@ -204,10 +204,12 @@ public class ScriptUILabelProvider
 
 	@Override
 	public String getText(Object element) {
-		StyledString styledText = getStyledText(element);
-		if (styledText != null)
-			return styledText.toString();
-		return null;
+		String result = ScriptElementLabels.getDefault().getTextLabel(element,
+				evaluateTextFlags(element));
+		if (result.length() == 0 && (element instanceof IStorage)) {
+			result = fStorageLabelProvider.getText(element);
+		}
+		return decorateText(result, element);
 	}
 
 	private ILabelProvider[] getProviders(Object element) {

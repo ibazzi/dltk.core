@@ -41,6 +41,7 @@ import org.eclipse.dltk.core.search.SearchPattern;
 import org.eclipse.dltk.core.search.SearchRequestor;
 import org.eclipse.dltk.core.search.matching.ModuleFactory;
 import org.eclipse.dltk.internal.core.DefaultWorkingCopyOwner;
+import org.eclipse.dltk.internal.core.ExternalSourceModule;
 import org.eclipse.dltk.internal.core.ModelManager;
 import org.eclipse.dltk.internal.core.SourceModule;
 import org.eclipse.dltk.internal.core.search.matching.AndPattern;
@@ -203,6 +204,7 @@ public class NewSearchEngine {
 
 		int elementType = 0;
 		String qualifier = null;
+		String parent = null;
 		String elementName = null;
 		SearchFor searchFor = null;
 		MatchRule matchRule = null;
@@ -211,6 +213,11 @@ public class NewSearchEngine {
 			elementType = IModelElement.TYPE;
 			elementName = new String(
 					((TypeDeclarationPattern) pattern).simpleName);
+			if (((TypeDeclarationPattern) pattern).enclosingTypeNames != null
+					&& ((TypeDeclarationPattern) pattern).enclosingTypeNames.length > 0) {
+				qualifier = new String(
+						((TypeDeclarationPattern) pattern).enclosingTypeNames[0]);
+			}
 			matchRule = ModelAccess.convertSearchRule(pattern.getMatchRule());
 			searchFor = SearchFor.DECLARATIONS;
 
@@ -218,6 +225,10 @@ public class NewSearchEngine {
 			elementType = IModelElement.TYPE;
 			elementName = new String(
 					((TypeReferencePattern) pattern).simpleName);
+			if (((TypeReferencePattern) pattern).qualification != null) {
+				qualifier = new String(
+						((TypeReferencePattern) pattern).qualification);
+			}
 			matchRule = ModelAccess.convertSearchRule(pattern.getMatchRule());
 			searchFor = SearchFor.REFERENCES;
 
@@ -225,6 +236,13 @@ public class NewSearchEngine {
 			elementType = IModelElement.METHOD;
 			elementName = new String(
 					((MethodDeclarationPattern) pattern).simpleName);
+			if (((MethodDeclarationPattern) pattern).enclosingTypeNames != null
+					&& ((MethodDeclarationPattern) pattern).enclosingTypeNames.length > 1) {
+				qualifier = new String(
+						((MethodDeclarationPattern) pattern).enclosingTypeNames[0]);
+				parent = new String(
+						((MethodDeclarationPattern) pattern).enclosingTypeNames[1]);
+			}
 			matchRule = ModelAccess.convertSearchRule(pattern.getMatchRule());
 			searchFor = SearchFor.DECLARATIONS;
 
@@ -234,7 +252,10 @@ public class NewSearchEngine {
 			elementName = new String(methodPattern.selector);
 			matchRule = ModelAccess.convertSearchRule(pattern.getMatchRule());
 			searchFor = SearchFor.REFERENCES;
-
+			if (methodPattern.declaringQualificationName != null)
+				qualifier = new String(
+						methodPattern.declaringQualificationName);
+			parent = new String(methodPattern.declaringSimpleName);
 		} else if (pattern instanceof FieldPattern) {
 			elementType = IModelElement.FIELD;
 			FieldPattern fieldPattern = (FieldPattern) pattern;
@@ -248,6 +269,12 @@ public class NewSearchEngine {
 				searchFor = SearchFor.REFERENCES;
 			}
 
+			if (((FieldPattern) pattern).declaringQualification != null)
+				qualifier = new String(
+						((FieldPattern) pattern).declaringQualification);
+			if (((FieldPattern) pattern).declaringSimpleName != null)
+				parent = new String(
+						((FieldPattern) pattern).declaringSimpleName);
 		} else if (pattern instanceof AndPattern) {
 			AndPattern andPattern = (AndPattern) pattern;
 			do {
@@ -271,19 +298,42 @@ public class NewSearchEngine {
 			if (searchEngine != null) {
 				ISearchRequestor requestor = (elementType1, flags, offset,
 						length, nameOffset, nameLength, elementName1, metadata,
-						doc, qualifier1, parent, sourceModule,
-						isReference) -> paths
-								.add(sourceModule.getPath().toString());
+						doc, qualifier1, parent1, sourceModule,
+						isReference) -> {
+					if (sourceModule instanceof ExternalSourceModule) {
+						String path = sourceModule.getPath()
+								.append(((ExternalSourceModule) sourceModule)
+										.getFullPath())
+								.toString();
+						paths.add(path);
+					} else {
+						paths.add(sourceModule.getPath().toString());
+					}
+				};
 
-				searchEngine.search(elementType, qualifier, elementName, 0, 0,
-						0, searchFor, matchRule, scope, requestor, monitor);
+				if (searchEngine instanceof ISearchEngineExtension) {
+					((ISearchEngineExtension) searchEngine).search(elementType,
+							qualifier, elementName, parent, 0, 0, 0, searchFor,
+							matchRule, scope, requestor, monitor);
+				} else {
+					searchEngine.search(elementType, qualifier, elementName, 0,
+							0, 0, searchFor, matchRule, scope, requestor,
+							monitor);
+				}
 
 				if (matchRule == MatchRule.CAMEL_CASE) {
 					// Search also for prefix (workaround to the way original
 					// search engine worked)
-					searchEngine.search(elementType, qualifier, elementName, 0,
-							0, 0, searchFor, MatchRule.PREFIX, scope, requestor,
-							monitor);
+					if (searchEngine instanceof ISearchEngineExtension) {
+						((ISearchEngineExtension) searchEngine).search(
+								elementType, qualifier, elementName, parent, 0,
+								0, 0, searchFor, MatchRule.PREFIX, scope,
+								requestor, monitor);
+					} else {
+						searchEngine.search(elementType, qualifier, elementName,
+								0, 0, 0, searchFor, MatchRule.PREFIX, scope,
+								requestor, monitor);
+					}
 				}
 			}
 		}
