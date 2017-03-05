@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -11,11 +11,15 @@
  *******************************************************************************/
 package org.eclipse.dltk.debug.dbgp.tests.service;
 
+import static org.junit.Assert.*;
+
 import java.io.IOException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.dltk.dbgp.IDbgpSession;
 import org.eclipse.dltk.internal.debug.core.model.DbgpService;
+import org.junit.Before;
+import org.junit.Test;
 
 public class DbgpServiceDispatcherTests extends AbstractDbgpServiceTests {
 
@@ -31,35 +35,38 @@ public class DbgpServiceDispatcherTests extends AbstractDbgpServiceTests {
 	volatile int count2;
 	volatile int count3;
 
-	protected void setUp() throws Exception {
+	@Override
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		count1 = 0;
 		count2 = 0;
 		count3 = 0;
 	}
 
+	@Test
 	public void testInitPacketParser() throws IOException {
 		final DbgpService service = createService(ANY_PORT);
 		try {
 			service.registerAcceptor(IDE1, new AbstractDbgpAcceptor() {
-				public void acceptDbgpThread(IDbgpSession session,
-						IProgressMonitor monitor) {
+				@Override
+				public void acceptDbgpThread(IDbgpSession session, IProgressMonitor monitor) {
 					synchronized (DbgpServiceDispatcherTests.this) {
 						++count1;
 					}
 				}
 			});
 			service.registerAcceptor(IDE2, new AbstractDbgpAcceptor() {
-				public void acceptDbgpThread(IDbgpSession session,
-						IProgressMonitor monitor) {
+				@Override
+				public void acceptDbgpThread(IDbgpSession session, IProgressMonitor monitor) {
 					synchronized (DbgpServiceDispatcherTests.this) {
 						++count2;
 					}
 				}
 			});
 			service.registerAcceptor(IDE3, new AbstractDbgpAcceptor() {
-				public void acceptDbgpThread(IDbgpSession session,
-						IProgressMonitor monitor) {
+				@Override
+				public void acceptDbgpThread(IDbgpSession session, IProgressMonitor monitor) {
 					synchronized (DbgpServiceDispatcherTests.this) {
 						++count3;
 					}
@@ -68,26 +75,23 @@ public class DbgpServiceDispatcherTests extends AbstractDbgpServiceTests {
 			for (int i = 0; i < COUNT1; ++i) {
 				final byte[] packet = TestInitPacket.build(IDE1);
 				assertNotNull(packet);
-				performOperation(service.getPort(), new SendPacketOperation(
-						packet));
+				performOperation(service.getPort(), new SendPacketOperation(packet));
 			}
 			for (int i = 0; i < COUNT2; ++i) {
 				final byte[] packet = TestInitPacket.build(IDE2);
 				assertNotNull(packet);
-				performOperation(service.getPort(), new SendPacketOperation(
-						packet));
+				performOperation(service.getPort(), new SendPacketOperation(packet));
 			}
 			for (int i = 0; i < COUNT3; ++i) {
 				final byte[] packet = TestInitPacket.build(IDE3);
 				assertNotNull(packet);
-				performOperation(service.getPort(), new SendPacketOperation(
-						packet));
+				performOperation(service.getPort(), new SendPacketOperation(packet));
 			}
 			for (int i = 0; i < 40; ++i) {
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
-					// 
+					//
 				}
 				synchronized (DbgpServiceDispatcherTests.this) {
 					if (count1 + count2 + count3 == COUNT1 + COUNT2 + COUNT3) {

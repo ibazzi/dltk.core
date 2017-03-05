@@ -17,16 +17,16 @@ public class VariableNameComparatorTest extends TestCase {
 	protected ArrayList<IVariable> list;
 	protected VariableNameComparator comparator;
 
+	@Override
 	protected void setUp() {
 		comparator = new VariableNameComparator();
 		if (list == null)
-			list = new ArrayList<IVariable>();
+			list = new ArrayList<>();
 		else
 			list.clear();
 	}
 
-	protected void assertSortedListNamesEqual(String... expectedListNames)
-			throws DebugException {
+	protected void assertSortedListNamesEqual(String... expectedListNames) throws DebugException {
 		// when comparator doesn't adhere to the "Comparator" contract this
 		// could give an exception
 		IVariable[] tmp = new IVariable[list.size()];
@@ -41,8 +41,7 @@ public class VariableNameComparatorTest extends TestCase {
 		}
 
 		if (!ok)
-			failNotEquals("Sorted list has unexpected value;",
-					Arrays.asList(expectedListNames), Arrays.asList(tmp));
+			failNotEquals("Sorted list has unexpected value;", Arrays.asList(expectedListNames), Arrays.asList(tmp));
 	}
 
 	public void testStringVariables1() throws DebugException {
@@ -84,8 +83,7 @@ public class VariableNameComparatorTest extends TestCase {
 
 		// when the comparator doesn't respect it's contract this could get
 		// ordered strangely for ArrayList
-		assertSortedListNamesEqual("4", "5", "6", "114", "116", "2a", "2a",
-				"2a", "a", "b", "c");
+		assertSortedListNamesEqual("4", "5", "6", "114", "116", "2a", "2a", "2a", "a", "b", "c");
 	}
 
 	public void testMixedVariables2() throws DebugException {
@@ -173,76 +171,87 @@ public class VariableNameComparatorTest extends TestCase {
 		// org.eclipse.dltk.internal.debug.tests.VariableNameComparatorTest.testMixedVariables2(VariableNameComparatorTest.java:158)
 		// (...)
 
-		assertSortedListNamesEqual("1", "2", "3", "4", "4", "4", "4", "5", "5",
-				"5", "5", "6", "6", "6", "6", "6", "7", "8", "9", "10", "11",
-				"12", "13", "14", "15", "16", "17", "18", "114", "114", "114",
-				"114", "116", "116", "116", "2a", "2a", "2a", "2a", "2a", "2a",
-				"2a", "2a", "2a", "2a", "a", "a", "a", "a", "b", "b", "b", "c",
-				"c", "c");
+		assertSortedListNamesEqual("1", "2", "3", "4", "4", "4", "4", "5", "5", "5", "5", "6", "6", "6", "6", "6", "7",
+				"8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "114", "114", "114", "114", "116",
+				"116", "116", "2a", "2a", "2a", "2a", "2a", "2a", "2a", "2a", "2a", "2a", "a", "a", "a", "a", "b", "b",
+				"b", "c", "c", "c");
 	}
 
 	protected IVariable getNewVariable(final String name) {
 		return new IVariable() {
 
-			public boolean verifyValue(IValue value) throws DebugException {
+			@Override
+			public boolean verifyValue(IValue value) {
 				// dummy
 				return false;
 			}
 
-			public boolean verifyValue(String expression) throws DebugException {
+			@Override
+			public boolean verifyValue(String expression) {
 				// dummy
 				return false;
 			}
 
+			@Override
 			public boolean supportsValueModification() {
 				// dummy
 				return false;
 			}
 
-			public void setValue(IValue value) throws DebugException {
+			@Override
+			public void setValue(IValue value) {
 				// dummy
 			}
 
-			public void setValue(String expression) throws DebugException {
+			@Override
+			public void setValue(String expression) {
 				// dummy
 			}
 
-			public Object getAdapter(Class adapter) {
+			@Override
+			public <T> T getAdapter(Class<T> adapter) {
 				// dummy
 				return null;
 			}
 
+			@Override
 			public String getModelIdentifier() {
 				// dummy
 				return null;
 			}
 
+			@Override
 			public ILaunch getLaunch() {
 				// dummy
 				return null;
 			}
 
+			@Override
 			public IDebugTarget getDebugTarget() {
 				// dummy
 				return null;
 			}
 
-			public boolean hasValueChanged() throws DebugException {
+			@Override
+			public boolean hasValueChanged() {
 				// dummy
 				return false;
 			}
 
-			public IValue getValue() throws DebugException {
+			@Override
+			public IValue getValue() {
 				// dummy
 				return null;
 			}
 
-			public String getReferenceTypeName() throws DebugException {
+			@Override
+			public String getReferenceTypeName() {
 				// dummy
 				return null;
 			}
 
-			public String getName() throws DebugException {
+			@Override
+			public String getName() {
 				return name;
 			}
 

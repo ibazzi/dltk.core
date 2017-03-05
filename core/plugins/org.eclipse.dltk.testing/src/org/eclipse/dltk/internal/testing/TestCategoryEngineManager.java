@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 xored software, Inc. and others.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -25,8 +25,8 @@ import org.eclipse.dltk.testing.ITestCategoryEngine;
 import org.eclipse.dltk.testing.ITestRunnerUI;
 import org.eclipse.dltk.utils.NatureExtensionManager;
 
-public class TestCategoryEngineManager extends
-		NatureExtensionManager<TestCategoryEngineManager.Descriptor> {
+public class TestCategoryEngineManager
+		extends NatureExtensionManager<TestCategoryEngineManager.Descriptor> {
 
 	private static final String EXTENSION_POINT = DLTKTestingPlugin.PLUGIN_ID
 			+ ".categoryEngine"; //$NON-NLS-1$
@@ -65,15 +65,10 @@ public class TestCategoryEngineManager extends
 		return new Descriptor(confElement, priority);
 	}
 
-	private final Comparator<Object> descriptorComparator = new Comparator<Object>() {
-
-		@Override
-		public int compare(Object o1, Object o2) {
-			Descriptor descriptor1 = (Descriptor) o1;
-			Descriptor descriptor2 = (Descriptor) o2;
-			return descriptor1.priority - descriptor2.priority;
-		}
-
+	private final Comparator<Object> descriptorComparator = (o1, o2) -> {
+		Descriptor descriptor1 = (Descriptor) o1;
+		Descriptor descriptor2 = (Descriptor) o2;
+		return descriptor1.priority - descriptor2.priority;
 	};
 
 	@Override
@@ -104,7 +99,7 @@ public class TestCategoryEngineManager extends
 	/**
 	 * Returns the category engines registered for the specified testing engine
 	 * or <code>null</code>.
-	 * 
+	 *
 	 * @param runnerUI
 	 * @return
 	 */
@@ -113,12 +108,12 @@ public class TestCategoryEngineManager extends
 		if (runnerUI instanceof NullTestRunnerUI) {
 			return null;
 		}
-		final Descriptor[] descriptors = getInstance().getInstances(
-				runnerUI.getTestingEngine().getId());
+		final Descriptor[] descriptors = getInstance()
+				.getInstances(runnerUI.getTestingEngine().getId());
 		if (descriptors == null) {
 			return null;
 		}
-		final List<ITestCategoryEngine> result = new ArrayList<ITestCategoryEngine>(
+		final List<ITestCategoryEngine> result = new ArrayList<>(
 				descriptors.length);
 		for (int i = 0; i < descriptors.length; ++i) {
 			final Descriptor descriptor = descriptors[i];

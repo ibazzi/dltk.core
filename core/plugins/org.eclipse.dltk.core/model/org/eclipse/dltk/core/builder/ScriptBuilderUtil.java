@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2016 NumberFour AG and others.
+ * Copyright (c) 2011, 2017 NumberFour AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -244,23 +244,20 @@ public class ScriptBuilderUtil {
 	public static void rebuildAfterUpgrade(IProgressMonitor _monitor)
 			throws CoreException {
 		final UpgradeCheck check = new UpgradeCheck();
-		final IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				if (ScriptBuilder.DEBUG) {
-					System.out.println("Upgrade check BEGIN");
-				}
-				final IScriptProject[] projects = DLTKCore.create(
-						ResourcesPlugin.getWorkspace().getRoot())
-						.getScriptProjects();
-				SubMonitor subMonitor = SubMonitor.convert(monitor,
-						projects.length);
-				for (IScriptProject project : projects) {
-					check.checkProject(project, subMonitor.newChild(1));
-				}
-				if (ScriptBuilder.DEBUG) {
-					System.out.println("Upgrade check END");
-				}
+		final IWorkspaceRunnable runnable = monitor -> {
+			if (ScriptBuilder.DEBUG) {
+				System.out.println("Upgrade check BEGIN");
+			}
+			final IScriptProject[] projects = DLTKCore
+					.create(ResourcesPlugin.getWorkspace().getRoot())
+					.getScriptProjects();
+			SubMonitor subMonitor = SubMonitor.convert(monitor,
+					projects.length);
+			for (IScriptProject project : projects) {
+				check.checkProject(project, subMonitor.newChild(1));
+			}
+			if (ScriptBuilder.DEBUG) {
+				System.out.println("Upgrade check END");
 			}
 		};
 		ResourcesPlugin.getWorkspace().run(runnable, _monitor);

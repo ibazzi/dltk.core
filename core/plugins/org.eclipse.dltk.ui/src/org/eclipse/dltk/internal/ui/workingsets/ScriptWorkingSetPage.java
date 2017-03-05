@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,15 +36,12 @@ import org.eclipse.dltk.ui.viewsupport.StyledDecoratingModelLabelProvider;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ITreeViewerListener;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -68,18 +65,18 @@ import org.eclipse.ui.dialogs.IWorkingSetPage;
  * <p>
  * Working set elements are presented as a Script element tree.
  * </p>
- * 
+ *
 	 *
  */
 public class ScriptWorkingSetPage extends WizardPage implements IWorkingSetPage {
 
-	final private static String PAGE_TITLE= WorkingSetMessages.ScriptWorkingSetPage_title; 
+	final private static String PAGE_TITLE= WorkingSetMessages.ScriptWorkingSetPage_title;
 	final private static String PAGE_ID= "ScriptWorkingSetPage"; //$NON-NLS-1$
-	
+
 	private Text fWorkingSetName;
 	private CheckboxTreeViewer fTree;
 	private ITreeContentProvider fTreeContentProvider;
-	
+
 	private boolean fFirstCheck;
 	private IWorkingSet fWorkingSet;
 
@@ -88,39 +85,36 @@ public class ScriptWorkingSetPage extends WizardPage implements IWorkingSetPage 
 	 */
 	public ScriptWorkingSetPage() {
 		super(PAGE_ID, PAGE_TITLE, DLTKPluginImages.DESC_WIZBAN_SCRIPT_WORKINGSET);
-		setDescription(WorkingSetMessages.ScriptWorkingSetPage_workingSet_description); 
+		setDescription(WorkingSetMessages.ScriptWorkingSetPage_workingSet_description);
 		fFirstCheck= true;
 	}
 
 	/*
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
-		
+
 		Composite composite= new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		setControl(composite);
 
 		Label label= new Label(composite, SWT.WRAP);
-		label.setText(WorkingSetMessages.ScriptWorkingSetPage_workingSet_name); 
+		label.setText(WorkingSetMessages.ScriptWorkingSetPage_workingSet_name);
 		GridData gd= new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
 		label.setLayoutData(gd);
 
 		fWorkingSetName= new Text(composite, SWT.SINGLE | SWT.BORDER);
 		fWorkingSetName.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
 		fWorkingSetName.addModifyListener(
-			new ModifyListener() {
-				public void modifyText(ModifyEvent e) {
-					validateInput();
-				}
-			}
+				e -> validateInput()
 		);
 		fWorkingSetName.setFocus();
-		
+
 		label= new Label(composite, SWT.WRAP);
-		label.setText(WorkingSetMessages.ScriptWorkingSetPage_workingSet_content); 
+		label.setText(WorkingSetMessages.ScriptWorkingSetPage_workingSet_content);
 		gd= new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
 		label.setLayoutData(gd);
 
@@ -128,17 +122,17 @@ public class ScriptWorkingSetPage extends WizardPage implements IWorkingSetPage 
 		gd= new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL);
 		gd.heightHint= convertHeightInCharsToPixels(15);
 		fTree.getControl().setLayoutData(gd);
-		
+
 		fTreeContentProvider= new ScriptWorkingSetPageContentProvider();
 		fTree.setContentProvider(fTreeContentProvider);
-		
-		AppearanceAwareLabelProvider fScriptElementLabelProvider= 
+
+		AppearanceAwareLabelProvider fScriptElementLabelProvider=
 			new AppearanceAwareLabelProvider(
 				AppearanceAwareLabelProvider.DEFAULT_TEXTFLAGS | ScriptElementLabels.P_COMPRESSED,
 				AppearanceAwareLabelProvider.DEFAULT_IMAGEFLAGS | ScriptElementImageProvider.SMALL_ICONS,
 				DLTKUIPlugin.getDefault().getPreferenceStore()
 			);
-		
+
 		fTree.setLabelProvider(new StyledDecoratingModelLabelProvider(
 				fScriptElementLabelProvider));
 		fTree.setSorter(new ModelElementSorter());
@@ -147,26 +141,22 @@ public class ScriptWorkingSetPage extends WizardPage implements IWorkingSetPage 
 		}
 		//fTree.addFilter(new EmptyInnerPackageFilter());
 		fTree.setUseHashlookup(true);
-		
+
 		fTree.setInput(DLTKCore.create(ResourcesPlugin.getWorkspace().getRoot()));
 
-		fTree.addCheckStateListener(new ICheckStateListener() {
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				handleCheckStateChange(event);
-			}
-		});
+		fTree.addCheckStateListener(event -> handleCheckStateChange(event));
 
 		fTree.addTreeListener(new ITreeViewerListener() {
+			@Override
 			public void treeCollapsed(TreeExpansionEvent event) {
 			}
+			@Override
 			public void treeExpanded(TreeExpansionEvent event) {
 				final Object element= event.getElement();
 				if (fTree.getGrayed(element) == false)
-					BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-					public void run() {
-						setSubtreeChecked(element, fTree.getChecked(element), false);
-					}
-				});
+					BusyIndicator.showWhile(getShell().getDisplay(),
+							() -> setSubtreeChecked(element,
+									fTree.getChecked(element), false));
 			}
 		});
 
@@ -176,11 +166,12 @@ public class ScriptWorkingSetPage extends WizardPage implements IWorkingSetPage 
 		layout.marginWidth= 0; layout.marginHeight= 0;
 		buttonComposite.setLayout(layout);
 		buttonComposite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-		
+
 		Button selectAllButton = new Button(buttonComposite, SWT.PUSH);
 		selectAllButton.setText(WorkingSetMessages.ScriptWorkingSetPage_selectAll_label);
 		selectAllButton.setToolTipText(WorkingSetMessages.ScriptWorkingSetPage_selectAll_toolTip);
 		selectAllButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent selectionEvent) {
 				fTree.setCheckedElements(fTreeContentProvider.getElements(fTree.getInput()));
 				validateInput();
@@ -193,6 +184,7 @@ public class ScriptWorkingSetPage extends WizardPage implements IWorkingSetPage 
 		deselectAllButton.setText(WorkingSetMessages.ScriptWorkingSetPage_deselectAll_label);
 		deselectAllButton.setToolTipText(WorkingSetMessages.ScriptWorkingSetPage_deselectAll_toolTip);
 		deselectAllButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent selectionEvent) {
 				fTree.setCheckedElements(new Object[0]);
 				validateInput();
@@ -200,7 +192,7 @@ public class ScriptWorkingSetPage extends WizardPage implements IWorkingSetPage 
 		});
 		deselectAllButton.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(deselectAllButton);
-		
+
 		if (fWorkingSet != null)
 			fWorkingSetName.setText(fWorkingSet.getName());
 		initializeCheckedState();
@@ -210,13 +202,14 @@ public class ScriptWorkingSetPage extends WizardPage implements IWorkingSetPage 
 		// Set help for the page
 		if (DLTKCore.DEBUG) {
 			System.err.println("Add help support here..."); //$NON-NLS-1$
-		}		
+		}
 		//ScriptUIHelp.setHelp(fTree, IScriptHelpContextIds.Script_WORKING_SET_PAGE);
 	}
 
 	/*
 	 * Implements method from IWorkingSetPage
 	 */
+	@Override
 	public IWorkingSet getSelection() {
 		return fWorkingSet;
 	}
@@ -224,6 +217,7 @@ public class ScriptWorkingSetPage extends WizardPage implements IWorkingSetPage 
 	/*
 	 * Implements method from IWorkingSetPage
 	 */
+	@Override
 	public void setSelection(IWorkingSet workingSet) {
 		Assert.isNotNull(workingSet, "Working set must not be null"); //$NON-NLS-1$
 		fWorkingSet= workingSet;
@@ -238,6 +232,7 @@ public class ScriptWorkingSetPage extends WizardPage implements IWorkingSetPage 
 	/*
 	 * Implements method from IWorkingSetPage
 	 */
+	@Override
 	public void finish() {
 		String workingSetName= fWorkingSetName.getText();
 		ArrayList<IAdaptable> elements = new ArrayList<IAdaptable>(10);
@@ -273,20 +268,20 @@ public class ScriptWorkingSetPage extends WizardPage implements IWorkingSetPage 
 	}
 
 	private void validateInput() {
-		String errorMessage= null; 
+		String errorMessage= null;
 		String infoMessage= null;
 		String newText= fWorkingSetName.getText();
 
 		if (newText.equals(newText.trim()) == false)
-			errorMessage = WorkingSetMessages.ScriptWorkingSetPage_warning_nameWhitespace; 
+			errorMessage = WorkingSetMessages.ScriptWorkingSetPage_warning_nameWhitespace;
 		if (newText.equals("")) { //$NON-NLS-1$
 			if (fFirstCheck) {
 				setPageComplete(false);
 				fFirstCheck= false;
 				return;
 			}
-			else				
-				errorMessage= WorkingSetMessages.ScriptWorkingSetPage_warning_nameMustNotBeEmpty; 
+			else
+				errorMessage= WorkingSetMessages.ScriptWorkingSetPage_warning_nameMustNotBeEmpty;
 		}
 
 		fFirstCheck= false;
@@ -295,11 +290,11 @@ public class ScriptWorkingSetPage extends WizardPage implements IWorkingSetPage 
 			IWorkingSet[] workingSets= PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSets();
 			for (int i= 0; i < workingSets.length; i++) {
 				if (newText.equals(workingSets[i].getName())) {
-					errorMessage= WorkingSetMessages.ScriptWorkingSetPage_warning_workingSetExists; 
+					errorMessage= WorkingSetMessages.ScriptWorkingSetPage_warning_workingSetExists;
 				}
 			}
 		}
-		
+
 		if (!hasCheckedElement())
 			infoMessage= WorkingSetMessages.ScriptWorkingSetPage_warning_resourceMustBeChecked;
 
@@ -307,7 +302,7 @@ public class ScriptWorkingSetPage extends WizardPage implements IWorkingSetPage 
 		setErrorMessage(errorMessage);
 		setPageComplete(errorMessage == null);
 	}
-	
+
 	private boolean hasCheckedElement() {
 		TreeItem[] items= fTree.getTree().getItems();
 		for (int i= 0; i < items.length; i++) {
@@ -316,7 +311,7 @@ public class ScriptWorkingSetPage extends WizardPage implements IWorkingSetPage 
 		}
 		return false;
 	}
-	
+
 	private void findCheckedElements(List checkedResources, Object parent) {
 		Object[] children= fTreeContentProvider.getChildren(parent);
 		for (int i= 0; i < children.length; i++) {
@@ -328,17 +323,17 @@ public class ScriptWorkingSetPage extends WizardPage implements IWorkingSetPage 
 	}
 
 	void handleCheckStateChange(final CheckStateChangedEvent event) {
-		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-			public void run() {
-				IAdaptable element= (IAdaptable)event.getElement();
-				boolean state= event.getChecked();		
-				fTree.setGrayed(element, false);
-				if (isExpandable(element))
-					setSubtreeChecked(element, state, state); // only check subtree if state is set to true
-					
-				updateParentState(element, state);
-				validateInput();
-			}
+		BusyIndicator.showWhile(getShell().getDisplay(), () -> {
+			IAdaptable element = (IAdaptable) event.getElement();
+			boolean state = event.getChecked();
+			fTree.setGrayed(element, false);
+			if (isExpandable(element))
+				setSubtreeChecked(element, state, state); // only check subtree
+															// if state is set
+															// to true
+
+			updateParentState(element, state);
+			validateInput();
 		});
 	}
 
@@ -349,7 +344,7 @@ public class ScriptWorkingSetPage extends WizardPage implements IWorkingSetPage 
 				.getAdapter(IContainer.class);
 		if ((!fTree.getExpandedState(parent) && checkExpandedState) || (container != null && !container.isAccessible()))
 			return;
-		
+
 		Object[] children= fTreeContentProvider.getChildren(parent);
 		for (int i= children.length - 1; i >= 0; i--) {
 			Object element= children[i];
@@ -387,72 +382,75 @@ public class ScriptWorkingSetPage extends WizardPage implements IWorkingSetPage 
 				break;
 			}
 		}
-	
+
 		fTree.setGrayed(parent, !allSameState);
 		fTree.setChecked(parent, !allSameState || baseChildState);
-		
+
 		updateParentState(parent, baseChildState);
 	}
 
 	private void initializeCheckedState() {
 
-		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-			public void run() {
-				Object[] elements;
-				if (fWorkingSet == null) {
-					// Use current part's selection for initialization
-					IWorkbenchPage page= DLTKUIPlugin.getActivePage();
-					if (page == null)
-						return;
-					
-					IWorkbenchPart part= DLTKUIPlugin.getActivePage().getActivePart();
-					if (part == null)
-						return;
-					
-					try {
-						elements= SelectionConverter.getStructuredSelection(part).toArray();
-						for (int i= 0; i < elements.length; i++) {
-							if (elements[i] instanceof IResource) {
-								IModelElement je = ((IResource) elements[i])
-										.getAdapter(IModelElement.class);
-								if (je != null && je.exists() &&  je.getScriptProject().isOnBuildpath((IResource)elements[i]))
-									elements[i]= je;
-							}
+		BusyIndicator.showWhile(getShell().getDisplay(), () -> {
+			Object[] elements;
+			if (fWorkingSet == null) {
+				// Use current part's selection for initialization
+				IWorkbenchPage page = DLTKUIPlugin.getActivePage();
+				if (page == null)
+					return;
+
+				IWorkbenchPart part = DLTKUIPlugin.getActivePage()
+						.getActivePart();
+				if (part == null)
+					return;
+
+				try {
+					elements = SelectionConverter.getStructuredSelection(part)
+							.toArray();
+					for (int i1 = 0; i1 < elements.length; i1++) {
+						if (elements[i1] instanceof IResource) {
+							IModelElement je = ((IResource) elements[i1])
+									.getAdapter(IModelElement.class);
+							if (je != null && je.exists()
+									&& je.getScriptProject().isOnBuildpath(
+											(IResource) elements[i1]))
+								elements[i1] = je;
 						}
-					} catch (ModelException e) {
-						return;
 					}
+				} catch (ModelException e) {
+					return;
 				}
-				else
-					elements= fWorkingSet.getElements();
+			} else
+				elements = fWorkingSet.getElements();
 
-				// Use closed project for elements in closed project
-				for (int i= 0; i < elements.length; i++) {
-					Object element= elements[i];
-					if (element instanceof IResource) {
-						IProject project= ((IResource)element).getProject();
-						if (!project.isAccessible())
-							elements[i]= project;
-					}
-					if (element instanceof IModelElement) {
-						IScriptProject jProject= ((IModelElement)element).getScriptProject();
-						if (jProject != null && !jProject.getProject().isAccessible()) 
-							elements[i]= jProject.getProject();
-					}
+			// Use closed project for elements in closed project
+			for (int i2 = 0; i2 < elements.length; i2++) {
+				Object element1 = elements[i2];
+				if (element1 instanceof IResource) {
+					IProject project = ((IResource) element1).getProject();
+					if (!project.isAccessible())
+						elements[i2] = project;
 				}
+				if (element1 instanceof IModelElement) {
+					IScriptProject jProject = ((IModelElement) element1)
+							.getScriptProject();
+					if (jProject != null
+							&& !jProject.getProject().isAccessible())
+						elements[i2] = jProject.getProject();
+				}
+			}
 
-				fTree.setCheckedElements(elements);
-				for (int i= 0; i < elements.length; i++) {
-					Object element= elements[i];
-					if (isExpandable(element))
-						setSubtreeChecked(element, true, true);
-						
-					updateParentState(element, true);
-				}
+			fTree.setCheckedElements(elements);
+			for (int i3 = 0; i3 < elements.length; i3++) {
+				Object element2 = elements[i3];
+				if (isExpandable(element2))
+					setSubtreeChecked(element2, true, true);
+
+				updateParentState(element2, true);
 			}
 		});
 	}
-	
+
 	private boolean isExpandable(Object element) {
 		return (
 			element instanceof IScriptProject

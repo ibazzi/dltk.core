@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.eclipse.dltk.ui.PreferenceConstants;
 import org.eclipse.dltk.ui.preferences.OverlayPreferenceStore;
-import org.eclipse.dltk.ui.preferences.PreferencesMessages;
 import org.eclipse.dltk.ui.preferences.OverlayPreferenceStore.OverlayKey;
+import org.eclipse.dltk.ui.preferences.PreferencesMessages;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
@@ -20,7 +20,7 @@ public class SourceCodeFoldingPreferenceBlock extends
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * <p>
 	 * Sub-classes overriding this method to add additional overlay keys must
 	 * also invoke this method.
@@ -36,24 +36,26 @@ public class SourceCodeFoldingPreferenceBlock extends
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * <p>
 	 * Sub-classes should override this method to add additional source block
 	 * folding options.
 	 * </p>
 	 */
+	@Override
 	protected void createOptionsControl(Composite composite) {
 		// empty implementation
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * <p>
 	 * Sub-classes overriding this method to add additional 'initially' fold
 	 * options also invoke this method.
 	 * </p>
 	 */
+	@Override
 	protected void addInitiallyFoldOptions(Group group) {
 		/*
 		 * don't display the 'initally fold' classes checkbox if the language
@@ -72,7 +74,7 @@ public class SourceCodeFoldingPreferenceBlock extends
 	/**
 	 * Returns the preference key used to indicate if classes should be
 	 * 'initially' folded.
-	 * 
+	 *
 	 * <p>
 	 * Sub-classes may override this method to provide an alternative preference
 	 * key if they are not using the one in {@link PreferenceConstants}.
@@ -85,7 +87,7 @@ public class SourceCodeFoldingPreferenceBlock extends
 	/**
 	 * Returns the preference key used to indicate if methods should be
 	 * 'initially' folded.
-	 * 
+	 *
 	 * <p>
 	 * Sub-classes may override this method to provide an alternative preference
 	 * key if they are not using the one in {@link PreferenceConstants}.

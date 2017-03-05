@@ -28,7 +28,7 @@ public class PropToPrefLinkArea {
 			String message, final Shell shell, final Object pageData) {
 		/*
 		 * breaking new ground yet again - want to link between property and
-		 * preference paes. ie: project specific debug engine options to 
+		 * preference paes. ie: project specific debug engine options to
 		 * general debugging options
 		 */
 		pageLink = new Link(parent, style);
@@ -44,6 +44,7 @@ public class PropToPrefLinkArea {
 			// only add the selection listener if the node is found
 			pageLink.addSelectionListener(new SelectionAdapter() {
 
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					PreferencesUtil.createPreferenceDialogOn(shell, pageId,
 							new String[] { pageId }, pageData).open();

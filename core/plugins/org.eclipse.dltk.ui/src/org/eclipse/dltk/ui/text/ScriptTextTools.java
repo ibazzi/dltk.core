@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.text;
 
@@ -40,10 +39,12 @@ public abstract class ScriptTextTools implements IPartitioningProvider {
 		fColorManager = new DLTKColorManager(autoDisposeOnDisplayDispose);
 	}
 
+	@Override
 	public String getPartitioning() {
 		return fDefaultPartitioning;
 	}
 
+	@Override
 	public String[] getPartitionContentTypes() {
 		return fLegalContentTypes;
 	}
@@ -65,7 +66,7 @@ public abstract class ScriptTextTools implements IPartitioningProvider {
 	 * Clients which are only interested in the color manager of the DLTK UI
 	 * plug-in should use ....
 	 * </p>
-	 * 
+	 *
 	 * @return the color manager to be used for DLTK text viewers
 	 */
 	public IColorManager getColorManager() {
@@ -85,7 +86,7 @@ public abstract class ScriptTextTools implements IPartitioningProvider {
 	/**
 	 * Creates {@link SourceViewerConfiguration} to use in code template editor.
 	 * Should be overridden in ancestors.
-	 * 
+	 *
 	 * @param preferenceStore
 	 * @param variableProcessor
 	 * @return
@@ -97,6 +98,7 @@ public abstract class ScriptTextTools implements IPartitioningProvider {
 				fDefaultPartitioning);
 	}
 
+	@Override
 	public IPartitionTokenScanner createPartitionScanner() {
 		return getPartitionScanner();
 	}
@@ -109,7 +111,7 @@ public abstract class ScriptTextTools implements IPartitioningProvider {
 	/**
 	 * Factory method for creating a script-specific document partitioner using
 	 * this object's partitions scanner. This method is a convenience method.
-	 * 
+	 *
 	 * @return a newly created script document partitioner
 	 */
 	public IDocumentPartitioner createDocumentPartitioner() {
@@ -123,7 +125,7 @@ public abstract class ScriptTextTools implements IPartitioningProvider {
 	/**
 	 * Sets up the script document partitioner for the given document for the
 	 * {@link IDocumentExtension3.DEFAULT_PARTITIONING} default partitioning.
-	 * 
+	 *
 	 * @param document
 	 *            the document to be set up
 	 */
@@ -135,7 +137,7 @@ public abstract class ScriptTextTools implements IPartitioningProvider {
 	/**
 	 * Sets up the script document partitioner for the given document for the
 	 * default partitioning of this object.
-	 * 
+	 *
 	 * @param document
 	 *            the document to be set up
 	 */
@@ -146,7 +148,7 @@ public abstract class ScriptTextTools implements IPartitioningProvider {
 	/**
 	 * Sets up the script document partitioner for the given document for the
 	 * given partitioning.
-	 * 
+	 *
 	 * @param document
 	 *            the document to be set up
 	 * @param partitioning

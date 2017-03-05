@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,14 +54,14 @@ import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
  * <p>
  * Note: This class is for internal use only. Clients should not use this class.
  * </p>
- * 
+ *
 	 *
  */
 public abstract class FindAction extends SelectionDispatchAction {
 
 	// A dummy which can't be selected in the UI
 	private static final IModelElement RETURN_WITHOUT_BEEP= DLTKCore.create(DLTKUIPlugin.getWorkspace().getRoot());
-		
+
 	private Class[] fValidTypes;
 	private final IDLTKLanguageToolkit toolkit;
 	private AbstractDecoratedTextEditor fEditor;
@@ -82,7 +82,7 @@ public abstract class FindAction extends SelectionDispatchAction {
 	}
 
 	/**
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	FindAction(IDLTKLanguageToolkit toolkit,
@@ -91,7 +91,7 @@ public abstract class FindAction extends SelectionDispatchAction {
 		fEditor = editor;
 		setEnabled(SelectionConverter.canOperateOn(fEditor));
 	}
-	
+
 	/**
 	 * Called once by the constructors to initialize label, tooltip, image and help support of the action.
 	 * To be overridden by implementors of this action.
@@ -104,11 +104,11 @@ public abstract class FindAction extends SelectionDispatchAction {
 	 * @return the valid input types of the action
 	 */
 	abstract Class[] getValidTypes();
-	
+
 	private boolean canOperateOn(IStructuredSelection sel) {
 		return sel != null && !sel.isEmpty() && canOperateOn(getModelElement(sel, true));
 	}
-		
+
 	boolean canOperateOn(IModelElement element) {
 		if (element == null || fValidTypes == null || fValidTypes.length == 0 || !ActionUtil.isOnBuildPath(element))
 			return false;
@@ -123,7 +123,7 @@ public abstract class FindAction extends SelectionDispatchAction {
 		}
 		return false;
 	}
-	
+
 	private boolean hasChildren(IScriptFolder ScriptFolder) {
 		try {
 			return ScriptFolder.hasChildren();
@@ -138,9 +138,9 @@ public abstract class FindAction extends SelectionDispatchAction {
 				if (silent)
 					return o;
 				else
-					return findType((ISourceModule)o, silent);			
+					return findType((ISourceModule)o, silent);
 			default:
-				return o;				
+				return o;
 		}
 	}
 
@@ -148,22 +148,22 @@ public abstract class FindAction extends SelectionDispatchAction {
 		if (selection.size() == 1) {
 			Object firstElement= selection.getFirstElement();
 			IModelElement elem= null;
-			if (firstElement instanceof IModelElement) 
+			if (firstElement instanceof IModelElement)
 				elem= (IModelElement) firstElement;
-			else if (firstElement instanceof IAdaptable) 
+			else if (firstElement instanceof IAdaptable)
 				elem = ((IAdaptable) firstElement)
 						.getAdapter(IModelElement.class);
 			if (elem != null) {
 				return getTypeIfPossible(elem, silent);
 			}
-			
+
 		}
 		return null;
 	}
 
 	private void showOperationUnavailableDialog() {
-		MessageDialog.openInformation(getShell(), SearchMessages.DLTKElementAction_operationUnavailable_title, getOperationUnavailableMessage()); 
-	}	
+		MessageDialog.openInformation(getShell(), SearchMessages.DLTKElementAction_operationUnavailable_title, getOperationUnavailableMessage());
+	}
 
 	String getOperationUnavailableMessage() {
 		return NLS.bind(
@@ -176,11 +176,11 @@ public abstract class FindAction extends SelectionDispatchAction {
 
 	private IModelElement findType(ISourceModule cu, boolean silent) {
 		IType[] types= null;
-		try {					
+		try {
 			types= cu.getTypes();
 		} catch (ModelException ex) {
 			if (ScriptModelUtil.isExceptionToBeLogged(ex))
-				ExceptionHandler.log(ex, SearchMessages.DLTKElementAction_error_open_message); 
+				ExceptionHandler.log(ex, SearchMessages.DLTKElementAction_error_open_message);
 			if (silent)
 				return RETURN_WITHOUT_BEEP;
 			else
@@ -192,46 +192,42 @@ public abstract class FindAction extends SelectionDispatchAction {
 			return RETURN_WITHOUT_BEEP;
 		if (types.length == 0)
 			return null;
-		String title= SearchMessages.DLTKElementAction_typeSelectionDialog_title; 
-		String message = SearchMessages.DLTKElementAction_typeSelectionDialog_message; 
-		int flags= (ModelElementLabelProvider.SHOW_DEFAULT);						
+		String title= SearchMessages.DLTKElementAction_typeSelectionDialog_title;
+		String message = SearchMessages.DLTKElementAction_typeSelectionDialog_message;
+		int flags= (ModelElementLabelProvider.SHOW_DEFAULT);
 
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), new ModelElementLabelProvider(flags));
 		dialog.setTitle(title);
 		dialog.setMessage(message);
 		dialog.setElements(types);
-		
+
 		if (dialog.open() == Window.OK)
 			return (IType)dialog.getFirstResult();
 		else
 			return RETURN_WITHOUT_BEEP;
-	}	
-	
-	/* 
-	 * Method declared on SelectionChangedAction.
-	 */
+	}
+
+	@Override
 	public void run(IStructuredSelection selection) {
 		IModelElement element= getModelElement(selection, false);
 		if (element == null || !element.exists()) {
 			showOperationUnavailableDialog();
 			return;
-		} 
+		}
 		else if (element == RETURN_WITHOUT_BEEP)
 			return;
-		
+
 		run(element);
 	}
 
-	/* 
-	 * Method declared on SelectionChangedAction.
-	 */
+	@Override
 	public void run(ITextSelection selection) {
 		if (!ActionUtil.isProcessable(getShell(), fEditor))
 			return;
 		try {
-			String title= SearchMessages.SearchElementSelectionDialog_title; 
-			String message= SearchMessages.SearchElementSelectionDialog_message; 
-			
+			String title= SearchMessages.SearchElementSelectionDialog_title;
+			String message= SearchMessages.SearchElementSelectionDialog_message;
+
 			IModelElement[] elements= SelectionConverter.codeResolveForked(fEditor, true);
 			if (elements.length > 0 && canOperateOn(elements[0])) {
 				IModelElement element= elements[0];
@@ -243,24 +239,20 @@ public abstract class FindAction extends SelectionDispatchAction {
 			else
 				showOperationUnavailableDialog();
 		} catch (InvocationTargetException ex) {
-			String title= SearchMessages.Search_Error_search_title; 
-			String message= SearchMessages.Search_Error_codeResolve; 
+			String title= SearchMessages.Search_Error_search_title;
+			String message= SearchMessages.Search_Error_codeResolve;
 			ExceptionHandler.handle(ex, getShell(), title, message);
 		} catch (InterruptedException e) {
 			// ignore
 		}
 	}
 
-	/* 
-	 * Method declared on SelectionChangedAction.
-	 */
+	@Override
 	public void selectionChanged(IStructuredSelection selection) {
 		setEnabled(canOperateOn(selection));
 	}
 
-	/* 
-	 * Method declared on SelectionChangedAction.
-	 */
+	@Override
 	public void selectionChanged(ITextSelection selection) {
 	}
 
@@ -269,15 +261,15 @@ public abstract class FindAction extends SelectionDispatchAction {
 	 * @param element Thescriptelement to be found.
 	 */
 	public void run(IModelElement element) {
-		
+
 		if (!ActionUtil.isProcessable(getShell(), element))
 			return;
-		
+
 		// will return true except for debugging purposes.
 		try {
 			performNewSearch(element);
 		} catch (ModelException ex) {
-			ExceptionHandler.handle(ex, getShell(), SearchMessages.Search_Error_search_notsuccessful_title, SearchMessages.Search_Error_search_notsuccessful_message); 
+			ExceptionHandler.handle(ex, getShell(), SearchMessages.Search_Error_search_notsuccessful_title, SearchMessages.Search_Error_search_notsuccessful_message);
 		}
 	}
 
@@ -301,15 +293,15 @@ public abstract class FindAction extends SelectionDispatchAction {
 			 */
 			IStatus status= SearchUtil.runQueryInForeground(progressService, query);
 			if (status.matches(IStatus.ERROR | IStatus.INFO | IStatus.WARNING)) {
-				ErrorDialog.openError(getShell(), SearchMessages.Search_Error_search_title, SearchMessages.Search_Error_search_message, status); 
+				ErrorDialog.openError(getShell(), SearchMessages.Search_Error_search_title, SearchMessages.Search_Error_search_message, status);
 			}
 		}
 	}
-	
+
 	protected final IDLTKLanguageToolkit getLanguageToolkit() {
 		return toolkit;
 	}
-	
+
 	QuerySpecification createQuery(IModelElement element) throws ModelException {
 		DLTKSearchScopeFactory factory= DLTKSearchScopeFactory.getInstance();
 		IDLTKSearchScope scope= factory.createWorkspaceScope(true, getLanguageToolkit());
@@ -322,7 +314,7 @@ public abstract class FindAction extends SelectionDispatchAction {
 	IType getType(IModelElement element) {
 		if (element == null)
 			return null;
-		
+
 		IType type= null;
 		if (element.getElementType() == IModelElement.TYPE)
 			type= (IType)element;
@@ -333,12 +325,12 @@ public abstract class FindAction extends SelectionDispatchAction {
 //		}
 		return type;
 	}
-	
+
 	/**
 	 * @since 5.3
 	 */
 	AbstractDecoratedTextEditor getTextEditor() {
 		return fEditor;
 	}
-		
+
 }

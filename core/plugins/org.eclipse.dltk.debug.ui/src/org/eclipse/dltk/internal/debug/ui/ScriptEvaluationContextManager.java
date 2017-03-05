@@ -1,12 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  *******************************************************************************/
-
 package org.eclipse.dltk.internal.debug.ui;
 
 import java.util.ArrayList;
@@ -53,46 +52,47 @@ public class ScriptEvaluationContextManager
 
 	protected ScriptEvaluationContextManager() {
 		DebugUITools.getDebugContextManager().addDebugContextListener(this);
-		pageToContextMap = new HashMap<IWorkbenchPage, IScriptStackFrame>();
+		pageToContextMap = new HashMap<>();
 	}
 
 	public static void startup() {
-		Runnable r = new Runnable() {
-			public void run() {
-				if (manager == null) {
-					manager = new ScriptEvaluationContextManager();
+		Runnable r = () -> {
+			if (manager == null) {
+				manager = new ScriptEvaluationContextManager();
 
-					IWorkbench workbench = PlatformUI.getWorkbench();
-					IWorkbenchWindow[] windows = workbench
-							.getWorkbenchWindows();
-					for (int i = 0; i < windows.length; i++) {
-						manager.windowOpened(windows[i]);
-					}
-					workbench.addWindowListener(manager);
-					manager.activeWindow = workbench.getActiveWorkbenchWindow();
+				IWorkbench workbench = PlatformUI.getWorkbench();
+				IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
+				for (int i = 0; i < windows.length; i++) {
+					manager.windowOpened(windows[i]);
 				}
+				workbench.addWindowListener(manager);
+				manager.activeWindow = workbench.getActiveWorkbenchWindow();
 			}
 		};
 		DLTKDebugUIPlugin.getStandardDisplay().asyncExec(r);
 	}
 
+	@Override
 	public void windowActivated(IWorkbenchWindow window) {
 		activeWindow = window;
 	}
 
+	@Override
 	public void windowClosed(IWorkbenchWindow window) {
 	}
 
+	@Override
 	public void windowDeactivated(IWorkbenchWindow window) {
 	}
 
+	@Override
 	public void windowOpened(IWorkbenchWindow window) {
 	}
 
 	/**
 	 * Sets the evaluation context for the given page, and notes that a valid
 	 * execution context exists.
-	 * 
+	 *
 	 * @param page
 	 * @param frame
 	 */
@@ -120,7 +120,7 @@ public class ScriptEvaluationContextManager
 	/**
 	 * Removes an evaluation context for the given page, and determines if any
 	 * valid execution context remain.
-	 * 
+	 *
 	 * @param page
 	 */
 	private void removeContext(IWorkbenchPage page) {
@@ -154,7 +154,7 @@ public class ScriptEvaluationContextManager
 	 * <li>stack frame in active page of other window</li>
 	 * <li>stack frame in page of other windows</li>
 	 * </ol>
-	 * 
+	 *
 	 * @param part
 	 *            the part that the evaluation action was invoked from
 	 * @return the stack frame that supplies an evaluation context, or
@@ -179,7 +179,7 @@ public class ScriptEvaluationContextManager
 	 * <li>stack frame in active page of another window</li>
 	 * <li>stack frame in a page of another window</li>
 	 * </ol>
-	 * 
+	 *
 	 * @param window
 	 *            the window that the evaluation action was invoked from, or
 	 *            <code>null</code> if the current window should be consulted
@@ -189,7 +189,7 @@ public class ScriptEvaluationContextManager
 	 */
 	public static IScriptStackFrame getEvaluationContext(
 			IWorkbenchWindow window) {
-		List<IWorkbenchWindow> alreadyVisited = new ArrayList<IWorkbenchWindow>();
+		List<IWorkbenchWindow> alreadyVisited = new ArrayList<>();
 		if (window == null) {
 			window = manager.activeWindow;
 		}
@@ -231,6 +231,7 @@ public class ScriptEvaluationContextManager
 		return frame;
 	}
 
+	@Override
 	public void debugContextChanged(DebugContextEvent event) {
 		if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {
 			IWorkbenchPart part = event.getDebugContextProvider().getPart();

@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.workingsets;
 
@@ -19,7 +18,8 @@ import org.eclipse.dltk.internal.ui.StandardModelElementContentProvider;
 
 
 class ScriptWorkingSetPageContentProvider extends StandardModelElementContentProvider {
-	
+
+	@Override
 	public boolean hasChildren(Object element) {
 
 		if (element instanceof IProject && !((IProject)element).isAccessible())
@@ -40,12 +40,13 @@ class ScriptWorkingSetPageContentProvider extends StandardModelElementContentPro
 		return super.hasChildren(element);
 	}
 
+	@Override
 	public Object[] getChildren(Object parentElement) {
 		try {
-			if (parentElement instanceof IScriptModel) 
+			if (parentElement instanceof IScriptModel)
 				return concatenate(super.getChildren(parentElement), getForeignProjects((IScriptModel)parentElement));
-			
-			if (parentElement instanceof IProject) 
+
+			if (parentElement instanceof IProject)
 				return ((IProject)parentElement).members();
 
 			return super.getChildren(parentElement);

@@ -13,6 +13,7 @@ public abstract class ScriptRegExpRule extends PatternRule {
 		super(start, end, token, '\\', true, false);
 	}
 
+	@Override
 	public IToken evaluate(ICharacterScanner scanner, boolean resume) {
 		IToken token = super.evaluate(scanner, resume);
 		if (token.isUndefined())
@@ -23,11 +24,12 @@ public abstract class ScriptRegExpRule extends PatternRule {
 
 	/**
 	 * Comparator that orders <code>char[]</code> in decreasing array lengths.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private static class DecreasingCharArrayLengthComparator implements
 			Comparator<char[]> {
+		@Override
 		public int compare(char[] o1, char[] o2) {
 			return o2.length - o1.length;
 		}
@@ -36,21 +38,21 @@ public abstract class ScriptRegExpRule extends PatternRule {
 	/**
 	 * Line delimiter comparator which orders according to decreasing delimiter
 	 * length.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private Comparator<char[]> fLineDelimiterComparator = new DecreasingCharArrayLengthComparator();
 
 	/**
 	 * Cached line delimiters.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private char[][] fLineDelimiters;
 
 	/**
 	 * Cached sorted {@linkplain #fLineDelimiters}.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private char[][] fSortedLineDelimiters;
@@ -60,15 +62,16 @@ public abstract class ScriptRegExpRule extends PatternRule {
 	 * considered ended by a line delimiter, the result of this method is
 	 * <code>true</code> if the rule breaks on the end of the line, or if the
 	 * EOF character is read.
-	 * 
+	 *
 	 * @param scanner
 	 *            the character scanner to be used
 	 * @return <code>true</code> if the end sequence has been detected
 	 */
+	@Override
 	protected boolean endSequenceDetected(ICharacterScanner scanner) {
 		/*
 		 * This method is copied from PatternRule.
-		 * 
+		 *
 		 * The only change is that fBreaksOnEOL toggles negative match.
 		 */
 		char[][] originalDelimiters = scanner.getLegalLineDelimiters();

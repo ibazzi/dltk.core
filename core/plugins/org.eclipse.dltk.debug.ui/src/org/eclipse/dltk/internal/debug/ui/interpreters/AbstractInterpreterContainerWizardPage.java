@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.debug.ui.interpreters;
 
@@ -20,8 +19,6 @@ import org.eclipse.dltk.core.environment.IEnvironment;
 import org.eclipse.dltk.debug.ui.ScriptDebugImages;
 import org.eclipse.dltk.internal.ui.wizards.IBuildpathContainerPage;
 import org.eclipse.dltk.ui.wizards.IBuildpathContainerPageExtension;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -54,10 +51,10 @@ public abstract class AbstractInterpreterContainerWizardPage extends WizardPage
 	 * Constructs a new page.
 	 */
 	public AbstractInterpreterContainerWizardPage() {
-		super(
-				InterpretersMessages.InterpreterContainerWizardPage_Interpreter_System_Library_1);
+		super(InterpretersMessages.InterpreterContainerWizardPage_Interpreter_System_Library_1);
 	}
 
+	@Override
 	public boolean finish() {
 		IStatus status = fInterpreterBlock.getStatus();
 		if (!status.isOK()) {
@@ -67,10 +64,12 @@ public abstract class AbstractInterpreterContainerWizardPage extends WizardPage
 		return true;
 	}
 
+	@Override
 	public IBuildpathEntry getSelection() {
 		return fSelection;
 	}
 
+	@Override
 	public void setSelection(IBuildpathEntry containerEntry) {
 		fSelection = containerEntry;
 		initializeFromSelection();
@@ -93,8 +92,8 @@ public abstract class AbstractInterpreterContainerWizardPage extends WizardPage
 					IStatusHandler handler = DebugPlugin.getDefault()
 							.getStatusHandler(status);
 					if (handler != null) {
-						Boolean b = (Boolean) handler
-								.handleStatus(status, this);
+						Boolean b = (Boolean) handler.handleStatus(status,
+								this);
 						if (b.booleanValue()) {
 							fInterpreterBlock.refreshInterpreters();
 						}
@@ -113,9 +112,7 @@ public abstract class AbstractInterpreterContainerWizardPage extends WizardPage
 		return new AbstractInterpreterComboBlock(context);
 	}
 
-	/*
-	 * @see IDialogPage#createControl(Composite)
-	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -125,29 +122,27 @@ public abstract class AbstractInterpreterContainerWizardPage extends WizardPage
 		composite.setFont(parent.getFont());
 		final IInterpreterComboBlockContext context = createInterpreterBlockHost();
 		fInterpreterBlock = createInterpreterBlock(context);
-		fInterpreterBlock
-				.setDefaultInterpreterDescriptor(new BuildInterpreterDescriptor(
-						context));
-		fInterpreterBlock
-				.setTitle(InterpretersMessages.InterpreterContainerWizardPage_3);
+		fInterpreterBlock.setDefaultInterpreterDescriptor(
+				new BuildInterpreterDescriptor(context));
+		fInterpreterBlock.setTitle(
+				InterpretersMessages.InterpreterContainerWizardPage_3);
 		fInterpreterBlock.createControl(composite);
 		// gd = new GridData(GridData.FILL_HORIZONTAL);
 		// fInterpreterEnvironmentBlock.getControl().setLayoutData(gd);
 		setControl(composite);
-		fInterpreterBlock
-				.addPropertyChangeListener(new IPropertyChangeListener() {
-					public void propertyChange(PropertyChangeEvent event) {
-						IStatus status = fInterpreterBlock.getStatus();
-						if (status.isOK()) {
-							setErrorMessage(null);
-						} else {
-							setErrorMessage(status.getMessage());
-						}
-					}
-				});
+		fInterpreterBlock.addPropertyChangeListener(event -> {
+			IStatus status = fInterpreterBlock.getStatus();
+			if (status.isOK()) {
+				setErrorMessage(null);
+			} else {
+				setErrorMessage(status.getMessage());
+			}
+		});
 
-		setTitle(InterpretersMessages.InterpreterContainerWizardPage_Interpreter_System_Library_1);
-		setMessage(InterpretersMessages.InterpreterContainerWizardPage_Select_the_Interpreter_used_to_build_this_project__4);
+		setTitle(
+				InterpretersMessages.InterpreterContainerWizardPage_Interpreter_System_Library_1);
+		setMessage(
+				InterpretersMessages.InterpreterContainerWizardPage_Select_the_Interpreter_used_to_build_this_project__4);
 
 		initializeFromSelection();
 	}
@@ -158,14 +153,17 @@ public abstract class AbstractInterpreterContainerWizardPage extends WizardPage
 	private IInterpreterComboBlockContext createInterpreterBlockHost() {
 		return new IInterpreterComboBlockContext() {
 
+			@Override
 			public int getMode() {
 				return M_BUILDPATH;
 			}
 
+			@Override
 			public IEnvironment getEnvironment() {
 				return EnvironmentManager.getEnvironment(getScriptProject());
 			}
 
+			@Override
 			public String getNatureId() {
 				return AbstractInterpreterContainerWizardPage.this
 						.getScriptNature();
@@ -179,6 +177,7 @@ public abstract class AbstractInterpreterContainerWizardPage extends WizardPage
 		return ScriptDebugImages.get(ScriptDebugImages.IMG_WIZBAN_LIBRARY);
 	}
 
+	@Override
 	public void initialize(IScriptProject project,
 			IBuildpathEntry[] currentEntries) {
 		this.scriptProject = project;

@@ -1,11 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
+
  *******************************************************************************/
 package org.eclipse.dltk.ui.templates;
 
@@ -50,6 +50,7 @@ public abstract class ScriptTemplateCompletionProcessor extends
 
 	private static final class ProposalComparator implements
 			Comparator<TemplateProposal> {
+		@Override
 		public int compare(TemplateProposal o1, TemplateProposal o2) {
 			return o2.getRelevance() - o1.getRelevance();
 		}
@@ -153,7 +154,7 @@ public abstract class ScriptTemplateCompletionProcessor extends
 	 * Returns <code>true</code> if one line is completely selected or if
 	 * multiple lines are selected. Being completely selected means that all
 	 * characters except the new line characters are selected.
-	 * 
+	 *
 	 * @param viewer
 	 *            the text viewer
 	 * @return <code>true</code> if one or multiple lines are selected
@@ -252,7 +253,7 @@ public abstract class ScriptTemplateCompletionProcessor extends
 
 	/**
 	 * Validates the current location
-	 * 
+	 *
 	 * @param viewer
 	 * @param region
 	 * @return <code>true</code> if the location is valid and could be used to
@@ -299,7 +300,7 @@ public abstract class ScriptTemplateCompletionProcessor extends
 	/**
 	 * Returns the relevance of a template. The default implementation returns
 	 * zero.
-	 * 
+	 *
 	 * @param template
 	 *            the template to compute the relevance for
 	 * @return the relevance of <code>template</code>

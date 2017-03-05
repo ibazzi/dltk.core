@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 NumberFour AG
+ * Copyright (c) 2012, 2017 NumberFour AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -11,12 +11,13 @@
  *******************************************************************************/
 package org.eclipse.dltk.core.tests.utils;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.dltk.utils.IntList;
+import org.junit.Test;
 
-public class IntListTests extends TestCase {
-
+public class IntListTests {
+	@Test
 	public void testRemoveAt() {
 		IntList list = new IntList();
 		list.add(100);

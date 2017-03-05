@@ -1,19 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.refactoring;
 
 import org.eclipse.dltk.internal.corext.refactoring.tagging.IQualifiedNameUpdating;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -34,28 +31,25 @@ public class QualifiedNameComponent extends Composite {
 		layout.numColumns= 2;
 		setLayout(layout);
 		Label label= new Label(this, SWT.NONE);
-		label.setText(RefactoringMessages.QualifiedNameComponent_patterns_label); 
+		label.setText(RefactoringMessages.QualifiedNameComponent_patterns_label);
 		fPatterns= new Text(this, SWT.BORDER);
 		fPatterns.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		label= new Label(this, SWT.NONE);
-		label.setText(RefactoringMessages.QualifiedNameComponent_patterns_description);  
+		label.setText(RefactoringMessages.QualifiedNameComponent_patterns_description);
 		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan=2;
 		label.setLayoutData(gd);
 		String text= refactoring.getFilePatterns();
-		if (text == null) 
+		if (text == null)
 			text= settings.get(PATTERNS);
-		if (text != null) { 
+		if (text != null) {
 			fPatterns.setText(text);
 			refactoring.setFilePatterns(text);
 		}
-		fPatterns.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				refactoring.setFilePatterns(fPatterns.getText());
-			}
-		});
+		fPatterns.addModifyListener(e -> refactoring.setFilePatterns(fPatterns.getText()));
 	}
-	
+
+	@Override
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
 		Control[] children= getChildren();
@@ -63,7 +57,7 @@ public class QualifiedNameComponent extends Composite {
 			children[i].setEnabled(enabled);
 		}
 	}
-	
+
 	public void savePatterns(IDialogSettings settings) {
 		settings.put(PATTERNS, fPatterns.getText());
 	}

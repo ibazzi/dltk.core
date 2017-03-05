@@ -13,8 +13,6 @@ import org.eclipse.dltk.internal.ui.dialogs.StatusUtil;
 import org.eclipse.dltk.ui.DLTKUIPlugin;
 import org.eclipse.dltk.ui.dialogs.StatusInfo;
 import org.eclipse.dltk.ui.util.IStatusChangeListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
@@ -22,8 +20,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
-/**
- */
 public class ControlBindingManager<KEY> {
 	final IStatusChangeListener changeListener;
 
@@ -68,11 +64,13 @@ public class ControlBindingManager<KEY> {
 	public void bindControl(final Combo combo, final KEY key) {
 		bindControl(combo, key, new IComboSelectedValueProvider() {
 
+			@Override
 			public String getValueAt(int index) {
 				return index >= 0 && index < combo.getItemCount() ? combo
 						.getItem(index) : null;
 			}
 
+			@Override
 			public int indexOf(String value) {
 				final String[] items = combo.getItems();
 				for (int i = 0; i < items.length; i++) {
@@ -87,10 +85,12 @@ public class ControlBindingManager<KEY> {
 
 	public void bindControl(Combo combo, KEY key, final String[] itemValues) {
 		bindControl(combo, key, new IComboSelectedValueProvider() {
+			@Override
 			public String getValueAt(int index) {
 				return itemValues[index];
 			}
 
+			@Override
 			public int indexOf(String value) {
 				for (int i = 0; i < itemValues.length; i++) {
 					if (itemValues[i].equals(value)) {
@@ -110,10 +110,12 @@ public class ControlBindingManager<KEY> {
 		comboValueProviders.put(combo, itemValueProvider);
 
 		combo.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				int index = combo.getSelectionIndex();
 				preferenceDelegate.setString(key,
@@ -132,10 +134,12 @@ public class ControlBindingManager<KEY> {
 		createDependency(button, slaves);
 
 		button.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean state = button.getSelection();
 				preferenceDelegate.setBoolean(key, state);
@@ -172,23 +176,21 @@ public class ControlBindingManager<KEY> {
 			validatorManager.registerValidator(text, validator);
 		}
 
-		text.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				IStatus status = validateText(text);
+		text.addModifyListener(e -> {
+			IStatus status = validateText(text);
 
-				if (key != null) {
-					if (status.getSeverity() != IStatus.ERROR) {
-						String value = text.getText();
-						if (transformer != null) {
-							value = transformer.convertInput(value);
-						}
-
-						preferenceDelegate.setString(key, value);
+			if (key != null) {
+				if (status.getSeverity() != IStatus.ERROR) {
+					String value = text.getText();
+					if (transformer != null) {
+						value = transformer.convertInput(value);
 					}
-				}
 
-				updateStatus(status);
+					preferenceDelegate.setString(key, value);
+				}
 			}
+
+			updateStatus(status);
 		});
 	}
 
@@ -202,10 +204,12 @@ public class ControlBindingManager<KEY> {
 
 		button.setData(String.valueOf(enable));
 		button.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				String value = String.valueOf(enable);
 				preferenceDelegate.setString(key, value);
@@ -332,6 +336,7 @@ public class ControlBindingManager<KEY> {
 		public void createDependency(final Button master,
 				final Control[] slaves, final DependencyMode mode) {
 			SelectionListener listener = new SelectionListener() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					boolean state = master.getSelection();
 					// set enablement to the opposite of the selection value
@@ -346,6 +351,7 @@ public class ControlBindingManager<KEY> {
 					changeListener.statusChanged(StatusInfo.OK_STATUS);
 				}
 
+				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
 					// do nothing
 				}

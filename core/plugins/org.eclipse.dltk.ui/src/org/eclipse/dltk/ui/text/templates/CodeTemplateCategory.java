@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 xored software, Inc.
+ * Copyright (c) 2009, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -26,23 +26,27 @@ public class CodeTemplateCategory implements ICodeTemplateCategory {
 		this.contextTypes = contextTypes;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public boolean isGroup() {
 		return group;
 	}
 
 	/**
 	 * Returns {@link TemplateContextType}s for this group.
-	 * 
+	 *
 	 * @return
 	 */
+	@Override
 	public TemplateContextType[] getTemplateContextTypes() {
 		return contextTypes;
 	}
 
+	@Override
 	public int getPriority() {
 		return 0;
 	}

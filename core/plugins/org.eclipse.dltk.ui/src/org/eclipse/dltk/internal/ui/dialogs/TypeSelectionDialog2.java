@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.dialogs;
 
@@ -80,6 +79,7 @@ public class TypeSelectionDialog2 extends SelectionStatusDialog {
 	private IDLTKUILanguageToolkit fToolkit;
 
 	private class TitleLabel implements TypeSelectionComponent.ITitleLabel {
+		@Override
 		public void setText(String text) {
 			if (text == null || text.length() == 0) {
 				getShell().setText(fTitle);
@@ -136,18 +136,21 @@ public class TypeSelectionDialog2 extends SelectionStatusDialog {
 		return fContent.getSelection();
 	}
 
+	@Override
 	public void create() {
 		super.create();
 		fContent.populate(fSelectionMode);
 		getOkButton().setEnabled(fContent.getSelection().length > 0);
 	}
 
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		// PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
 		// IJavaHelpContextIds.TYPE_SELECTION_DIALOG2);
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite area = (Composite) super.createDialogArea(parent);
 		fContent = new TypeSelectionComponent(area, SWT.NONE, getMessage(),
@@ -156,10 +159,12 @@ public class TypeSelectionDialog2 extends SelectionStatusDialog {
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		fContent.setLayoutData(gd);
 		fContent.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				handleDefaultSelected(fContent.getSelection());
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleWidgetSelected(fContent.getSelection());
 			}
@@ -210,6 +215,7 @@ public class TypeSelectionDialog2 extends SelectionStatusDialog {
 		updateStatus(status);
 	}
 
+	@Override
 	public int open() {
 		try {
 			ensureConsistency();
@@ -255,6 +261,7 @@ public class TypeSelectionDialog2 extends SelectionStatusDialog {
 		}
 	}
 
+	@Override
 	public boolean close() {
 		boolean result;
 		try {
@@ -267,11 +274,13 @@ public class TypeSelectionDialog2 extends SelectionStatusDialog {
 		return result;
 	}
 
+	@Override
 	public void setTitle(String title) {
 		super.setTitle(title);
 		fTitle = title;
 	}
 
+	@Override
 	protected void computeResult() {
 		TypeNameMatch[] selected = fContent.getSelection();
 		if (selected == null || selected.length == 0) {
@@ -323,6 +332,7 @@ public class TypeSelectionDialog2 extends SelectionStatusDialog {
 		// engine
 		// takes care of working copies.
 		class ConsistencyRunnable implements IRunnableWithProgress {
+			@Override
 			public void run(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
 				if (fgFirstTime) {

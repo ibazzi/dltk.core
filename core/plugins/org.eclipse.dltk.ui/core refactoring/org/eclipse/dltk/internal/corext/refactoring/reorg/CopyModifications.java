@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,21 +36,21 @@ import org.eclipse.ltk.core.refactoring.participants.SharableParticipants;
 
 
 public class CopyModifications extends RefactoringModifications {
-	
+
 	private List fCopies;
 	private List fCopyArguments;
 	private List fParticipantDescriptorFilter;
-	
+
 	public CopyModifications() {
 		fCopies= new ArrayList();
 		fCopyArguments= new ArrayList();
 		fParticipantDescriptorFilter= new ArrayList();
 	}
-	
+
 	public void copy(IResource resource, CopyArguments args) {
 		add(resource, args, null);
 	}
-	
+
 	public void copy(IModelElement element, CopyArguments javaArgs, CopyArguments resourceArgs) throws CoreException {
 		switch(element.getElementType()) {
 			case IModelElement.PROJECT_FRAGMENT:
@@ -82,7 +82,7 @@ public class CopyModifications extends RefactoringModifications {
 			}
 		}
 	}
-	
+
 	public void copy(IScriptFolder pack, CopyArguments javaArgs, CopyArguments resourceArgs) throws CoreException {
 		add(pack, javaArgs, null);
 		ResourceMapping mapping= DLTKElementResourceMapping.create(pack);
@@ -125,6 +125,7 @@ public class CopyModifications extends RefactoringModifications {
 		}
 	}
 
+	@Override
 	public void buildDelta(IResourceChangeDescriptionFactory builder) {
 		for (int i= 0; i < fCopies.size(); i++) {
 			Object element= fCopies.get(i);
@@ -134,20 +135,21 @@ public class CopyModifications extends RefactoringModifications {
 		}
 		getResourceModifications().buildDelta(builder);
 	}
-	
+
+	@Override
 	public RefactoringParticipant[] loadParticipants(RefactoringStatus status, RefactoringProcessor owner, String[] natures, SharableParticipants shared) {
 		List<RefactoringParticipant> result = new ArrayList<RefactoringParticipant>();
 		for (int i= 0; i < fCopies.size(); i++) {
-			result.addAll(Arrays.asList(ParticipantManager.loadCopyParticipants(status, 
-				owner, fCopies.get(i), 
-				(CopyArguments) fCopyArguments.get(i), 
-				(IParticipantDescriptorFilter) fParticipantDescriptorFilter.get(i), 
+			result.addAll(Arrays.asList(ParticipantManager.loadCopyParticipants(status,
+				owner, fCopies.get(i),
+				(CopyArguments) fCopyArguments.get(i),
+				(IParticipantDescriptorFilter) fParticipantDescriptorFilter.get(i),
 				natures, shared)));
 		}
 		result.addAll(Arrays.asList(getResourceModifications().getParticipants(status, owner, natures, shared)));
 		return result.toArray(new RefactoringParticipant[result.size()]);
 	}
-	
+
 	private void add(Object element, RefactoringArguments args, IParticipantDescriptorFilter filter) {
 		Assert.isNotNull(element);
 		Assert.isNotNull(args);
@@ -155,4 +157,4 @@ public class CopyModifications extends RefactoringModifications {
 		fCopyArguments.add(args);
 		fParticipantDescriptorFilter.add(filter);
 	}
-} 
+}

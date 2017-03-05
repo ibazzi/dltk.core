@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,7 +55,6 @@ import org.eclipse.dltk.ui.viewsupport.StyledDecoratingModelLabelProvider;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -109,12 +108,12 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
  * IClassFiles. Publishes its context menu under
  * <code>JavaPlugin.getDefault().getPluginId() + ".outline"</code>.
  */
-public class ScriptOutlinePage extends Page implements IContentOutlinePage,
-		IAdaptable, IPostSelectionProvider {
+public class ScriptOutlinePage extends Page
+		implements IContentOutlinePage, IAdaptable, IPostSelectionProvider {
 
 	/**
 	 * Content provider for the children of an ICompilationUnit or an IClassFile
-	 * 
+	 *
 	 * @see ITreeContentProvider
 	 */
 	protected class ChildrenProvider implements ITreeContentProvider {
@@ -210,7 +209,8 @@ public class ScriptOutlinePage extends Page implements IContentOutlinePage,
 		 * @see IContentProvider#inputChanged(Viewer, Object, Object)
 		 */
 		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		public void inputChanged(Viewer viewer, Object oldInput,
+				Object newInput) {
 			boolean isCU = (newInput instanceof ISourceModule);
 
 			if (isCU && fListener == null) {
@@ -233,7 +233,7 @@ public class ScriptOutlinePage extends Page implements IContentOutlinePage,
 
 	/**
 	 * The element change listener of the java outline viewer.
-	 * 
+	 *
 	 * @see IElementChangedListener
 	 */
 	protected class ElementChangedListener implements IElementChangedListener {
@@ -247,17 +247,13 @@ public class ScriptOutlinePage extends Page implements IContentOutlinePage,
 
 			Display d = getControl().getDisplay();
 			if (d != null) {
-				d.asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						ISourceModule cu = (ISourceModule) fInput;
-						IModelElement base = cu;
+				d.asyncExec(() -> {
+					ISourceModule cu = (ISourceModule) fInput;
+					IModelElement base = cu;
 
-						IModelElementDelta delta = findElement(base, e
-								.getDelta());
-						if (delta != null && fOutlineViewer != null) {
-							fOutlineViewer.reconcile(delta);
-						}
+					IModelElementDelta delta = findElement(base, e.getDelta());
+					if (delta != null && fOutlineViewer != null) {
+						fOutlineViewer.reconcile(delta);
 					}
 				});
 			}
@@ -306,17 +302,18 @@ public class ScriptOutlinePage extends Page implements IContentOutlinePage,
 			if ((flags & IModelElementDelta.F_CHILDREN) != 0) {
 				return true;
 			}
-			return (flags & (IModelElementDelta.F_CONTENT | IModelElementDelta.F_FINE_GRAINED)) == IModelElementDelta.F_CONTENT;
+			return (flags & (IModelElementDelta.F_CONTENT
+					| IModelElementDelta.F_FINE_GRAINED)) == IModelElementDelta.F_CONTENT;
 		}
 	}
 
 	/**
 	 * Empty selection provider.
-	 * 
+	 *
 	 * @since 3.2
 	 */
-	private static final class EmptySelectionProvider implements
-			ISelectionProvider {
+	private static final class EmptySelectionProvider
+			implements ISelectionProvider {
 		@Override
 		public void addSelectionChangedListener(
 				ISelectionChangedListener listener) {
@@ -341,7 +338,7 @@ public class ScriptOutlinePage extends Page implements IContentOutlinePage,
 
 	/**
 	 * The tree viewer used for displaying the outline.
-	 * 
+	 *
 	 * @see TreeViewer
 	 */
 	protected class ScriptOutlineViewer extends TreeViewer {
@@ -359,9 +356,9 @@ public class ScriptOutlinePage extends Page implements IContentOutlinePage,
 				cu = cu.getPrimary();
 				return cu.getResource();
 			} /*
-			 * else if (input instanceof IClassFile) { return ((IClassFile)
-			 * input).getResource(); }
-			 */
+				 * else if (input instanceof IClassFile) { return ((IClassFile)
+				 * input).getResource(); }
+				 */
 			return null;
 		}
 
@@ -419,7 +416,7 @@ public class ScriptOutlinePage extends Page implements IContentOutlinePage,
 		/**
 		 * Investigates the given element change event and if affected
 		 * incrementally updates the Java outline.
-		 * 
+		 *
 		 * @param delta
 		 *            the Java element delta used to reconcile the Java outline
 		 */
@@ -444,7 +441,8 @@ public class ScriptOutlinePage extends Page implements IContentOutlinePage,
 			DLTKPluginImages.setLocalImageDescriptors(this,
 					"alphab_sort_co.png"); //$NON-NLS-1$
 			setToolTipText(DLTKEditorMessages.ScriptOutlinePage_Sort_tooltip);
-			setDescription(DLTKEditorMessages.ScriptOutlinePage_Sort_description);
+			setDescription(
+					DLTKEditorMessages.ScriptOutlinePage_Sort_description);
 
 			boolean checked = fStore
 					.getBoolean(LEXICAL_SORTING_ACTION_IS_CHECKED);
@@ -459,23 +457,19 @@ public class ScriptOutlinePage extends Page implements IContentOutlinePage,
 		private void valueChanged(final boolean on, boolean store) {
 			setChecked(on);
 			BusyIndicator.showWhile(fOutlineViewer.getControl().getDisplay(),
-					new Runnable() {
-						@Override
-						public void run() {
-							if (on) {
-								fOutlineViewer.setComparator(fComparator);
-								fDropSupport.setFeedbackEnabled(false);
-							} else {
-								fOutlineViewer
-										.setComparator(fSourcePositonComparator);
-								fDropSupport.setFeedbackEnabled(true);
-							}
+					() -> {
+						if (on) {
+							fOutlineViewer.setComparator(fComparator);
+							fDropSupport.setFeedbackEnabled(false);
+						} else {
+							fOutlineViewer
+									.setComparator(fSourcePositonComparator);
+							fDropSupport.setFeedbackEnabled(true);
 						}
 					});
 
 			if (store) {
-				fStore.setValue(
-						LEXICAL_SORTING_ACTION_IS_CHECKED, on);
+				fStore.setValue(LEXICAL_SORTING_ACTION_IS_CHECKED, on);
 			}
 		}
 	}
@@ -483,7 +477,7 @@ public class ScriptOutlinePage extends Page implements IContentOutlinePage,
 	/**
 	 * This action toggles whether this Java Outline page links its selection to
 	 * the active editor.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public class ToggleLinkingAction extends AbstractToggleLinkingAction {
@@ -492,13 +486,13 @@ public class ScriptOutlinePage extends Page implements IContentOutlinePage,
 
 		/**
 		 * Constructs a new action.
-		 * 
+		 *
 		 * @param outlinePage
 		 *            the Java outline page
 		 */
 		public ToggleLinkingAction(ScriptOutlinePage outlinePage) {
-			boolean isLinkingEnabled = fStore
-					.getBoolean(PreferenceConstants.EDITOR_SYNC_OUTLINE_ON_CURSOR_MOVE);
+			boolean isLinkingEnabled = fStore.getBoolean(
+					PreferenceConstants.EDITOR_SYNC_OUTLINE_ON_CURSOR_MOVE);
 			setChecked(isLinkingEnabled);
 			fJavaOutlinePage = outlinePage;
 		}
@@ -512,8 +506,8 @@ public class ScriptOutlinePage extends Page implements IContentOutlinePage,
 					PreferenceConstants.EDITOR_SYNC_OUTLINE_ON_CURSOR_MOVE,
 					isChecked());
 			if (isChecked() && fEditor != null) {
-				fEditor.synchronizeOutlinePage(fEditor
-						.computeHighlightRangeSourceReference(), false);
+				fEditor.synchronizeOutlinePage(
+						fEditor.computeHighlightRangeSourceReference(), false);
 			}
 		}
 
@@ -546,7 +540,7 @@ public class ScriptOutlinePage extends Page implements IContentOutlinePage,
 	private IPropertyChangeListener fPropertyChangeListener;
 	/**
 	 * Custom filter action group.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private CustomFiltersActionGroup fCustomFiltersActionGroup;
@@ -575,19 +569,14 @@ public class ScriptOutlinePage extends Page implements IContentOutlinePage,
 			fTogglePresentation.setEditor((ITextEditor) editor);
 		}
 
-		fPropertyChangeListener = new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				doPropertyChange(event);
-			}
-		};
+		fPropertyChangeListener = event -> doPropertyChange(event);
 		fStore.addPropertyChangeListener(fPropertyChangeListener);
 	}
 
 	/**
 	 * Convenience method to add the action installed under the given actionID
 	 * to the specified group of the menu.
-	 * 
+	 *
 	 * @param menu
 	 *            the menu manager
 	 * @param group
@@ -614,8 +603,8 @@ public class ScriptOutlinePage extends Page implements IContentOutlinePage,
 	}
 
 	/*
-	 * @see
-	 * org.eclipse.jface.text.IPostSelectionProvider#addPostSelectionChangedListener
+	 * @see org.eclipse.jface.text.IPostSelectionProvider#
+	 * addPostSelectionChangedListener
 	 * (org.eclipse.jface.viewers.ISelectionChangedListener)
 	 */
 	@Override
@@ -633,7 +622,8 @@ public class ScriptOutlinePage extends Page implements IContentOutlinePage,
 	 * ISelectionProvider#addSelectionChangedListener(ISelectionChangedListener)
 	 */
 	@Override
-	public void addSelectionChangedListener(ISelectionChangedListener listener) {
+	public void addSelectionChangedListener(
+			ISelectionChangedListener listener) {
 		if (fOutlineViewer != null) {
 			fOutlineViewer.addSelectionChangedListener(listener);
 		} else {
@@ -689,51 +679,46 @@ public class ScriptOutlinePage extends Page implements IContentOutlinePage,
 		fOutlineViewer = new ScriptOutlineViewer(tree);
 		initDragAndDrop();
 		fOutlineViewer.setContentProvider(new ChildrenProvider());
-		fOutlineViewer.setLabelProvider(new StyledDecoratingModelLabelProvider(
-				lprovider));
+		fOutlineViewer.setLabelProvider(
+				new StyledDecoratingModelLabelProvider(lprovider));
 
 		Object[] listeners = fSelectionChangedListeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
 			fSelectionChangedListeners.remove(listeners[i]);
-			fOutlineViewer
-					.addSelectionChangedListener((ISelectionChangedListener) listeners[i]);
+			fOutlineViewer.addSelectionChangedListener(
+					(ISelectionChangedListener) listeners[i]);
 		}
 
 		listeners = fPostSelectionChangedListeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
 			fPostSelectionChangedListeners.remove(listeners[i]);
-			fOutlineViewer
-					.addPostSelectionChangedListener((ISelectionChangedListener) listeners[i]);
+			fOutlineViewer.addPostSelectionChangedListener(
+					(ISelectionChangedListener) listeners[i]);
 		}
 
-		MenuManager manager = new MenuManager(DLTKUIPlugin.getPluginId()
-				+ ".outline", DLTKUIPlugin.getPluginId() + ".outline"); //$NON-NLS-1$ //$NON-NLS-2$
+		MenuManager manager = new MenuManager(
+				DLTKUIPlugin.getPluginId() + ".outline", //$NON-NLS-1$
+				DLTKUIPlugin.getPluginId() + ".outline"); //$NON-NLS-1$
 		manager.setRemoveAllWhenShown(true);
-		manager.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager m) {
-				contextMenuAboutToShow(m);
-			}
-		});
+		manager.addMenuListener(m -> contextMenuAboutToShow(m));
 		fMenu = manager.createContextMenu(tree);
 		tree.setMenu(fMenu);
 
 		IPageSite site = getSite();
-		site
-				.registerContextMenu(
-						DLTKUIPlugin.getPluginId() + ".outline", manager, fOutlineViewer); //$NON-NLS-1$
+		site.registerContextMenu(DLTKUIPlugin.getPluginId() + ".outline", //$NON-NLS-1$
+				manager, fOutlineViewer);
 
 		updateSelectionProvider(site);
 
 		IDLTKLanguageToolkit toolkit = fEditor.getLanguageToolkit();
 		// we must create the groups after we have set the selection provider to
 		// the site
-		fActionGroups = new CompositeActionGroup(new ActionGroup[] {
-				new OpenViewActionGroup(this),
-				// new CCPActionGroup(this),
-				/* new GenerateActionGroup(this), */
-				new RefactorActionGroup(this, toolkit),
-				new SearchActionGroup(this, toolkit) });
+		fActionGroups = new CompositeActionGroup(
+				new ActionGroup[] { new OpenViewActionGroup(this),
+						// new CCPActionGroup(this),
+						/* new GenerateActionGroup(this), */
+						new RefactorActionGroup(this, toolkit),
+						new SearchActionGroup(this, toolkit) });
 
 		// register global actions
 		IActionBars actionBars = site.getActionBars();
@@ -748,17 +733,15 @@ public class ScriptOutlinePage extends Page implements IContentOutlinePage,
 		actionBars.setGlobalActionHandler(ITextEditorActionConstants.NEXT,
 				action);
 		action = fEditor.getAction(ITextEditorActionConstants.PREVIOUS);
-		actionBars
-				.setGlobalActionHandler(
-						ITextEditorActionDefinitionIds.GOTO_PREVIOUS_ANNOTATION,
-						action);
+		actionBars.setGlobalActionHandler(
+				ITextEditorActionDefinitionIds.GOTO_PREVIOUS_ANNOTATION,
+				action);
 		actionBars.setGlobalActionHandler(ITextEditorActionConstants.PREVIOUS,
 				action);
 		if (fTogglePresentation != null) {
-			actionBars
-					.setGlobalActionHandler(
-							ITextEditorActionDefinitionIds.TOGGLE_SHOW_SELECTED_ELEMENT_ONLY,
-							fTogglePresentation);
+			actionBars.setGlobalActionHandler(
+					ITextEditorActionDefinitionIds.TOGGLE_SHOW_SELECTED_ELEMENT_ONLY,
+					fTogglePresentation);
 		}
 
 		fActionGroups.fillActionBars(actionBars);
@@ -833,8 +816,8 @@ public class ScriptOutlinePage extends Page implements IContentOutlinePage,
 
 	private void doPropertyChange(PropertyChangeEvent event) {
 		if (fOutlineViewer != null) {
-			if (MembersOrderPreferenceCache.isMemberOrderProperty(event
-					.getProperty())) {
+			if (MembersOrderPreferenceCache
+					.isMemberOrderProperty(event.getProperty())) {
 				fOutlineViewer.refresh(false);
 			}
 		}
@@ -852,13 +835,8 @@ public class ScriptOutlinePage extends Page implements IContentOutlinePage,
 			return (T) getShowInSource();
 		}
 		if (key == IShowInTargetList.class) {
-			return (T) new IShowInTargetList() {
-				@Override
-				public String[] getShowInTargetIds() {
-					return new String[] { DLTKUIPlugin.ID_SCRIPT_EXPLORER };
-				}
-
-			};
+			return (T) (IShowInTargetList) () -> new String[] {
+					DLTKUIPlugin.ID_SCRIPT_EXPLORER };
 		}
 		if (key == IShowInTarget.class) {
 			return (T) getShowInTarget();
@@ -877,7 +855,7 @@ public class ScriptOutlinePage extends Page implements IContentOutlinePage,
 
 	/**
 	 * Returns the <code>JavaOutlineViewer</code> of this view.
-	 * 
+	 *
 	 * @return the {@link ScriptOutlineViewer}
 	 * @since 3.3
 	 */
@@ -898,43 +876,35 @@ public class ScriptOutlinePage extends Page implements IContentOutlinePage,
 
 	/**
 	 * Returns the <code>IShowInSource</code> for this view.
-	 * 
+	 *
 	 * @return the {@link IShowInSource}
 	 */
 	protected IShowInSource getShowInSource() {
-		return new IShowInSource() {
-			@Override
-			public ShowInContext getShowInContext() {
-				return new ShowInContext(null, getSite().getSelectionProvider()
-						.getSelection());
-			}
-		};
+		return () -> new ShowInContext(null,
+				getSite().getSelectionProvider().getSelection());
 	}
 
 	/**
 	 * Returns the <code>IShowInTarget</code> for this view.
-	 * 
+	 *
 	 * @return the {@link IShowInTarget}
 	 */
 	protected IShowInTarget getShowInTarget() {
-		return new IShowInTarget() {
-			@Override
-			public boolean show(ShowInContext context) {
-				ISelection sel = context.getSelection();
-				if (sel instanceof ITextSelection) {
-					ITextSelection tsel = (ITextSelection) sel;
-					int offset = tsel.getOffset();
-					IModelElement element = fEditor.getElementAt(offset);
-					if (element != null) {
-						setSelection(new StructuredSelection(element));
-						return true;
-					}
-				} else if (sel instanceof IStructuredSelection) {
-					setSelection(sel);
+		return context -> {
+			ISelection sel = context.getSelection();
+			if (sel instanceof ITextSelection) {
+				ITextSelection tsel = (ITextSelection) sel;
+				int offset = tsel.getOffset();
+				IModelElement element = fEditor.getElementAt(offset);
+				if (element != null) {
+					setSelection(new StructuredSelection(element));
 					return true;
 				}
-				return false;
+			} else if (sel instanceof IStructuredSelection) {
+				setSelection(sel);
+				return true;
 			}
+			return false;
 		};
 	}
 
@@ -956,7 +926,7 @@ public class ScriptOutlinePage extends Page implements IContentOutlinePage,
 	/**
 	 * Answers if a given model element should be collapsed initially in the
 	 * Outline view.
-	 * 
+	 *
 	 * @param element
 	 *            the model element
 	 * @return <code>true</code> iff the given element should be initially
@@ -974,7 +944,8 @@ public class ScriptOutlinePage extends Page implements IContentOutlinePage,
 		} else if (elementType == IModelElement.METHOD
 				|| elementType == IModelElement.FIELD) {
 			final IModelElement parent = element.getParent();
-			if (parent != null && parent.getElementType() == IModelElement.TYPE) {
+			if (parent != null
+					&& parent.getElementType() == IModelElement.TYPE) {
 				// collapse methods/fields of a type if no nested types
 				try {
 					if (!containsTypes((IMember) element)) {
@@ -992,7 +963,7 @@ public class ScriptOutlinePage extends Page implements IContentOutlinePage,
 		for (IModelElement child : ((IParent) element).getChildren()) {
 			if (child.getElementType() == IModelElement.TYPE
 					|| child instanceof IMember
-					&& containsTypes((IMember) child)) {
+							&& containsTypes((IMember) child)) {
 				return true;
 			}
 		}
@@ -1045,9 +1016,8 @@ public class ScriptOutlinePage extends Page implements IContentOutlinePage,
 	}
 
 	/*
-	 * @see
-	 * ISelectionProvider#removeSelectionChangedListener(ISelectionChangedListener
-	 * )
+	 * @see ISelectionProvider#removeSelectionChangedListener(
+	 * ISelectionChangedListener )
 	 */
 	@Override
 	public void removeSelectionChangedListener(

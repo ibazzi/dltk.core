@@ -1,14 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.dltk.debug.ui.preferences.dialogs;
 
 import org.eclipse.core.runtime.IStatus;
@@ -20,8 +19,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -66,6 +63,7 @@ public class CreateStepFilterDialog extends StatusDialog {
 		return createStepFilterDialog.filter;
 	}
 
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		okButton = createButton(parent, IDialogConstants.OK_ID,
 				IDialogConstants.OK_LABEL, true);
@@ -74,6 +72,7 @@ public class CreateStepFilterDialog extends StatusDialog {
 				IDialogConstants.CANCEL_LABEL, false);
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite container = (Composite) super.createDialogArea(parent);
 
@@ -107,21 +106,17 @@ public class CreateStepFilterDialog extends StatusDialog {
 		text.setLayoutData(gridData);
 		text.setFont(container.getFont());
 
-		text.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				validateChange();
-				if (!filterValid)
-					updateStatus(new StatusInfo(
-							IStatus.ERROR,
-							ScriptDebugPreferencesMessages.CreateStepFilterDialog_4));
-				else if (isDuplicateFilter(text.getText().trim())) {
-					updateStatus(new StatusInfo(
-							IStatus.WARNING,
-							ScriptDebugPreferencesMessages.CreateStepFilterDialog_5));
-					return;
-				} else
-					updateStatus(new StatusInfo());
-			}
+		text.addModifyListener(e -> {
+			validateChange();
+			if (!filterValid)
+				updateStatus(new StatusInfo(IStatus.ERROR,
+						ScriptDebugPreferencesMessages.CreateStepFilterDialog_4));
+			else if (isDuplicateFilter(text.getText().trim())) {
+				updateStatus(new StatusInfo(IStatus.WARNING,
+						ScriptDebugPreferencesMessages.CreateStepFilterDialog_5));
+				return;
+			} else
+				updateStatus(new StatusInfo());
 		});
 
 		return container;
@@ -181,18 +176,14 @@ public class CreateStepFilterDialog extends StatusDialog {
 
 	/**
 	 * Returns the name of the section that this dialog stores its settings in
-	 * 
+	 *
 	 * @return String
 	 */
 	protected String getDialogSettingsSectionName() {
 		return DLTKUIPlugin.PLUGIN_ID + ".CREATE_STEP_FILTER_DIALOG_SECTION"; //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.window.Window#close()
-	 */
+	@Override
 	public boolean close() {
 		if (!okClicked) {
 			filterValid = false;
@@ -201,11 +192,7 @@ public class CreateStepFilterDialog extends StatusDialog {
 		return super.close();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
-	 */
+	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
 		IDialogSettings settings = DLTKUIPlugin.getDefault()
 				.getDialogSettings();
@@ -217,6 +204,7 @@ public class CreateStepFilterDialog extends StatusDialog {
 		return section;
 	}
 
+	@Override
 	protected void okPressed() {
 		okClicked = true;
 		super.okPressed();

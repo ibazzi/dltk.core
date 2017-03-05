@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -89,15 +88,10 @@ public final class EnvironmentManager {
 		protected void initializeDescriptors(
 				List<Descriptor<IEnvironmentProvider>> descriptors) {
 			Collections.sort(descriptors,
-					new Comparator<Descriptor<IEnvironmentProvider>>() {
-						@Override
-						public int compare(
-								Descriptor<IEnvironmentProvider> arg0,
-								Descriptor<IEnvironmentProvider> arg1) {
-							EnvironmentProviderDesc d1 = (EnvironmentProviderDesc) arg0;
-							EnvironmentProviderDesc d2 = (EnvironmentProviderDesc) arg1;
-							return d1.priority - d2.priority;
-						}
+					(arg0, arg1) -> {
+						EnvironmentProviderDesc d1 = (EnvironmentProviderDesc) arg0;
+						EnvironmentProviderDesc d2 = (EnvironmentProviderDesc) arg1;
+						return d1.priority - d2.priority;
 					});
 		}
 
@@ -109,22 +103,18 @@ public final class EnvironmentManager {
 
 	private static final Map<IProject, IEnvironment> environmentCache = new HashMap<IProject, IEnvironment>();
 
-	private static IResourceChangeListener resourceListener = new IResourceChangeListener() {
+	private static IResourceChangeListener resourceListener = event -> {
+		int eventType = event.getType();
+		IResource resource = event.getResource();
 
-		@Override
-		public void resourceChanged(IResourceChangeEvent event) {
-			int eventType = event.getType();
-			IResource resource = event.getResource();
-
-			switch (eventType) {
-			case IResourceChangeEvent.PRE_DELETE:
-				if (resource.getType() == IResource.PROJECT) {
-					synchronized (environmentCache) {
-						environmentCache.remove(resource);
-					}
+		switch (eventType) {
+		case IResourceChangeEvent.PRE_DELETE:
+			if (resource.getType() == IResource.PROJECT) {
+				synchronized (environmentCache) {
+					environmentCache.remove(resource);
 				}
-				return;
 			}
+			return;
 		}
 	};
 
@@ -530,15 +520,10 @@ public final class EnvironmentManager {
 		protected void initializeDescriptors(
 				List<Descriptor<IEnvironmentLocationResolver>> descriptors) {
 			Collections.sort(descriptors,
-					new Comparator<Descriptor<IEnvironmentLocationResolver>>() {
-						@Override
-						public int compare(
-								Descriptor<IEnvironmentLocationResolver> arg0,
-								Descriptor<IEnvironmentLocationResolver> arg1) {
-							Desc d1 = (Desc) arg0;
-							Desc d2 = (Desc) arg1;
-							return d1.priority - d2.priority;
-						}
+					(arg0, arg1) -> {
+						Desc d1 = (Desc) arg0;
+						Desc d2 = (Desc) arg1;
+						return d1.priority - d2.priority;
 					});
 		}
 	}

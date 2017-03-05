@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,13 +28,11 @@ import org.eclipse.dltk.ui.DLTKUIPlugin;
 import org.eclipse.dltk.ui.text.hover.IScriptEditorTextHover;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.DefaultInformationControl;
-import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextHoverExtension;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.editors.text.EditorsUI;
@@ -44,10 +42,12 @@ public abstract class ScriptDebugHover
 
 	private IEditorPart editor;
 
+	@Override
 	public void setEditor(IEditorPart editor) {
 		this.editor = editor;
 	}
 
+	@Override
 	public IRegion getHoverRegion(final ITextViewer textViewer, int offset) {
 		return ScriptWordFinder.findWord(textViewer.getDocument(), offset);
 	}
@@ -55,7 +55,7 @@ public abstract class ScriptDebugHover
 	/**
 	 * Returns the stack frame in which to search for variables, or
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @return the stack frame in which to search for variables, or
 	 *         <code>null</code> if none
 	 */
@@ -67,6 +67,7 @@ public abstract class ScriptDebugHover
 		return null;
 	}
 
+	@Override
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		IScriptStackFrame frame = getFrame();
 		if (frame == null || editor == null)
@@ -165,7 +166,7 @@ public abstract class ScriptDebugHover
 
 	/**
 	 * Returns the value of this filters preference (on/off) for the given view.
-	 * 
+	 *
 	 * @param part
 	 * @return boolean
 	 */
@@ -183,14 +184,11 @@ public abstract class ScriptDebugHover
 		return value;
 	}
 
+	@Override
 	public IInformationControlCreator getHoverControlCreator() {
-		return new IInformationControlCreator() {
-			public IInformationControl createInformationControl(Shell parent) {
-				return new DefaultInformationControl(parent, SWT.NONE,
-						new HTMLTextPresenter(true),
-						EditorsUI.getTooltipAffordanceString());
-			}
-		};
+		return parent -> new DefaultInformationControl(parent, SWT.NONE,
+				new HTMLTextPresenter(true),
+				EditorsUI.getTooltipAffordanceString());
 	}
 
 	/**

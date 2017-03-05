@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.debug.core.model;
 
@@ -21,8 +20,8 @@ import org.eclipse.dltk.debug.core.model.IScriptStackFrame;
 import org.eclipse.dltk.debug.core.model.IScriptThread;
 import org.eclipse.dltk.debug.core.model.IScriptVariable;
 
-public class ScriptVariable extends ScriptDebugElement implements
-		IScriptVariable, IRefreshableScriptVariable {
+public class ScriptVariable extends ScriptDebugElement
+		implements IScriptVariable, IRefreshableScriptVariable {
 	private final IScriptStackFrame frame;
 	private final String name;
 	private IDbgpProperty property;
@@ -36,10 +35,12 @@ public class ScriptVariable extends ScriptDebugElement implements
 		this.property = property;
 	}
 
+	@Override
 	public IDebugTarget getDebugTarget() {
 		return frame.getDebugTarget();
 	}
 
+	@Override
 	public synchronized IValue getValue() throws DebugException {
 		if (value == null) {
 			value = ScriptValue.createValue(frame, property);
@@ -47,24 +48,30 @@ public class ScriptVariable extends ScriptDebugElement implements
 		return value;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public String getReferenceTypeName() throws DebugException {
 		return property.getType();
 	}
 
+	@Override
 	public boolean hasValueChanged() throws DebugException {
 		return isValueChanged;
 	}
 
+	@Override
 	public synchronized void setValue(String expression) throws DebugException {
 		try {
 			if (("String".equals(property.getType())) && //$NON-NLS-1$
-					(!expression.startsWith("'") || !expression.endsWith("'")) && //$NON-NLS-1$ //$NON-NLS-2$
-					(!expression.startsWith("\"") || !expression.endsWith("\""))) //$NON-NLS-1$ //$NON-NLS-2$
-				expression = "\"" + expression.replaceAll("\\\"", "\\\\\"") + "\""; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					(!expression.startsWith("'") || !expression.endsWith("'")) //$NON-NLS-1$ //$NON-NLS-2$
+					&& (!expression.startsWith("\"") //$NON-NLS-1$
+							|| !expression.endsWith("\""))) //$NON-NLS-1$
+				expression = "\"" + expression.replaceAll("\\\"", "\\\\\"") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						+ "\""; //$NON-NLS-1$
 			if (getCoreCommands().setProperty(property.getEvalName(),
 					frame.getLevel(), expression)) {
 				clearEvaluationManagerCache();
@@ -100,31 +107,38 @@ public class ScriptVariable extends ScriptDebugElement implements
 		DebugEventHelper.fireChangeEvent(this);
 	}
 
+	@Override
 	public void setValue(IValue value) throws DebugException {
 		setValue(value.getValueString());
 	}
 
+	@Override
 	public boolean supportsValueModification() {
 		return !property.isConstant();
 	}
 
+	@Override
 	public boolean verifyValue(String expression) throws DebugException {
 		// TODO: perform more smart verification
 		return expression != null;
 	}
 
+	@Override
 	public boolean verifyValue(IValue value) throws DebugException {
 		return verifyValue(value.getValueString());
 	}
 
+	@Override
 	public boolean isConstant() {
 		return property.isConstant();
 	}
 
+	@Override
 	public String toString() {
 		return getName();
 	}
 
+	@Override
 	public String getId() {
 		return property.getKey();
 	}
@@ -134,6 +148,7 @@ public class ScriptVariable extends ScriptDebugElement implements
 	 * @return
 	 * @throws DebugException
 	 */
+	@Override
 	public IVariable refreshVariable(IVariable newVariable)
 			throws DebugException {
 		if (newVariable instanceof ScriptVariable) {
@@ -147,8 +162,9 @@ public class ScriptVariable extends ScriptDebugElement implements
 					 * could be a hash - it is safer to get all of the new
 					 * children.
 					 */
-					ScriptStackFrame.refreshVariables(v.getValue()
-							.getVariables(), ((ScriptValue) value).variables);
+					ScriptStackFrame.refreshVariables(
+							v.getValue().getVariables(),
+							((ScriptValue) value).variables);
 				}
 			}
 			isValueChanged = !equals(property, v.property);

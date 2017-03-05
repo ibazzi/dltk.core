@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,9 +48,7 @@ class PackagesViewHierarchicalContentProvider extends LogicalPackagesProvider
 		super(viewer);
 	}
 
-	/*
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(Object)
-	 */
+	@Override
 	public Object[] getChildren(Object parentElement) {
 		try {
 			if (parentElement instanceof IModelElement) {
@@ -292,6 +290,7 @@ class PackagesViewHierarchicalContentProvider extends LogicalPackagesProvider
 	/*
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(Object)
 	 */
+	@Override
 	public Object getParent(Object element) {
 
 		try {
@@ -438,6 +437,7 @@ class PackagesViewHierarchicalContentProvider extends LogicalPackagesProvider
 	/*
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(Object)
 	 */
+	@Override
 	public boolean hasChildren(Object element) {
 
 		if (element instanceof IScriptFolder) {
@@ -451,10 +451,12 @@ class PackagesViewHierarchicalContentProvider extends LogicalPackagesProvider
 	/*
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(Object)
 	 */
+	@Override
 	public Object[] getElements(Object inputElement) {
 		return getChildren(inputElement);
 	}
 
+	@Override
 	protected void processDelta(IModelElementDelta delta) {
 
 		int kind = delta.getKind();
@@ -544,34 +546,28 @@ class PackagesViewHierarchicalContentProvider extends LogicalPackagesProvider
 	}
 
 	private void postAdd(final Object child, final Object parent) {
-		postRunnable(new Runnable() {
-			public void run() {
-				Control ctrl = fViewer.getControl();
-				if (ctrl != null && !ctrl.isDisposed()) {
-					((TreeViewer) fViewer).add(parent, child);
-				}
+		postRunnable(() -> {
+			Control ctrl = fViewer.getControl();
+			if (ctrl != null && !ctrl.isDisposed()) {
+				((TreeViewer) fViewer).add(parent, child);
 			}
 		});
 	}
 
 	private void postRemove(final Object object) {
-		postRunnable(new Runnable() {
-			public void run() {
-				Control ctrl = fViewer.getControl();
-				if (ctrl != null && !ctrl.isDisposed()) {
-					((TreeViewer) fViewer).remove(object);
-				}
+		postRunnable(() -> {
+			Control ctrl = fViewer.getControl();
+			if (ctrl != null && !ctrl.isDisposed()) {
+				((TreeViewer) fViewer).remove(object);
 			}
 		});
 	}
 
 	private void postRefresh(final Object object) {
-		postRunnable(new Runnable() {
-			public void run() {
-				Control ctrl = fViewer.getControl();
-				if (ctrl != null && !ctrl.isDisposed()) {
-					((TreeViewer) fViewer).refresh(object);
-				}
+		postRunnable(() -> {
+			Control ctrl = fViewer.getControl();
+			if (ctrl != null && !ctrl.isDisposed()) {
+				((TreeViewer) fViewer).refresh(object);
 			}
 		});
 	}

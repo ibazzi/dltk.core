@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,19 +18,20 @@ import org.eclipse.ui.IContainmentAdapter;
 
 
 public class DLTKElementContainmentAdapter implements IContainmentAdapter {
-	
+
 	private IScriptModel fModel= DLTKCore.create(ResourcesPlugin.getWorkspace().getRoot());
 
+	@Override
 	public boolean contains(Object workingSetElement, Object element, int flags) {
 		if (!(workingSetElement instanceof IModelElement) || element == null)
 			return false;
-						
+
 		IModelElement workingSetModelElement= (IModelElement)workingSetElement;
-		IResource resource= null;		
+		IResource resource= null;
 		IModelElement jElement= null;
 		if (element instanceof IModelElement) {
-			jElement= (IModelElement)element;	
-			resource= jElement.getResource(); 
+			jElement= (IModelElement)element;
+			resource= jElement.getResource();
 		} else {
 			if (element instanceof IAdaptable) {
 				resource = ((IAdaptable) element).getAdapter(IResource.class);
@@ -38,16 +39,16 @@ public class DLTKElementContainmentAdapter implements IContainmentAdapter {
 					if (fModel.contains(resource)) {
 						jElement= DLTKCore.create(resource);
 						if (jElement != null && !jElement.exists())
-							jElement= null;		
+							jElement= null;
 					}
 				}
 			}
 		}
-		
+
 		if (jElement != null) {
 			if (contains(workingSetModelElement, jElement, flags))
 				return true;
-			if (workingSetModelElement.getElementType() == IModelElement.PROJECT_FRAGMENT && 
+			if (workingSetModelElement.getElementType() == IModelElement.PROJECT_FRAGMENT &&
 				resource.getType() == IResource.FOLDER && checkIfDescendant(flags))
 				return isChild(workingSetModelElement, resource);
 		} else if (resource != null) {
@@ -55,7 +56,7 @@ public class DLTKElementContainmentAdapter implements IContainmentAdapter {
 		}
 		return false;
 	}
-	
+
 	private boolean contains(IModelElement workingSetElement, IModelElement element, int flags) {
 		if (checkContext(flags) && workingSetElement.equals(element)) {
 			return true;
@@ -71,7 +72,7 @@ public class DLTKElementContainmentAdapter implements IContainmentAdapter {
 		}
 		return false;
 	}
-	
+
 	private boolean check(IModelElement ancestor, IModelElement descendent) {
 		descendent= descendent.getParent();
 		while (descendent != null) {
@@ -81,14 +82,14 @@ public class DLTKElementContainmentAdapter implements IContainmentAdapter {
 		}
 		return false;
 	}
-	
+
 	private boolean isChild(IModelElement workingSetElement, IResource element) {
 		IResource resource= workingSetElement.getResource();
 		if (resource == null)
 			return false;
 		return check(element, resource);
 	}
-	
+
 	private boolean contains(IModelElement workingSetElement, IResource element, int flags) {
 		IResource workingSetResource= workingSetElement.getResource();
 		if (workingSetResource == null)
@@ -107,7 +108,7 @@ public class DLTKElementContainmentAdapter implements IContainmentAdapter {
 		}
 		return false;
 	}
-	
+
 	private boolean check(IResource ancestor, IResource descendent) {
 		descendent= descendent.getParent();
 		while(descendent != null) {
@@ -117,19 +118,19 @@ public class DLTKElementContainmentAdapter implements IContainmentAdapter {
 		}
 		return false;
 	}
-	
+
 	private boolean checkIfDescendant(int flags) {
 		return (flags & CHECK_IF_DESCENDANT) != 0;
 	}
-	
+
 	private boolean checkIfAncestor(int flags) {
 		return (flags & CHECK_IF_ANCESTOR) != 0;
 	}
-	
+
 	private boolean checkIfChild(int flags) {
 		return (flags & CHECK_IF_CHILD) != 0;
 	}
-	
+
 	private boolean checkContext(int flags) {
 		return (flags & CHECK_CONTEXT) != 0;
 	}

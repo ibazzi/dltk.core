@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -32,28 +32,27 @@ class TestTodoTaskPreferences implements ITodoTaskPreferences {
 		this.caseSensitive = caseSensitive;
 	}
 
+	@Override
 	public String[] getTagNames() {
 		return tags;
 	}
 
-	public List getTaskTags() {
-		final List taskTags = new ArrayList();
+	@Override
+	public List<TodoTask> getTaskTags() {
+		final List<TodoTask> taskTags = new ArrayList<>();
 		for (int i = 0; i < tags.length; ++i) {
 			taskTags.add(new TodoTask(tags[i], TodoTask.PRIORITY_NORMAL));
 		}
 		return taskTags;
 	}
 
+	@Override
 	public boolean isCaseSensitive() {
 		return caseSensitive;
 	}
 
+	@Override
 	public boolean isEnabled() {
 		return true;
 	}
-
-	public void setTaskTags(List elements) {
-		throw new UnsupportedOperationException("setTaskTags");
-	}
-
 }

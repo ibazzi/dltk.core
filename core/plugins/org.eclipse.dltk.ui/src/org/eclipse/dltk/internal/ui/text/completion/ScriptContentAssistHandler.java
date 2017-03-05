@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.text.completion;
 
@@ -20,29 +19,22 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-
-/**
- * 
-	 *
- */
 public final class ScriptContentAssistHandler extends AbstractHandler {
 	private final SpecificContentAssistExecutor fExecutor= new SpecificContentAssistExecutor(CompletionProposalComputerRegistry.getDefault());
-	
+
 	public ScriptContentAssistHandler() {
 	}
 
-	/*
-	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
-	 */
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		ITextEditor editor= getActiveEditor();
 		if (editor == null)
 			return null;
-		
+
 		String categoryId= event.getParameter("org.eclipse.dltk.ui.specific_content_assist.category_id"); //$NON-NLS-1$
 		if (categoryId == null)
 			return null;
-		
+
 		fExecutor.invokeContentAssist(editor, categoryId);
 
 		return null;

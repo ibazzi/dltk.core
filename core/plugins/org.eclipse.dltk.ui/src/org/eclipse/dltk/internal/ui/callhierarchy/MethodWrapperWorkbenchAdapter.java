@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
-
 package org.eclipse.dltk.internal.ui.callhierarchy;
 
 import org.eclipse.core.runtime.Assert;
@@ -29,47 +27,36 @@ public class MethodWrapperWorkbenchAdapter implements IWorkbenchAdapter {
 		return fMethodWrapper;
 	}
 
+	@Override
 	public Object[] getChildren(Object o) { //should not be called
 		return new Object[0];
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
-	 */
+	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
-	 */
+	@Override
 	public String getLabel(Object o) {
         return fMethodWrapper.getMember().getElementName();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
-	 */
+	@Override
 	public Object getParent(Object o) {
 		return fMethodWrapper.getParent();
 	}
-	
-    /*
-     * (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    public boolean equals(Object obj) {
+
+    @Override
+	public boolean equals(Object obj) {
         //Note: A MethodWrapperWorkbenchAdapter is equal to its MethodWrapper and vice versa (bug 101677).
         return fMethodWrapper.equals(obj);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         //Note: A MethodWrapperWorkbenchAdapter is equal to its MethodWrapper and vice versa (bug 101677).
         return fMethodWrapper.hashCode();
     }
-    
+
 }

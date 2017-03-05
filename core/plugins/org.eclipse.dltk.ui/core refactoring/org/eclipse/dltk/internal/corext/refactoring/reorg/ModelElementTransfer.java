@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.corext.refactoring.reorg;
 
@@ -46,24 +45,16 @@ public class ModelElementTransfer extends ByteArrayTransfer {
 		return fInstance;
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on Transfer.
-	 */
+	@Override
 	protected int[] getTypeIds() {
 		return new int[] { TYPEID };
 	}
-	/* (non-Javadoc)
-	 * Returns the type names.
-	 *
-	 * @return the list of type names
-	 */
+	@Override
 	protected String[] getTypeNames() {
 		return new String[] { TYPE_NAME };
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.dnd.Transfer#javaToNative(java.lang.Object, org.eclipse.swt.dnd.TransferData)
-	 */
+	@Override
 	protected void javaToNative(Object data, TransferData transferData) {
 		if (!(data instanceof IModelElement[]))
 			return;
@@ -98,9 +89,7 @@ public class ModelElementTransfer extends ByteArrayTransfer {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.dnd.Transfer#nativeToScript(org.eclipse.swt.dnd.TransferData)
-	 */
+	@Override
 	protected Object nativeToJava(TransferData transferData) {
 		/*
 		 * The element serialization format is:

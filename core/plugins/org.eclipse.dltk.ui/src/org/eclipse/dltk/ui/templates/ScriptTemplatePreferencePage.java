@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,11 +46,12 @@ public abstract class ScriptTemplatePreferencePage extends
 		/**
 		 * Creates the viewer to be used to display the pattern. Subclasses may
 		 * override.
-		 * 
+		 *
 		 * @param parent
 		 *            the parent composite of the viewer
 		 * @return a configured <code>SourceViewer</code>
 		 */
+		@Override
 		protected SourceViewer createViewer(Composite parent) {
 			IPreferenceStore store = getPreferenceStore();
 			SourceViewer viewer = new ScriptSourceViewer(parent, null, null,
@@ -80,6 +81,7 @@ public abstract class ScriptTemplatePreferencePage extends
 		setContextTypeRegistry(tplAccess.getContextTypeRegistry());
 	}
 
+	@Override
 	protected Template editTemplate(Template template, boolean edit,
 			boolean isNameModifiable) {
 		EditTemplateDialog dialog = new ScriptEditTemplateDialog(getShell(),
@@ -90,6 +92,7 @@ public abstract class ScriptTemplatePreferencePage extends
 		return null;
 	}
 
+	@Override
 	protected SourceViewer createViewer(Composite parent) {
 		IPreferenceStore store = getPreferenceStore();
 		ScriptSourceViewerConfiguration configuration = createSourceViewerConfiguration();
@@ -117,6 +120,7 @@ public abstract class ScriptTemplatePreferencePage extends
 		return viewer;
 	}
 
+	@Override
 	protected void updateViewerInput() {
 		IStructuredSelection selection = (IStructuredSelection) getTableViewer()
 				.getSelection();
@@ -149,7 +153,7 @@ public abstract class ScriptTemplatePreferencePage extends
 
 		/**
 		 * Updates the <code>viewer</code> content
-		 * 
+		 *
 		 * @param viewer
 		 * @param template
 		 */
@@ -173,6 +177,7 @@ public abstract class ScriptTemplatePreferencePage extends
 			this.suffix = suffix;
 		}
 
+		@Override
 		public void updateInput(SourceViewer viewer, Template template) {
 			StringBuilder sb = new StringBuilder();
 			final int offset;
@@ -202,7 +207,7 @@ public abstract class ScriptTemplatePreferencePage extends
 	 * Returns the {@link IViewerInputUpdater} for the specified template or
 	 * <code>null</code> if template content should be used directly without any
 	 * modifications.
-	 * 
+	 *
 	 * @param viewer
 	 * @param template
 	 * @return
@@ -212,6 +217,7 @@ public abstract class ScriptTemplatePreferencePage extends
 		return null;
 	}
 
+	@Override
 	protected boolean isShowFormatterSetting() {
 		return false;
 	}

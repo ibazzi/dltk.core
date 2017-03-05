@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -13,7 +13,6 @@ package org.eclipse.dltk.core.tests.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -116,11 +115,6 @@ public class TestSearchResults extends SearchRequestor {
 	}
 
 	public void sortByOffset() {
-		Collections.sort(matches, new Comparator<SearchMatch>() {
-			@Override
-			public int compare(SearchMatch o1, SearchMatch o2) {
-				return o1.getOffset() - o2.getOffset();
-			}
-		});
+		Collections.sort(matches, (o1, o2) -> o1.getOffset() - o2.getOffset());
 	}
 }

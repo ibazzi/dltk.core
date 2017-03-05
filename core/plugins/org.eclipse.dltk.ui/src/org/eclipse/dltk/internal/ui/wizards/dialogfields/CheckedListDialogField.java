@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.wizards.dialogfields;
 
@@ -68,25 +67,15 @@ public class CheckedListDialogField<E> extends ListDialogField<E> {
 		fUncheckAllButtonIndex = uncheckButtonIndex;
 	}
 
-	/*
-	 * @see ListDialogField#createTableViewer
-	 */
 	@Override
 	protected TableViewer createTableViewer(Composite parent) {
 		Table table = new Table(parent, SWT.CHECK + getListStyle());
 		table.setFont(parent.getFont());
 		CheckboxTableViewer tableViewer = new CheckboxTableViewer(table);
-		tableViewer.addCheckStateListener(new ICheckStateListener() {
-			public void checkStateChanged(CheckStateChangedEvent e) {
-				doCheckStateChanged(e);
-			}
-		});
+		tableViewer.addCheckStateListener(e -> doCheckStateChanged(e));
 		return tableViewer;
 	}
 
-	/*
-	 * @see ListDialogField#getListControl
-	 */
 	@Override
 	public Control getListControl(Composite parent) {
 		Control control = super.getListControl(parent);

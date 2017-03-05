@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -35,31 +35,35 @@ public class ValidateAction extends Action {
 	/**
 	 * @param validator
 	 */
-	public ValidateAction(IValidator validator, IStructuredSelection selection) {
+	public ValidateAction(IValidator validator,
+			IStructuredSelection selection) {
 		this.validator = validator;
 		this.selection = selection;
 		final String text = NLS.bind(
 				Messages.DLTKValidatorsEditorContextMenu_validateWith,
 				validator.getName());
 		setText(text);
-		setImageDescriptor(ValidatorsUI.getDefault().getImageDescriptor(
-				VALIDATE_IMAGE));
+		setImageDescriptor(
+				ValidatorsUI.getDefault().getImageDescriptor(VALIDATE_IMAGE));
 	}
 
+	@Override
 	public void run() {
 		final AbstractConsoleValidateJob delegate = new AbstractConsoleValidateJob(
 				validator.getName()) {
 
+			@Override
 			protected void invokeValidationFor(IValidatorOutput output,
 					IScriptProject project, ISourceModule[] modules,
 					IResource[] resources, IProgressMonitor monitor) {
 				if (validator.isValidatorValid(project)) {
 					// TODO create submonitors
 					final ISourceModuleValidator sourceModuleValidator = (ISourceModuleValidator) validator
-							.getValidator(project, ISourceModuleValidator.class);
+							.getValidator(project,
+									ISourceModuleValidator.class);
 					if (sourceModuleValidator != null) {
-						sourceModuleValidator
-								.validate(modules, output, monitor);
+						sourceModuleValidator.validate(modules, output,
+								monitor);
 					}
 					final IResourceValidator resourceValidator = (IResourceValidator) validator
 							.getValidator(project, IResourceValidator.class);

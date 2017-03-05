@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,7 @@ import org.eclipse.swt.custom.StyleRange;
 
 /**
  * Semantic highlighting presenter - UI thread implementation.
- * 
+ *
  * @since 3.0
  */
 public class SemanticHighlightingPresenter implements
@@ -55,7 +55,7 @@ public class SemanticHighlightingPresenter implements
 
 		/**
 		 * Creates a new updater for the given <code>category</code>.
-		 * 
+		 *
 		 * @param category
 		 *            the new category.
 		 */
@@ -66,6 +66,7 @@ public class SemanticHighlightingPresenter implements
 		/*
 		 * @see IPositionUpdater#update(DocumentEvent)
 		 */
+		@Override
 		public void update(DocumentEvent event) {
 
 			int eventOffset = event.getOffset();
@@ -111,7 +112,7 @@ public class SemanticHighlightingPresenter implements
 		/**
 		 * Update the given position with the given event. The event precedes
 		 * the position.
-		 * 
+		 *
 		 * @param position
 		 *            The position
 		 * @param event
@@ -129,7 +130,7 @@ public class SemanticHighlightingPresenter implements
 		/**
 		 * Update the given position with the given event. The event succeeds
 		 * the position.
-		 * 
+		 *
 		 * @param position
 		 *            The position
 		 * @param event
@@ -142,7 +143,7 @@ public class SemanticHighlightingPresenter implements
 		/**
 		 * Update the given position with the given event. The event is included
 		 * by the position.
-		 * 
+		 *
 		 * @param position
 		 *            The position
 		 * @param event
@@ -197,7 +198,7 @@ public class SemanticHighlightingPresenter implements
 		/**
 		 * Update the given position with the given event. The event overlaps
 		 * with the end of the position.
-		 * 
+		 *
 		 * @param position
 		 *            The position
 		 * @param event
@@ -222,7 +223,7 @@ public class SemanticHighlightingPresenter implements
 		/**
 		 * Update the given position with the given event. The event overlaps
 		 * with the start of the position.
-		 * 
+		 *
 		 * @param position
 		 *            The position
 		 * @param event
@@ -252,7 +253,7 @@ public class SemanticHighlightingPresenter implements
 		/**
 		 * Update the given position with the given event. The event includes
 		 * the position.
-		 * 
+		 *
 		 * @param position
 		 *            The position
 		 * @param event
@@ -291,7 +292,7 @@ public class SemanticHighlightingPresenter implements
 	 * <p>
 	 * NOTE: Also called from background thread.
 	 * </p>
-	 * 
+	 *
 	 * @param offset
 	 *            The offset
 	 * @param length
@@ -300,6 +301,7 @@ public class SemanticHighlightingPresenter implements
 	 *            The highlighting
 	 * @return The new highlighted position
 	 */
+	@Override
 	public HighlightedPosition createHighlightedPosition(int offset,
 			int length, HighlightingStyle highlighting) {
 		// TODO: reuse deleted positions
@@ -312,7 +314,7 @@ public class SemanticHighlightingPresenter implements
 	 * <p>
 	 * NOTE: Called from background thread.
 	 * </p>
-	 * 
+	 *
 	 * @param list
 	 *            The list
 	 */
@@ -342,7 +344,7 @@ public class SemanticHighlightingPresenter implements
 	 * <p>
 	 * NOTE: Called from background thread.
 	 * </p>
-	 * 
+	 *
 	 * @param addedPositions
 	 *            the added positions
 	 * @param removedPositions
@@ -396,7 +398,7 @@ public class SemanticHighlightingPresenter implements
 	 * <p>
 	 * NOTE: Called from background thread.
 	 * </p>
-	 * 
+	 *
 	 * @param textPresentation
 	 *            the text presentation
 	 * @param added
@@ -418,11 +420,8 @@ public class SemanticHighlightingPresenter implements
 		if (isCanceled())
 			return null;
 
-		Runnable runnable = new Runnable() {
-			public void run() {
-				updatePresentation(textPresentation, added, removed);
-			}
-		};
+		Runnable runnable = () -> updatePresentation(textPresentation, added,
+				removed);
 		return runnable;
 	}
 
@@ -434,7 +433,7 @@ public class SemanticHighlightingPresenter implements
 	 * <p>
 	 * NOTE: Indirectly called from background thread by UI runnable.
 	 * </p>
-	 * 
+	 *
 	 * @param textPresentation
 	 *            the text presentation or <code>null</code>, if the
 	 *            presentation should computed in the UI thread
@@ -558,7 +557,7 @@ public class SemanticHighlightingPresenter implements
 
 	/**
 	 * Returns <code>true</code> iff the positions contain the position.
-	 * 
+	 *
 	 * @param positions
 	 *            the positions, must be ordered by offset but may overlap
 	 * @param position
@@ -573,7 +572,7 @@ public class SemanticHighlightingPresenter implements
 	/**
 	 * Returns index of the position in the positions, <code>-1</code> if not
 	 * found.
-	 * 
+	 *
 	 * @param positions
 	 *            the positions, must be ordered by offset but may overlap
 	 * @param position
@@ -592,47 +591,9 @@ public class SemanticHighlightingPresenter implements
 	}
 
 	/**
-	 * Insert the given position in <code>fPositions</code>, s.t. the offsets
-	 * remain in linear order.
-	 * 
-	 * @param position
-	 *            The position for insertion
-	 */
-	private void insertPosition(HighlightedPosition position) {
-		int i = computeIndexAfterOffset(fPositions, position.getOffset());
-		fPositions.add(i, position);
-	}
-
-	/**
-	 * Returns the index of the first position with an offset greater than the
-	 * given offset.
-	 * 
-	 * @param positions
-	 *            the positions, must be ordered by offset and must not overlap
-	 * @param offset
-	 *            the offset
-	 * @return the index of the last position with an offset greater than the
-	 *         given offset
-	 */
-	private int computeIndexAfterOffset(List<? extends Position> positions,
-			int offset) {
-		int i = -1;
-		int j = positions.size();
-		while (j - i > 1) {
-			int k = (i + j) >> 1;
-			Position position = positions.get(k);
-			if (position.getOffset() > offset)
-				j = k;
-			else
-				i = k;
-		}
-		return j;
-	}
-
-	/**
 	 * Returns the index of the first position with an offset equal or greater
 	 * than the given offset.
-	 * 
+	 *
 	 * @param positions
 	 *            the positions, must be ordered by offset and must not overlap
 	 * @param offset
@@ -658,6 +619,7 @@ public class SemanticHighlightingPresenter implements
 	/*
 	 * @see ITextPresentationListener#applyTextPresentation (TextPresentation)
 	 */
+	@Override
 	public void applyTextPresentation(TextPresentation textPresentation) {
 		IRegion region = textPresentation.getExtent();
 		int i = computeIndexAtOffset(fPositions, region.getOffset()), n = computeIndexAtOffset(
@@ -685,6 +647,7 @@ public class SemanticHighlightingPresenter implements
 	/*
 	 * @see ITextInputListener#inputDocumentAboutToBeChanged(IDocument,IDocument)
 	 */
+	@Override
 	public void inputDocumentAboutToBeChanged(IDocument oldInput,
 			IDocument newInput) {
 		setCanceled(true);
@@ -695,6 +658,7 @@ public class SemanticHighlightingPresenter implements
 	/*
 	 * @see ITextInputListener#inputDocumentChanged(IDocument, IDocument)
 	 */
+	@Override
 	public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
 		manageDocument(newInput);
 	}
@@ -702,6 +666,7 @@ public class SemanticHighlightingPresenter implements
 	/*
 	 * @see IDocumentListener#documentAboutToBeChanged(DocumentEvent)
 	 */
+	@Override
 	public void documentAboutToBeChanged(DocumentEvent event) {
 		setCanceled(true);
 	}
@@ -709,6 +674,7 @@ public class SemanticHighlightingPresenter implements
 	/*
 	 * @see IDocumentListener#documentChanged(DocumentEvent)
 	 */
+	@Override
 	public void documentChanged(DocumentEvent event) {
 	}
 
@@ -731,7 +697,7 @@ public class SemanticHighlightingPresenter implements
 
 	/**
 	 * Set whether or not the current reconcile is canceled.
-	 * 
+	 *
 	 * @param isCanceled
 	 *            <code>true</code> iff the current reconcile is canceled
 	 */
@@ -765,7 +731,7 @@ public class SemanticHighlightingPresenter implements
 	/**
 	 * Install this presenter on the given source viewer and background
 	 * presentation reconciler.
-	 * 
+	 *
 	 * @param sourceViewer
 	 *            the source viewer
 	 * @param backgroundPresentationReconciler
@@ -804,7 +770,7 @@ public class SemanticHighlightingPresenter implements
 
 	/**
 	 * Invalidate text presentation of positions with the given highlighting.
-	 * 
+	 *
 	 * @param highlighting
 	 *            The highlighting
 	 */
@@ -829,40 +795,6 @@ public class SemanticHighlightingPresenter implements
 	}
 
 	/**
-	 * Add a position with the given range and highlighting unconditionally,
-	 * only from UI thread. The position will also be registered on the
-	 * document. The text presentation is not invalidated.
-	 * 
-	 * @param offset
-	 *            The range offset
-	 * @param length
-	 *            The range length
-	 * @param highlighting
-	 */
-	private void addPositionFromUI(int offset, int length,
-			HighlightingStyle highlighting) {
-		HighlightedPosition position = createHighlightedPosition(offset,
-				length, highlighting);
-		synchronized (fPositionLock) {
-			insertPosition(position);
-		}
-
-		IDocument document = fSourceViewer.getDocument();
-		if (document == null)
-			return;
-		String positionCategory = getPositionCategory();
-		try {
-			document.addPosition(positionCategory, position);
-		} catch (BadLocationException e) {
-			// Should not happen
-			DLTKUIPlugin.log(e);
-		} catch (BadPositionCategoryException e) {
-			// Should not happen
-			DLTKUIPlugin.log(e);
-		}
-	}
-
-	/**
 	 * Reset to initial state.
 	 */
 	private void resetState() {
@@ -873,7 +805,7 @@ public class SemanticHighlightingPresenter implements
 
 	/**
 	 * Start managing the given document.
-	 * 
+	 *
 	 * @param document
 	 *            The document
 	 */
@@ -887,7 +819,7 @@ public class SemanticHighlightingPresenter implements
 
 	/**
 	 * Stop managing the given document.
-	 * 
+	 *
 	 * @param document
 	 *            The document
 	 */

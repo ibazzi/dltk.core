@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.wizards.dialogfields;
 
@@ -114,7 +113,7 @@ public class ListDialogField<E> extends DialogField {
 
 	/**
 	 * Creates the <code>ListDialogField</code>.
-	 * 
+	 *
 	 * @param adapter
 	 *            A listener for button invocation, selection changes. Can be
 	 *            <code>null</code>.
@@ -185,7 +184,7 @@ public class ListDialogField<E> extends DialogField {
 
 	/**
 	 * Sets the viewerSorter.
-	 * 
+	 *
 	 * @param viewerSorter
 	 *            The viewerSorter to set
 	 */
@@ -207,7 +206,7 @@ public class ListDialogField<E> extends DialogField {
 
 	/**
 	 * Checks if the button pressed is handled internally
-	 * 
+	 *
 	 * @return Returns true if button has been handled.
 	 */
 	protected boolean managedButtonPressed(int index) {
@@ -315,7 +314,7 @@ public class ListDialogField<E> extends DialogField {
 	/**
 	 * Returns the list control. When called the first time, the control will be
 	 * created.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent composite when called the first time, or
 	 *            <code>null</code> after.
@@ -436,7 +435,7 @@ public class ListDialogField<E> extends DialogField {
 	/**
 	 * Returns the composite containing the buttons. When called the first time,
 	 * the control will be created.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent composite when called the first time, or
 	 *            <code>null</code> after.
@@ -446,10 +445,12 @@ public class ListDialogField<E> extends DialogField {
 			assertCompositeNotNull(parent);
 
 			SelectionListener listener = new SelectionListener() {
+				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
 					doButtonSelected(e);
 				}
 
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					doButtonSelected(e);
 				}
@@ -792,11 +793,9 @@ public class ListDialogField<E> extends DialogField {
 	public void postSetSelection(final ISelection selection) {
 		if (isOkToUse(fTableControl)) {
 			Display d = fTableControl.getDisplay();
-			d.asyncExec(new Runnable() {
-				public void run() {
-					if (isOkToUse(fTableControl)) {
-						selectElements(selection);
-					}
+			d.asyncExec(() -> {
+				if (isOkToUse(fTableControl)) {
+					selectElements(selection);
 				}
 			});
 		}
@@ -925,30 +924,35 @@ public class ListDialogField<E> extends DialogField {
 
 		// ------- ITableContentProvider Interface ------------
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			// will never happen
 		}
 
+		@Override
 		public void dispose() {
 		}
 
+		@Override
 		public Object[] getElements(Object obj) {
 			return fElements.toArray();
 		}
 
 		// ------- ISelectionChangedListener Interface ------------
 
+		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			doListSelected(event);
 		}
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * org.eclipse.jface.viewers.IDoubleClickListener#doubleClick(org.eclipse
 		 * .jface.viewers.DoubleClickEvent)
 		 */
+		@Override
 		public void doubleClick(DoubleClickEvent event) {
 			doDoubleClick(event);
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,7 +71,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * Updates the projection model of a source module using AST info.
- * 
+ *
  * @see DelegatingFoldingStructureProvider
  * @see IFoldingBlockProvider
  */
@@ -109,7 +109,7 @@ public abstract class AbstractASTFoldingStructureProvider implements
 		 * <code>false</code> when updating the folding structure while typing;
 		 * it may be <code>true</code> when computing or restoring the initial
 		 * folding structure.
-		 * 
+		 *
 		 * @return <code>true</code> if newly created folding regions may be
 		 *         collapsed, <code>false</code> if not
 		 */
@@ -119,7 +119,7 @@ public abstract class AbstractASTFoldingStructureProvider implements
 
 		/**
 		 * Returns the document which contains the code being folded.
-		 * 
+		 *
 		 * @return the document which contains the code being folded
 		 */
 		IDocument getDocument() {
@@ -135,7 +135,7 @@ public abstract class AbstractASTFoldingStructureProvider implements
 		 * annotation / position pair will be added to the
 		 * {@link ProjectionAnnotationModel} of the {@link ProjectionViewer} of
 		 * the editor.
-		 * 
+		 *
 		 * @param annotation
 		 *            the annotation to add
 		 * @param position
@@ -187,7 +187,7 @@ public abstract class AbstractASTFoldingStructureProvider implements
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see java.lang.Object#equals(java.lang.Object)
 		 */
 		@Override
@@ -201,7 +201,7 @@ public abstract class AbstractASTFoldingStructureProvider implements
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see java.lang.Object#hashCode()
 		 */
 		@Override
@@ -221,7 +221,7 @@ public abstract class AbstractASTFoldingStructureProvider implements
 
 		/**
 		 * Creates a new projection annotation.
-		 * 
+		 *
 		 * @param isCollapsed
 		 *            <code>true</code> to set the initial state to collapsed,
 		 *            <code>false</code> to set it to expanded
@@ -299,6 +299,7 @@ public abstract class AbstractASTFoldingStructureProvider implements
 	 * Matches comments.
 	 */
 	private static final class CommentFilter implements Filter {
+		@Override
 		public boolean match(ScriptProjectionAnnotation annotation) {
 			if (annotation.isComment() && !annotation.isMarkedDeleted()) {
 				return true;
@@ -311,6 +312,7 @@ public abstract class AbstractASTFoldingStructureProvider implements
 	 * Matches members.
 	 */
 	private static final class MemberFilter implements Filter {
+		@Override
 		public boolean match(ScriptProjectionAnnotation annotation) {
 			if (!annotation.isMarkedDeleted()
 					&& annotation.getElement() instanceof IMember) {
@@ -331,10 +333,7 @@ public abstract class AbstractASTFoldingStructureProvider implements
 			super(offset, length);
 		}
 
-		/*
-		 * @seeorg.eclipse.jface.text.source.projection.IProjectionPosition#
-		 * computeFoldingRegions(org.eclipse.jface.text.IDocument)
-		 */
+		@Override
 		public IRegion[] computeProjectionRegions(IDocument document)
 				throws BadLocationException {
 			DocumentCharacterIterator sequence = new DocumentCharacterIterator(
@@ -376,7 +375,7 @@ public abstract class AbstractASTFoldingStructureProvider implements
 		/**
 		 * Finds the offset of the first identifier part within
 		 * <code>content</code>. Returns 0 if none is found.
-		 * 
+		 *
 		 * @param content
 		 *            the content to search
 		 * @return the first index of a unicode identifier part, or zero if none
@@ -395,6 +394,7 @@ public abstract class AbstractASTFoldingStructureProvider implements
 		 * @seeorg.eclipse.jface.text.source.projection.IProjectionPosition#
 		 * computeCaptionOffset(org.eclipse.jface.text.IDocument)
 		 */
+		@Override
 		public int computeCaptionOffset(IDocument document) {
 			DocumentCharacterIterator sequence = new DocumentCharacterIterator(
 					document, offset, offset + length);
@@ -417,6 +417,7 @@ public abstract class AbstractASTFoldingStructureProvider implements
 		 * @seeorg.eclipse.jface.text.source.projection.IProjectionPosition#
 		 * computeFoldingRegions(org.eclipse.jface.text.IDocument)
 		 */
+		@Override
 		public IRegion[] computeProjectionRegions(IDocument document)
 				throws BadLocationException {
 			int nameStart = offset;
@@ -459,6 +460,7 @@ public abstract class AbstractASTFoldingStructureProvider implements
 		 * @seeorg.eclipse.jface.text.source.projection.IProjectionPosition#
 		 * computeCaptionOffset(org.eclipse.jface.text.IDocument)
 		 */
+		@Override
 		public int computeCaptionOffset(IDocument document) {
 			return 0;
 		}
@@ -472,7 +474,7 @@ public abstract class AbstractASTFoldingStructureProvider implements
 
 		/**
 		 * Registers the listener with the viewer.
-		 * 
+		 *
 		 * @param viewer
 		 *            the viewer to register a listener with
 		 */
@@ -496,6 +498,7 @@ public abstract class AbstractASTFoldingStructureProvider implements
 		 * @seeorg.eclipse.jface.text.source.projection.IProjectionListener#
 		 * projectionEnabled()
 		 */
+		@Override
 		public void projectionEnabled() {
 			handleProjectionEnabled();
 		}
@@ -504,6 +507,7 @@ public abstract class AbstractASTFoldingStructureProvider implements
 		 * @seeorg.eclipse.jface.text.source.projection.IProjectionListener#
 		 * projectionDisabled()
 		 */
+		@Override
 		public void projectionDisabled() {
 			handleProjectionDisabled();
 		}
@@ -515,6 +519,7 @@ public abstract class AbstractASTFoldingStructureProvider implements
 		 * org.eclipse.dltk.core.IElementChangedListener#elementChanged(org.
 		 * eclipse.dltk.core.ElementChangedEvent)
 		 */
+		@Override
 		public void elementChanged(ElementChangedEvent e) {
 			IModelElementDelta delta = findElement(fInput, e.getDelta());
 			if (delta != null
@@ -584,12 +589,13 @@ public abstract class AbstractASTFoldingStructureProvider implements
 	 * <p>
 	 * Subclasses may extend.
 	 * </p>
-	 * 
+	 *
 	 * @param editor
 	 *            {@inheritDoc}
 	 * @param viewer
 	 *            {@inheritDoc}
 	 */
+	@Override
 	public void install(ITextEditor editor, ProjectionViewer viewer,
 			IPreferenceStore store) {
 		internalUninstall();
@@ -606,6 +612,7 @@ public abstract class AbstractASTFoldingStructureProvider implements
 	 * Subclasses may extend.
 	 * </p>
 	 */
+	@Override
 	public void uninstall() {
 		internalUninstall();
 	}
@@ -625,7 +632,7 @@ public abstract class AbstractASTFoldingStructureProvider implements
 	/**
 	 * Returns <code>true</code> if the provider is installed,
 	 * <code>false</code> otherwise.
-	 * 
+	 *
 	 * @return <code>true</code> if the provider is installed,
 	 *         <code>false</code> otherwise
 	 */
@@ -669,10 +676,12 @@ public abstract class AbstractASTFoldingStructureProvider implements
 		}
 	}
 
+	@Override
 	public final void initialize() {
 		initialize(false);
 	}
 
+	@Override
 	public final void initialize(boolean isReinit) {
 		update(createInitialContext(isReinit));
 	}
@@ -928,7 +937,7 @@ public abstract class AbstractASTFoldingStructureProvider implements
 
 		/**
 		 * Represents foldable statement.
-		 * 
+		 *
 		 * @param s
 		 *            AST statement
 		 * @param r
@@ -973,7 +982,7 @@ public abstract class AbstractASTFoldingStructureProvider implements
 	/**
 	 * Returns the preference key used to indicate if classes should be
 	 * 'initially' folded.
-	 * 
+	 *
 	 * <p>
 	 * Sub-classes may override this method to provide an alternative preference
 	 * key if they are not using the one in {@link PreferenceConstants}.
@@ -986,7 +995,7 @@ public abstract class AbstractASTFoldingStructureProvider implements
 	/**
 	 * Returns the preference key used to indicate if methods should be
 	 * 'initially' folded.
-	 * 
+	 *
 	 * <p>
 	 * Sub-classes may override this method to provide an alternative preference
 	 * key if they are not using the one in {@link PreferenceConstants}.
@@ -1003,7 +1012,7 @@ public abstract class AbstractASTFoldingStructureProvider implements
 
 	/**
 	 * Tests if the specified region contains only space or tab characters.
-	 * 
+	 *
 	 * @param document
 	 * @param region
 	 * @return
@@ -1043,7 +1052,7 @@ public abstract class AbstractASTFoldingStructureProvider implements
 	 * Creates a comment folding position from an
 	 * {@link #alignRegion(IRegion, AbstractASTFoldingStructureProvider.FoldingStructureComputationContext)
 	 * aligned} region.
-	 * 
+	 *
 	 * @param aligned
 	 *            an aligned region
 	 * @return a folding position corresponding to <code>aligned</code>
@@ -1056,10 +1065,10 @@ public abstract class AbstractASTFoldingStructureProvider implements
 	 * Creates a folding position that remembers its member from an
 	 * {@link #alignRegion(IRegion, AbstractASTFoldingStructureProvider.FoldingStructureComputationContext)
 	 * aligned} region.
-	 * 
+	 *
 	 * @param aligned
 	 *            an aligned region
-	 * 
+	 *
 	 * @return a folding position corresponding to <code>aligned</code>
 	 */
 	protected final Position createMemberPosition(IRegion aligned) {
@@ -1074,7 +1083,7 @@ public abstract class AbstractASTFoldingStructureProvider implements
 	 * <code>null</code> is returned if <code>region</code> is <code>null</code>
 	 * itself or does not comprise at least one line delimiter, as a single line
 	 * cannot be folded.
-	 * 
+	 *
 	 * @param region
 	 *            the region to align, may be <code>null</code>
 	 * @param ctx
@@ -1137,11 +1146,8 @@ public abstract class AbstractASTFoldingStructureProvider implements
 				list.add(new Tuple(ann, position));
 			}
 		}
-		Comparator<Tuple> comparator = new Comparator<Tuple>() {
-			public int compare(Tuple o1, Tuple o2) {
-				return o1.position.getOffset() - o2.position.getOffset();
-			}
-		};
+		Comparator<Tuple> comparator = (o1, o2) -> o1.position.getOffset()
+				- o2.position.getOffset();
 		for (Iterator<List<Tuple>> it = map.values().iterator(); it.hasNext();) {
 			List<Tuple> list = it.next();
 			Collections.sort(list, comparator);
@@ -1152,6 +1158,7 @@ public abstract class AbstractASTFoldingStructureProvider implements
 	/*
 	 * @see IScriptFoldingStructureProviderExtension#collapseMembers()
 	 */
+	@Override
 	public final void collapseMembers() {
 		modifyFiltered(fMemberFilter, false);
 	}
@@ -1159,13 +1166,14 @@ public abstract class AbstractASTFoldingStructureProvider implements
 	/*
 	 * @see IScriptFoldingStructureProviderExtension#collapseComments()
 	 */
+	@Override
 	public final void collapseComments() {
 		modifyFiltered(fCommentFilter, false);
 	}
 
 	/**
 	 * Collapses or expands all annotations matched by the passed filter.
-	 * 
+	 *
 	 * @param filter
 	 *            the filter to use to select which annotations to collapse
 	 * @param expand
@@ -1262,7 +1270,7 @@ public abstract class AbstractASTFoldingStructureProvider implements
 
 	/**
 	 * Should locate all statements and return
-	 * 
+	 *
 	 * @param code
 	 */
 	protected CodeBlock[] getCodeBlocks(String code) {
@@ -1316,7 +1324,7 @@ public abstract class AbstractASTFoldingStructureProvider implements
 	/**
 	 * Returns is it possible to collapse statement, or it should never be
 	 * folded
-	 * 
+	 *
 	 * @param s
 	 * @param ctx
 	 */
@@ -1377,7 +1385,7 @@ public abstract class AbstractASTFoldingStructureProvider implements
 	/**
 	 * Checks if the specified region is located at the beginning of the
 	 * document
-	 * 
+	 *
 	 * @param region
 	 * @param ctx
 	 */
@@ -1398,7 +1406,7 @@ public abstract class AbstractASTFoldingStructureProvider implements
 
 	/**
 	 * Installs a partitioner with <code>document</code>.
-	 * 
+	 *
 	 * @param document
 	 *            the document
 	 */
@@ -1414,7 +1422,7 @@ public abstract class AbstractASTFoldingStructureProvider implements
 
 	/**
 	 * Removes partitioner with <code>document</code>.
-	 * 
+	 *
 	 * @param document
 	 *            the document
 	 */
@@ -1422,25 +1430,23 @@ public abstract class AbstractASTFoldingStructureProvider implements
 		document.setDocumentPartitioner(getPartition(), null);
 	}
 
+	@Override
 	public void expandElements(final IModelElement[] array) {
-		modifyFiltered(new Filter() {
-
-			public boolean match(ScriptProjectionAnnotation annotation) {
-				IModelElement element = annotation.getElement();
-				if (element == null)
-					return false;
-				for (int a = 0; a < array.length; a++) {
-					IModelElement e = array[a];
-					if (e.equals(element)) {
-						return true;
-					}
-				}
+		modifyFiltered(annotation -> {
+			IModelElement element = annotation.getElement();
+			if (element == null)
 				return false;
+			for (int a = 0; a < array.length; a++) {
+				IModelElement e = array[a];
+				if (e.equals(element)) {
+					return true;
+				}
 			}
-
+			return false;
 		}, true);
 	}
 
+	@Override
 	public void collapseElements(IModelElement[] modelElements) {
 		// empty implementation
 	}
@@ -1555,6 +1561,7 @@ public abstract class AbstractASTFoldingStructureProvider implements
 	public static class MethodCollector implements IModelElementVisitor {
 		private final Map<SourceRange, IModelElement> methodByNameRange = new HashMap<SourceRange, IModelElement>();
 
+		@Override
 		public boolean visit(IModelElement element) {
 
 			if (element instanceof SourceMethod) {

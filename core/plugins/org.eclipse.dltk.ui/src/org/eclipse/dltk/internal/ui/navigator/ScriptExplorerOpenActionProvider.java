@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.navigator;
 
@@ -28,6 +27,7 @@ public class ScriptExplorerOpenActionProvider extends CommonActionProvider {
 
 	private boolean fInViewPart = false;
 
+	@Override
 	public void fillActionBars(IActionBars actionBars) {
 		if (fInViewPart) {
 			fOpenGroup.fillActionBars(actionBars);
@@ -43,6 +43,7 @@ public class ScriptExplorerOpenActionProvider extends CommonActionProvider {
 		}
 	}
 
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		if (fInViewPart) {
 			if (fOpenGroup.getOpenAction().isEnabled()) {
@@ -51,6 +52,7 @@ public class ScriptExplorerOpenActionProvider extends CommonActionProvider {
 		}
 	}
 
+	@Override
 	public void init(ICommonActionExtensionSite site) {
 		ICommonViewerWorkbenchSite workbenchSite = null;
 		if (site.getViewSite() instanceof ICommonViewerWorkbenchSite)
@@ -72,6 +74,7 @@ public class ScriptExplorerOpenActionProvider extends CommonActionProvider {
 		}
 	}
 
+	@Override
 	public void setContext(ActionContext context) {
 		super.setContext(context);
 		if (fInViewPart) {

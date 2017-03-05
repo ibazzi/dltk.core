@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,8 +27,6 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
@@ -78,6 +76,7 @@ public class TableTextCellEditor extends CellEditor {
 		fProperty= (String) tableViewer.getColumnProperties()[column];
 	}
 
+	@Override
 	public void activate() {
 		super.activate();
 		if (fActivationListener != null)
@@ -91,6 +90,7 @@ public class TableTextCellEditor extends CellEditor {
 				fProperty, newValue);
 	}
 
+	@Override
 	protected void focusLost() {
 		if (fContentAssistant != null && fContentAssistant.hasProposalPopupFocus()) {
 			// skip focus lost if it went to the content assist popup
@@ -138,26 +138,22 @@ public class TableTextCellEditor extends CellEditor {
 
 	private ModifyListener getModifyListener() {
 	    if (fModifyListener == null) {
-	        fModifyListener = new ModifyListener() {
-	            public void modifyText(ModifyEvent e) {
-	                editOccured(e);
-	            }
-	        };
+			fModifyListener = e -> editOccured(e);
 	    }
 	    return fModifyListener;
 	}
 
-    /* (non-Javadoc)
-     * Method declared on CellEditor.
-     */
-    protected Control createControl(Composite parent) {
+	@Override
+	protected Control createControl(Composite parent) {
         text= new Text(parent, getStyle());
         text.addSelectionListener(new SelectionAdapter() {
-            public void widgetDefaultSelected(SelectionEvent e) {
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
                 handleDefaultSelection(e);
             }
         });
 		text.addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyPressed(KeyEvent e) {
 				// support switching rows while editing:
 				if (e.stateMask == SWT.MOD1 || e.stateMask == SWT.MOD2) {
@@ -205,7 +201,8 @@ public class TableTextCellEditor extends CellEditor {
 		});
         text.addKeyListener(new KeyAdapter() {
             // hook key pressed - see PR 14201
-            public void keyPressed(KeyEvent e) {
+			@Override
+			public void keyPressed(KeyEvent e) {
                 keyReleaseOccured(e);
 
                 // as a result of processing the above call, clients may have
@@ -217,32 +214,27 @@ public class TableTextCellEditor extends CellEditor {
                 checkSelectable();
             }
         });
-        text.addTraverseListener(new TraverseListener() {
-            public void keyTraversed(TraverseEvent e) {
-                if (e.detail == SWT.TRAVERSE_ESCAPE
-                        || e.detail == SWT.TRAVERSE_RETURN) {
-                    e.doit = false;
-                }
-            }
-        });
+		text.addTraverseListener(e -> {
+			if (e.detail == SWT.TRAVERSE_ESCAPE
+					|| e.detail == SWT.TRAVERSE_RETURN) {
+				e.doit = false;
+			}
+		});
         // We really want a selection listener but it is not supported so we
         // use a key listener and a mouse listener to know when selection changes
         // may have occurred
         text.addMouseListener(new MouseAdapter() {
-            public void mouseUp(MouseEvent e) {
+			@Override
+			public void mouseUp(MouseEvent e) {
                 checkSelection();
                 checkDeleteable();
                 checkSelectable();
             }
         });
         text.addFocusListener(new FocusAdapter() {
-            public void focusLost(FocusEvent e) {
-            	e.display.asyncExec(new Runnable() {
-					public void run() {
-						// without the asyncExec, focus has not had a chance to go to the content assist proposals
-						TableTextCellEditor.this.focusLost();
-					}
-				});
+			@Override
+			public void focusLost(FocusEvent e) {
+				e.display.asyncExec(() -> TableTextCellEditor.this.focusLost());
             }
         });
         text.setFont(parent.getFont());
@@ -253,7 +245,8 @@ public class TableTextCellEditor extends CellEditor {
 		return text;
     }
 
-    protected void fireCancelEditor() {
+	@Override
+	protected void fireCancelEditor() {
 		/* bug 58540: change signature refactoring interaction: validate as you type [refactoring] */
     	text.setText(fOriginalValue);
 		super.fireApplyEditorValue();
@@ -266,11 +259,13 @@ public class TableTextCellEditor extends CellEditor {
      *
      * @return the text string
      */
-    protected Object doGetValue() {
+	@Override
+	protected Object doGetValue() {
         return text.getText();
     }
 
-    protected void doSetFocus() {
+	@Override
+	protected void doSetFocus() {
         if (text != null) {
             text.selectAll();
             text.setFocus();
@@ -287,7 +282,8 @@ public class TableTextCellEditor extends CellEditor {
      *
      * @param value a text string (type <code>String</code>)
      */
-    protected void doSetValue(Object value) {
+	@Override
+	protected void doSetValue(Object value) {
         Assert.isTrue(text != null && (value instanceof String));
         text.removeModifyListener(getModifyListener());
         text.setText((String) value);
@@ -316,7 +312,8 @@ public class TableTextCellEditor extends CellEditor {
 		fireModifyEvent(text.getText()); // update model on-the-fly
     }
 
-    public LayoutData getLayoutData() {
+	@Override
+	public LayoutData getLayoutData() {
         return new LayoutData();
     }
 
@@ -326,38 +323,44 @@ public class TableTextCellEditor extends CellEditor {
         deactivate();
     }
 
-    public boolean isCopyEnabled() {
+	@Override
+	public boolean isCopyEnabled() {
         if (text == null || text.isDisposed())
             return false;
         return text.getSelectionCount() > 0;
     }
 
-    public boolean isCutEnabled() {
+	@Override
+	public boolean isCutEnabled() {
         if (text == null || text.isDisposed())
             return false;
         return text.getSelectionCount() > 0;
     }
 
-    public boolean isDeleteEnabled() {
+	@Override
+	public boolean isDeleteEnabled() {
         if (text == null || text.isDisposed())
             return false;
         return text.getSelectionCount() > 0
                 || text.getCaretPosition() < text.getCharCount();
     }
 
-    public boolean isPasteEnabled() {
+	@Override
+	public boolean isPasteEnabled() {
         if (text == null || text.isDisposed())
             return false;
         return true;
     }
 
-    public boolean isSelectAllEnabled() {
+	@Override
+	public boolean isSelectAllEnabled() {
         if (text == null || text.isDisposed())
             return false;
         return text.getCharCount() > 0;
     }
 
-    protected void keyReleaseOccured(KeyEvent keyEvent) {
+	@Override
+	protected void keyReleaseOccured(KeyEvent keyEvent) {
         if (keyEvent.character == '\r') { // Return key
             // Enter is handled in handleDefaultSelection.
             // Do not apply the editor value in response to an Enter key event
@@ -378,18 +381,21 @@ public class TableTextCellEditor extends CellEditor {
         super.keyReleaseOccured(keyEvent);
     }
 
-    public void performCopy() {
+	@Override
+	public void performCopy() {
         text.copy();
     }
 
-    public void performCut() {
+	@Override
+	public void performCut() {
         text.cut();
         checkSelection();
         checkDeleteable();
         checkSelectable();
     }
 
-    public void performDelete() {
+	@Override
+	public void performDelete() {
         if (text.getSelectionCount() > 0)
             // remove the contents of the current selection
             text.insert(""); //$NON-NLS-1$
@@ -406,22 +412,22 @@ public class TableTextCellEditor extends CellEditor {
         checkSelectable();
     }
 
-    public void performPaste() {
+	@Override
+	public void performPaste() {
         text.paste();
         checkSelection();
         checkDeleteable();
         checkSelectable();
     }
 
-    public void performSelectAll() {
+	@Override
+	public void performSelectAll() {
         text.selectAll();
         checkSelection();
         checkDeleteable();
     }
 
-    /*
-	 * @see org.eclipse.jface.viewers.CellEditor#dependsOnExternalFocusListener()
-	 */
+	@Override
 	protected boolean dependsOnExternalFocusListener() {
 		return false;
 	}

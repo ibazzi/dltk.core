@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -620,13 +620,8 @@ public class MatchLocator implements IMatchLocator, ITypeRequestor {
 			this.patternLocator.initializePolymorphicSearch(this);
 			IScriptProject previousScriptProject = null;
 			PossibleMatchSet matchSet = new PossibleMatchSet();
-			Util.sort(searchDocuments, new Util.Comparer() {
-				@Override
-				public int compare(Object a, Object b) {
-					return ((SearchDocument) a).getPath().compareTo(
-							((SearchDocument) b).getPath());
-				}
-			});
+			Util.sort(searchDocuments, (a, b) -> ((SearchDocument) a).getPath()
+					.compareTo(((SearchDocument) b).getPath()));
 			int displayed = 0; // progress worked displayed
 			final Set<String> previousPaths = new HashSet<String>();
 			for (int i = 0; i < docsLength; i++) {

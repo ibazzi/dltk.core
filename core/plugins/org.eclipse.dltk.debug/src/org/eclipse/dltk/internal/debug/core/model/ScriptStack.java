@@ -45,8 +45,8 @@ public class ScriptStack implements IScriptStack {
 			for (int depth = 0; depth < numToRebind; ++depth) {
 				final ScriptStackFrame oldFrame = (ScriptStackFrame) frames[oldSize
 						- depth - 1];
-				newFrames[newSize - depth - 1] = oldFrame.bind(levels[newSize
-						- depth - 1]);
+				newFrames[newSize - depth - 1] = oldFrame
+						.bind(levels[newSize - depth - 1]);
 			}
 			final int newCount = newSize - oldSize;
 			for (int i = 0; i < newCount; ++i) {
@@ -57,28 +57,33 @@ public class ScriptStack implements IScriptStack {
 		}
 	}
 
+	@Override
 	public ScriptThread getThread() {
 		return thread;
 	}
 
+	@Override
 	public int size() {
 		synchronized (framesLock) {
 			return frames.length;
 		}
 	}
 
+	@Override
 	public boolean hasFrames() {
 		synchronized (framesLock) {
 			return frames.length > 0;
 		}
 	}
 
+	@Override
 	public IScriptStackFrame[] getFrames() {
 		synchronized (framesLock) {
 			return frames;
 		}
 	}
 
+	@Override
 	public IScriptStackFrame getTopFrame() {
 		synchronized (framesLock) {
 			return frames.length > 0 ? frames[0] : null;

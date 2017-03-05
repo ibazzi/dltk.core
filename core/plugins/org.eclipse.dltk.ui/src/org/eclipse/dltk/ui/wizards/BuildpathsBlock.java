@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.wizards;
 
@@ -102,7 +101,7 @@ public class BuildpathsBlock {
 		/**
 		 * Do the callback. Returns <code>true</code> if .class files should be
 		 * removed from the old output location.
-		 * 
+		 *
 		 * @param oldOutputLocation
 		 *            The old output location
 		 * @return Returns true if .class files should be removed.
@@ -275,7 +274,7 @@ public class BuildpathsBlock {
 	 * Initializes the buildpath for the given project. Multiple calls to init
 	 * are allowed, but all existing settings will be cleared and replace by the
 	 * given or default paths.
-	 * 
+	 *
 	 * @param jproject
 	 *            The java project to configure. Does not have to exist.
 	 * @param outputLocation
@@ -338,13 +337,11 @@ public class BuildpathsBlock {
 		if (Display.getCurrent() != null) {
 			doUpdateUI();
 		} else {
-			Display.getDefault().asyncExec(new Runnable() {
-				public void run() {
-					if (fSWTWidget == null || fSWTWidget.isDisposed()) {
-						return;
-					}
-					doUpdateUI();
+			Display.getDefault().asyncExec(() -> {
+				if (fSWTWidget == null || fSWTWidget.isDisposed()) {
+					return;
 				}
+				doUpdateUI();
 			});
 		}
 	}
@@ -485,11 +482,13 @@ public class BuildpathsBlock {
 	private class BuildPathAdapter implements IStringButtonAdapter,
 			IDialogFieldListener {
 		// -------- IStringButtonAdapter --------
+		@Override
 		public void changeControlPressed(DialogField field) {
 			buildPathChangeControlPressed(field);
 		}
 
 		// ---------- IDialogFieldListener --------
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 			buildPathDialogFieldChanged(field);
 		}
@@ -785,33 +784,29 @@ public class BuildpathsBlock {
 
 	public static IRemoveOldBinariesQuery getRemoveOldBinariesQuery(
 			final Shell shell) {
-		return new IRemoveOldBinariesQuery() {
-			public boolean doQuery(final IPath oldOutputLocation)
-					throws OperationCanceledException {
-				final int[] res = new int[] { 1 };
-				Display.getDefault().syncExec(new Runnable() {
-					public void run() {
-						Shell sh = shell != null ? shell : DLTKUIPlugin
-								.getActiveWorkbenchShell();
-						String title = NewWizardMessages.BuildPathsBlock_RemoveBinariesDialog_title;
-						String message = Messages
-								.format(NewWizardMessages.BuildPathsBlock_RemoveBinariesDialog_description,
-										oldOutputLocation.toString());
-						MessageDialog dialog = new MessageDialog(sh, title,
-								null, message, MessageDialog.QUESTION,
-								new String[] { IDialogConstants.YES_LABEL,
-										IDialogConstants.NO_LABEL,
-										IDialogConstants.CANCEL_LABEL }, 0);
-						res[0] = dialog.open();
-					}
-				});
-				if (res[0] == 0) {
-					return true;
-				} else if (res[0] == 1) {
-					return false;
-				}
-				throw new OperationCanceledException();
+		return oldOutputLocation -> {
+			final int[] res = new int[] { 1 };
+			Display.getDefault().syncExec(() -> {
+				Shell sh = shell != null ? shell
+						: DLTKUIPlugin.getActiveWorkbenchShell();
+				String title = NewWizardMessages.BuildPathsBlock_RemoveBinariesDialog_title;
+				String message = Messages.format(
+						NewWizardMessages.BuildPathsBlock_RemoveBinariesDialog_description,
+						oldOutputLocation.toString());
+				MessageDialog dialog = new MessageDialog(sh, title, null,
+						message, MessageDialog.QUESTION,
+						new String[] { IDialogConstants.YES_LABEL,
+								IDialogConstants.NO_LABEL,
+								IDialogConstants.CANCEL_LABEL },
+						0);
+				res[0] = dialog.open();
+			});
+			if (res[0] == 0) {
+				return true;
+			} else if (res[0] == 1) {
+				return false;
 			}
+			throw new OperationCanceledException();
 		};
 	}
 

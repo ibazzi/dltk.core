@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build Help Indexes" default="build.index" basedir=".">
+	<target name="build.index" if="eclipse.running">
+		<help.buildHelpIndex manifest="plugin.xml" destination="." />
+	</target>
+</project>

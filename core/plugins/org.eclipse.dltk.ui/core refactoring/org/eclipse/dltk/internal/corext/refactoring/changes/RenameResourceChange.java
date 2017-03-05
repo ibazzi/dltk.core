@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.corext.refactoring.changes;
 
@@ -52,16 +51,19 @@ public final class RenameResourceChange extends DLTKChange {
 		this(descriptor, resource.getFullPath(), newName, comment, IResource.NULL_STAMP);
 	}
 
+	@Override
 	public ChangeDescriptor getDescriptor() {
 		if (fDescriptor != null)
 			return new RefactoringChangeDescriptor(fDescriptor);
 		return null;
 	}
 
+	@Override
 	public Object getModifiedElement() {
 		return getResource();
 	}
 
+	@Override
 	public String getName() {
 		return Messages.format(RefactoringCoreMessages.RenameResourceChange_name, new String[] { fResourcePath.toString(), fNewName});
 	}
@@ -74,6 +76,7 @@ public final class RenameResourceChange extends DLTKChange {
 		return ResourcesPlugin.getWorkspace().getRoot().findMember(fResourcePath);
 	}
 
+	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
 		IResource resource= getResource();
 		if (resource == null || !resource.exists()) {
@@ -83,6 +86,7 @@ public final class RenameResourceChange extends DLTKChange {
 		}
 	}
 
+	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		try {
 			pm.beginTask(RefactoringCoreMessages.RenameResourceChange_rename_resource, 1);

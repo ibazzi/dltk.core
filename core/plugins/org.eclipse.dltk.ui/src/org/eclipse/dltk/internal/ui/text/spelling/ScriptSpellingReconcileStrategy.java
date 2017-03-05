@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,7 @@ import org.eclipse.ui.texteditor.spelling.SpellingService;
 
 /**
  * Reconcile strategy for spell checking comments.
- * 
+ *
  * @since 4.0
  */
 public class ScriptSpellingReconcileStrategy implements IReconcilingStrategy,
@@ -55,9 +55,7 @@ public class ScriptSpellingReconcileStrategy implements IReconcilingStrategy,
 		SpellingProblemCollector() {
 		}
 
-		/*
-		 * @see ISpellingProblemCollector#accept(SpellingProblem)
-		 */
+		@Override
 		public void accept(SpellingProblem problem) {
 			final IProblemRequestor requestor = fRequestor;
 			if (requestor != null) {
@@ -92,17 +90,13 @@ public class ScriptSpellingReconcileStrategy implements IReconcilingStrategy,
 			}
 		}
 
-		/*
-		 * @see ISpellingProblemCollector#beginCollecting()
-		 */
+		@Override
 		public void beginCollecting() {
 			if (fRequestor != null)
 				fRequestor.beginReporting();
 		}
 
-		/*
-		 * @see ISpellingProblemCollector#endCollecting()
-		 */
+		@Override
 		public void endCollecting() {
 			if (fRequestor != null)
 				fRequestor.endReporting();
@@ -126,7 +120,7 @@ public class ScriptSpellingReconcileStrategy implements IReconcilingStrategy,
 
 	/**
 	 * Creates a new comment reconcile strategy.
-	 * 
+	 *
 	 * @param editor
 	 *            the text editor to operate on
 	 * @param partitioning
@@ -142,13 +136,12 @@ public class ScriptSpellingReconcileStrategy implements IReconcilingStrategy,
 		fCheckDelegate = checkDelegate;
 	}
 
+	@Override
 	public void initialReconcile() {
 		reconcile(new Region(0, fDocument.getLength()));
 	}
 
-	/*
-	 * @see IReconcilingStrategy#reconcile(DirtyRegion, IRegion)
-	 */
+	@Override
 	public void reconcile(DirtyRegion dirtyRegion, IRegion subRegion) {
 		try {
 			IRegion startLineInfo = fDocument
@@ -170,9 +163,7 @@ public class ScriptSpellingReconcileStrategy implements IReconcilingStrategy,
 		reconcile(subRegion);
 	}
 
-	/*
-	 * @see IReconcilingStrategy#reconcile(IRegion)
-	 */
+	@Override
 	public void reconcile(IRegion region) {
 		if (fRequestor != null && isSpellingEnabled()) {
 			fRequestor.beginReporting();
@@ -216,9 +207,7 @@ public class ScriptSpellingReconcileStrategy implements IReconcilingStrategy,
 				SpellingService.PREFERENCE_SPELLING_ENABLED);
 	}
 
-	/*
-	 * @see IReconcilingStrategy#setDocument(IDocument)
-	 */
+	@Override
 	public void setDocument(IDocument document) {
 		fDocument = document;
 		fSpellingProblemCollector = new SpellingProblemCollector();
@@ -252,16 +241,14 @@ public class ScriptSpellingReconcileStrategy implements IReconcilingStrategy,
 
 	/**
 	 * Returns the document which is spell checked.
-	 * 
+	 *
 	 * @return the document
 	 */
 	protected final IDocument getDocument() {
 		return fDocument;
 	}
 
-	/*
-	 * @see IReconcilingStrategyExtension#setProgressMonitor(IProgressMonitor)
-	 */
+	@Override
 	public final void setProgressMonitor(IProgressMonitor monitor) {
 		fProgressMonitor = monitor;
 	}

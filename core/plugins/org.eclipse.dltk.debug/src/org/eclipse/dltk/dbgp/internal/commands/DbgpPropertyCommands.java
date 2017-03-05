@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.dbgp.internal.commands;
 
@@ -20,8 +19,8 @@ import org.eclipse.dltk.dbgp.internal.utils.DbgpXmlParser;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-public class DbgpPropertyCommands extends DbgpBaseCommands implements
-		IDbgpPropertyCommands {
+public class DbgpPropertyCommands extends DbgpBaseCommands
+		implements IDbgpPropertyCommands {
 	private static final String PROPERTY_GET_COMMAND = "property_get"; //$NON-NLS-1$
 
 	private static final String PROPERTY_SET_COMMAND = "property_set"; //$NON-NLS-1$
@@ -62,6 +61,7 @@ public class DbgpPropertyCommands extends DbgpBaseCommands implements
 		return parsePropertyResponse(communicate(request));
 	}
 
+	@Override
 	public IDbgpProperty getPropertyByKey(String name, String key)
 			throws DbgpException {
 		DbgpRequest request = createRequest(PROPERTY_GET_COMMAND);
@@ -70,27 +70,32 @@ public class DbgpPropertyCommands extends DbgpBaseCommands implements
 		return parsePropertyResponse(communicate(request));
 	}
 
+	@Override
 	public IDbgpProperty getProperty(String name) throws DbgpException {
 		return getProperty(name, null, null);
 	}
 
+	@Override
 	public IDbgpProperty getProperty(String name, int stackDepth)
 			throws DbgpException {
 		return getProperty(name, Integer.valueOf(stackDepth), null);
 	}
 
+	@Override
 	public IDbgpProperty getProperty(String name, int stackDepth, int contextId)
 			throws DbgpException {
 		return getProperty(name, Integer.valueOf(stackDepth),
 				Integer.valueOf(contextId));
 	}
 
+	@Override
 	public IDbgpProperty getProperty(int page, String name, int stackDepth)
 			throws DbgpException {
-		return getProperty(Integer.valueOf(page), name, Integer.valueOf(stackDepth),
-				null);
+		return getProperty(Integer.valueOf(page), name,
+				Integer.valueOf(stackDepth), null);
 	}
 
+	@Override
 	public boolean setProperty(IDbgpProperty property) throws DbgpException {
 		DbgpRequest request = createRequest(PROPERTY_SET_COMMAND);
 		request.addOption("-n", property.getName()); //$NON-NLS-1$
@@ -98,6 +103,7 @@ public class DbgpPropertyCommands extends DbgpBaseCommands implements
 		return DbgpXmlParser.parseSuccess(communicate(request));
 	}
 
+	@Override
 	public boolean setProperty(String name, int stackDepth, String value)
 			throws DbgpException {
 		DbgpRequest request = createRequest(PROPERTY_SET_COMMAND);

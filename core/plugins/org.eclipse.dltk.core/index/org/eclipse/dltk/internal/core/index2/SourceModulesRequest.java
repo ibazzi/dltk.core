@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ package org.eclipse.dltk.internal.core.index2;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -70,13 +69,8 @@ public class SourceModulesRequest extends AbstractIndexRequest {
 			indexer.removeDocument(containerPath, path);
 		}
 
-		Collections.sort(toReindex, new Comparator<ISourceModule>() {
-			@Override
-			public int compare(ISourceModule m1, ISourceModule m2) {
-				return m1.getPath().toString().compareTo(
-						m2.getPath().toString());
-			}
-		});
+		Collections.sort(toReindex, (m1, m2) -> m1.getPath().toString()
+				.compareTo(m2.getPath().toString()));
 
 		for (final ISourceModule sourceModule : toReindex) {
 			if (isCancelled)

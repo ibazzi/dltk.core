@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,7 +44,7 @@ public class PreferenceConstants {
 
 	/**
 	 * Preference key suffix that controls if semantic highlighting is enabled.
-	 * 
+	 *
 	 * <p>
 	 * Value is of type <code>Boolean</code>: <code>true</code> if enabled.
 	 * </p>
@@ -57,7 +57,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 */
 	public final static String EDITOR_CLOSE_STRINGS = "closeStrings"; //$NON-NLS-1$
 
@@ -67,7 +67,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 */
 	public final static String EDITOR_ESCAPE_STRINGS = "escapeStrings"; //$NON-NLS-1$
 
@@ -77,7 +77,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 */
 	public final static String EDITOR_CLOSE_BRACKETS = "closeBrackets"; //$NON-NLS-1$
 
@@ -87,7 +87,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 */
 	public final static String EDITOR_CLOSE_BRACES = "closeBraces"; //$NON-NLS-1$
 
@@ -97,7 +97,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 */
 	public final static String EDITOR_SMART_PASTE = "smartPaste"; //$NON-NLS-1$
 
@@ -107,7 +107,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 */
 	public final static String EDITOR_SMART_HOME_END = AbstractTextEditor.PREFERENCE_NAVIGATION_SMART_HOME_END;
 
@@ -126,7 +126,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 */
 	public final static String EDITOR_SUB_WORD_NAVIGATION = "subWordNavigation"; //$NON-NLS-1$
 
@@ -134,8 +134,8 @@ public class PreferenceConstants {
 	 * A named preference that controls the smart tab behavior.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	public static final String EDITOR_SMART_TAB = "smart_tab"; //$NON-NLS-1$
 
@@ -146,7 +146,7 @@ public class PreferenceConstants {
 	 * Value is of type <code>Integer</code>: positive integer value specifying
 	 * the number of spaces per tab.
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants#EDITOR_TAB_WIDTH
 	 */
 	public final static String EDITOR_TAB_WIDTH = AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH;
@@ -159,7 +159,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 */
 	public final static String EDITOR_SYNC_OUTLINE_ON_CURSOR_MOVE = "syncOutlineOnCursorMove"; //$NON-NLS-1$
 
@@ -199,10 +199,10 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>String</code>.
 	 * </p>
-	 * 
+	 *
 	 * @see #SRCBIN_FOLDERS_IN_NEWPROJ
 	 */
-	public static final String SRC_SRCNAME = "org.eclipse.dltk.ui.wizards.srcFoldersSrcName"; //$NON-NLS-1$	
+	public static final String SRC_SRCNAME = "org.eclipse.dltk.ui.wizards.srcFoldersSrcName"; //$NON-NLS-1$
 
 	public final static String EDITOR_SMART_INDENT = "editorSmartIndent"; //$NON-NLS-1$
 
@@ -274,7 +274,7 @@ public class PreferenceConstants {
 	/**
 	 * A named preference that controls whether comments are initially folded
 	 * when the editor is opened.
-	 * 
+	 *
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
@@ -284,7 +284,7 @@ public class PreferenceConstants {
 	/**
 	 * A named preference that controls whether docs are initially folded when
 	 * the editor is opened.
-	 * 
+	 *
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
@@ -294,7 +294,7 @@ public class PreferenceConstants {
 	/**
 	 * A named preference that controls whether header comments are initially
 	 * folded when the editor is opened.
-	 * 
+	 *
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
@@ -304,7 +304,7 @@ public class PreferenceConstants {
 	/**
 	 * A named preference that controls whether classes (packages, modules, etc)
 	 * are initially folded when the editor is opened.
-	 * 
+	 *
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
@@ -314,7 +314,7 @@ public class PreferenceConstants {
 	/**
 	 * A named preference that controls whether methods are initially folded
 	 * when the editor is opened.
-	 * 
+	 *
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
@@ -324,7 +324,7 @@ public class PreferenceConstants {
 	/**
 	 * A named preference that controls whether comments separated by newlines
 	 * are joined together to form a single comment folding block.
-	 * 
+	 *
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
@@ -345,14 +345,14 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is an XML encoded version of the history.
 	 * </p>
-	 * 
+	 *
 	 */
 	public static final String CODEASSIST_LRU_HISTORY = "content_assist_lru_history"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that defines whether the hint to make hover sticky
 	 * should be shown.
-	 * 
+	 *
 	 * @see JavaUI
 	 * @deprecated there is global preference now
 	 * @see AbstractDecoratedTextEditorPreferenceConstants#EDITOR_SHOW_TEXT_HOVER_AFFORDANCE
@@ -362,9 +362,9 @@ public class PreferenceConstants {
 
 	/**
 	 * A named preference that defines the key for the hover modifiers.
-	 * 
+	 *
 	 * @see JavaUI
-	 * 
+	 *
 	 */
 	public static final String EDITOR_TEXT_HOVER_MODIFIERS = "hoverModifiers"; //$NON-NLS-1$
 
@@ -373,18 +373,18 @@ public class PreferenceConstants {
 	 * masks. The value is only used if the value of
 	 * <code>EDITOR_TEXT_HOVER_MODIFIERS</code> cannot be resolved to valid SWT
 	 * modifier bits.
-	 * 
+	 *
 	 * @see JavaUI
 	 * @see #EDITOR_TEXT_HOVER_MODIFIERS
-	 * 
+	 *
 	 */
 	public static final String EDITOR_TEXT_HOVER_MODIFIER_MASKS = "hoverModifierMasks"; //$NON-NLS-1$
 
 	/**
 	 * The id of the best match hover contributed for extension point
 	 * <code>javaEditorTextHovers</code>.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	public static final String ID_BESTMATCH_HOVER = "org.eclipse.dltk.ui.BestMatchHover"; //$NON-NLS-1$
 
@@ -393,9 +393,9 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is a {@link String}.
 	 * </p>
-	 * 
+	 *
 	 * @see ProposalSorterRegistry
-	 * 
+	 *
 	 */
 	public static final String CODEASSIST_SORTER = "content_assist_sorter"; //$NON-NLS-1$
 
@@ -528,12 +528,8 @@ public class PreferenceConstants {
 			return;
 		}
 		final RGB rgb[] = new RGB[1];
-		display.syncExec(new Runnable() {
-			public void run() {
-				rgb[0] = display.getSystemColor(SWT.COLOR_INFO_BACKGROUND)
-						.getRGB();
-			}
-		});
+		display.syncExec(() -> rgb[0] = display.getSystemColor(SWT.COLOR_INFO_BACKGROUND)
+				.getRGB());
 		PreferenceConverter.setValue(store,
 				PreferenceConstants.EDITOR_SOURCE_HOVER_BACKGROUND_COLOR,
 				rgb[0]);
@@ -562,7 +558,7 @@ public class PreferenceConstants {
 	 * <li><b>F</b>: Fields</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 */
 	public static final String APPEARANCE_MEMBER_SORT_ORDER = "outlinesortoption"; //$NON-NLS-1$
 
@@ -590,7 +586,7 @@ public class PreferenceConstants {
 	 * proposals.
 	 * <p>
 	 * Value is of type <code>Boolean</code>. if
-	 * <code>true<code> code assist only contains visible members. If 
+	 * <code>true<code> code assist only contains visible members. If
 	 * <code>false</code> all members are included.
 	 * </p>
 	 */
@@ -602,7 +598,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 */
 	public final static String CODEASSIST_AUTOINSERT = "content_assist_autoinsert"; //$NON-NLS-1$
 
@@ -617,7 +613,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 */
 	public final static String CODEASSIST_ADDIMPORT = "content_assist_add_import"; //$NON-NLS-1$
 
@@ -627,9 +623,9 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 */
-	public final static String CODEASSIST_INSERT_COMPLETION = "content_assist_insert_completion"; //$NON-NLS-1$	
+	public final static String CODEASSIST_INSERT_COMPLETION = "content_assist_insert_completion"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether code assist proposals filtering
@@ -655,7 +651,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 */
 	public final static String CODEASSIST_GUESS_METHOD_ARGUMENTS = "content_assist_guess_method_arguments"; //$NON-NLS-1$
 
@@ -668,7 +664,7 @@ public class PreferenceConstants {
 	 * Value is of type <code>String</code>. A RGB color value encoded as a
 	 * string using class <code>PreferenceConverter</code>
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 */
@@ -681,7 +677,7 @@ public class PreferenceConstants {
 	 * Value is of type <code>String</code>. A RGB color value encoded as a
 	 * string using class <code>PreferenceConverter</code>
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 */
@@ -694,7 +690,7 @@ public class PreferenceConstants {
 	 * Value is of type <code>String</code>. A RGB color value encoded as a
 	 * string using class <code>PreferenceConverter</code>
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 */
@@ -707,7 +703,7 @@ public class PreferenceConstants {
 	 * Value is of type <code>String</code>. A RGB color value encoded as a
 	 * string using class <code>PreferenceConverter</code>
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 */
@@ -720,10 +716,10 @@ public class PreferenceConstants {
 	 * Value is of type <code>String</code>. A RGB color value encoded as a
 	 * string using class <code>PreferenceConverter</code>
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
-	 * 
+	 *
 	 */
 	public final static String CODEASSIST_REPLACEMENT_BACKGROUND = "content_assist_completion_replacement_background"; //$NON-NLS-1$
 
@@ -734,10 +730,10 @@ public class PreferenceConstants {
 	 * Value is of type <code>String</code>. A RGB color value encoded as a
 	 * string using class <code>PreferenceConverter</code>
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
-	 * 
+	 *
 	 */
 	public final static String CODEASSIST_REPLACEMENT_FOREGROUND = "content_assist_completion_replacement_foreground"; //$NON-NLS-1$
 
@@ -748,7 +744,7 @@ public class PreferenceConstants {
 	 * Value is of type <code>Boolean</code>. If <code>true</code> the
 	 * annotation ruler column uses a roll over to display multiple annotations
 	 * </p>
-	 * 
+	 *
 	 */
 
 	/**
@@ -759,21 +755,21 @@ public class PreferenceConstants {
 	 * DOUBLE_CLICK_GOES_INTO</code> or <code>
 	 * DOUBLE_CLICK_EXPANDS</code>.
 	 * </p>
-	 * 
+	 *
 	 * @see #DOUBLE_CLICK_EXPANDS
 	 * @see #DOUBLE_CLICK_GOES_INTO
 	 */
 	public static final String DOUBLE_CLICK = "scriptExplorerDoubleclick"; //$NON-NLS-1$
 	/**
 	 * A string value used by the named preference <code>DOUBLE_CLICK</code>.
-	 * 
+	 *
 	 * @see #DOUBLE_CLICK
 	 */
 	public static final String DOUBLE_CLICK_EXPANDS = "scriptExplorerDoubleclickExpands"; //$NON-NLS-1$
 
 	/**
 	 * A string value used by the named preference <code>DOUBLE_CLICK</code>.
-	 * 
+	 *
 	 * @see #DOUBLE_CLICK
 	 */
 	public static final String DOUBLE_CLICK_GOES_INTO = "scriptExplorerDoubleclickGointo"; //$NON-NLS-1$
@@ -786,8 +782,8 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	public final static String CODEASSIST_PREFIX_COMPLETION = "content_assist_prefix_completion"; //$NON-NLS-1$
 
@@ -798,8 +794,8 @@ public class PreferenceConstants {
 	 * Value is of type <code>String</code>, a "\0"-separated list of
 	 * identifiers.
 	 * </p>
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	public static final String CODEASSIST_EXCLUDED_CATEGORIES = "content_assist_disabled_computers"; //$NON-NLS-1$
 
@@ -810,8 +806,8 @@ public class PreferenceConstants {
 	 * Value is of type <code>String</code>, a "\0"-separated list of
 	 * identifiers.
 	 * </p>
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	public static final String CODEASSIST_CATEGORY_ORDER = "content_assist_category_order"; //$NON-NLS-1$
 
@@ -832,7 +828,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static final String EDITOR_MARK_OCCURRENCES = "markOccurrences"; //$NON-NLS-1$
@@ -843,7 +839,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static final String EDITOR_STICKY_OCCURRENCES = "stickyOccurrences"; //$NON-NLS-1$

@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.editor.selectionaction;
 
@@ -16,7 +15,6 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.dltk.core.ISourceRange;
 import org.eclipse.dltk.internal.ui.editor.ScriptEditor;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 
 
 public class SelectionHistory {
@@ -31,11 +29,9 @@ public class SelectionHistory {
 		Assert.isNotNull(editor);
 		fEditor= editor;
 		fHistory= new ArrayList(3);
-		fSelectionListener= new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				if (fSelectionChangeListenerCounter == 0)
-					flush();
-			}
+		fSelectionListener = event -> {
+			if (fSelectionChangeListenerCounter == 0)
+				flush();
 		};
 		fEditor.getSelectionProvider().addSelectionChangedListener(fSelectionListener);
 	}

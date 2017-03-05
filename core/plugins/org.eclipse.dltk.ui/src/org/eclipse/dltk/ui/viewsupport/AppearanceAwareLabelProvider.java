@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.viewsupport;
 
@@ -37,7 +36,7 @@ public class AppearanceAwareLabelProvider extends ScriptUILabelProvider
 
 	/**
 	 * Constructor for AppearanceAwareLabelProvider.
-	 * 
+	 *
 	 * @param preferenceStore
 	 */
 	public AppearanceAwareLabelProvider(long textFlags, int imageFlags,
@@ -81,9 +80,7 @@ public class AppearanceAwareLabelProvider extends ScriptUILabelProvider
 		fImageFlagMask = -1;
 	}
 
-	/*
-	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
-	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		String property = event.getProperty();
 		if (property.equals(PreferenceConstants.APPEARANCE_METHOD_RETURNTYPE)

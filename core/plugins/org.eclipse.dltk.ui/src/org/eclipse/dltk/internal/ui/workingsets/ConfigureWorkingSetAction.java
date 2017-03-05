@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,25 +23,23 @@ public class ConfigureWorkingSetAction extends Action {
 	private WorkingSetModel fWorkingSetModel;
 
 	public ConfigureWorkingSetAction(IWorkbenchPartSite site) {
-		super(WorkingSetMessages.ConfigureWorkingSetAction_label); 
+		super(WorkingSetMessages.ConfigureWorkingSetAction_label);
 		fSite= site;
 	}
-	
+
 	public void setWorkingSetModel(WorkingSetModel model) {
 		fWorkingSetModel= model;
 	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
+
+	@Override
 	public void run() {
 		List<IWorkingSet> workingSets = new ArrayList<IWorkingSet>(
 				Arrays.asList(fWorkingSetModel.getAllWorkingSets()));
 		IWorkingSet[] activeWorkingSets= fWorkingSetModel.getActiveWorkingSets();
 		WorkingSetConfigurationDialog dialog= new WorkingSetConfigurationDialog(
-			fSite.getShell(), 
+			fSite.getShell(),
 				workingSets.toArray(new IWorkingSet[workingSets.size()]),
-			activeWorkingSets); 
+			activeWorkingSets);
 		dialog.setSelection(activeWorkingSets);
 		if (dialog.open() == IDialogConstants.OK_ID) {
 			IWorkingSet[] selection= dialog.getSelection();

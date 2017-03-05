@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.validators.internal.ui;
 
@@ -23,8 +22,8 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 /**
  * The installed validators preference page.
  */
-public class ValidatorPreferencePage extends PreferencePage implements
-		IWorkbenchPreferencePage {
+public class ValidatorPreferencePage extends PreferencePage
+		implements IWorkbenchPreferencePage {
 
 	private static final String VALIDATOR_PREFERENCE_PAGE = ValidatorsUI.PLUGIN_ID
 			+ ".ValidatorPreferencePage"; //$NON-NLS-1$
@@ -40,22 +39,11 @@ public class ValidatorPreferencePage extends PreferencePage implements
 		setDescription(ValidatorMessages.ValidatorPreferencePage_2);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse
-	 * .swt.widgets.Composite)
-	 */
+	@Override
 	protected Control createContents(Composite ancestor) {
 		initializeDialogUnits(ancestor);
 
@@ -85,20 +73,14 @@ public class ValidatorPreferencePage extends PreferencePage implements
 		return new ValidatorBlock();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
-	 */
+	@Override
 	public boolean performOk() {
 		final boolean[] canceled = new boolean[] { false };
-		BusyIndicator.showWhile(null, new Runnable() {
-			public void run() {
-				IValidator[] vnterpreters = fInterpretersBlock.getValidators();
-				ValidatorUpdater updater = new ValidatorUpdater();
-				if (!updater.updateValidatorSettings(vnterpreters)) {
-					canceled[0] = true;
-				}
+		BusyIndicator.showWhile(null, () -> {
+			IValidator[] vnterpreters = fInterpretersBlock.getValidators();
+			ValidatorUpdater updater = new ValidatorUpdater();
+			if (!updater.updateValidatorSettings(vnterpreters)) {
+				canceled[0] = true;
 			}
 		});
 

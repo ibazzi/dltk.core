@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.editor;
 
@@ -30,7 +29,7 @@ public class ScriptAnnotationIterator implements Iterator<Annotation> {
 
 	/**
 	 * Returns a new JavaAnnotationIterator.
-	 * 
+	 *
 	 * @param model
 	 *            the annotation model
 	 * @param skipIrrelevants
@@ -46,7 +45,7 @@ public class ScriptAnnotationIterator implements Iterator<Annotation> {
 
 	/**
 	 * Returns a new JavaAnnotationIterator.
-	 * 
+	 *
 	 * @param model
 	 *            the annotation model
 	 * @param returnAllAnnotations
@@ -87,9 +86,7 @@ public class ScriptAnnotationIterator implements Iterator<Annotation> {
 		}
 	}
 
-	/*
-	 * @see Iterator#hasNext()
-	 */
+	@Override
 	public boolean hasNext() {
 		return fNext != null;
 	}
@@ -98,6 +95,7 @@ public class ScriptAnnotationIterator implements Iterator<Annotation> {
 	 * @see Iterator#next()
 	 * @since 3.0
 	 */
+	@Override
 	public Annotation next() {
 		try {
 			return fNext;
@@ -106,9 +104,7 @@ public class ScriptAnnotationIterator implements Iterator<Annotation> {
 		}
 	}
 
-	/*
-	 * @see Iterator#remove()
-	 */
+	@Override
 	public void remove() {
 		throw new UnsupportedOperationException();
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ import org.eclipse.jface.viewers.Viewer;
 /**
  * This is more extensible copy of
  * org.eclipse.dltk.internal.ui.StandardModelElementContentProvider
- * 
+ *
  * A base content provider for Java elements. It provides access to the Java
  * element hierarchy without listening to changes in the Java model. If updating
  * the presentation on Java model change is required than clients have to
@@ -45,7 +45,7 @@ import org.eclipse.jface.viewers.Viewer;
  * <p>
  * The following Java element hierarchy is surfaced by this content provider:
  * <p>
- * 
+ *
  * <pre>
  *  Java model (
  * &lt;code&gt;
@@ -78,7 +78,7 @@ import org.eclipse.jface.viewers.Viewer;
  * &lt;/code&gt;
  * )
  * </pre>
- * 
+ *
  * </p>
  * <p>
  * Note that when the entire Java project is declared to be package fragment
@@ -104,7 +104,7 @@ public class StandardModelElementContentProvider2 implements
 
 	/**
 	 * Creates a new <code>StandardJavaElementContentProvider</code>.
-	 * 
+	 *
 	 * @param provideMembers
 	 *            if <code>true</code> members below compilation units and class
 	 *            files are provided.
@@ -115,7 +115,7 @@ public class StandardModelElementContentProvider2 implements
 
 	/**
 	 * Creates a new <code>StandardJavaElementContentProvider</code>.
-	 * 
+	 *
 	 * @param provideMembers
 	 *            if <code>true</code> members below compilation units and class
 	 *            files are provided.
@@ -129,7 +129,7 @@ public class StandardModelElementContentProvider2 implements
 	/**
 	 * Returns whether members are provided when asking for a compilation units
 	 * or class file for its children.
-	 * 
+	 *
 	 * @return <code>true</code> if the content provider provides members;
 	 *         otherwise <code>false</code> is returned
 	 */
@@ -140,7 +140,7 @@ public class StandardModelElementContentProvider2 implements
 	/**
 	 * Sets whether the content provider is supposed to return members when
 	 * asking a compilation unit or class file for its children.
-	 * 
+	 *
 	 * @param b
 	 *            if <code>true</code> then members are provided. If
 	 *            <code>false</code> compilation units and class files are the
@@ -150,37 +150,25 @@ public class StandardModelElementContentProvider2 implements
 		fProvideMembers = b;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see IWorkingCopyProvider#providesWorkingCopies()
-	 */
+	@Override
 	public boolean providesWorkingCopies() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IStructuredContentProvider.
-	 */
+	@Override
 	public Object[] getElements(Object parent) {
 		return getChildren(parent);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IContentProvider.
-	 */
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IContentProvider.
-	 */
+	@Override
 	public void dispose() {
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on ITreeContentProvider.
-	 */
+	@Override
 	public Object[] getChildren(Object element) {
 		if (!exists(element))
 			return NO_CHILDREN;
@@ -200,11 +188,11 @@ public class StandardModelElementContentProvider2 implements
 
 			if (element instanceof IFolder)
 				return getFolderContent((IFolder) element);
-			//			
+			//
 			// if (element instanceof IJarEntryResource) {
 			// return ((IJarEntryResource) element).getChildren();
 			// }
-			//			
+			//
 			if (getProvideMembers() && element instanceof ISourceReference
 					&& element instanceof IParent) {
 				return ((IParent) element).getChildren();
@@ -215,11 +203,7 @@ public class StandardModelElementContentProvider2 implements
 		return NO_CHILDREN;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see ITreeContentProvider
-	 */
+	@Override
 	public boolean hasChildren(Object element) {
 		if (getProvideMembers()) {
 			// assume CUs and class files are never empty
@@ -253,9 +237,7 @@ public class StandardModelElementContentProvider2 implements
 		return (children != null) && children.length > 0;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on ITreeContentProvider.
-	 */
+	@Override
 	public Object getParent(Object element) {
 		if (!exists(element))
 			return null;
@@ -265,7 +247,7 @@ public class StandardModelElementContentProvider2 implements
 	/**
 	 * Evaluates all children of a given {@link IPackageFragmentRoot}. Clients
 	 * can override this method.
-	 * 
+	 *
 	 * @param root
 	 *            The root to evaluate the children for.
 	 * @return The children of the root
@@ -273,7 +255,7 @@ public class StandardModelElementContentProvider2 implements
 	 *                if the package fragment root does not exist or if an
 	 *                exception occurs while accessing its corresponding
 	 *                resource
-	 * 
+	 *
 	 */
 	protected Object[] getProjectFragmentContent(IProjectFragment root)
 			throws ModelException {
@@ -310,7 +292,7 @@ public class StandardModelElementContentProvider2 implements
 	/**
 	 * Evaluates all children of a given {@link IJavaProject}. Clients can
 	 * override this method.
-	 * 
+	 *
 	 * @param project
 	 *            The Java project to evaluate the children for.
 	 * @return The children of the project. Typically these are package fragment
@@ -369,14 +351,14 @@ public class StandardModelElementContentProvider2 implements
 	/**
 	 * Evaluates all children of a given {@link IPackageFragment}. Clients can
 	 * override this method.
-	 * 
+	 *
 	 * @param fragment
 	 *            The fragment to evaluate the children for.
 	 * @return The children of the given package fragment.
 	 * @exception JavaModelException
 	 *                if the package fragment does not exist or if an exception
 	 *                occurs while accessing its corresponding resource
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected Object[] getScriptFolderContent(IScriptFolder fragment)
@@ -398,13 +380,13 @@ public class StandardModelElementContentProvider2 implements
 	/**
 	 * Evaluates all children of a given {@link IFolder}. Clients can override
 	 * this method.
-	 * 
+	 *
 	 * @param folder
 	 *            The folder to evaluate the children for.
 	 * @return The children of the given package fragment.
 	 * @exception CoreException
 	 *                if the folder does not exist.
-	 * 
+	 *
 	 */
 	protected Object[] getFolderContent(IFolder folder) throws CoreException {
 		IResource[] members = folder.members();

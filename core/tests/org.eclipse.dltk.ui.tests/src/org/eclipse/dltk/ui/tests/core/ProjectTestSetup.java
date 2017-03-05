@@ -5,13 +5,8 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
-
 package org.eclipse.dltk.ui.tests.core;
-
-import junit.extensions.TestSetup;
-import junit.framework.Test;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -19,6 +14,9 @@ import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.ui.tests.ScriptProjectHelper;
 import org.eclipse.dltk.ui.tests.TestOptions;
+
+import junit.extensions.TestSetup;
+import junit.framework.Test;
 
 
 public class ProjectTestSetup extends TestSetup {
@@ -38,9 +36,7 @@ public class ProjectTestSetup extends TestSetup {
 		super(test);
 	}
 	
-	/* (non-Javadoc)
-	 * @see junit.extensions.TestSetup#setUp()
-	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		
@@ -60,9 +56,7 @@ public class ProjectTestSetup extends TestSetup {
 		//DLTKUIPlugin.getDefault().getCodeTemplateStore().load();		
 	}
 
-	/* (non-Javadoc)
-	 * 
-	 */
+	@Override
 	protected void tearDown() throws Exception {
 		if (fJProject != null) {
 			ScriptProjectHelper.delete(fJProject);

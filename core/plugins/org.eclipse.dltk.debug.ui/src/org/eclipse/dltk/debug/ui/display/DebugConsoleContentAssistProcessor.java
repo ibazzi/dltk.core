@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008
+ * Copyright (c) 2008, 2017 Johan Compagner and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -13,9 +13,9 @@ package org.eclipse.dltk.debug.ui.display;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
 import org.eclipse.dltk.console.ui.IScriptConsoleViewer;
 import org.eclipse.dltk.dbgp.IDbgpProperty;
@@ -36,27 +36,33 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
 class DebugConsoleContentAssistProcessor implements IContentAssistProcessor {
+	@Override
 	public String getErrorMessage() {
 		return null;
 	}
 
+	@Override
 	public IContextInformationValidator getContextInformationValidator() {
 		return null;
 	}
 
+	@Override
 	public char[] getContextInformationAutoActivationCharacters() {
 		return null;
 	}
 
+	@Override
 	public char[] getCompletionProposalAutoActivationCharacters() {
 		return null;
 	}
 
+	@Override
 	public IContextInformation[] computeContextInformation(ITextViewer viewer,
 			int offset) {
 		return null;
 	}
 
+	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer,
 			int offset) {
 		if (!(viewer instanceof IScriptConsoleViewer)) {
@@ -108,8 +114,8 @@ class DebugConsoleContentAssistProcessor implements IContentAssistProcessor {
 							if (index != -1) {
 								name = name.substring(index + 1);
 							}
-							map.put(name, getTree(property
-									.getAvailableChildren()));
+							map.put(name,
+									getTree(property.getAvailableChildren()));
 							SortedMap segmentMap = (SortedMap) map
 									.get(segments[lastSegment]);
 							if (segmentMap == null) {
@@ -139,7 +145,8 @@ class DebugConsoleContentAssistProcessor implements IContentAssistProcessor {
 				Iterator iterator = map.entrySet().iterator();
 				while (iterator.hasNext()) {
 					Map.Entry entry = (Entry) iterator.next();
-					if (((String) entry.getKey()).startsWith(lastSegmentString)) {
+					if (((String) entry.getKey())
+							.startsWith(lastSegmentString)) {
 						hit.put(entry.getKey(), entry.getKey());
 					}
 				}
@@ -150,9 +157,9 @@ class DebugConsoleContentAssistProcessor implements IContentAssistProcessor {
 		int i = 0;
 		while (iterator.hasNext()) {
 			String proposal = (String) iterator.next();
-			proposals[i++] = new CompletionProposal(proposal
-					.substring(beginOffset), offset, 0, proposal.length(),
-					null, proposal, null, null);
+			proposals[i++] = new CompletionProposal(
+					proposal.substring(beginOffset), offset, 0,
+					proposal.length(), null, proposal, null, null);
 		}
 		return proposals;
 	}

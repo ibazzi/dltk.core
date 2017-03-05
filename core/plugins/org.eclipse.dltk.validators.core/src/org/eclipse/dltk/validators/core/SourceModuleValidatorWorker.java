@@ -13,12 +13,11 @@ import org.eclipse.dltk.core.ISourceModule;
  * Abstract base class that may be used to validate <code>ISourceModule</code>
  * objects contained within an <code>IScriptProject</code>.
  */
-public abstract class SourceModuleValidatorWorker extends
-		AbstractValidatorWorker implements ISourceModuleValidator {
+public abstract class SourceModuleValidatorWorker extends AbstractValidatorWorker implements ISourceModuleValidator {
 
+	@Override
 	public final void clean(ISourceModule[] modules) {
-		final List<IResource> resources = new ArrayList<IResource>(
-				modules.length);
+		final List<IResource> resources = new ArrayList<>(modules.length);
 		for (int i = 0; i < modules.length; ++i) {
 			final IResource resource = modules[i].getResource();
 			if (resource != null) {
@@ -32,8 +31,8 @@ public abstract class SourceModuleValidatorWorker extends
 		clean(results);
 	}
 
-	public final IStatus validate(ISourceModule[] modules,
-			IValidatorOutput console, IProgressMonitor monitor) {
+	@Override
+	public final IStatus validate(ISourceModule[] modules, IValidatorOutput console, IProgressMonitor monitor) {
 		return doValidate(modules, console, monitor);
 	}
 
@@ -46,8 +45,7 @@ public abstract class SourceModuleValidatorWorker extends
 	/**
 	 * Executes the validator against the given source module
 	 */
-	protected abstract void runValidator(ISourceModule module,
-			IValidatorOutput console, IValidatorReporter reporter,
+	protected abstract void runValidator(ISourceModule module, IValidatorOutput console, IValidatorReporter reporter,
 			IProgressMonitor monitor) throws CoreException;
 
 	@Override
@@ -61,9 +59,8 @@ public abstract class SourceModuleValidatorWorker extends
 	}
 
 	@Override
-	protected final void runValidator(Object object, IValidatorOutput console,
-			IValidatorReporter reporter, IProgressMonitor monitor)
-			throws CoreException {
+	protected final void runValidator(Object object, IValidatorOutput console, IValidatorReporter reporter,
+			IProgressMonitor monitor) throws CoreException {
 		runValidator((ISourceModule) object, console, reporter, monitor);
 	}
 }

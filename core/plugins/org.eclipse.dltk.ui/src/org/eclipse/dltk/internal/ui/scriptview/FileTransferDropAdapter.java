@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
-
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.scriptview;
 
@@ -47,16 +46,12 @@ public class FileTransferDropAdapter extends DLTKViewerDropAdapter implements
 	// ---- TransferDropTargetListener interface
 	// ---------------------------------------
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Transfer getTransfer() {
 		return FileTransfer.getInstance();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean isEnabled(DropTargetEvent event) {
 		Object target = event.item != null ? event.item.getData() : null;
 		if (target == null) {
@@ -68,18 +63,14 @@ public class FileTransferDropAdapter extends DLTKViewerDropAdapter implements
 	// ---- Actual DND
 	// -----------------------------------------------------------------
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean validateDrop(Object target, int operation,
 			TransferData transferType) {
 		return determineOperation(target, operation, transferType,
 				DND.DROP_MOVE | DND.DROP_LINK | DND.DROP_COPY) != DND.DROP_NONE;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected int determineOperation(Object target, int operation,
 			TransferData transferType, int operations) {
 
@@ -107,9 +98,7 @@ public class FileTransferDropAdapter extends DLTKViewerDropAdapter implements
 		return DND.DROP_NONE;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean performDrop(final Object data) {
 		try {
 			int operation = getCurrentOperation();
@@ -128,12 +117,10 @@ public class FileTransferDropAdapter extends DLTKViewerDropAdapter implements
 			// Otherwise the drag source (e.g., Windows Explorer) will be
 			// blocked
 			// while the operation executes. Fixes bug 35796.
-			Display.getCurrent().asyncExec(new Runnable() {
-				public void run() {
-					getShell().forceActive();
-					new CopyFilesAndFoldersOperation(getShell()).copyFiles(
-							(String[]) data, target);
-				}
+			Display.getCurrent().asyncExec(() -> {
+				getShell().forceActive();
+				new CopyFilesAndFoldersOperation(getShell())
+						.copyFiles((String[]) data, target);
 			});
 			return false;
 		} catch (ModelException e) {

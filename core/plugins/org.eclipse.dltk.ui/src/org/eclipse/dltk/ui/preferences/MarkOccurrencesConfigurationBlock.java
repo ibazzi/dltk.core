@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,7 +37,7 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 
 /**
  * Configures Java Editor hover preferences.
- * 
+ *
  * @since 2.1
  */
 public class MarkOccurrencesConfigurationBlock implements
@@ -47,9 +47,11 @@ public class MarkOccurrencesConfigurationBlock implements
 
 	private Map<Object, String> fCheckBoxes = new HashMap<Object, String>();
 	private SelectionListener fCheckBoxListener = new SelectionListener() {
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
 
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Button button = (Button) e.widget;
 			fStore.setValue(fCheckBoxes.get(button), button.getSelection());
@@ -58,7 +60,7 @@ public class MarkOccurrencesConfigurationBlock implements
 
 	/**
 	 * List of master/slave listeners when there's a dependency.
-	 * 
+	 *
 	 * @see #createDependency(Button, String, Control)
 	 * @since 3.0
 	 */
@@ -86,11 +88,12 @@ public class MarkOccurrencesConfigurationBlock implements
 
 	/**
 	 * Creates page for mark occurrences preferences.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 * @return the control for the preference page
 	 */
+	@Override
 	public Control createControl(final Composite parent) {
 
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -103,6 +106,7 @@ public class MarkOccurrencesConfigurationBlock implements
 		Link link = new Link(composite, SWT.NONE);
 		link.setText(PreferencesMessages.MarkOccurrencesConfigurationBlock_link);
 		link.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				PreferencesUtil.createPreferenceDialogOn(parent.getShell(),
 						e.text, null, null);
@@ -163,10 +167,12 @@ public class MarkOccurrencesConfigurationBlock implements
 		boolean masterState = fStore.getBoolean(masterKey);
 		slave.setEnabled(masterState);
 		SelectionListener listener = new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				slave.setEnabled(master.getSelection());
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		};
@@ -180,6 +186,7 @@ public class MarkOccurrencesConfigurationBlock implements
 		control.setLayoutData(gridData);
 	}
 
+	@Override
 	public void initialize() {
 		initializeFields();
 	}
@@ -202,9 +209,11 @@ public class MarkOccurrencesConfigurationBlock implements
 
 	}
 
+	@Override
 	public void performOk() {
 	}
 
+	@Override
 	public void performDefaults() {
 		restoreFromPreferences();
 		initializeFields();
@@ -224,9 +233,10 @@ public class MarkOccurrencesConfigurationBlock implements
 	 * @see
 	 * org.eclipse.jdt.internal.ui.preferences.IPreferenceConfigurationBlock
 	 * #dispose()
-	 * 
+	 *
 	 * @since 3.0
 	 */
+	@Override
 	public void dispose() {
 	}
 }

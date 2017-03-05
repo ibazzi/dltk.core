@@ -543,5 +543,16 @@
          </enablement>
       </consolePageParticipant>
    </extension>
+   <extension point="org.eclipse.ui.activities">
+		<activity name="%activity.name" description="%activity.description" id="org.eclipse.dltk.debug.ui.activity"></activity>
+		<categoryActivityBinding activityId="org.eclipse.dltk.debug.ui.activity" categoryId="org.eclipse.categories.developmentCategory"></categoryActivityBinding>
+		<activityPatternBinding
+			activityId="org.eclipse.dltk.debug.ui.activity"
+			pattern="org\.eclipse\.dltk\.debug\.ui.*">
+		</activityPatternBinding>
+		<defaultEnablement
+	        id="org.eclipse.dltk.debug.ui.activity">
+		</defaultEnablement>
+   </extension>
 
 </plugin>

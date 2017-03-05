@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -17,16 +17,15 @@ import java.util.Map;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.dltk.debug.core.model.IScriptSpawnpoint;
 
-public class ScriptSpawnpoint extends ScriptLineBreakpoint implements
-		IScriptSpawnpoint {
+public class ScriptSpawnpoint extends ScriptLineBreakpoint
+		implements IScriptSpawnpoint {
 
+	@Override
 	protected String getMarkerId() {
 		return ScriptMarkerFactory.SPAWNPOINT_MARKER_ID;
 	}
@@ -45,28 +44,25 @@ public class ScriptSpawnpoint extends ScriptLineBreakpoint implements
 	 * @param register
 	 * @throws DebugException
 	 */
-	public ScriptSpawnpoint(final String debugModelId,
-			final IResource resource, final IPath path, final int lineNumber,
-			final int charStart, final int charEnd, final boolean register)
-			throws DebugException {
+	public ScriptSpawnpoint(final String debugModelId, final IResource resource,
+			final IPath path, final int lineNumber, final int charStart,
+			final int charEnd, final boolean register) throws DebugException {
 
-		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				// create the marker
-				setMarker(resource.createMarker(getMarkerId()));
+		IWorkspaceRunnable wr = monitor -> {
+			// create the marker
+			setMarker(resource.createMarker(getMarkerId()));
 
-				// add attributes
-				final Map attributes = new HashMap();
-				addScriptBreakpointAttributes(attributes, debugModelId, true);
-				addLineBreakpointAttributes(attributes, path, lineNumber,
-						charStart, charEnd);
+			// add attributes
+			final Map attributes = new HashMap();
+			addScriptBreakpointAttributes(attributes, debugModelId, true);
+			addLineBreakpointAttributes(attributes, path, lineNumber, charStart,
+					charEnd);
 
-				// set attributes
-				ensureMarker().setAttributes(attributes);
+			// set attributes
+			ensureMarker().setAttributes(attributes);
 
-				// add to breakpoint manager if requested
-				register(register);
-			}
+			// add to breakpoint manager if requested
+			register(register);
 		};
 		run(getMarkerRule(resource), wr);
 	}
@@ -74,6 +70,7 @@ public class ScriptSpawnpoint extends ScriptLineBreakpoint implements
 	private static final String[] UPDATABLE_ATTRS = new String[] {
 			IMarker.LINE_NUMBER, IBreakpoint.ENABLED };
 
+	@Override
 	public String[] getUpdatableAttributes() {
 		return UPDATABLE_ATTRS;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,9 +62,7 @@ public class AddArchiveToBuildpathAction extends Action implements ISelectionCha
 		fSite= site;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void run() {
 
 		final Shell shell= fSite.getShell() != null ? fSite.getShell() : DLTKUIPlugin.getActiveWorkbenchShell();
@@ -72,15 +70,15 @@ public class AddArchiveToBuildpathAction extends Action implements ISelectionCha
 				.chooseExternalArchiveEntries(shell, EnvironmentManager.getEnvironment(this.fScriptProject));
 
 		try {
-			final IRunnableWithProgress runnable= new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					try {
-						List result= addExternalArchives(selected == null?new IPath[0]:selected, fScriptProject, monitor);
-						if (result != null && result.size() > 0)
-							selectAndReveal(new StructuredSelection(result));
-					} catch (CoreException e) {
-						throw new InvocationTargetException(e);
-					}
+			final IRunnableWithProgress runnable = monitor -> {
+				try {
+					List result = addExternalArchives(
+							selected == null ? new IPath[0] : selected,
+							fScriptProject, monitor);
+					if (result != null && result.size() > 0)
+						selectAndReveal(new StructuredSelection(result));
+				} catch (CoreException e) {
+					throw new InvocationTargetException(e);
 				}
 			};
 			PlatformUI.getWorkbench().getProgressService().run(true, false, runnable);
@@ -99,7 +97,7 @@ public class AddArchiveToBuildpathAction extends Action implements ISelectionCha
 			monitor= new NullProgressMonitor();
 		List addedEntries= new ArrayList();
 		try {
-			monitor.beginTask(NewWizardMessages.BuildpathModifier_Monitor_AddToBuildpath, 4); 
+			monitor.beginTask(NewWizardMessages.BuildpathModifier_Monitor_AddToBuildpath, 4);
 			if (archivePaths != null) {
 				for (int i= 0; i < archivePaths.length; i++) {
 					addedEntries.add(new BPListElement(project, IBuildpathEntry.BPE_LIBRARY, archivePaths[i], null, archivePaths[i].isAbsolute()));
@@ -127,9 +125,7 @@ public class AddArchiveToBuildpathAction extends Action implements ISelectionCha
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void selectionChanged(final SelectionChangedEvent event) {
 		final ISelection selection = event.getSelection();
 		if (selection instanceof IStructuredSelection) {
@@ -165,7 +161,7 @@ public class AddArchiveToBuildpathAction extends Action implements ISelectionCha
 	private void showExceptionDialog(CoreException exception) {
 		showError(exception, fSite.getShell(), NewWizardMessages.AddArchiveToBuildpathAction_ErrorTitle, exception.getMessage());
 	}
-	
+
 	private void showError(CoreException e, Shell shell, String title, String message) {
 		IStatus status= e.getStatus();
 		if (status != null) {
@@ -174,7 +170,7 @@ public class AddArchiveToBuildpathAction extends Action implements ISelectionCha
 			MessageDialog.openError(shell, title, message);
 		}
 	}
-	
+
 	private void selectAndReveal(final ISelection selection) {
 		// validate the input
 		IWorkbenchPage page= fSite.getPage();
@@ -209,11 +205,8 @@ public class AddArchiveToBuildpathAction extends Action implements ISelectionCha
 			if (target != null) {
 				// select and reveal resource
 				final ISetSelectionTarget finalTarget= target;
-				page.getWorkbenchWindow().getShell().getDisplay().asyncExec(new Runnable() {
-					public void run() {
-						finalTarget.selectReveal(selection);
-					}
-				});
+				page.getWorkbenchWindow().getShell().getDisplay()
+						.asyncExec(() -> finalTarget.selectReveal(selection));
 			}
 		}
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -22,14 +22,16 @@ public class RunInputFieldAction extends Action implements IUpdate {
 	public RunInputFieldAction(DebugConsolePage page) {
 		super(Messages.RunInputFieldAction_runCode);
 		this.page = page;
-		setImageDescriptor(ScriptDebugImages
-				.getImageDescriptor(ScriptDebugImages.IMG_OBJS_SNIPPET_EVALUATING));
+		setImageDescriptor(ScriptDebugImages.getImageDescriptor(
+				ScriptDebugImages.IMG_OBJS_SNIPPET_EVALUATING));
 	}
 
+	@Override
 	public void update() {
 		setEnabled(page.canExecuteInputField());
 	}
 
+	@Override
 	public void run() {
 		page.executeInputField();
 	}

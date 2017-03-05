@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.corext.refactoring.rename;
 
@@ -68,7 +67,7 @@ public class RenameSourceModuleProcessor extends ScriptRenameProcessor
 
 	/**
 	 * Creates a new rename compilation unit processor.
-	 * 
+	 *
 	 * @param unit
 	 *            the compilation unit, or <code>null</code> if invoked by
 	 *            scripting
@@ -82,26 +81,32 @@ public class RenameSourceModuleProcessor extends ScriptRenameProcessor
 		}
 	}
 
+	@Override
 	public String getIdentifier() {
 		return IDENTIFIER;
 	}
 
+	@Override
 	public boolean isApplicable() {
 		return RefactoringAvailabilityTester.isRenameAvailable(fCu);
 	}
 
+	@Override
 	public String getProcessorName() {
 		return RefactoringCoreMessages.RenameSourceModuleRefactoring_name;
 	}
 
+	@Override
 	protected String[] getAffectedProjectNatures() throws CoreException {
 		return ScriptProcessors.computeAffectedNatures(fCu);
 	}
 
+	@Override
 	public Object[] getElements() {
 		return new Object[] { fCu };
 	}
 
+	@Override
 	protected RenameModifications computeRenameModifications() {
 		RenameModifications result = new RenameModifications();
 		result.rename(fCu, new RenameArguments(getNewElementName(),
@@ -112,6 +117,7 @@ public class RenameSourceModuleProcessor extends ScriptRenameProcessor
 		return result;
 	}
 
+	@Override
 	protected IFile[] getChangedFiles() throws CoreException {
 		IFile file = ResourceUtil.getFile(fCu);
 		if (file != null) {
@@ -122,6 +128,7 @@ public class RenameSourceModuleProcessor extends ScriptRenameProcessor
 
 	// ---- IRenameProcessor -------------------------------------
 
+	@Override
 	public String getCurrentElementName() {
 		if (isFileExtensionRequired()) {
 			// return initial name without extension
@@ -134,7 +141,7 @@ public class RenameSourceModuleProcessor extends ScriptRenameProcessor
 
 	/**
 	 * Tests if script file must have an extension for this language
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean isFileExtensionRequired() {
@@ -143,11 +150,13 @@ public class RenameSourceModuleProcessor extends ScriptRenameProcessor
 		return tk != null && tk.get(DLTKFeatures.FILE_EXTENSION_REQUIRED);
 	}
 
+	@Override
 	public String getCurrentElementQualifier() {
 		IScriptFolder pack = (IScriptFolder) fCu.getParent();
 		return pack.getElementName();
 	}
 
+	@Override
 	public RefactoringStatus checkNewElementName(String newName)
 			throws CoreException {
 		Assert.isNotNull(newName, "new name"); //$NON-NLS-1$
@@ -162,10 +171,12 @@ public class RenameSourceModuleProcessor extends ScriptRenameProcessor
 		return result;
 	}
 
+	@Override
 	public void setNewElementName(String newName) {
 		super.setNewElementName(newName);
 	}
 
+	@Override
 	public Object getNewElement() {
 		IModelElement parent = fCu.getParent();
 		if (parent.getElementType() != IModelElement.SCRIPT_FOLDER)
@@ -183,70 +194,86 @@ public class RenameSourceModuleProcessor extends ScriptRenameProcessor
 
 	// ---- ITextUpdating ---------------------------------------------
 
+	@Override
 	public boolean canEnableTextUpdating() {
 		return false;
 	}
 
+	@Override
 	public boolean getUpdateTextualMatches() {
 		return false;
 	}
 
+	@Override
 	public void setUpdateTextualMatches(boolean update) {
 	}
 
 	// ---- IReferenceUpdating -----------------------------------
 
+	@Override
 	public boolean canEnableUpdateReferences() {
 		return false;
 	}
 
+	@Override
 	public void setUpdateReferences(boolean update) {
 	}
 
+	@Override
 	public boolean getUpdateReferences() {
 		return false;
 	}
 
 	// ---- IQualifiedNameUpdating -------------------------------
 
+	@Override
 	public boolean canEnableQualifiedNameUpdating() {
 		return false;
 	}
 
+	@Override
 	public boolean getUpdateQualifiedNames() {
 		return false;
 	}
 
+	@Override
 	public void setUpdateQualifiedNames(boolean update) {
 	}
 
+	@Override
 	public String getFilePatterns() {
 		return null;
 	}
 
+	@Override
 	public void setFilePatterns(String patterns) {
 	}
 
 	// ---- ISimilarDeclarationUpdating ------------------------------
 
+	@Override
 	public boolean canEnableSimilarDeclarationUpdating() {
 		return false;
 	}
 
+	@Override
 	public void setUpdateSimilarDeclarations(boolean update) {
 		return;
 	}
 
+	@Override
 	public boolean getUpdateSimilarDeclarations() {
 		return false;
 	}
 
+	@Override
 	public int getMatchStrategy() {
 		return RenamingNameSuggestor.STRATEGY_EXACT; // method should not be
 		// called in this case
 		// anyway ...
 	}
 
+	@Override
 	public void setMatchStrategy(int selectedStrategy) {
 		return;
 	}
@@ -255,6 +282,7 @@ public class RenameSourceModuleProcessor extends ScriptRenameProcessor
 		return null;
 	}
 
+	@Override
 	public IResource getRefactoredResource(IResource element) {
 		return element;
 	}
@@ -265,6 +293,7 @@ public class RenameSourceModuleProcessor extends ScriptRenameProcessor
 
 	// --- preconditions ----------------------------------
 
+	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm)
 			throws CoreException {
 
@@ -273,6 +302,7 @@ public class RenameSourceModuleProcessor extends ScriptRenameProcessor
 		return new RefactoringStatus();
 	}
 
+	@Override
 	protected RefactoringStatus doCheckFinalConditions(IProgressMonitor pm,
 			CheckConditionsContext context) throws CoreException {
 		try {
@@ -283,7 +313,7 @@ public class RenameSourceModuleProcessor extends ScriptRenameProcessor
 	}
 
 	private void computeRenameTypeRefactoring() throws CoreException {
-		if (getSimpleCUName().indexOf(".") != -1) { //$NON-NLS-1$			
+		if (getSimpleCUName().indexOf(".") != -1) { //$NON-NLS-1$
 			return;
 		}
 	}
@@ -302,6 +332,7 @@ public class RenameSourceModuleProcessor extends ScriptRenameProcessor
 		return fileName.substring(0, fileName.lastIndexOf(".")); //$NON-NLS-1$
 	}
 
+	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException {
 		// renaming the file is taken care of in renameTypeRefactoring
 		final String newName = getNewElementName();
@@ -374,11 +405,13 @@ public class RenameSourceModuleProcessor extends ScriptRenameProcessor
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Change postCreateChange(Change[] participantChanges,
 			IProgressMonitor pm) throws CoreException {
 		return super.postCreateChange(participantChanges, pm);
 	}
 
+	@Override
 	public RefactoringStatus initialize(RefactoringArguments arguments) {
 		if (arguments instanceof ScriptRefactoringArguments) {
 			final ScriptRefactoringArguments generic = (ScriptRefactoringArguments) arguments;

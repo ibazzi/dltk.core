@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,7 +37,7 @@ import org.eclipse.ui.texteditor.SelectMarkerRulerAction;
 /**
  * Action which gets triggered when selecting (annotations) in the vertical
  * ruler.
- * 
+ *
  * <p>
  * Was originally called <code>JavaSelectMarkerRulerAction</code>.
  * </p>
@@ -77,6 +77,7 @@ public class ScriptSelectAnnotationRulerAction extends SelectMarkerRulerAction {
 		// IJavaHelpContextIds.JAVA_SELECT_MARKER_RULER_ACTION);
 	}
 
+	@Override
 	public void run() {
 		if (fStore.getBoolean(PreferenceConstants.EDITOR_ANNOTATION_ROLL_OVER))
 			return;
@@ -90,9 +91,10 @@ public class ScriptSelectAnnotationRulerAction extends SelectMarkerRulerAction {
 	 * @see
 	 * org.eclipse.jface.action.IAction#runWithEvent(org.eclipse.swt.widgets
 	 * .Event)
-	 * 
+	 *
 	 * @since 3.2
 	 */
+	@Override
 	public void runWithEvent(Event event) {
 		// if (fAnnotation instanceof
 		// OverrideIndicatorManager.OverrideIndicator) {
@@ -115,6 +117,7 @@ public class ScriptSelectAnnotationRulerAction extends SelectMarkerRulerAction {
 		super.run();
 	}
 
+	@Override
 	public void update() {
 		findJavaAnnotation();
 		setEnabled(true); // super.update() might change this later

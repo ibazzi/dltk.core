@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -8,7 +8,7 @@
  *
  * Contributors:
  *     xored software, Inc. - initial API and Implementation
- *     xored software, Inc. - remove DLTKDebugPlugin preferences dependency (Alex Panchenko) 
+ *     xored software, Inc. - remove DLTKDebugPlugin preferences dependency (Alex Panchenko)
  *******************************************************************************/
 package org.eclipse.dltk.internal.debug.core.model;
 
@@ -24,15 +24,15 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.dltk.dbgp.DbgpServer;
 import org.eclipse.dltk.dbgp.IDbgpServerListener;
 import org.eclipse.dltk.dbgp.IDbgpSession;
-import org.eclipse.dltk.dbgp.IDbgpThreadAcceptor;
 import org.eclipse.dltk.dbgp.IDbgpSessionInfo;
+import org.eclipse.dltk.dbgp.IDbgpThreadAcceptor;
 import org.eclipse.dltk.dbgp.internal.IDbgpTerminationListener;
 import org.eclipse.dltk.debug.core.DLTKDebugPlugin;
 import org.eclipse.dltk.debug.core.DLTKDebugPreferenceConstants;
 import org.eclipse.dltk.debug.core.IDbgpService;
 
-public class DbgpService implements IDbgpService, IDbgpTerminationListener,
-		IDbgpServerListener {
+public class DbgpService
+		implements IDbgpService, IDbgpTerminationListener, IDbgpServerListener {
 	private static final int FROM_PORT = 10000;
 	private static final int TO_PORT = 50000;
 
@@ -91,13 +91,14 @@ public class DbgpService implements IDbgpService, IDbgpTerminationListener,
 		stopServer();
 	}
 
+	@Override
 	public int getPort() {
 		return serverPort;
 	}
 
 	/**
 	 * Waits until the socket is actually started using the default timeout.
-	 * 
+	 *
 	 * @return <code>true</code> if socket was successfully started and
 	 *         <code>false</code> otherwise.
 	 */
@@ -107,7 +108,7 @@ public class DbgpService implements IDbgpService, IDbgpTerminationListener,
 
 	/**
 	 * Waits until the socket is actually started using specified timeout.
-	 * 
+	 *
 	 * @return <code>true</code> if socket was successfully started and
 	 *         <code>false</code> otherwise.
 	 */
@@ -116,10 +117,12 @@ public class DbgpService implements IDbgpService, IDbgpTerminationListener,
 	}
 
 	// Acceptors
+	@Override
 	public void registerAcceptor(String id, IDbgpThreadAcceptor acceptor) {
 		acceptors.put(id, acceptor);
 	}
 
+	@Override
 	public IDbgpThreadAcceptor unregisterAcceptor(String id) {
 		return (IDbgpThreadAcceptor) acceptors.remove(id);
 	}
@@ -132,11 +135,13 @@ public class DbgpService implements IDbgpService, IDbgpTerminationListener,
 	}
 
 	// IDbgpTerminationListener
+	@Override
 	public void objectTerminated(Object object, Exception e) {
 		if (e != null) {
 			DLTKDebugPlugin.log(e);
 			final Job job = new Job(Messages.DbgpService_ServerRestart) {
 
+				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					restartServer(serverPort);
 					return Status.OK_STATUS;
@@ -147,11 +152,13 @@ public class DbgpService implements IDbgpService, IDbgpTerminationListener,
 		}
 	}
 
+	@Override
 	public boolean available() {
 		return true;
 	}
 
 	// INewDbgpServerListener
+	@Override
 	public void clientConnected(IDbgpSession session) {
 		final IDbgpSessionInfo info = session.getInfo();
 		if (info != null) {

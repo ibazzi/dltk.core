@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 xored software, Inc.
+ * Copyright (c) 2009, 2017 xored software, Inc.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -31,7 +31,6 @@ import org.eclipse.dltk.ui.text.templates.TemplateVariableProcessor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
@@ -45,25 +44,18 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.TemplateException;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -106,7 +98,7 @@ public class EditTemplateDialog extends StatusDialog {
 
 		/**
 		 * Creates a new action.
-		 * 
+		 *
 		 * @param viewer
 		 *            the viewer
 		 * @param operationCode
@@ -121,9 +113,10 @@ public class EditTemplateDialog extends StatusDialog {
 		/**
 		 * Updates the enabled state of the action. Fires a property change if
 		 * the enabled state changes.
-		 * 
+		 *
 		 * @see Action#firePropertyChange(String, Object, Object)
 		 */
+		@Override
 		public void update() {
 			// XXX: workaround for
 			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=206111
@@ -142,9 +135,7 @@ public class EditTemplateDialog extends StatusDialog {
 			}
 		}
 
-		/**
-		 * @see Action#run()
-		 */
+		@Override
 		public void run() {
 			if (fOperationCode != -1 && fOperationTarget != null) {
 				fOperationTarget.doOperation(fOperationCode);
@@ -178,7 +169,7 @@ public class EditTemplateDialog extends StatusDialog {
 
 	/**
 	 * Creates a new dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            the shell parent of the dialog
 	 * @param template
@@ -231,25 +222,22 @@ public class EditTemplateDialog extends StatusDialog {
 
 	/*
 	 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
-	 * 
+	 *
 	 * @since 3.4
 	 */
+	@Override
 	protected boolean isResizable() {
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.jdt.internal.ui.dialogs.StatusDialog#create()
-	 */
+	@Override
 	public void create() {
 		super.create();
 		updateStatusAndButtons();
 		getButton(IDialogConstants.OK_ID).setEnabled(getStatus().isOK());
 	}
 
-	/*
-	 * @see Dialog#createDialogArea(Composite)
-	 */
+	@Override
 	protected Control createDialogArea(Composite ancestor) {
 		Composite parent = new Composite(ancestor, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -262,11 +250,7 @@ public class EditTemplateDialog extends StatusDialog {
 		parent.setLayout(layout);
 		parent.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		ModifyListener listener = new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				doTextWidgetChanged(e.widget);
-			}
-		};
+		ModifyListener listener = e -> doTextWidgetChanged(e.widget);
 
 		if (fIsNameModifiable) {
 			createLabel(parent, PreferencesMessages.EditTemplateDialog_name);
@@ -282,9 +266,11 @@ public class EditTemplateDialog extends StatusDialog {
 			fNameText = createText(composite);
 			fNameText.addFocusListener(new FocusListener() {
 
+				@Override
 				public void focusGained(FocusEvent e) {
 				}
 
+				@Override
 				public void focusLost(FocusEvent e) {
 					if (fSuppressError) {
 						fSuppressError = false;
@@ -341,12 +327,14 @@ public class EditTemplateDialog extends StatusDialog {
 		fInsertVariableButton
 				.setText(PreferencesMessages.EditTemplateDialog_insert_variable);
 		fInsertVariableButton.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fPatternEditor.getTextWidget().setFocus();
 				fPatternEditor
 						.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
@@ -428,14 +416,6 @@ public class EditTemplateDialog extends StatusDialog {
 		return label;
 	}
 
-	private static Button createCheckbox(Composite parent, String name) {
-		Button button = new Button(parent, SWT.CHECK);
-		button.setText(name);
-		button.setLayoutData(new GridData());
-
-		return button;
-	}
-
 	private static Text createText(Composite parent) {
 		Text text = new Text(parent, SWT.BORDER);
 		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -476,18 +456,12 @@ public class EditTemplateDialog extends StatusDialog {
 		data.heightHint = convertHeightInCharsToPixels(nLines);
 		control.setLayoutData(data);
 
-		viewer.addTextListener(new ITextListener() {
-			public void textChanged(TextEvent event) {
-				if (event.getDocumentEvent() != null)
-					doSourceChanged(event.getDocumentEvent().getDocument());
-			}
+		viewer.addTextListener(event -> {
+			if (event.getDocumentEvent() != null)
+				doSourceChanged(event.getDocumentEvent().getDocument());
 		});
 
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				updateSelectionDependentActions();
-			}
-		});
+		viewer.addSelectionChangedListener(event -> updateSelectionDependentActions());
 
 		return viewer;
 	}
@@ -509,17 +483,15 @@ public class EditTemplateDialog extends StatusDialog {
 		final Expression expression = new ActiveShellExpression(fPatternEditor
 				.getControl().getShell());
 
-		getShell().addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				handlerService.deactivateHandlers(handlerActivations);
-			}
-		});
+		getShell().addDisposeListener(e -> handlerService.deactivateHandlers(handlerActivations));
 
 		fPatternEditor.getTextWidget().addFocusListener(new FocusListener() {
+			@Override
 			public void focusLost(FocusEvent e) {
 				handlerService.deactivateHandlers(handlerActivations);
 			}
 
+			@Override
 			public void focusGained(FocusEvent e) {
 				IAction action = fGlobalActions
 						.get(ITextEditorActionConstants.REDO);
@@ -580,11 +552,7 @@ public class EditTemplateDialog extends StatusDialog {
 		// create context menu
 		MenuManager manager = new MenuManager(null, null);
 		manager.setRemoveAllWhenShown(true);
-		manager.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager mgr) {
-				fillContextMenu(mgr);
-			}
-		});
+		manager.addMenuListener(mgr -> fillContextMenu(mgr));
 
 		StyledText text = fPatternEditor.getTextWidget();
 		Menu menu = manager.createContextMenu(text);
@@ -638,6 +606,7 @@ public class EditTemplateDialog extends StatusDialog {
 		return -1;
 	}
 
+	@Override
 	protected void okPressed() {
 		String name = fNameText == null ? fTemplate.getName() : fNameText
 				.getText();
@@ -667,7 +636,7 @@ public class EditTemplateDialog extends StatusDialog {
 
 	/**
 	 * Checks whether the given string is a valid template name.
-	 * 
+	 *
 	 * @param name
 	 *            the string to test
 	 * @return <code>true</code> if the name is valid
@@ -680,6 +649,7 @@ public class EditTemplateDialog extends StatusDialog {
 	/*
 	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
 	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		// TODO PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell,
@@ -688,7 +658,7 @@ public class EditTemplateDialog extends StatusDialog {
 
 	/**
 	 * Returns the created template.
-	 * 
+	 *
 	 * @return the created template
 	 * @since 3.1
 	 */
@@ -709,9 +679,10 @@ public class EditTemplateDialog extends StatusDialog {
 
 	/*
 	 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
-	 * 
+	 *
 	 * @since 3.2
 	 */
+	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
 		String sectionName = getClass().getName() + "_dialogBounds"; //$NON-NLS-1$
 		IDialogSettings settings = DLTKUIPlugin.getDefault()

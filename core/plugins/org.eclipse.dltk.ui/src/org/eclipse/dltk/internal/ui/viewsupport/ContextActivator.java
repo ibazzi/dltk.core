@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2017 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
-
+ *******************************************************************************/
 package org.eclipse.dltk.internal.ui.viewsupport;
 
 import java.util.Collection;
@@ -46,19 +45,19 @@ import org.eclipse.ui.views.contentoutline.ContentOutline;
  */
 public class ContextActivator implements IWindowListener, IPartListener2 {
 	private static ContextActivator sInstance= new ContextActivator();
-	
+
 	private Map<ContentOutline, IContextActivation> fActivationPerOutline = new HashMap<ContentOutline, IContextActivation>();
 	private Map<CommonNavigator, SelectionListener> fActivationPerNavigator= new HashMap<CommonNavigator, SelectionListener>();
 	private Collection<IWorkbenchWindow> fWindows= new HashSet<IWorkbenchWindow>();
 
-	
+
 	private ContextActivator() {
 	}
-	
+
 	public static ContextActivator getInstance() {
 		return sInstance;
 	}
-	
+
 	public void install() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		if (workbench != null) {
@@ -98,30 +97,34 @@ public class ContextActivator implements IWindowListener, IPartListener2 {
 		wnd.getPartService().addPartListener(this);
 		fWindows.add(wnd);
 	}
-	
+
 	private void unregister(IWorkbenchWindow wnd) {
 		wnd.getPartService().removePartListener(this);
 		fWindows.remove(wnd);
 	}
 
+	@Override
 	public void windowOpened(IWorkbenchWindow window) {
 		register(window);
 	}
 
+	@Override
 	public void windowClosed(IWorkbenchWindow window) {
 		unregister(window);
 	}
 
+	@Override
 	public void windowActivated(IWorkbenchWindow window) {
 	}
-	
+
+	@Override
 	public void windowDeactivated(IWorkbenchWindow window) {
 	}
 
 	private void onContentOutlineClosed(ContentOutline outline) {
 		fActivationPerOutline.remove(outline);
 	}
-	
+
 	private void onContentOutlineActivated(ContentOutline outline) {
 		IPage page = outline.getCurrentPage();
 		if (page instanceof ScriptOutlinePage) {
@@ -133,9 +136,9 @@ public class ContextActivator implements IWindowListener, IPartListener2 {
 						.activateContext(DLTKUIPlugin.CONTEXT_VIEWS);
 				fActivationPerOutline.put(outline,activateContext);
 			}
-		} 
+		}
 		else {
-			IContextActivation activation = fActivationPerOutline.remove(outline); 
+			IContextActivation activation = fActivationPerOutline.remove(outline);
 			if (activation != null) {
 				// other outline page brought to front
 				IContextService ctxtService = outline.getViewSite()
@@ -154,7 +157,7 @@ public class ContextActivator implements IWindowListener, IPartListener2 {
 			fSite= site;
 			fCtxService = fSite.getService(IContextService.class);
 			ISelectionProvider sp= site.getSelectionProvider();
-			
+
 			if (sp != null && fCtxService != null) {
 				sp.addSelectionChangedListener(this);
 				onNewSelection(sp.getSelection());
@@ -168,7 +171,8 @@ public class ContextActivator implements IWindowListener, IPartListener2 {
 				sp.removeSelectionChangedListener(this);
 			}
 		}
-		
+
+		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			onNewSelection(event.getSelection());
 		}
@@ -207,6 +211,7 @@ public class ContextActivator implements IWindowListener, IPartListener2 {
 		fActivationPerNavigator.remove(part);
 	}
 
+	@Override
 	public void partActivated(IWorkbenchPartReference partRef) {
 		IWorkbenchPart part= partRef.getPart(false);
 		if (part instanceof ContentOutline) {
@@ -217,6 +222,7 @@ public class ContextActivator implements IWindowListener, IPartListener2 {
 		}
 	}
 
+	@Override
 	public void partClosed(IWorkbenchPartReference partRef) {
 		IWorkbenchPart part= partRef.getPart(false);
 		if (part instanceof ContentOutline) {
@@ -227,21 +233,27 @@ public class ContextActivator implements IWindowListener, IPartListener2 {
 		}
 	}
 
+	@Override
 	public void partBroughtToTop(IWorkbenchPartReference partRef) {
 	}
 
+	@Override
 	public void partDeactivated(IWorkbenchPartReference partRef) {
 	}
 
+	@Override
 	public void partOpened(IWorkbenchPartReference partRef) {
 	}
 
+	@Override
 	public void partHidden(IWorkbenchPartReference partRef) {
 	}
 
+	@Override
 	public void partVisible(IWorkbenchPartReference partRef) {
 	}
 
+	@Override
 	public void partInputChanged(IWorkbenchPartReference partRef) {
 	}
 }

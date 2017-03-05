@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.debug.ui.actions;
 
@@ -21,8 +20,8 @@ import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.IUpdate;
 
-public class ScriptBreakpointPropertiesRulerAction extends
-		RulerBreakpointAction implements IUpdate {
+public class ScriptBreakpointPropertiesRulerAction extends RulerBreakpointAction
+		implements IUpdate {
 
 	private IBreakpoint fBreakpoint;
 
@@ -32,29 +31,35 @@ public class ScriptBreakpointPropertiesRulerAction extends
 		setText(ActionMessages.ScriptBreakpointPropertiesRulerAction_BreakpointProperties);
 	}
 
+	@Override
 	public void run() {
 		if (getBreakpoint() != null) {
-			PropertyDialogAction action = new PropertyDialogAction(getEditor()
-					.getEditorSite(), new ISelectionProvider() {
-				public void addSelectionChangedListener(
-						ISelectionChangedListener listener) {
-				}
+			PropertyDialogAction action = new PropertyDialogAction(
+					getEditor().getEditorSite(), new ISelectionProvider() {
+						@Override
+						public void addSelectionChangedListener(
+								ISelectionChangedListener listener) {
+						}
 
-				public ISelection getSelection() {
-					return new StructuredSelection(getBreakpoint());
-				}
+						@Override
+						public ISelection getSelection() {
+							return new StructuredSelection(getBreakpoint());
+						}
 
-				public void removeSelectionChangedListener(
-						ISelectionChangedListener listener) {
-				}
+						@Override
+						public void removeSelectionChangedListener(
+								ISelectionChangedListener listener) {
+						}
 
-				public void setSelection(ISelection selection) {
-				}
-			});
+						@Override
+						public void setSelection(ISelection selection) {
+						}
+					});
 			action.run();
 		}
 	}
 
+	@Override
 	public void update() {
 		fBreakpoint = null;
 		IBreakpoint breakpoint = getBreakpoint();

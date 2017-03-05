@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-
 package org.eclipse.dltk.internal.debug.ui.log;
 
 import org.eclipse.debug.core.DebugEvent;
@@ -26,8 +25,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 
-public class ScriptDebugLogManager implements ILaunchListener,
-		IDebugEventSetListener, IDbgpRawListener {
+public class ScriptDebugLogManager
+		implements ILaunchListener, IDebugEventSetListener, IDbgpRawListener {
 
 	private static ScriptDebugLogManager instance;
 
@@ -45,30 +44,19 @@ public class ScriptDebugLogManager implements ILaunchListener,
 		return instance;
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.dltk.dbgp.IDbgpRawListener#dbgpPacketReceived(java.lang.String
-	 * )
-	 */
+	@Override
 	public void dbgpPacketReceived(int sessionId, IDbgpRawPacket content) {
 		append(new ScriptDebugLogItem(Messages.ItemType_Input, sessionId,
 				content));
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.dltk.dbgp.IDbgpRawListener#dbgpPacketSent(java.lang.String)
-	 */
+	@Override
 	public void dbgpPacketSent(int sessionId, IDbgpRawPacket content) {
 		append(new ScriptDebugLogItem(Messages.ItemType_Output, sessionId,
 				content));
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse
-	 * .debug.core.DebugEvent[])
-	 */
+	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		if (view == null) {
 			return;
@@ -78,13 +66,13 @@ public class ScriptDebugLogManager implements ILaunchListener,
 			DebugEvent event = events[i];
 
 			append(new ScriptDebugLogItem(Messages.ItemType_Event,
-					getDebugEventKind(event)
-							+ " from " + event.getSource().getClass().getName()));//$NON-NLS-1$
+					getDebugEventKind(event) + " from " //$NON-NLS-1$
+							+ event.getSource().getClass().getName()));
 
 			if (event.getKind() == DebugEvent.CREATE) {
 				handleCreateEvent(event);
-			} else if (event.getKind() == DebugEvent.MODEL_SPECIFIC
-					&& event.getDetail() == ExtendedDebugEventDetails.DGBP_NEW_CONNECTION) {
+			} else if (event.getKind() == DebugEvent.MODEL_SPECIFIC && event
+					.getDetail() == ExtendedDebugEventDetails.DGBP_NEW_CONNECTION) {
 				if (event.getSource() instanceof IDbgpDebugingEngine) {
 					((IDbgpDebugingEngine) event.getSource())
 							.addRawListener(this);
@@ -95,20 +83,12 @@ public class ScriptDebugLogManager implements ILaunchListener,
 		}
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.debug.core.ILaunchListener#launchAdded(org.eclipse.debug.
-	 * core.ILaunch)
-	 */
+	@Override
 	public void launchAdded(ILaunch launch) {
 		// empty implementation
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.debug.core.ILaunchListener#launchChanged(org.eclipse.debug
-	 * .core.ILaunch)
-	 */
+	@Override
 	public void launchChanged(ILaunch launch) {
 		IDebugTarget target = launch.getDebugTarget();
 		boolean loggingEnabled = LaunchConfigurationUtils
@@ -119,30 +99,24 @@ public class ScriptDebugLogManager implements ILaunchListener,
 			return;
 		}
 
-		Display.getDefault().asyncExec(new Runnable() {
-			public void run() {
-				IWorkbenchPage page = DLTKDebugUIPlugin.getActivePage();
+		Display.getDefault().asyncExec(() -> {
+			IWorkbenchPage page = DLTKDebugUIPlugin.getActivePage();
 
-				if (page != null) {
-					try {
-						view = (ScriptDebugLogView) page
-								.showView(ScriptDebugLogView.VIEW_ID);
+			if (page != null) {
+				try {
+					view = (ScriptDebugLogView) page
+							.showView(ScriptDebugLogView.VIEW_ID);
 
-						DebugPlugin.getDefault().addDebugEventListener(
-								ScriptDebugLogManager.this);
-					} catch (PartInitException e) {
-						DLTKDebugUIPlugin.log(e);
-					}
+					DebugPlugin.getDefault()
+							.addDebugEventListener(ScriptDebugLogManager.this);
+				} catch (PartInitException e) {
+					DLTKDebugUIPlugin.log(e);
 				}
 			}
 		});
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.debug.core.ILaunchListener#launchRemoved(org.eclipse.debug
-	 * .core.ILaunch)
-	 */
+	@Override
 	public void launchRemoved(ILaunch launch) {
 		// empty implementation
 	}

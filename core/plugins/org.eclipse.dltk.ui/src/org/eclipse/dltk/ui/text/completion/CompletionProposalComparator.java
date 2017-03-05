@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.text.completion;
 
@@ -21,7 +20,7 @@ import org.eclipse.jface.text.templates.TemplateProposal;
  * <p>
  * Note: this comparator imposes orderings that are inconsistent with equals.
  * </p>
- * 
+ *
  */
 public final class CompletionProposalComparator implements
 		Comparator<ICompletionProposal> {
@@ -38,7 +37,7 @@ public final class CompletionProposalComparator implements
 	/**
 	 * Sets the sort order. Default is <code>false</code>, i.e. order by
 	 * relevance.
-	 * 
+	 *
 	 * @param orderAlphabetically
 	 *            <code>true</code> to order alphabetically, <code>false</code>
 	 *            to order by relevance
@@ -47,6 +46,7 @@ public final class CompletionProposalComparator implements
 		fOrderAlphabetically = orderAlphabetically;
 	}
 
+	@Override
 	public int compare(ICompletionProposal p1, ICompletionProposal p2) {
 
 		if (!fOrderAlphabetically) {

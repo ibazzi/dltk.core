@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,7 +83,7 @@ public class DocumentationHover extends AbstractScriptEditorTextHover implements
 
 	/**
 	 * Action to go back to the previous input in the hover control.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	private static final class BackAction extends Action {
@@ -129,7 +129,7 @@ public class DocumentationHover extends AbstractScriptEditorTextHover implements
 
 	/**
 	 * Action to go forward to the next input in the hover control.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	private static final class ForwardAction extends Action {
@@ -174,7 +174,7 @@ public class DocumentationHover extends AbstractScriptEditorTextHover implements
 
 	/**
 	 * Action that opens the current hover input element.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	private static final class OpenDeclarationAction extends Action {
@@ -214,7 +214,7 @@ public class DocumentationHover extends AbstractScriptEditorTextHover implements
 
 	/**
 	 * Presenter control creator.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static final class PresenterControlCreator extends
@@ -224,7 +224,7 @@ public class DocumentationHover extends AbstractScriptEditorTextHover implements
 
 		/**
 		 * Creates a new PresenterControlCreator.
-		 * 
+		 *
 		 * @param site
 		 *            the site or <code>null</code> if none
 		 */
@@ -232,11 +232,6 @@ public class DocumentationHover extends AbstractScriptEditorTextHover implements
 			fSite = site;
 		}
 
-		/*
-		 * @see org.eclipse.jdt.internal.ui.text.java.hover.
-		 * AbstractReusableInformationControlCreator
-		 * #doCreateInformationControl(org.eclipse.swt.widgets.Shell)
-		 */
 		@Override
 		public IInformationControl doCreateInformationControl(Shell parent) {
 			if (BrowserInformationControl.isAvailable(parent)) {
@@ -278,26 +273,23 @@ public class DocumentationHover extends AbstractScriptEditorTextHover implements
 				// tbm.add(openAttachedJavadocAction);
 				// }
 
-				IInputChangedListener inputChangeListener = new IInputChangedListener() {
-					@Override
-					public void inputChanged(Object newInput) {
-						backAction.update();
-						forwardAction.update();
-						if (newInput == null) {
-							// selectionProvider
-							// .setSelection(new StructuredSelection());
-						} else if (newInput instanceof BrowserInformationControlInput) {
-							BrowserInformationControlInput input = (BrowserInformationControlInput) newInput;
-							Object inputElement = input.getInputElement();
-							// selectionProvider
-							// .setSelection(new StructuredSelection(
-							// inputElement));
-							boolean isJavaElementInput = inputElement instanceof IModelElement;
-							// showInJavadocViewAction
-							// .setEnabled(isJavaElementInput);
-							openDeclarationAction
-									.setEnabled(isJavaElementInput);
-						}
+				IInputChangedListener inputChangeListener = newInput -> {
+					backAction.update();
+					forwardAction.update();
+					if (newInput == null) {
+						// selectionProvider
+						// .setSelection(new StructuredSelection());
+					} else if (newInput instanceof BrowserInformationControlInput) {
+						BrowserInformationControlInput input = (BrowserInformationControlInput) newInput;
+						Object inputElement = input.getInputElement();
+						// selectionProvider
+						// .setSelection(new StructuredSelection(
+						// inputElement));
+						boolean isJavaElementInput = inputElement instanceof IModelElement;
+						// showInJavadocViewAction
+						// .setEnabled(isJavaElementInput);
+						openDeclarationAction
+								.setEnabled(isJavaElementInput);
 					}
 				};
 				iControl.addInputChangeListener(inputChangeListener);
@@ -336,7 +328,7 @@ public class DocumentationHover extends AbstractScriptEditorTextHover implements
 
 	/**
 	 * Hover control creator.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static final class HoverControlCreator extends

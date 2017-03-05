@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.dbgp.internal.commands;
 
@@ -59,11 +58,12 @@ public class DbgpDebuggingEngineCommunicator implements IDbgpCommunicator {
 
 	private final Map activeRequests = new IdentityHashMap();
 
+	@Override
 	public Element communicate(DbgpRequest request) throws DbgpException {
 		try {
 			final DbgpResponsePacket packet;
-			final int requestId = Integer.parseInt(request
-					.getOption(DbgpBaseCommands.ID_OPTION));
+			final int requestId = Integer
+					.parseInt(request.getOption(DbgpBaseCommands.ID_OPTION));
 			if (options.get(DebugOption.DBGP_ASYNC) || request.isAsync()) {
 				sendRequest(request);
 				packet = receiveResponse(requestId);
@@ -120,6 +120,7 @@ public class DbgpDebuggingEngineCommunicator implements IDbgpCommunicator {
 		}
 	}
 
+	@Override
 	public void send(DbgpRequest request) throws DbgpException {
 		try {
 			sendRequest(request);
@@ -130,10 +131,12 @@ public class DbgpDebuggingEngineCommunicator implements IDbgpCommunicator {
 
 	private static final boolean DEBUG = false;
 
+	@Override
 	public IDebugOptions getDebugOptions() {
 		return options;
 	}
 
+	@Override
 	public void configure(IDebugOptions debugOptions) {
 		this.options = debugOptions;
 	}

@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.viewsupport;
 
@@ -47,7 +46,7 @@ public class ImageDescriptorRegistry {
 	/**
 	 * Creates a new image descriptor registry for the given display. All images
 	 * managed by this registry will be disposed when the display gets disposed.
-	 * 
+	 *
 	 * @param display
 	 *            the display the images managed by this registry are allocated
 	 *            for
@@ -62,7 +61,7 @@ public class ImageDescriptorRegistry {
 
 	/**
 	 * Returns the image associated with the given image descriptor.
-	 * 
+	 *
 	 * @param descriptor
 	 *            the image descriptor for which the registry manages an image
 	 * @return the image associated with the image descriptor or
@@ -96,14 +95,6 @@ public class ImageDescriptorRegistry {
 	}
 
 	private void hookDisplay() {
-		fDisplay.asyncExec(new Runnable() {
-			public void run() {
-				fDisplay.disposeExec(new Runnable() {
-					public void run() {
-						dispose();
-					}
-				});
-			}
-		});
+		fDisplay.asyncExec(() -> fDisplay.disposeExec(() -> dispose()));
 	}
 }

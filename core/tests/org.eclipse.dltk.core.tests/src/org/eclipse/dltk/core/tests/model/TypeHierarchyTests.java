@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 IBM Corporation and others.
+ * Copyright (c) 2016, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  *******************************************************************************/
 package org.eclipse.dltk.core.tests.model;
 
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -148,14 +147,11 @@ public class TypeHierarchyTests extends ModifyingResourceTests {
 	}
 
 	private void print(Set<IType> classPaths) {
-		Set<IType> sortedClassPaths = new TreeSet<IType>(new Comparator<IType>() {
-			@Override
-			public int compare(IType arg0, IType arg1) {
-				if (arg0 == arg1 || arg0.equals(arg1)) {
-					return 0;
-				}
-				return arg0.getElementName().compareTo(arg1.getElementName());
+		Set<IType> sortedClassPaths = new TreeSet<IType>((arg0, arg1) -> {
+			if (arg0 == arg1 || arg0.equals(arg1)) {
+				return 0;
 			}
+			return arg0.getElementName().compareTo(arg1.getElementName());
 		});
 		sortedClassPaths.addAll(classPaths);
 		System.out.println(sortedClassPaths);

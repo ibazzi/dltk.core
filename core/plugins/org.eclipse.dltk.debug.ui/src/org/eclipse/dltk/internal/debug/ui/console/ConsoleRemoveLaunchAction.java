@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,8 +31,8 @@ import org.eclipse.ui.console.IConsoleView;
 /**
  * ConsoleRemoveTerminatedAction
  */
-public class ConsoleRemoveLaunchAction extends Action implements
-		IViewActionDelegate, IConsoleListener, ILaunchesListener2 {
+public class ConsoleRemoveLaunchAction extends Action
+		implements IViewActionDelegate, IConsoleListener, ILaunchesListener2 {
 
 	private ILaunch fLaunch;
 
@@ -62,8 +62,8 @@ public class ConsoleRemoveLaunchAction extends Action implements
 
 	public void dispose() {
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
-		ConsolePlugin.getDefault().getConsoleManager().removeConsoleListener(
-				this);
+		ConsolePlugin.getDefault().getConsoleManager()
+				.removeConsoleListener(this);
 	}
 
 	public synchronized void update() {
@@ -85,6 +85,7 @@ public class ConsoleRemoveLaunchAction extends Action implements
 		}
 	}
 
+	@Override
 	public void init(IViewPart view) {
 		if (view instanceof IConsoleView) {
 			fConsoleView = (IConsoleView) view;
@@ -92,42 +93,38 @@ public class ConsoleRemoveLaunchAction extends Action implements
 		update();
 	}
 
+	@Override
 	public void run(IAction action) {
 		run();
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
 
+	@Override
 	public void consolesAdded(IConsole[] consoles) {
 	}
 
+	@Override
 	public void consolesRemoved(IConsole[] consoles) {
 		update();
 	}
 
-	/*
-	 * @see ILaunchesListener2#launchesTerminated(ILaunch[])
-	 */
+	@Override
 	public void launchesTerminated(ILaunch[] launches) {
 		update();
 	}
 
-	/*
-	 * @see ILaunchesListener#launchesRemoved(ILaunch[])
-	 */
+	@Override
 	public void launchesRemoved(ILaunch[] launches) {
 	}
 
-	/*
-	 * @see ILaunchesListener#launchesAdded(ILaunch[])
-	 */
+	@Override
 	public void launchesAdded(ILaunch[] launches) {
 	}
 
-	/*
-	 * @see ILaunchesListener#launchesChanged(ILaunch[])
-	 */
+	@Override
 	public void launchesChanged(ILaunch[] launches) {
 	}
 

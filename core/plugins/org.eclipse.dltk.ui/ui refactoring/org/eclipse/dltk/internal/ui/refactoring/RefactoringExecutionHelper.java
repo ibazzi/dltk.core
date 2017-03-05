@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.refactoring;
 
@@ -55,6 +54,7 @@ public class RefactoringExecutionHelper {
 	private class Operation implements IWorkspaceRunnable {
 		public Change fChange;
 		public PerformChangeOperation fPerformChangeOperation;
+		@Override
 		public void run(IProgressMonitor pm) throws CoreException {
 			try {
 				pm.beginTask("", 11); //$NON-NLS-1$
@@ -93,17 +93,14 @@ public class RefactoringExecutionHelper {
 			public OperationRunner(IWorkspaceRunnable runnable, ISchedulingRule schedulingRule) {
 				super(runnable, schedulingRule);
 			}
+			@Override
 			public void threadChange(Thread thread) {
 				manager.transferRule(getSchedulingRule(), thread);
 			}
 		}
 		try {
 			try {
-				Runnable r= new Runnable() {
-					public void run() {
-						manager.beginRule(rule, null);
-					}
-				};
+				Runnable r= () -> manager.beginRule(rule, null);
 				BusyIndicator.showWhile(fParent.getDisplay(), r);
 			} catch (OperationCanceledException e) {
 				throw new InterruptedException(e.getMessage());

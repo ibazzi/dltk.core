@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 xored software, Inc.
+ * Copyright (c) 2010, 2017 xored software, Inc.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -25,25 +25,29 @@ import org.eclipse.jface.preference.IPreferenceStore;
 /**
  * The implementation of {@link IFoldingBlockProvider} performing folding based
  * on the structure of the source file.
- * 
+ *
  * @since 3.0
  */
 public class ModelFoldingBlockProvider implements IFoldingBlockProvider,
 		IModelElementVisitor {
 
+	@Override
 	public void initializePreferences(IPreferenceStore preferenceStore) {
 	}
 
 	private IFoldingBlockRequestor requestor;
 
+	@Override
 	public void setRequestor(IFoldingBlockRequestor requestor) {
 		this.requestor = requestor;
 	}
 
+	@Override
 	public int getMinimalLineCount() {
 		return 0;
 	}
 
+	@Override
 	public void computeFoldableBlocks(IFoldingContent content) {
 		try {
 			content.getModelElement().accept(this);
@@ -59,6 +63,7 @@ public class ModelFoldingBlockProvider implements IFoldingBlockProvider,
 		throw new AbortFoldingException();
 	}
 
+	@Override
 	public boolean visit(IModelElement element) {
 		if (element instanceof IType || element instanceof IMember) {
 			reportElement(element);
@@ -91,6 +96,7 @@ public class ModelFoldingBlockProvider implements IFoldingBlockProvider,
 
 		TYPE, METHOD;
 
+		@Override
 		public boolean isComment() {
 			return false;
 		}

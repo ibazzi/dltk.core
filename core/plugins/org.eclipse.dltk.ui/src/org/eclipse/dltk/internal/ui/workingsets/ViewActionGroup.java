@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.workingsets;
 
@@ -29,12 +28,12 @@ public class ViewActionGroup extends ActionGroup {
 	public static final int SHOW_PROJECTS= 1;
 	public static final int SHOW_WORKING_SETS= 2;
 	public static final String MODE_CHANGED= ViewActionGroup.class.getName() + ".mode_changed"; //$NON-NLS-1$
-	
+
 	private static final Integer INT_SHOW_PROJECTS= Integer.valueOf(SHOW_PROJECTS);
 	private static final Integer INT_SHOW_WORKING_SETS= Integer.valueOf(SHOW_WORKING_SETS);
-	
+
 	private IPropertyChangeListener fChangeListener;
-	
+
 	private int fMode;
 	private IMenuManager fMenuManager;
 	private IWorkingSetActionGroup fActiveActionGroup;
@@ -44,9 +43,7 @@ public class ViewActionGroup extends ActionGroup {
 	public ViewActionGroup(int mode, IPropertyChangeListener changeListener, IWorkbenchPartSite site) {
 		fChangeListener= changeListener;
 		if(fChangeListener == null) {
-			fChangeListener = new IPropertyChangeListener() {
-				public void propertyChange(PropertyChangeEvent event) {}
-			};
+			fChangeListener = event -> {};
 		}
 		fFilterActionGroup= new WorkingSetFilterActionGroup(site, fChangeListener);
 		fShowActionGroup= new WorkingSetShowActionGroup(site);
@@ -56,21 +53,20 @@ public class ViewActionGroup extends ActionGroup {
 		else
 			fActiveActionGroup= fFilterActionGroup;
 	}
-	
+
+	@Override
 	public void dispose() {
 		fFilterActionGroup.dispose();
 		fShowActionGroup.dispose();
 		fChangeListener= null;
 		super.dispose();
 	}
-	
+
 	public void setWorkingSetModel(WorkingSetModel model) {
 		fShowActionGroup.setWorkingSetMode(model);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void fillActionBars(IActionBars actionBars) {
 		super.fillActionBars(actionBars);
 		fMenuManager= actionBars.getMenuManager();
@@ -80,20 +76,20 @@ public class ViewActionGroup extends ActionGroup {
 			fActiveActionGroup= fFilterActionGroup;
 		((ActionGroup)fActiveActionGroup).fillActionBars(actionBars);
 	}
-	
-	private void fillViewMenu(IMenuManager menu) { 
-		IMenuManager showMenu= new MenuManager(WorkingSetMessages.ViewActionGroup_show_label); 
+
+	private void fillViewMenu(IMenuManager menu) {
+		IMenuManager showMenu= new MenuManager(WorkingSetMessages.ViewActionGroup_show_label);
 		fillShowMenu(showMenu);
 		menu.add(showMenu);
 		menu.add(new Separator(IWorkingSetActionGroup.ACTION_GROUP));
 	}
-	
+
 	private void fillShowMenu(IMenuManager menu) {
 		ViewAction projects= new ViewAction(this, SHOW_PROJECTS);
-		projects.setText(WorkingSetMessages.ViewActionGroup_projects_label); 
+		projects.setText(WorkingSetMessages.ViewActionGroup_projects_label);
 		menu.add(projects);
 		ViewAction workingSets= new ViewAction(this, SHOW_WORKING_SETS);
-		workingSets.setText(WorkingSetMessages.ViewActionGroup_workingSets_label); 
+		workingSets.setText(WorkingSetMessages.ViewActionGroup_workingSets_label);
 		menu.add(workingSets);
 		if (fMode == SHOW_PROJECTS) {
 			projects.setChecked(true);
@@ -110,7 +106,7 @@ public class ViewActionGroup extends ActionGroup {
 			viewer.removeFilter(workingSetFilter);
 		}
 	}
-	
+
 	public void setMode(int mode) {
 		fMode= mode;
 		fActiveActionGroup.cleanViewMenu(fMenuManager);
@@ -127,7 +123,7 @@ public class ViewActionGroup extends ActionGroup {
 		if(fChangeListener != null)
 			fChangeListener.propertyChange(event);
 	}
-	
+
 	public WorkingSetFilterActionGroup getFilterGroup() {
 		return fFilterActionGroup;
 	}
@@ -139,11 +135,11 @@ public class ViewActionGroup extends ActionGroup {
 	public void saveState(IMemento memento) {
 		fFilterActionGroup.saveState(memento);
 	}
-	
+
 	private boolean showProjects() {
 		return fMode == SHOW_PROJECTS;
 	}
-	
+
 	private boolean showWorkingSets() {
 		return fMode == SHOW_WORKING_SETS;
 	}

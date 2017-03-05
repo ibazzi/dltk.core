@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,7 +67,7 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 
 		/**
 		 * Initialize with the given offset, length and highlighting key.
-		 * 
+		 *
 		 * @param offset
 		 * @param length
 		 * @param key
@@ -130,7 +130,7 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 
 	/**
 	 * Install the semantic highlighting on the given editor infrastructure
-	 * 
+	 *
 	 * @param editor
 	 *            The Script editor
 	 * @param sourceViewer
@@ -174,7 +174,7 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 	/**
 	 * Install the semantic highlighting on the given source viewer
 	 * infrastructure. No reconciliation will be performed.
-	 * 
+	 *
 	 * @param sourceViewer
 	 *            the source viewer
 	 * @param colorManager
@@ -190,7 +190,7 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 	/**
 	 * Install the semantic highlighting on the given source viewer
 	 * infrastructure. No reconciliation will be performed.
-	 * 
+	 *
 	 * @param sourceViewer
 	 *            the source viewer
 	 * @param colorManager
@@ -363,16 +363,14 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 		fHighlightings = null;
 	}
 
-	/*
-	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
-	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		handlePropertyChangeEvent(event);
 	}
 
 	/**
 	 * Handle the given property change event
-	 * 
+	 *
 	 * @param event
 	 *            The event
 	 */
@@ -472,7 +470,7 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 	/**
 	 * Tests whether <code>event</code> affects the enablement of semantic
 	 * highlighting.
-	 * 
+	 *
 	 * @param event
 	 *            the property change under examination
 	 * @return <code>true</code> if <code>event</code> changed semantic
@@ -602,7 +600,7 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 
 	/**
 	 * Returns this hightlighter's reconciler.
-	 * 
+	 *
 	 * @return the semantic highlighter reconciler or <code>null</code> if none
 	 * @since 3.3
 	 */

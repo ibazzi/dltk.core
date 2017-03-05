@@ -11,12 +11,13 @@
  *******************************************************************************/
 package org.eclipse.dltk.debug.dbgp.tests;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.dltk.dbgp.internal.utils.Base64Helper;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class DbgpBase64Tests extends TestCase {
-
+public class DbgpBase64Tests {
+	@Test
 	public void testNullAndEmpty() {
 		assertEquals("", Base64Helper.encodeString(null));
 		assertEquals("", Base64Helper.encodeString(""));
@@ -24,23 +25,23 @@ public class DbgpBase64Tests extends TestCase {
 		assertEquals("", Base64Helper.decodeString(""));
 		assertEquals("", Base64Helper.decodeString("\r\n"));
 	}
-
+	@Test
 	public void testEndode() {
 		assertEquals("MTIz", Base64Helper.encodeString("123"));
 		assertEquals("MTIzNDU2Nzg5", Base64Helper.encodeString("123456789"));
 	}
-
+	@Test
 	public void testDecode() {
 		assertEquals("123", Base64Helper.decodeString("MTIz"));
 		assertEquals("123456789", Base64Helper.decodeString("MTIzNDU2Nzg5"));
 	}
-
+	@Test
 	public void testDecodeChunked() {
 		assertEquals("123", Base64Helper.decodeString("MTIz"));
 		assertEquals("123456789", Base64Helper.decodeString("MTIz" + "\n"
 				+ "NDU2" + "\n" + "Nzg5"));
 	}
-
+	@Test
 	public void testLongString() {
 		char[] c = new char[256];
 		for (int i = 0; i < c.length; ++i) {

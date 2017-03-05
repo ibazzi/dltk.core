@@ -36,6 +36,7 @@ public abstract class ContributedExtensionOptionsBlock extends
 
 	// ~ Methods
 
+	@Override
 	public final Control createOptionsBlock(Composite parent) {
 		Composite composite = SWTFactory.createComposite(parent, parent
 				.getFont(), 1, 1, GridData.FILL);
@@ -115,6 +116,7 @@ public abstract class ContributedExtensionOptionsBlock extends
 	protected ComboViewerBlock createComboViewerBlock(Composite group) {
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		return new ComboViewerBlock(group, gd) {
+			@Override
 			protected String getObjectName(Object element) {
 				final IDLTKContributedExtension item = (IDLTKContributedExtension) element;
 				if (item.getName() != null && item.getName().length() != 0) {
@@ -123,19 +125,22 @@ public abstract class ContributedExtensionOptionsBlock extends
 				return item.getClass().getName();
 			}
 
+			@Override
 			protected void selectedObjectChanged(Object element) {
 				updateSelection((IDLTKContributedExtension) element);
 			}
 
+			@Override
 			protected String getObjectId(Object element) {
 				return ((IDLTKContributedExtension) element).getId();
 			}
 
+			@Override
 			protected Object getDefaultObject() {
 				/*
 				 * no preference value has been set so we want a contribution
 				 * that is returned based upon the 'select by priority' logic
-				 * 
+				 *
 				 * this is done to handle the case where the plugin implementor
 				 * did not configure a default value via a preference
 				 * initializer
@@ -144,10 +149,12 @@ public abstract class ContributedExtensionOptionsBlock extends
 						getProject(), getNatureId());
 			}
 
+			@Override
 			protected String getSavedObjectId() {
 				return getValue(getSavedContributionKey());
 			}
 
+			@Override
 			protected Object getObjectById(String id) {
 				return getExtensionManager().getContributionById(id);
 			}
@@ -174,6 +181,7 @@ public abstract class ContributedExtensionOptionsBlock extends
 	 */
 	protected abstract String getSelectorNameLabel();
 
+	@Override
 	protected void initialize() {
 		super.initialize();
 
@@ -189,6 +197,7 @@ public abstract class ContributedExtensionOptionsBlock extends
 		viewer.initialize(contributions);
 	}
 
+	@Override
 	public void performDefaults() {
 		super.performDefaults();
 		viewer.performDefaults();

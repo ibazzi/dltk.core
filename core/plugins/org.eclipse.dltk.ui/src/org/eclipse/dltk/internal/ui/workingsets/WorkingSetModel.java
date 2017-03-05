@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,6 +55,7 @@ public class WorkingSetModel {
 	private boolean fConfigured;
 
 	private static class WorkingSetComparar implements IElementComparer {
+		@Override
 		public boolean equals(Object o1, Object o2) {
 			IWorkingSet w1 = o1 instanceof IWorkingSet ? (IWorkingSet) o1
 					: null;
@@ -65,6 +66,7 @@ public class WorkingSetModel {
 			return w1 == w2;
 		}
 
+		@Override
 		public int hashCode(Object element) {
 			if (element instanceof IWorkingSet)
 				return System.identityHashCode(element);
@@ -91,17 +93,6 @@ public class WorkingSetModel {
 			for (int i = 0; i < workingSets.length; i++) {
 				put(workingSets[i]);
 			}
-		}
-
-		public IAdaptable[] remove(IWorkingSet ws) {
-			IAdaptable[] elements = (IAdaptable[]) fWorkingSetToElement
-					.remove(ws);
-			if (elements != null) {
-				for (int i = 0; i < elements.length; i++) {
-					removeElement(elements[i], ws);
-				}
-			}
-			return elements;
 		}
 
 		public IAdaptable[] refresh(IWorkingSet ws) {
@@ -141,11 +132,6 @@ public class WorkingSetModel {
 
 		public List getAllWorkingSets(Object element) {
 			return getAllElements(fElementToWorkingSet, element);
-		}
-
-		public IWorkingSet getFirstWorkingSetForResource(IResource resource) {
-			return (IWorkingSet) getFirstElement(fResourceToWorkingSet,
-					resource);
 		}
 
 		public List getAllWorkingSetsForResource(IResource resource) {
@@ -264,11 +250,7 @@ public class WorkingSetModel {
 
 	private void addListenersToWorkingSetManagers() {
 		fListeners = new ListenerList(ListenerList.IDENTITY);
-		fWorkingSetManagerListener = new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				workingSetManagerChanged(event);
-			}
-		};
+		fWorkingSetManagerListener = event -> workingSetManagerChanged(event);
 		PlatformUI.getWorkbench().getWorkingSetManager()
 				.addPropertyChangeListener(fWorkingSetManagerListener);
 		fLocalWorkingSetManager
@@ -343,7 +325,7 @@ public class WorkingSetModel {
 
 	/**
 	 * Adds a property change listener.
-	 * 
+	 *
 	 * @param listener
 	 *            the property change listener to add
 	 */
@@ -353,7 +335,7 @@ public class WorkingSetModel {
 
 	/**
 	 * Removes the property change listener.
-	 * 
+	 *
 	 * @param listener
 	 *            the property change listener to remove
 	 */

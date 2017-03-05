@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -24,15 +24,16 @@ public class RemoveAllValidatorConsolesAction extends Action {
 	public RemoveAllValidatorConsolesAction() {
 		setText(Messages.RemoveAllValidatorConsolesAction_text);
 		setToolTipText(Messages.RemoveAllValidatorConsolesAction_toolTipText);
-		setImageDescriptor(ValidatorsUI.getDefault().getImageDescriptor(
-				"icons/full/elcl16/rem_all_co.png")); //$NON-NLS-1$
+		setImageDescriptor(ValidatorsUI.getDefault()
+				.getImageDescriptor("icons/full/elcl16/rem_all_co.png")); //$NON-NLS-1$
 	}
 
+	@Override
 	public void run() {
 		final IConsoleManager manager = ConsolePlugin.getDefault()
 				.getConsoleManager();
 		final IConsole[] consoles = manager.getConsoles();
-		final List<IConsole> toRemove = new ArrayList<IConsole>();
+		final List<IConsole> toRemove = new ArrayList<>();
 		for (int i = 0; i < consoles.length; ++i) {
 			IConsole console = consoles[i];
 			if (console instanceof ValidatorConsole
@@ -42,8 +43,8 @@ public class RemoveAllValidatorConsolesAction extends Action {
 			}
 		}
 		if (!toRemove.isEmpty()) {
-			manager.removeConsoles(toRemove.toArray(new IConsole[toRemove
-					.size()]));
+			manager.removeConsoles(
+					toRemove.toArray(new IConsole[toRemove.size()]));
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 xored software, Inc.
+ * Copyright (c) 2010, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -25,7 +25,7 @@ import org.eclipse.ui.IPersistableElement;
 /**
  * The ExternalSourceModuleEditorInputFactory is used to save and recreate an
  * {@link IEditorInput} for {@link IExternalSourceModule} object.
- * 
+ *
  * @see IMemento
  * @see IPersistableElement
  * @see IElementFactory
@@ -35,9 +35,7 @@ public class ExternalSourceModuleEditorInputFactory implements IElementFactory {
 	private static final String KEY = "elementID"; //$NON-NLS-1$
 	private static final String FACTORY_ID = "org.eclipse.dltk.ui.ExternalSourceModuleEditorInputFactory"; //$NON-NLS-1$
 
-	/**
-	 * @see IElementFactory
-	 */
+	@Override
 	public IAdaptable createElement(IMemento memento) {
 		String identifier = memento.getString(KEY);
 		if (identifier != null) {
@@ -53,10 +51,12 @@ public class ExternalSourceModuleEditorInputFactory implements IElementFactory {
 			final IExternalSourceModule module) {
 		return new IPersistableElement() {
 
+			@Override
 			public String getFactoryId() {
 				return FACTORY_ID;
 			}
 
+			@Override
 			public void saveState(IMemento memento) {
 				memento.putString(KEY, module.getHandleIdentifier());
 			}

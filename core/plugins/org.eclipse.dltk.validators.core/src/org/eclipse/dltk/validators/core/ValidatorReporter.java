@@ -1,9 +1,11 @@
 package org.eclipse.dltk.validators.core;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.dltk.compiler.CharOperation;
 import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.core.ISourceModule;
@@ -12,15 +14,11 @@ import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.core.builder.ISourceLineTracker;
 import org.eclipse.dltk.utils.TextUtils;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  */
 public class ValidatorReporter implements IValidatorReporter {
 
-	private Map<ISourceModule, ISourceLineTracker> lineTrackers = 
-			new HashMap<ISourceModule, ISourceLineTracker>();
+	private Map<ISourceModule, ISourceLineTracker> lineTrackers = new HashMap<>();
 
 	private String markerId;
 	private boolean underline;
@@ -34,8 +32,8 @@ public class ValidatorReporter implements IValidatorReporter {
 		this(markerId, true);
 	}
 
-	public IMarker report(ISourceModule module, IValidatorProblem problem)
-			throws CoreException {
+	@Override
+	public IMarker report(ISourceModule module, IValidatorProblem problem) throws CoreException {
 		IMarker marker = report(module.getResource(), problem);
 
 		if (marker != null && underline) {
@@ -48,15 +46,14 @@ public class ValidatorReporter implements IValidatorReporter {
 			ISourceRange adjusted = TextUtils.trimWhitespace(source, range);
 
 			marker.setAttribute(IMarker.CHAR_START, adjusted.getOffset());
-			marker.setAttribute(IMarker.CHAR_END, adjusted.getOffset()
-					+ adjusted.getLength());
+			marker.setAttribute(IMarker.CHAR_END, adjusted.getOffset() + adjusted.getLength());
 		}
 
 		return marker;
 	}
 
-	public IMarker report(IResource resource, IValidatorProblem problem)
-			throws CoreException {
+	@Override
+	public IMarker report(IResource resource, IValidatorProblem problem) throws CoreException {
 		if (problem == null) {
 			return null;
 		}
@@ -88,8 +85,7 @@ public class ValidatorReporter implements IValidatorReporter {
 		return lineTracker;
 	}
 
-	private IMarker createMarker(IResource resource, IValidatorProblem problem)
-			throws CoreException {
+	private IMarker createMarker(IResource resource, IValidatorProblem problem) throws CoreException {
 
 		IMarker marker = resource.createMarker(markerId);
 

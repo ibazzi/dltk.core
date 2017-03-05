@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ public abstract class ViewFilterAction extends ViewerFilter
 
 	class Updater implements IPropertyChangeListener {
 
+		@Override
 		public void propertyChange(PropertyChangeEvent event) {
 			if (event.getProperty().equals(getPreferenceKey())
 					|| event.getProperty().equals(getCompositeKey())) {
@@ -44,6 +45,7 @@ public abstract class ViewFilterAction extends ViewerFilter
 		super();
 	}
 
+	@Override
 	public void init(IViewPart view) {
 		fView = view;
 		fAction.setChecked(getPreferenceValue());
@@ -51,18 +53,22 @@ public abstract class ViewFilterAction extends ViewerFilter
 		getPreferenceStore().addPropertyChangeListener(fListener);
 	}
 
+	@Override
 	public void init(IAction action) {
 		fAction = action;
 	}
 
+	@Override
 	public void dispose() {
 		getPreferenceStore().removePropertyChangeListener(fListener);
 	}
 
+	@Override
 	public void runWithEvent(IAction action, Event event) {
 		run(action);
 	}
 
+	@Override
 	public void run(IAction action) {
 		StructuredViewer viewer = getStructuredViewer();
 		ViewerFilter[] filters = viewer.getFilters();
@@ -91,6 +97,7 @@ public abstract class ViewFilterAction extends ViewerFilter
 		store.setValue(key, checked);
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
 
@@ -100,7 +107,7 @@ public abstract class ViewFilterAction extends ViewerFilter
 
 	/**
 	 * Returns the value of this filters preference (on/off) for the given view.
-	 * 
+	 *
 	 * @param part
 	 * @return boolean
 	 */
@@ -118,7 +125,7 @@ public abstract class ViewFilterAction extends ViewerFilter
 
 	/**
 	 * Returns the key for this action's preference
-	 * 
+	 *
 	 * @return String
 	 */
 	protected abstract String getPreferenceKey();
@@ -126,7 +133,7 @@ public abstract class ViewFilterAction extends ViewerFilter
 	/**
 	 * Returns the key used by this action to store its preference
 	 * value/setting. Based on a base key (suffix) and part id (prefix).
-	 * 
+	 *
 	 * @return preference store key
 	 */
 	protected String getCompositeKey() {
@@ -152,7 +159,7 @@ public abstract class ViewFilterAction extends ViewerFilter
 
 	/**
 	 * Returns whether this action is selected/checked.
-	 * 
+	 *
 	 * @return whether this action is selected/checked
 	 */
 	protected boolean getValue() {

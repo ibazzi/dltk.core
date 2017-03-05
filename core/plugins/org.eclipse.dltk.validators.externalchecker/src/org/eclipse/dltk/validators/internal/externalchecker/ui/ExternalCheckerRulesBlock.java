@@ -1,15 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
-
  *******************************************************************************/
 package org.eclipse.dltk.validators.internal.externalchecker.ui;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -38,7 +36,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 
-public class ExternalCheckerRulesBlock  {
+public class ExternalCheckerRulesBlock {
 
 	private Composite fControl;
 
@@ -61,11 +59,9 @@ public class ExternalCheckerRulesBlock  {
 		// String preference =
 		// ValidatorsUI.getDefault().getPreferenceStore().getString("wildcards");
 		wlist.getWcards().clear();
-		List wildcards = new ArrayList();
-		
-		wildcards = ExternalCheckerWildcardManager.loadCustomWildcards();
+		List<CustomWildcard> wildcards = ExternalCheckerWildcardManager.loadCustomWildcards();
 		for (int i = 0; i < wildcards.size(); i++) {
-			wlist.addWcard((CustomWildcard)wildcards.get(i));
+			wlist.addWcard(wildcards.get(i));
 		}
 	}
 
@@ -89,11 +85,9 @@ public class ExternalCheckerRulesBlock  {
 		PixelConverter conv = new PixelConverter(parent);
 		data = new GridData(GridData.FILL_BOTH);
 		data.widthHint = conv.convertWidthInCharsToPixels(50);
-		TableLayoutComposite tblComposite = new TableLayoutComposite(parent,
-				SWT.NONE);
+		TableLayoutComposite tblComposite = new TableLayoutComposite(parent, SWT.NONE);
 		tblComposite.setLayoutData(data);
-		fTable = new Table(tblComposite, SWT.BORDER | SWT.MULTI
-				| SWT.FULL_SELECTION);
+		fTable = new Table(tblComposite, SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
 
 		data = new GridData(GridData.FILL_BOTH);
 		data.widthHint = 450;
@@ -146,6 +140,7 @@ public class ExternalCheckerRulesBlock  {
 
 		addWCard = SWTFactory.createPushButton(buttons, Messages.ExternalCheckerRulesBlock_add, null);
 		addWCard.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent ev) {
 				getWlist().addWcard();
 			}
@@ -153,9 +148,10 @@ public class ExternalCheckerRulesBlock  {
 
 		removeWCard = SWTFactory.createPushButton(buttons, Messages.ExternalCheckerRulesBlock_remove, null);
 		removeWCard.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent ev) {
-				CustomWildcard rule = (CustomWildcard) ((IStructuredSelection) tViewer
-						.getSelection()).getFirstElement();
+				CustomWildcard rule = (CustomWildcard) ((IStructuredSelection) tViewer.getSelection())
+						.getFirstElement();
 				if (rule != null)
 					wlist.removeWcard(rule);
 			}
@@ -179,8 +175,8 @@ public class ExternalCheckerRulesBlock  {
 		// GridData data;
 		GridLayout layout = (GridLayout) ancestor.getLayout();
 
-		fTable = new Table(ancestor, SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL
-				| SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.HIDE_SELECTION);
+		fTable = new Table(ancestor,
+				SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.HIDE_SELECTION);
 
 		fTable.setLayout(layout);
 		fTable.setLinesVisible(true);
@@ -216,6 +212,7 @@ public class ExternalCheckerRulesBlock  {
 		addWCard = new Button(ancestor, SWT.PUSH);
 		addWCard.setText(Messages.ExternalCheckerRulesBlock_addRule);
 		addWCard.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent ev) {
 				getWlist().addWcard();
 			}
@@ -231,7 +228,7 @@ public class ExternalCheckerRulesBlock  {
 		return getControl().getShell();
 	}
 
-	public List getColumnNames() {
+	public List<String> getColumnNames() {
 		return Arrays.asList(columnNames);
 	}
 
@@ -243,16 +240,18 @@ public class ExternalCheckerRulesBlock  {
 		return wlist;
 	}
 
-	class WildcardContentProvider implements IStructuredContentProvider,
-			IWildcardListViewer {
+	class WildcardContentProvider implements IStructuredContentProvider, IWildcardListViewer {
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return getWlist().getWcards().toArray();
 		}
 
+		@Override
 		public void dispose() {
 			getWlist().removeChangeListener(this);
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			if (newInput != null)
 				((CustomWildcardsList) newInput).addChangeListener(this);
@@ -260,14 +259,17 @@ public class ExternalCheckerRulesBlock  {
 				((CustomWildcardsList) oldInput).removeChangeListener(this);
 		}
 
+		@Override
 		public void addWildcard(CustomWildcard r) {
 			tViewer.add(r);
 		}
 
+		@Override
 		public void removeWildcard(CustomWildcard r) {
 			tViewer.remove(r);
 		}
 
+		@Override
 		public void updateWildcard(CustomWildcard r) {
 			tViewer.update(r, null);
 		}

@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.debug.ui;
 
@@ -28,9 +27,7 @@ import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.dltk.debug.core.DLTKDebugPlugin;
-import org.eclipse.dltk.debug.core.model.IScriptStackFrame;
 import org.eclipse.dltk.debug.core.model.IScriptVariable;
-import org.eclipse.dltk.debug.core.model.ISourceOffsetLookup;
 import org.eclipse.dltk.internal.debug.core.model.HotCodeReplaceManager;
 import org.eclipse.dltk.internal.debug.ui.ScriptDebugOptionsManager;
 import org.eclipse.dltk.internal.debug.ui.ScriptHotCodeReplaceListener;
@@ -78,7 +75,7 @@ public class DLTKDebugUIPlugin extends AbstractUIPlugin {
 	// Map of InterpreterInstallTypeIDs to IConfigurationElements
 	protected Map<String, IConfigurationElement> fInterpreterInstallTypePageMap;
 
-	protected Map<RGB, Color> fColorTable = new HashMap<RGB, Color>(10);
+	protected Map<RGB, Color> fColorTable = new HashMap<>(10);
 
 	/**
 	 * Whether this plugin is in the process of shutting down.
@@ -87,7 +84,7 @@ public class DLTKDebugUIPlugin extends AbstractUIPlugin {
 
 	private ScriptHotCodeReplaceListener fHCRListener;
 
-	private HashMap<String, ScriptDebugModelPresentation> fPresentations = new HashMap<String, ScriptDebugModelPresentation>();
+	private HashMap<String, ScriptDebugModelPresentation> fPresentations = new HashMap<>();
 
 	// private Object fUtilPresentation;
 
@@ -122,20 +119,20 @@ public class DLTKDebugUIPlugin extends AbstractUIPlugin {
 
 		// Special listener that prints command line on the console
 		// TODO: add user preferences
-		ConsolePlugin.getDefault().getConsoleManager().addConsoleListener(
-				new IConsoleListener() {
+		ConsolePlugin.getDefault().getConsoleManager()
+				.addConsoleListener(new IConsoleListener() {
+					@Override
 					public void consolesAdded(
 							org.eclipse.ui.console.IConsole[] consoles) {
 						for (int i = 0; i < consoles.length; ++i) {
 							if (consoles[i] instanceof org.eclipse.debug.ui.console.IConsole) {
 								org.eclipse.debug.ui.console.IConsole console = (org.eclipse.debug.ui.console.IConsole) consoles[i];
 								org.eclipse.ui.console.IOConsoleOutputStream stream = console
-										.getStream(IDebugUIConstants.ID_STANDARD_OUTPUT_STREAM);
+										.getStream(
+												IDebugUIConstants.ID_STANDARD_OUTPUT_STREAM);
 								if (stream != null) {
-									String cmdLine = console
-											.getProcess()
-											.getLaunch()
-											.getAttribute(
+									String cmdLine = console.getProcess()
+											.getLaunch().getAttribute(
 													DLTKLaunchingPlugin.LAUNCH_COMMAND_LINE);
 
 									if (cmdLine != null) {
@@ -151,59 +148,58 @@ public class DLTKDebugUIPlugin extends AbstractUIPlugin {
 						}
 					}
 
+					@Override
 					public void consolesRemoved(
 							org.eclipse.ui.console.IConsole[] consoles) {
 					}
 				});
 
 		fHCRListener = new ScriptHotCodeReplaceListener();
-		HotCodeReplaceManager.getDefault().addHotCodeReplaceListener(
-				fHCRListener);
-		DLTKDebugPlugin.setSourceOffsetRetriever(new ISourceOffsetLookup() {
-
-			public int calculateOffset(IScriptStackFrame frame, int lineNumber,
-					int column, boolean isEndOffset) {
-				final ILaunch launch = frame.getLaunch();
-				final ISourceLocator sourceLocator = launch.getSourceLocator();
-				final Object object = sourceLocator.getSourceElement(frame);
-				if (object instanceof IFile) {
-					final IDocumentProvider provider = DLTKUIPlugin
-							.getDocumentProvider();
-					final IDocument document = provider
-							.getDocument(new FileEditorInput((IFile) object));
-					if (document != null) {
-						try {
-							if (column >= 0) {
-								return document.getLineOffset(lineNumber - 1)
-										+ column;
-							} else {
-								if (!isEndOffset) {
-									return document
-											.getLineOffset(lineNumber - 1);
+		HotCodeReplaceManager.getDefault()
+				.addHotCodeReplaceListener(fHCRListener);
+		DLTKDebugPlugin.setSourceOffsetRetriever(
+				(frame, lineNumber, column, isEndOffset) -> {
+					final ILaunch launch = frame.getLaunch();
+					final ISourceLocator sourceLocator = launch
+							.getSourceLocator();
+					final Object object = sourceLocator.getSourceElement(frame);
+					if (object instanceof IFile) {
+						final IDocumentProvider provider = DLTKUIPlugin
+								.getDocumentProvider();
+						final IDocument document = provider.getDocument(
+								new FileEditorInput((IFile) object));
+						if (document != null) {
+							try {
+								if (column >= 0) {
+									return document.getLineOffset(
+											lineNumber - 1) + column;
 								} else {
-									final IRegion region = document
-											.getLineInformation(lineNumber - 1);
-									return region.getOffset()
-											+ region.getLength();
+									if (!isEndOffset) {
+										return document
+												.getLineOffset(lineNumber - 1);
+									} else {
+										final IRegion region = document
+												.getLineInformation(
+														lineNumber - 1);
+										return region.getOffset()
+												+ region.getLength();
+									}
 								}
+							} catch (BadLocationException e) {
+								// ignore
 							}
-						} catch (BadLocationException e) {
-							// ignore
 						}
 					}
-				}
-				return -1;
-			}
-
-		});
+					return -1;
+				});
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		try {
 			DLTKDebugPlugin.setSourceOffsetRetriever(null);
-			HotCodeReplaceManager.getDefault().removeHotCodeReplaceListener(
-					fHCRListener);
+			HotCodeReplaceManager.getDefault()
+					.removeHotCodeReplaceListener(fHCRListener);
 
 			setShuttingDown(true);
 
@@ -212,10 +208,10 @@ public class DLTKDebugUIPlugin extends AbstractUIPlugin {
 
 			ILaunchManager launchManager = DebugPlugin.getDefault()
 					.getLaunchManager();
-			launchManager.removeLaunchListener(DebugConsoleManager
-					.getInstance());
-			launchManager.removeLaunchListener(ScriptDebugLogManager
-					.getInstance());
+			launchManager
+					.removeLaunchListener(DebugConsoleManager.getInstance());
+			launchManager
+					.removeLaunchListener(ScriptDebugLogManager.getInstance());
 
 			Iterator<Color> e = fColorTable.values().iterator();
 			while (e.hasNext())
@@ -228,7 +224,7 @@ public class DLTKDebugUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns whether this plug-in is in the process of being shutdown.
-	 * 
+	 *
 	 * @return whether this plug-in is in the process of being shutdown
 	 */
 	public boolean isShuttingDown() {
@@ -241,7 +237,7 @@ public class DLTKDebugUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the shared instance
-	 * 
+	 *
 	 * @return the shared instance
 	 */
 	public static DLTKDebugUIPlugin getDefault() {
@@ -251,7 +247,7 @@ public class DLTKDebugUIPlugin extends AbstractUIPlugin {
 	// UI
 	/**
 	 * Returns the active workbench window
-	 * 
+	 *
 	 * @return the active workbench window
 	 */
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
@@ -260,7 +256,7 @@ public class DLTKDebugUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the active workbench shell or <code>null</code> if none
-	 * 
+	 *
 	 * @return the active workbench shell or <code>null</code> if none
 	 */
 	public static Shell getActiveWorkbenchShell() {
@@ -289,7 +285,7 @@ public class DLTKDebugUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Displays the given preference page.
-	 * 
+	 *
 	 * @param id
 	 *            pref page id
 	 * @param page
@@ -300,22 +296,19 @@ public class DLTKDebugUIPlugin extends AbstractUIPlugin {
 
 		PreferenceManager manager = new PreferenceManager();
 		manager.addToRoot(targetNode);
-		final PreferenceDialog dialog = new PreferenceDialog(DLTKDebugUIPlugin
-				.getActiveWorkbenchShell(), manager);
+		final PreferenceDialog dialog = new PreferenceDialog(
+				DLTKDebugUIPlugin.getActiveWorkbenchShell(), manager);
 		final boolean[] result = new boolean[] { false };
-		BusyIndicator.showWhile(DLTKDebugUIPlugin.getStandardDisplay(),
-				new Runnable() {
-					public void run() {
-						dialog.create();
-						dialog.setMessage(targetNode.getLabelText());
-						result[0] = (dialog.open() == Window.OK);
-					}
-				});
+		BusyIndicator.showWhile(DLTKDebugUIPlugin.getStandardDisplay(), () -> {
+			dialog.create();
+			dialog.setMessage(targetNode.getLabelText());
+			result[0] = (dialog.open() == Window.OK);
+		});
 	}
 
 	/**
 	 * Logs the specified status with this plug-in's log.
-	 * 
+	 *
 	 * @param status
 	 *            status to log
 	 */
@@ -325,7 +318,7 @@ public class DLTKDebugUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Logs an internal error with the specified message.
-	 * 
+	 *
 	 * @param message
 	 *            the error message to log
 	 */
@@ -336,7 +329,7 @@ public class DLTKDebugUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Logs an internal error with the specified throwable
-	 * 
+	 *
 	 * @param e
 	 *            the exception to be logged
 	 */
@@ -365,7 +358,7 @@ public class DLTKDebugUIPlugin extends AbstractUIPlugin {
 		if (shell != null) {
 			IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(),
 					IDLTKDebugUIConstants.INTERNAL_ERROR,
-					"Error logged from DLTK Debug UI: ", t); //$NON-NLS-1$	
+					"Error logged from DLTK Debug UI: ", t); //$NON-NLS-1$
 			ErrorDialog.openError(shell,
 					"DebugUIMessages.JDIDebugUIPlugin_Error_1", //$NON-NLS-1$
 					message, status);
@@ -389,9 +382,7 @@ public class DLTKDebugUIPlugin extends AbstractUIPlugin {
 				tab = (ILaunchConfigurationTab) configElement
 						.createExecutableExtension("class"); //$NON-NLS-1$
 			} catch (CoreException ce) {
-				log(new Status(
-						IStatus.ERROR,
-						getUniqueIdentifier(),
+				log(new Status(IStatus.ERROR, getUniqueIdentifier(),
 						IDLTKDebugUIConstants.INTERNAL_ERROR,
 						"DebugUIMessages.JDIDebugUIPlugin_An_error_occurred_retrieving_a_InterpreterInstallType_page_1", //$NON-NLS-1$
 						ce));
@@ -401,13 +392,11 @@ public class DLTKDebugUIPlugin extends AbstractUIPlugin {
 	}
 
 	protected void initializeInterpreterInstallTypePageMap() {
-		fInterpreterInstallTypePageMap = new HashMap<String, IConfigurationElement>(
+		fInterpreterInstallTypePageMap = new HashMap<>(
 				10);
 
-		IExtensionPoint extensionPoint = Platform
-				.getExtensionRegistry()
-				.getExtensionPoint(
-						getUniqueIdentifier(),
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
+				.getExtensionPoint(getUniqueIdentifier(),
 						IDLTKDebugUIConstants.EXTENSION_POINT_INTERPRETER_INSTALL_TYPE_PAGE);
 		IConfigurationElement[] infos = extensionPoint
 				.getConfigurationElements();

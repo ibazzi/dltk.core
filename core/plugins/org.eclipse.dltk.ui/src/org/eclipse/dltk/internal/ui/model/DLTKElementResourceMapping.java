@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,39 +42,42 @@ import org.eclipse.dltk.ui.DLTKUIPlugin;
  * An abstract super class to describe mappings from a model element to a
  * set of resources. The class also provides factory methods to create
  * resource mappings.
- * 
-	 *
+ *
  */
 public abstract class DLTKElementResourceMapping extends ResourceMapping {
-	
+
 	protected DLTKElementResourceMapping() {
 	}
-	
+
 	public IModelElement getModelElement() {
 		Object o= getModelObject();
 		if (o instanceof IModelElement)
 			return (IModelElement)o;
 		return null;
 	}
-	
+
+	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof DLTKElementResourceMapping))
 			return false;
 		return getModelElement().equals(((DLTKElementResourceMapping)obj).getModelElement());
 	}
-	
+
+	@Override
 	public int hashCode() {
 		IModelElement modelElement= getModelElement();
 		if (modelElement == null)
 			return super.hashCode();
-		
+
 		return modelElement.hashCode();
 	}
-	
+
+	@Override
 	public String getModelProviderId() {
 		return ScriptModelProvider.DLTK_MODEL_PROVIDER_ID;
 	}
-	
+
+	@Override
 	public boolean contains(ResourceMapping mapping) {
 		if (mapping instanceof DLTKElementResourceMapping) {
 			DLTKElementResourceMapping javaMapping = (DLTKElementResourceMapping) mapping;
@@ -85,18 +88,22 @@ public abstract class DLTKElementResourceMapping extends ResourceMapping {
 		}
 		return false;
 	}
-	
+
 	//---- the factory code ---------------------------------------------------------------
-	
+
 	private static final class ScriptModelResourceMapping extends DLTKElementResourceMapping {
 		private final IScriptModel fModel;
 		private ScriptModelResourceMapping(IScriptModel model) {
 			Assert.isNotNull(model);
 			fModel= model;
 		}
+
+		@Override
 		public Object getModelObject() {
 			return fModel;
 		}
+
+		@Override
 		public IProject[] getProjects() {
 			IScriptProject[] projects= null;
 			try {
@@ -111,6 +118,8 @@ public abstract class DLTKElementResourceMapping extends ResourceMapping {
 			}
 			return result;
 		}
+
+		@Override
 		public ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
 			IScriptProject[] projects= fModel.getScriptProjects();
 			ResourceTraversal[] result= new ResourceTraversal[projects.length];
@@ -120,51 +129,65 @@ public abstract class DLTKElementResourceMapping extends ResourceMapping {
 			return result;
 		}
 	}
-	
+
 	private static final class ScriptProjectResourceMapping extends DLTKElementResourceMapping {
 		private final IScriptProject fProject;
 		private ScriptProjectResourceMapping(IScriptProject project) {
 			Assert.isNotNull(project);
 			fProject= project;
 		}
+
+		@Override
 		public Object getModelObject() {
 			return fProject;
 		}
+
+		@Override
 		public IProject[] getProjects() {
 			return new IProject[] {fProject.getProject() };
 		}
+
+		@Override
 		public ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
 			return new ResourceTraversal[] {
 				new ResourceTraversal(new IResource[] {fProject.getProject()}, IResource.DEPTH_INFINITE, 0)
 			};
 		}
 	}
-	
+
 	private static final class PackageFragementRootResourceMapping extends DLTKElementResourceMapping {
 		private final IProjectFragment fRoot;
 		private PackageFragementRootResourceMapping(IProjectFragment root) {
 			Assert.isNotNull(root);
 			fRoot= root;
 		}
+
+		@Override
 		public Object getModelObject() {
 			return fRoot;
 		}
+
+		@Override
 		public IProject[] getProjects() {
 			return new IProject[] {fRoot.getScriptProject().getProject() };
 		}
+
+		@Override
 		public ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
 			return new ResourceTraversal[] {
 				new ResourceTraversal(new IResource[] {fRoot.getResource()}, IResource.DEPTH_INFINITE, 0)
 			};
 		}
 	}
-	
+
 	private static final class LocalPackageFragementTraversal extends ResourceTraversal {
 		private final IScriptFolder fPack;
 		public LocalPackageFragementTraversal(IScriptFolder pack) throws CoreException {
 			super(new IResource[] {pack.getResource()}, IResource.DEPTH_ONE, 0);
 			fPack= pack;
 		}
+
+		@Override
 		public void accept(IResourceVisitor visitor) throws CoreException {
 			IFile[] files= getPackageContent(fPack);
 			final IResource resource= fPack.getResource();
@@ -175,19 +198,25 @@ public abstract class DLTKElementResourceMapping extends ResourceMapping {
 			}
 		}
 	}
-	
+
 	private static final class ScriptFolderResourceMapping extends DLTKElementResourceMapping {
 		private final IScriptFolder fPack;
 		private ScriptFolderResourceMapping(IScriptFolder pack) {
 			Assert.isNotNull(pack);
 			fPack= pack;
 		}
+
+		@Override
 		public Object getModelObject() {
 			return fPack;
 		}
+
+		@Override
 		public IProject[] getProjects() {
 			return new IProject[] { fPack.getScriptProject().getProject() };
 		}
+
+		@Override
 		public ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
 			if (context instanceof RemoteResourceMappingContext) {
 				return new ResourceTraversal[] {
@@ -200,6 +229,8 @@ public abstract class DLTKElementResourceMapping extends ResourceMapping {
 			  return new ResourceTraversal[0];
 			}
 		}
+
+		@Override
 		public void accept(ResourceMappingContext context, IResourceVisitor visitor, IProgressMonitor monitor) throws CoreException {
 			if (context instanceof RemoteResourceMappingContext) {
 				super.accept(context, visitor, monitor);
@@ -220,7 +251,7 @@ public abstract class DLTKElementResourceMapping extends ResourceMapping {
 			}
 		}
 	}
-	
+
 	private static IFile[] getPackageContent(IScriptFolder pack) throws CoreException {
 		List<IFile> result = new ArrayList<IFile>();
 		IContainer container= (IContainer)pack.getResource();
@@ -238,35 +269,45 @@ public abstract class DLTKElementResourceMapping extends ResourceMapping {
 		}
 		return result.toArray(new IFile[result.size()]);
 	}
-	
-	
+
+
 	private static final class SourceModuleResourceMapping extends DLTKElementResourceMapping {
 		private final ISourceModule fUnit;
 		private SourceModuleResourceMapping(ISourceModule unit) {
 			Assert.isNotNull(unit);
 			fUnit= unit;
 		}
+
+		@Override
 		public Object getModelObject() {
 			return fUnit;
 		}
+
+		@Override
 		public IProject[] getProjects() {
 			return new IProject[] {fUnit.getScriptProject().getProject() };
 		}
+
+		@Override
 		public ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
 			return new ResourceTraversal[] {
 				new ResourceTraversal(new IResource[] {fUnit.getResource()}, IResource.DEPTH_ONE, 0)
 			};
 		}
-	}	
-	
+	}
+
 	private static final class LogicalPackageResourceMapping extends ResourceMapping {
 		private final IScriptFolder[] fFragments;
 		private LogicalPackageResourceMapping(IScriptFolder[] fragments) {
 			fFragments= fragments;
 		}
+
+		@Override
 		public Object getModelObject() {
 			return fFragments;
 		}
+
+		@Override
 		public IProject[] getProjects() {
 			Set<IProject> result = new HashSet<IProject>();
 			for (int i= 0; i < fFragments.length; i++) {
@@ -274,6 +315,8 @@ public abstract class DLTKElementResourceMapping extends ResourceMapping {
 			}
 			return result.toArray(new IProject[result.size()]);
 		}
+
+		@Override
 		public ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
 			List<ResourceTraversal> result = new ArrayList<ResourceTraversal>();
 			if (context instanceof RemoteResourceMappingContext) {
@@ -288,18 +331,19 @@ public abstract class DLTKElementResourceMapping extends ResourceMapping {
 			}
 			return result.toArray(new ResourceTraversal[result.size()]);
 		}
-		
+
+		@Override
 		public String getModelProviderId() {
 			return ScriptModelProvider.DLTK_MODEL_PROVIDER_ID;
 		}
 	}
-	
+
 	public static ResourceMapping create(IModelElement element) {
 		switch (element.getElementType()) {
 			case IModelElement.TYPE:
 				return create((IType)element);
 			case IModelElement.SOURCE_MODULE:
-				return create((ISourceModule)element);			
+				return create((ISourceModule)element);
 			case IModelElement.SCRIPT_FOLDER:
 				return create((IScriptFolder)element);
 			case IModelElement.PROJECT_FRAGMENT:
@@ -310,24 +354,24 @@ public abstract class DLTKElementResourceMapping extends ResourceMapping {
 				return create((IScriptModel)element);
 			default:
 				return null;
-		}		
-		
+		}
+
 	}
 
 	public static ResourceMapping create(final IScriptModel model) {
 		return new ScriptModelResourceMapping(model);
 	}
-	
+
 	public static ResourceMapping create(final IScriptProject project) {
 		return new ScriptProjectResourceMapping(project);
 	}
-	
+
 	public static ResourceMapping create(final IProjectFragment root) {
 		if (root.isExternal())
 			return null;
 		return new PackageFragementRootResourceMapping(root);
 	}
-	
+
 	public static ResourceMapping create(final IScriptFolder pack) {
 		// test if in an archive
 		IProjectFragment root= (IProjectFragment)pack.getAncestor(IModelElement.PROJECT_FRAGMENT);
@@ -336,13 +380,13 @@ public abstract class DLTKElementResourceMapping extends ResourceMapping {
 		}
 		return null;
 	}
-	
+
 	public static ResourceMapping create(ISourceModule unit) {
 		if ((unit == null) || (unit.getResource() == null))
 			return null;
 		return new SourceModuleResourceMapping(unit.getPrimary());
-	}	
-	
+	}
+
 	public static ResourceMapping create(IType type) {
 		// top level types behave like the CU
 		IModelElement parent= type.getParent();
@@ -351,7 +395,7 @@ public abstract class DLTKElementResourceMapping extends ResourceMapping {
 		}
 		return null;
 	}
-	
+
 	public static ResourceMapping create(LogicalPackage logicalPackage) {
 		IScriptFolder[] fragments= logicalPackage.getFragments();
 		List toProcess= new ArrayList(fragments.length);

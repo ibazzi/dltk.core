@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -57,15 +57,18 @@ public abstract class AbstractFormatterPreferencePage extends
 			fColorManager = new DLTKColorManager(false);
 		}
 
+		@Override
 		public void dispose() {
 			fColorManager.dispose();
 			super.dispose();
 		}
 
+		@Override
 		protected DLTKContributionExtensionManager getExtensionManager() {
 			return ScriptFormatterManager.getInstance();
 		}
 
+		@Override
 		protected IFormatterModifyDialogOwner createDialogOwner() {
 			return new FormatterModifyDialogOwner();
 		}
@@ -73,20 +76,19 @@ public abstract class AbstractFormatterPreferencePage extends
 		private class FormatterModifyDialogOwner implements
 				IFormatterModifyDialogOwner {
 
+			@Override
 			public ISourceViewer createPreview(Composite composite) {
 				return FormatterSelectionBlock.this.createPreview(composite);
 			}
 
+			@Override
 			public Shell getShell() {
 				return AbstractFormatterPreferencePage.this.getShell();
 			}
 
+			@Override
 			public IDialogSettings getDialogSettings() {
 				return AbstractFormatterPreferencePage.this.getDialogSettings();
-			}
-
-			public IProfileManager getProfileManager() {
-				return FormatterSelectionBlock.this.getProfileManager();
 			}
 
 		}
@@ -94,6 +96,7 @@ public abstract class AbstractFormatterPreferencePage extends
 		/**
 		 * @param composite
 		 */
+		@Override
 		public SourceViewer createPreview(Composite composite) {
 			IPreferenceStore generalTextStore = EditorsUI.getPreferenceStore();
 			IPreferenceStore store = new ChainedPreferenceStore(
@@ -140,15 +143,18 @@ public abstract class AbstractFormatterPreferencePage extends
 					showAnnotationsOverview, styles, store);
 		}
 
+		@Override
 		protected String getPreferenceLinkMessage() {
 			return FormatterMessages.FormatterPreferencePage_settingsLink;
 		}
 
+		@Override
 		protected PreferenceKey getSavedContributionKey() {
 			return AbstractFormatterPreferencePage.this
 					.getFormatterPreferenceKey();
 		}
 
+		@Override
 		protected void updatePreview() {
 			if (fPreviewViewer != null) {
 				IScriptFormatterFactory factory = getSelectedExtension();
@@ -161,6 +167,7 @@ public abstract class AbstractFormatterPreferencePage extends
 
 	}
 
+	@Override
 	protected AbstractOptionsBlock createOptionsBlock(
 			IStatusChangeListener newStatusChangedListener, IProject project,
 			IWorkbenchPreferenceContainer container) {
@@ -179,28 +186,34 @@ public abstract class AbstractFormatterPreferencePage extends
 			IColorManager colorManager, IPreferenceStore preferenceStore,
 			ITextEditor editor, boolean configureFormatter);
 
+	@Override
 	protected abstract String getNatureId();
 
 	protected abstract PreferenceKey getFormatterPreferenceKey();
 
 	protected abstract IDialogSettings getDialogSettings();
 
+	@Override
 	protected String getHelpId() {
 		return null;
 	}
 
+	@Override
 	protected void setDescription() {
 		// empty
 	}
 
+	@Override
 	protected String getPreferencePageId() {
 		return null;
 	}
 
+	@Override
 	protected String getProjectHelpId() {
 		return null;
 	}
 
+	@Override
 	protected String getPropertyPageId() {
 		return null;
 	}

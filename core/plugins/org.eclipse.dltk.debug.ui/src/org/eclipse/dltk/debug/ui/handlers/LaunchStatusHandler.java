@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 xored software, Inc.
+ * Copyright (c) 2009, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -23,14 +23,15 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
-public class LaunchStatusHandler implements ILaunchStatusHandler,
-		ILaunchStatusHandlerExtension {
+public class LaunchStatusHandler
+		implements ILaunchStatusHandler, ILaunchStatusHandlerExtension {
 
 	private IDebugTarget debugTarget;
 	private final Object lock = new Object();
 	private boolean disposed = false;
 	private LaunchStatusDialog dialog = null;
 
+	@Override
 	public void initialize(IDebugTarget target, IProgressMonitor monitor) {
 		if (Display.getCurrent() != null) {
 			throw new IllegalStateException(getClass().getSimpleName()
@@ -51,19 +52,18 @@ public class LaunchStatusHandler implements ILaunchStatusHandler,
 		}
 	}
 
+	@Override
 	public void updateElapsedTime(final long elapsedTime) {
 		if (isDisposed()) {
 			return;
 		}
-		asyncExec(new Runnable() {
-			public void run() {
-				if (!isDialogCreated()) {
-					createDialog();
-				}
-				final LaunchStatusDialog d = dialog;
-				if (d != null)
-					d.updateElapsedTime(elapsedTime);
+		asyncExec(() -> {
+			if (!isDialogCreated()) {
+				createDialog();
 			}
+			final LaunchStatusDialog d = dialog;
+			if (d != null)
+				d.updateElapsedTime(elapsedTime);
 		});
 	}
 
@@ -84,8 +84,8 @@ public class LaunchStatusHandler implements ILaunchStatusHandler,
 				&& PlatformUI.getWorkbench().getWorkbenchWindowCount() > 0) {
 			window = PlatformUI.getWorkbench().getWorkbenchWindows()[0];
 		}
-		dialog = new LaunchStatusDialog(window != null ? window.getShell()
-				: null, this);
+		dialog = new LaunchStatusDialog(
+				window != null ? window.getShell() : null, this);
 		final ILaunch launch = debugTarget.getLaunch();
 		if (launch != null) {
 			final ILaunchConfiguration configuration = launch
@@ -95,8 +95,9 @@ public class LaunchStatusHandler implements ILaunchStatusHandler,
 			}
 		}
 		final IProcess process = debugTarget.getProcess();
-		String cmdLine = process != null ? process
-				.getAttribute(IProcess.ATTR_CMDLINE) : null;
+		String cmdLine = process != null
+				? process.getAttribute(IProcess.ATTR_CMDLINE)
+				: null;
 		dialog.setCommandLine(cmdLine);
 		dialog.open();
 	}
@@ -108,6 +109,7 @@ public class LaunchStatusHandler implements ILaunchStatusHandler,
 		}
 	}
 
+	@Override
 	public void dispose() {
 		if (isDisposed()) {
 			return;
@@ -116,11 +118,7 @@ public class LaunchStatusHandler implements ILaunchStatusHandler,
 			disposed = true;
 		}
 		if (isDialogCreated()) {
-			asyncExec(new Runnable() {
-				public void run() {
-					disposeDialog();
-				}
-			});
+			asyncExec(() -> disposeDialog());
 		}
 	}
 
@@ -129,6 +127,7 @@ public class LaunchStatusHandler implements ILaunchStatusHandler,
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public boolean isCanceled() {
 		synchronized (lock) {
 			return canceled;

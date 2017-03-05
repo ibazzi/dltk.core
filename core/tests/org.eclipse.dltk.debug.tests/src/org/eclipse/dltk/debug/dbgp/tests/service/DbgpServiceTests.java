@@ -11,13 +11,16 @@
  *******************************************************************************/
 package org.eclipse.dltk.debug.dbgp.tests.service;
 
+import static org.junit.Assert.*;
+
 import java.io.IOException;
 
 import org.eclipse.dltk.dbgp.DbgpServer;
 import org.eclipse.dltk.internal.debug.core.model.DbgpService;
+import org.junit.Test;
 
 public class DbgpServiceTests extends AbstractDbgpServiceTests {
-
+	@Test
 	public void testConnect() throws IOException {
 		DbgpService service = createService(ANY_PORT);
 		try {
@@ -27,12 +30,15 @@ public class DbgpServiceTests extends AbstractDbgpServiceTests {
 		}
 	}
 
+	@Test
 	public void testConnectDelayed() throws IOException {
 		DbgpService service = new DbgpService(ANY_PORT) {
 
+			@Override
 			protected DbgpServer createServer(int port) {
 				return new DbgpServer(port, CLIENT_SOCKET_TIMEOUT) {
 
+					@Override
 					protected void workingCycle() throws Exception, IOException {
 						Thread.sleep(1000);
 						super.workingCycle();
@@ -49,6 +55,7 @@ public class DbgpServiceTests extends AbstractDbgpServiceTests {
 		}
 	}
 
+	@Test
 	public void testShutdown() throws IOException {
 		final int port = findAvailablePort(MIN_PORT, MAX_PORT);
 		for (int i = 0; i < 4; ++i) {

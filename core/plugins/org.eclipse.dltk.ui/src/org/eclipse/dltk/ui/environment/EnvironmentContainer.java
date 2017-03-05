@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 xored software, Inc.
+ * Copyright (c) 2009, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -29,7 +29,7 @@ import org.omg.CORBA.Environment;
 /**
  * This class collects {@link IEnvironment}s from {@link EnvironmentManager} and
  * fires notification on UI thread if environments are changed.
- * 
+ *
  * At the moment if works only for initial retrieve of environments. It requires
  * some time to initialize RSE, so to prevent delays and possible deadlocks we
  * should not wait until RSE initialization is completed, this class is used to
@@ -60,6 +60,7 @@ public class EnvironmentContainer {
 	private static class EnvironmentComparator implements
 			Comparator<IEnvironment> {
 
+		@Override
 		public int compare(final IEnvironment e1, final IEnvironment e2) {
 			if (e1.isLocal() != e2.isLocal()) {
 				return e1.isLocal() ? -1 : +1;
@@ -89,11 +90,7 @@ public class EnvironmentContainer {
 					synchronized (environments) {
 						initEnvironments();
 					}
-					Display.getDefault().asyncExec(new Runnable() {
-						public void run() {
-							fireChangeNotifications();
-						}
-					});
+					Display.getDefault().asyncExec(() -> fireChangeNotifications());
 				}
 
 			};
@@ -110,7 +107,7 @@ public class EnvironmentContainer {
 
 	/**
 	 * Returns the list of {@link IEnvironment}s
-	 * 
+	 *
 	 * @return
 	 */
 	public List<IEnvironment> getEnvironments() {
@@ -119,7 +116,7 @@ public class EnvironmentContainer {
 
 	/**
 	 * Returns the identifiers of {@link Environment}s managed by this object
-	 * 
+	 *
 	 * @return
 	 */
 	public String[] getEnvironmentIds() {
@@ -141,7 +138,7 @@ public class EnvironmentContainer {
 
 	/**
 	 * Returns the name of the environment with the specified id
-	 * 
+	 *
 	 * @param environmentId
 	 * @return
 	 */
@@ -171,7 +168,7 @@ public class EnvironmentContainer {
 	 * Registers the specified change listener to be called when available
 	 * environments are changed. Specified event handler is called on the UI
 	 * thread.
-	 * 
+	 *
 	 * @param runnable
 	 */
 	public void addChangeListener(Runnable runnable) {

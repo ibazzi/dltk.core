@@ -14,6 +14,7 @@ import org.eclipse.dltk.utils.PlatformFileUtils;
 public final class FieldValidators {
 
 	public static class FilePathValidator implements IFieldValidator {
+		@Override
 		public IStatus validate(String text) {
 			return validate(text, EnvironmentManager.getLocalEnvironment());
 		}
@@ -66,6 +67,7 @@ public final class FieldValidators {
 	}
 
 	public static class PositiveNumberValidator implements IFieldValidator {
+		@Override
 		public IStatus validate(String text) {
 			StatusInfo status = new StatusInfo();
 
@@ -98,6 +100,7 @@ public final class FieldValidators {
 			this.minValue = minValue;
 		}
 
+		@Override
 		public IStatus validate(String text) {
 			StatusInfo status = (StatusInfo) super.validate(text);
 
@@ -117,6 +120,7 @@ public final class FieldValidators {
 	}
 
 	public static class PortValidator implements IFieldValidator {
+		@Override
 		public IStatus validate(String text) {
 			StatusInfo status = new StatusInfo();
 

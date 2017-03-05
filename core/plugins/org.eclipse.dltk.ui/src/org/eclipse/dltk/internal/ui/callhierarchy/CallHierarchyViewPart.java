@@ -1,14 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
-
- *             (report 36180: Callers/Callees view)
- *   Michael Fraenkel (fraenkel@us.ibm.com) - patch
- *             (report 60714: Call Hierarchy: display search scope in view title)
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.callhierarchy;
 
@@ -40,7 +36,6 @@ import org.eclipse.dltk.ui.actions.OpenEditorActionGroup;
 import org.eclipse.dltk.ui.actions.OpenViewActionGroup;
 import org.eclipse.dltk.ui.viewsupport.SelectionProviderMediator;
 import org.eclipse.dltk.ui.viewsupport.StatusBarUpdater;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -50,11 +45,9 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.util.TransferDragSourceListener;
 import org.eclipse.jface.util.TransferDropTargetListener;
-import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -96,13 +89,13 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * This is the main view for the callers plugin. It builds a tree of
  * callers/callees and allows the user to double click an entry to go to the
  * selected method.
- * 
+ *
  */
-public class CallHierarchyViewPart extends ViewPart implements
-		ICallHierarchyViewPart, ISelectionChangedListener {
+public class CallHierarchyViewPart extends ViewPart
+		implements ICallHierarchyViewPart, ISelectionChangedListener {
 
-	private class CallHierarchySelectionProvider extends
-			SelectionProviderMediator {
+	private class CallHierarchySelectionProvider
+			extends SelectionProviderMediator {
 
 		public CallHierarchySelectionProvider(StructuredViewer[] viewers) {
 			super(viewers, null);
@@ -203,13 +196,13 @@ public class CallHierarchyViewPart extends ViewPart implements
 			updateHistoryEntries();
 		}
 
-		return (IMethod[]) fMethodHistory.toArray(new IMethod[fMethodHistory
-				.size()]);
+		return (IMethod[]) fMethodHistory
+				.toArray(new IMethod[fMethodHistory.size()]);
 	}
 
 	/**
 	 * Method setMethod.
-	 * 
+	 *
 	 * @param method
 	 */
 	public void setMethod(IMethod method) {
@@ -256,7 +249,7 @@ public class CallHierarchyViewPart extends ViewPart implements
 
 	/**
 	 * called from ToggleOrientationAction.
-	 * 
+	 *
 	 * @param orientation
 	 *            VIEW_ORIENTATION_HORIZONTAL or VIEW_ORIENTATION_VERTICAL
 	 */
@@ -274,9 +267,8 @@ public class CallHierarchyViewPart extends ViewPart implements
 					}
 
 					boolean horizontal = orientation == CallHierarchyViewPart.VIEW_ORIENTATION_HORIZONTAL;
-					fHierarchyLocationSplitter
-							.setOrientation(horizontal ? SWT.HORIZONTAL
-									: SWT.VERTICAL);
+					fHierarchyLocationSplitter.setOrientation(
+							horizontal ? SWT.HORIZONTAL : SWT.VERTICAL);
 				}
 
 				fHierarchyLocationSplitter.layout();
@@ -300,15 +292,15 @@ public class CallHierarchyViewPart extends ViewPart implements
 
 	/**
 	 * called from ToggleCallModeAction.
-	 * 
+	 *
 	 * @param mode
 	 *            CALL_MODE_CALLERS or CALL_MODE_CALLEES
 	 */
 	void setCallMode(int mode) {
 		if (fCurrentCallMode != mode) {
 			for (int i = 0; i < fToggleCallModeActions.length; i++) {
-				fToggleCallModeActions[i]
-						.setChecked(mode == fToggleCallModeActions[i].getMode());
+				fToggleCallModeActions[i].setChecked(
+						mode == fToggleCallModeActions[i].getMode());
 			}
 
 			fCurrentCallMode = mode;
@@ -336,22 +328,22 @@ public class CallHierarchyViewPart extends ViewPart implements
 		// dnd on empty hierarchy
 		DropTarget dropTarget = new DropTarget(fPagebook, DND.DROP_MOVE
 				| DND.DROP_COPY | DND.DROP_LINK | DND.DROP_DEFAULT);
-		dropTarget.setTransfer(new Transfer[] { LocalSelectionTransfer
-				.getTransfer() });
+		dropTarget.setTransfer(
+				new Transfer[] { LocalSelectionTransfer.getTransfer() });
 		dropTarget.addDropListener(new CallHierarchyTransferDropAdapter(this,
 				fCallHierarchyViewer));
 	}
 
 	private void addDropAdapters(StructuredViewer viewer) {
-		Transfer[] transfers = new Transfer[] { LocalSelectionTransfer
-				.getTransfer() };
+		Transfer[] transfers = new Transfer[] {
+				LocalSelectionTransfer.getTransfer() };
 		int ops = DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK
 				| DND.DROP_DEFAULT;
 
-		TransferDropTargetListener[] dropListeners = new TransferDropTargetListener[] { new CallHierarchyTransferDropAdapter(
-				this, viewer) };
-		viewer.addDropSupport(ops, transfers, new DelegatingDropAdapter(
-				dropListeners));
+		TransferDropTargetListener[] dropListeners = new TransferDropTargetListener[] {
+				new CallHierarchyTransferDropAdapter(this, viewer) };
+		viewer.addDropSupport(ops, transfers,
+				new DelegatingDropAdapter(dropListeners));
 	}
 
 	private void addDragAdapters(StructuredViewer viewer) {
@@ -379,8 +371,8 @@ public class CallHierarchyViewPart extends ViewPart implements
 		createLocationViewer(fHierarchyLocationSplitter);
 
 		// Page 2: Nothing selected
-		fNoHierarchyShownLabel = new Label(fPagebook, SWT.TOP + SWT.LEFT
-				+ SWT.WRAP);
+		fNoHierarchyShownLabel = new Label(fPagebook,
+				SWT.TOP + SWT.LEFT + SWT.WRAP);
 		fNoHierarchyShownLabel
 				.setText(CallHierarchyMessages.CallHierarchyViewPart_empty); //
 
@@ -395,7 +387,8 @@ public class CallHierarchyViewPart extends ViewPart implements
 		}
 
 		fSelectionProviderMediator = new CallHierarchySelectionProvider(
-				new StructuredViewer[] { fCallHierarchyViewer, fLocationViewer });
+				new StructuredViewer[] { fCallHierarchyViewer,
+						fLocationViewer });
 
 		IStatusLineManager slManager = getViewSite().getActionBars()
 				.getStatusLineManager();
@@ -403,12 +396,9 @@ public class CallHierarchyViewPart extends ViewPart implements
 				.addSelectionChangedListener(new StatusBarUpdater(slManager));
 		getSite().setSelectionProvider(fSelectionProviderMediator);
 
-		fCallHierarchyViewer.initContextMenu(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager menu) {
-				fillCallHierarchyViewerContextMenu(menu);
-			}
-		}, getSite(), fSelectionProviderMediator);
+		fCallHierarchyViewer.initContextMenu(
+				menu -> fillCallHierarchyViewerContextMenu(menu), getSite(),
+				fSelectionProviderMediator);
 
 		fClipboard = new Clipboard(parent.getDisplay());
 
@@ -424,8 +414,8 @@ public class CallHierarchyViewPart extends ViewPart implements
 		}
 		restoreSplitterRatio();
 		addPartListener();
-		IContextService ctxService = getSite().getService(
-				IContextService.class);
+		IContextService ctxService = getSite()
+				.getService(IContextService.class);
 		if (ctxService != null) {
 			fContextActivation = ctxService
 					.activateContext(DLTKUIPlugin.CONTEXT_VIEWS);
@@ -433,15 +423,14 @@ public class CallHierarchyViewPart extends ViewPart implements
 	}
 
 	private void restoreSplitterRatio() {
-		String ratio = fDialogSettings
-				.get(CallHierarchyViewPart.DIALOGSTORE_RATIO
-						+ fCurrentOrientation);
+		String ratio = fDialogSettings.get(
+				CallHierarchyViewPart.DIALOGSTORE_RATIO + fCurrentOrientation);
 		if (ratio == null) {
 			return;
 		}
 		int intRatio = Integer.parseInt(ratio);
-		fHierarchyLocationSplitter.setWeights(new int[] { intRatio,
-				1000 - intRatio });
+		fHierarchyLocationSplitter
+				.setWeights(new int[] { intRatio, 1000 - intRatio });
 	}
 
 	private void saveSplitterRatio() {
@@ -467,16 +456,16 @@ public class CallHierarchyViewPart extends ViewPart implements
 
 			@Override
 			public void partClosed(IWorkbenchPartReference partRef) {
-				if (CallHierarchyViewPart.ID_CALL_HIERARCHY.equals(partRef
-						.getId())) {
+				if (CallHierarchyViewPart.ID_CALL_HIERARCHY
+						.equals(partRef.getId())) {
 					saveViewSettings();
 				}
 			}
 
 			@Override
 			public void partDeactivated(IWorkbenchPartReference partRef) {
-				if (CallHierarchyViewPart.ID_CALL_HIERARCHY.equals(partRef
-						.getId())) {
+				if (CallHierarchyViewPart.ID_CALL_HIERARCHY
+						.equals(partRef.getId())) {
 					saveViewSettings();
 				}
 			}
@@ -532,9 +521,11 @@ public class CallHierarchyViewPart extends ViewPart implements
 			Point size = fParent.getSize();
 			if (size.x != 0 && size.y != 0) {
 				if (size.x > size.y) {
-					setOrientation(CallHierarchyViewPart.VIEW_ORIENTATION_HORIZONTAL);
+					setOrientation(
+							CallHierarchyViewPart.VIEW_ORIENTATION_HORIZONTAL);
 				} else {
-					setOrientation(CallHierarchyViewPart.VIEW_ORIENTATION_VERTICAL);
+					setOrientation(
+							CallHierarchyViewPart.VIEW_ORIENTATION_VERTICAL);
 				}
 			}
 		}
@@ -614,7 +605,7 @@ public class CallHierarchyViewPart extends ViewPart implements
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
 	public void dispose() {
@@ -655,13 +646,14 @@ public class CallHierarchyViewPart extends ViewPart implements
 	 * (non-Javadoc) Method declared on IViewPart.
 	 */
 	@Override
-	public void init(IViewSite site, IMemento memento) throws PartInitException {
+	public void init(IViewSite site, IMemento memento)
+			throws PartInitException {
 		super.init(site, memento);
 		fMemento = memento;
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void refresh() {
 		setCalleeRoot(null);
@@ -737,15 +729,15 @@ public class CallHierarchyViewPart extends ViewPart implements
 					if (editorPart instanceof ITextEditor) {
 						ITextEditor editor = (ITextEditor) editorPart;
 						editor.selectAndReveal(callLocation.getStart(),
-								(callLocation.getEnd() - callLocation
-										.getStart()));
+								(callLocation.getEnd()
+										- callLocation.getStart()));
 					}
 				}
 			} else {
 				IEditorPart editorPart = CallHierarchyUI.isOpenInEditor(elem);
 				getSite().getPage().bringToTop(editorPart);
-				EditorUtility.revealInEditor(editorPart, ((MethodWrapper) elem)
-						.getMember());
+				EditorUtility.revealInEditor(editorPart,
+						((MethodWrapper) elem).getMember());
 			}
 		} else if (elem instanceof IModelElement) {
 			IEditorPart editorPart = EditorUtility.isOpenInEditor(elem);
@@ -858,12 +850,9 @@ public class CallHierarchyViewPart extends ViewPart implements
 
 		fLocationViewer.getControl().addKeyListener(createKeyListener());
 
-		fLocationViewer.initContextMenu(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager menu) {
-				fillLocationViewerContextMenu(menu);
-			}
-		}, CallHierarchyViewPart.ID_CALL_HIERARCHY, getSite());
+		fLocationViewer.initContextMenu(
+				menu -> fillLocationViewerContextMenu(menu),
+				CallHierarchyViewPart.ID_CALL_HIERARCHY, getSite());
 	}
 
 	private void createHierarchyLocationSplitter(Composite parent) {
@@ -886,8 +875,8 @@ public class CallHierarchyViewPart extends ViewPart implements
 		DLTKUIPlugin.createStandardGroups(menu);
 
 		menu.appendToGroup(IContextMenuConstants.GROUP_SHOW, fRefreshAction);
-		menu.appendToGroup(IContextMenuConstants.GROUP_SHOW, new Separator(
-				CallHierarchyViewPart.GROUP_FOCUS));
+		menu.appendToGroup(IContextMenuConstants.GROUP_SHOW,
+				new Separator(CallHierarchyViewPart.GROUP_FOCUS));
 
 		if (fFocusOnSelectionAction.canActionBeAdded()) {
 			menu.appendToGroup(CallHierarchyViewPart.GROUP_FOCUS,
@@ -927,23 +916,19 @@ public class CallHierarchyViewPart extends ViewPart implements
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void makeActions() {
 		fRefreshAction = new RefreshAction(this);
 
 		fOpenLocationAction = new OpenLocationAction(this, getSite());
-		fLocationViewer.addOpenListener(new IOpenListener() {
-			@Override
-			public void open(OpenEvent event) {
-				fOpenLocationAction.run();
-			}
-		});
+		fLocationViewer.addOpenListener(event -> fOpenLocationAction.run());
 
 		fFocusOnSelectionAction = new FocusOnSelectionAction(this);
 		fCopyAction = new CopyCallHierarchyAction(this, fClipboard,
 				fCallHierarchyViewer);
-		fSearchScopeActions = new SearchScopeActionGroup(this, fDialogSettings) {
+		fSearchScopeActions = new SearchScopeActionGroup(this,
+				fDialogSettings) {
 			@Override
 			protected IDLTKLanguageToolkit getLangaugeToolkit() {
 				return getMethodLanguageToolkit();
@@ -969,13 +954,13 @@ public class CallHierarchyViewPart extends ViewPart implements
 						CallHierarchyViewPart.CALL_MODE_CALLERS),
 				new ToggleCallModeAction(this,
 						CallHierarchyViewPart.CALL_MODE_CALLEES) };
-		fActionGroups = new CompositeActionGroup(new ActionGroup[] {
-				new OpenEditorActionGroup(this), new OpenViewActionGroup(this),
-				new CCPActionGroup(this),
-				// new GenerateActionGroup(this),
-				new RefactorActionGroup(this),
-				// new DLTKSearchActionGroup(this),
-				fSearchScopeActions, fFiltersActionGroup });
+		fActionGroups = new CompositeActionGroup(
+				new ActionGroup[] { new OpenEditorActionGroup(this),
+						new OpenViewActionGroup(this), new CCPActionGroup(this),
+						// new GenerateActionGroup(this),
+						new RefactorActionGroup(this),
+						// new DLTKSearchActionGroup(this),
+						fSearchScopeActions, fFiltersActionGroup });
 	}
 
 	protected IDLTKLanguageToolkit getMethodLanguageToolkit() {
@@ -989,16 +974,16 @@ public class CallHierarchyViewPart extends ViewPart implements
 		if (fShowCallDetails) {
 			fHierarchyLocationSplitter.setMaximizedControl(null);
 		} else {
-			fHierarchyLocationSplitter.setMaximizedControl(fCallHierarchyViewer
-					.getControl());
+			fHierarchyLocationSplitter
+					.setMaximizedControl(fCallHierarchyViewer.getControl());
 		}
 	}
 
 	private void updateLocationsView(MethodWrapper methodWrapper) {
 		if (methodWrapper != null
 				&& methodWrapper.getMethodCall().hasCallLocations()) {
-			fLocationViewer.setInput(methodWrapper.getMethodCall()
-					.getCallLocations());
+			fLocationViewer
+					.setInput(methodWrapper.getMethodCall().getCallLocations());
 		} else {
 			fLocationViewer.clearViewer();
 		}
@@ -1034,10 +1019,9 @@ public class CallHierarchyViewPart extends ViewPart implements
 			// the old contents:
 			fCallHierarchyViewer.setInput(null);
 			if (fCurrentCallMode == CallHierarchyViewPart.CALL_MODE_CALLERS) {
-				setContentDescription(Messages
-						.format(
-								CallHierarchyMessages.CallHierarchyViewPart_callsToMethod,
-								args));
+				setContentDescription(Messages.format(
+						CallHierarchyMessages.CallHierarchyViewPart_callsToMethod,
+						args));
 				fCallHierarchyViewer.setSorter(new ViewerSorter()); // bug
 																	// 111423:
 																	// sort
@@ -1046,17 +1030,17 @@ public class CallHierarchyViewPart extends ViewPart implements
 																	// alphabetically
 				fCallHierarchyViewer.setMethodWrapper(getCallerRoot());
 			} else {
-				setContentDescription(Messages
-						.format(
-								CallHierarchyMessages.CallHierarchyViewPart_callsFromMethod,
-								args));
+				setContentDescription(Messages.format(
+						CallHierarchyMessages.CallHierarchyViewPart_callsFromMethod,
+						args));
 				fCallHierarchyViewer.setSorter(null);
 				fCallHierarchyViewer.setMethodWrapper(getCalleeRoot());
 			}
 		}
 	}
 
-	static CallHierarchyViewPart findAndShowCallersView(IWorkbenchPartSite site) {
+	static CallHierarchyViewPart findAndShowCallersView(
+			IWorkbenchPartSite site) {
 		IWorkbenchPage workbenchPage = site.getPage();
 		CallHierarchyViewPart callersView = null;
 
@@ -1079,7 +1063,7 @@ public class CallHierarchyViewPart extends ViewPart implements
 
 	/**
 	 * Sets the enablement state of the cancel button.
-	 * 
+	 *
 	 * @param enabled
 	 */
 	void setCancelEnabled(boolean enabled) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -152,23 +152,28 @@ public class ScriptDebugTarget extends ScriptDebugElement implements
 		}
 	}
 
+	@Override
 	public String getSessionId() {
 		return sessionId;
 	}
 
+	@Override
 	public IDebugTarget getDebugTarget() {
 		return this;
 	}
 
+	@Override
 	public String getModelIdentifier() {
 		return modelId;
 	}
 
+	@Override
 	public ILaunch getLaunch() {
 		return launch;
 	}
 
 	// IDebugTarget
+	@Override
 	public IProcess getProcess() {
 		synchronized (processLock) {
 			return process;
@@ -181,19 +186,23 @@ public class ScriptDebugTarget extends ScriptDebugElement implements
 		}
 	}
 
+	@Override
 	public boolean hasThreads() {
 		return threadManager.hasThreads();
 	}
 
+	@Override
 	public IThread[] getThreads() {
 		return threadManager.getThreads();
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
 	// ITerminate
+	@Override
 	public boolean canTerminate() {
 		synchronized (processLock) {
 			return threadManager.canTerminate()
@@ -201,6 +210,7 @@ public class ScriptDebugTarget extends ScriptDebugElement implements
 		}
 	}
 
+	@Override
 	public boolean isTerminated() {
 		synchronized (processLock) {
 			return threadManager.isTerminated()
@@ -224,6 +234,7 @@ public class ScriptDebugTarget extends ScriptDebugElement implements
 		return true;
 	}
 
+	@Override
 	public void terminate() throws DebugException {
 		terminate(true);
 	}
@@ -253,45 +264,55 @@ public class ScriptDebugTarget extends ScriptDebugElement implements
 	}
 
 	// ISuspendResume
+	@Override
 	public boolean canSuspend() {
 		return threadManager.canSuspend();
 	}
 
+	@Override
 	public boolean isSuspended() {
 		return threadManager.isSuspended();
 	}
 
+	@Override
 	public void suspend() throws DebugException {
 		threadManager.suspend();
 	}
 
+	@Override
 	public boolean canResume() {
 		return threadManager.canResume();
 	}
 
+	@Override
 	public void resume() throws DebugException {
 		threadManager.resume();
 	}
 
 	// IDisconnect
+	@Override
 	public boolean canDisconnect() {
 		// Detach feature support!!!
 		return false;
 	}
 
+	@Override
 	public void disconnect() {
 		disconnected = true;
 	}
 
+	@Override
 	public boolean isDisconnected() {
 		return disconnected;
 	}
 
 	// IMemoryBlockRetrieval
+	@Override
 	public boolean supportsStorageRetrieval() {
 		return false;
 	}
 
+	@Override
 	public IMemoryBlock getMemoryBlock(long startAddress, long length) {
 		return null;
 	}
@@ -302,31 +323,38 @@ public class ScriptDebugTarget extends ScriptDebugElement implements
 	}
 
 	// Request timeout
+	@Override
 	public int getRequestTimeout() {
 		return 0;
 	}
 
+	@Override
 	public void setRequestTimeout(int timeout) {
 	}
 
 	// IBreakpointListener
+	@Override
 	public void breakpointAdded(IBreakpoint breakpoint) {
 		breakpointManager.breakpointAdded(breakpoint);
 	}
 
+	@Override
 	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
 		breakpointManager.breakpointChanged(breakpoint, delta);
 	}
 
+	@Override
 	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
 		breakpointManager.breakpointRemoved(breakpoint, delta);
 	}
 
 	// Streams
+	@Override
 	public IScriptStreamProxy getStreamProxy() {
 		return streamProxy;
 	}
 
+	@Override
 	public void setStreamProxy(IScriptStreamProxy proxy) {
 		this.streamProxy = proxy;
 		if (proxy != null) {
@@ -335,6 +363,7 @@ public class ScriptDebugTarget extends ScriptDebugElement implements
 	}
 
 	// IDbgpThreadManagerListener
+	@Override
 	public void threadAccepted(IScriptThread thread, boolean first) {
 		if (first) {
 			DebugEventHelper.fireExtendedEvent(this,
@@ -352,6 +381,7 @@ public class ScriptDebugTarget extends ScriptDebugElement implements
 		return new NopScriptBreakpointLineMapper();
 	}
 
+	@Override
 	public void allThreadsTerminated() {
 		try {
 			if (streamProxy != null) {
@@ -363,16 +393,19 @@ public class ScriptDebugTarget extends ScriptDebugElement implements
 		}
 	}
 
+	@Override
 	public String toString() {
 		return "Debugging engine (id = " + this.sessionId + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	// IScriptDebugTarget
+	@Override
 	public void runToLine(URI uri, int lineNumber) throws DebugException {
 		breakpointManager.setBreakpointUntilFirstSuspend(uri, lineNumber);
 		resume();
 	}
 
+	@Override
 	public boolean isInitialized() {
 		return initialized;
 	}
@@ -391,14 +424,17 @@ public class ScriptDebugTarget extends ScriptDebugElement implements
 		}
 	}
 
+	@Override
 	public void addListener(IScriptDebugTargetListener listener) {
 		listeners.add(listener);
 	}
 
+	@Override
 	public void removeListener(IScriptDebugTargetListener listener) {
 		listeners.remove(listener);
 	}
 
+	@Override
 	public boolean supportsBreakpoint(IBreakpoint breakpoint) {
 		if (breakpoint instanceof IScriptBreakpoint) {
 			return StrUtils.equals(breakpoint.getModelIdentifier(),
@@ -407,10 +443,12 @@ public class ScriptDebugTarget extends ScriptDebugElement implements
 		return false;
 	}
 
+	@Override
 	public void setFilters(String[] activeFilters) {
 		this.stepFilters = activeFilters;
 	}
 
+	@Override
 	public String[] getFilters() {
 		if (this.stepFilters != null) {
 			return this.stepFilters;
@@ -418,14 +456,17 @@ public class ScriptDebugTarget extends ScriptDebugElement implements
 		return CharOperation.NO_STRINGS;
 	}
 
+	@Override
 	public boolean isUseStepFilters() {
 		return useStepFilters;
 	}
 
+	@Override
 	public void setUseStepFilters(boolean useStepFilters) {
 		this.useStepFilters = useStepFilters;
 	}
 
+	@Override
 	public IDLTKLanguageToolkit getLanguageToolkit() {
 		IScriptProject scriptProject = getScriptProject();
 		if (scriptProject != null) {
@@ -468,37 +509,45 @@ public class ScriptDebugTarget extends ScriptDebugElement implements
 		return null;
 	}
 
+	@Override
 	public boolean breakOnFirstLineEnabled() {
 		return DLTKDebugLaunchConstants.isBreakOnFirstLine(launch);
 	}
 
+	@Override
 	public void toggleGlobalVariables(boolean enabled) {
 		retrieveGlobalVariables = enabled;
 		threadManager.refreshThreads();
 	}
 
+	@Override
 	public void toggleClassVariables(boolean enabled) {
 		retrieveClassVariables = enabled;
 		threadManager.refreshThreads();
 	}
 
+	@Override
 	public void toggleLocalVariables(boolean enabled) {
 		retrieveLocalVariables = enabled;
 		threadManager.refreshThreads();
 	}
 
+	@Override
 	public boolean retrieveClassVariables() {
 		return retrieveClassVariables;
 	}
 
+	@Override
 	public boolean retrieveGlobalVariables() {
 		return retrieveGlobalVariables;
 	}
 
+	@Override
 	public boolean retrieveLocalVariables() {
 		return retrieveLocalVariables;
 	}
 
+	@Override
 	public String getConsoleEncoding() {
 		String encoding = "UTF-8"; //$NON-NLS-1$
 		try {
@@ -515,18 +564,22 @@ public class ScriptDebugTarget extends ScriptDebugElement implements
 		this.threadManager.setScriptThreadConfigurator(configurator);
 	}
 
+	@Override
 	public IDebugOptions getOptions() {
 		return options;
 	}
 
+	@Override
 	public boolean isStepFiltersEnabled() {
 		return isUseStepFilters();
 	}
 
+	@Override
 	public void setStepFiltersEnabled(boolean enabled) {
 		setUseStepFilters(enabled);
 	}
 
+	@Override
 	public boolean supportsStepFilters() {
 		return true;
 	}
@@ -534,10 +587,12 @@ public class ScriptDebugTarget extends ScriptDebugElement implements
 	/*
 	 * @see org.eclipse.dltk.debug.core.model.IScriptDebugTarget#getSessions()
 	 */
+	@Override
 	public IDbgpSession[] getSessions() {
 		return breakpointManager.getSessions();
 	}
 
+	@Override
 	public IScriptBreakpointPathMapper getPathMapper() {
 		return breakpointManager.bpPathMapper;
 	}
@@ -560,13 +615,14 @@ public class ScriptDebugTarget extends ScriptDebugElement implements
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public boolean isRemote() {
 		return false;
 	}
 
 	/**
 	 * Update stack traces if it is required.
-	 * 
+	 *
 	 * @since 5.2
 	 */
 	public void updateStackLevels(IDbgpStackLevel[] levels) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -135,6 +135,7 @@ public abstract class DLTKChange extends Change {
 		fReadOnly= false;
 	}
 	
+	@Override
 	public void initializeValidationData(IProgressMonitor pm) {
 		IResource resource= getResource(getModifiedElement());
 		if (resource != null) {
@@ -236,6 +237,7 @@ public abstract class DLTKChange extends Change {
 		return null;
 	}
 
+	@Override
 	public String toString() {
 		return getName();
 	}

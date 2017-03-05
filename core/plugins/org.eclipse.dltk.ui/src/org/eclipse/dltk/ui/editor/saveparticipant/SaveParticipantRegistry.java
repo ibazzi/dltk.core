@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,7 +44,7 @@ import org.eclipse.osgi.util.NLS;
  * An instance of this registry can be received through a call to
  * {@link JavaPlugin#getSaveParticipantRegistry()}.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public final class SaveParticipantRegistry extends
@@ -68,7 +68,7 @@ public final class SaveParticipantRegistry extends
 	/**
 	 * Returns an array of <code>IPostSaveListener</code> which are enabled in
 	 * the given context.
-	 * 
+	 *
 	 * @param context
 	 *            the context from which to retrieve the settings from, not null
 	 * @return the current enabled post save listeners according to the
@@ -104,7 +104,7 @@ public final class SaveParticipantRegistry extends
 	/**
 	 * Tells whether one of the active post save listeners needs to be informed
 	 * about the changed region in this save cycle.
-	 * 
+	 *
 	 * @param unit
 	 *            the unit which is about to be saved
 	 * @return true if the change regions need do be determined
@@ -124,11 +124,13 @@ public final class SaveParticipantRegistry extends
 				final IPostSaveListener listener = listeners[i];
 				SafeRunner.run(new ISafeRunnable() {
 
+					@Override
 					public void run() throws Exception {
 						if (listener.needsChangedRegions(unit))
 							result[0] = true;
 					}
 
+					@Override
 					public void handleException(Throwable ex) {
 						String msg = NLS
 								.bind("The save participant ''{0}'' caused an exception.", listener.getId()); //$NON-NLS-1$

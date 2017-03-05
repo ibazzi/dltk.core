@@ -45,30 +45,22 @@ public abstract class AbstractTodoTaskOptionsBlock extends AbstractOptionsBlock 
 	private static class TodoTaskLabelProvider extends LabelProvider implements
 			ITableLabelProvider {
 
-		/*
-		 * @see ILabelProvider#getImage(java.lang.Object)
-		 */
+		@Override
 		public Image getImage(Object element) {
 			return null;
 		}
 
-		/*
-		 * @see ILabelProvider#getText(java.lang.Object)
-		 */
+		@Override
 		public String getText(Object element) {
 			return getColumnText(element, 0);
 		}
 
-		/*
-		 * @see ITableLabelProvider#getColumnImage(java.lang.Object, int)
-		 */
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
 		}
 
-		/*
-		 * @see ITableLabelProvider#getColumnText(java.lang.Object, int)
-		 */
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			final TodoTask task = (TodoTask) element;
 			if (columnIndex == 0) {
@@ -93,6 +85,7 @@ public abstract class AbstractTodoTaskOptionsBlock extends AbstractOptionsBlock 
 	}
 
 	private static class TodoTaskSorter extends ViewerSorter {
+		@Override
 		@SuppressWarnings("unchecked")
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			return getComparator().compare(((TodoTask) e1).name,
@@ -106,21 +99,25 @@ public abstract class AbstractTodoTaskOptionsBlock extends AbstractOptionsBlock 
 			return selectedElements.size() == 1;
 		}
 
+		@Override
 		public void customButtonPressed(ListDialogField field, int index) {
 			doTodoButtonPressed(index);
 		}
 
+		@Override
 		public void selectionChanged(ListDialogField field) {
 			List<?> selectedElements = field.getSelectedElements();
 			field.enableButton(IDX_EDIT, canEdit(selectedElements));
 		}
 
+		@Override
 		public void doubleClicked(ListDialogField field) {
 			if (canEdit(field.getSelectedElements())) {
 				doTodoButtonPressed(IDX_EDIT);
 			}
 		}
 
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 			updateModel(field);
 		}
@@ -140,6 +137,7 @@ public abstract class AbstractTodoTaskOptionsBlock extends AbstractOptionsBlock 
 		super(context, project, allKeys, container);
 	}
 
+	@Override
 	public void performDefaults() {
 		super.performDefaults();
 		initialize();
@@ -166,6 +164,7 @@ public abstract class AbstractTodoTaskOptionsBlock extends AbstractOptionsBlock 
 		return new PreferenceKey(pluginId, ITodoTaskPreferences.TAGS);
 	}
 
+	@Override
 	protected Control createOptionsBlock(Composite parent) {
 		final TaskTagAdapter adapter = new TaskTagAdapter();
 		final String[] buttons = new String[] {
@@ -219,6 +218,7 @@ public abstract class AbstractTodoTaskOptionsBlock extends AbstractOptionsBlock 
 
 		enableCheckbox.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				final boolean enabled = ((Button) e.widget).getSelection();
 				updateEnableState(enabled);
@@ -252,6 +252,7 @@ public abstract class AbstractTodoTaskOptionsBlock extends AbstractOptionsBlock 
 	 */
 	protected abstract PreferenceKey getTags();
 
+	@Override
 	protected void initialize() {
 		super.initialize();
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -80,8 +80,8 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
  * <li><code>getErrorMessage</code> to change error reporting</li>
  * </ul>
  * </p>
- * 
- * 
+ *
+ *
  */
 public abstract class ContentAssistProcessor implements IContentAssistProcessor {
 	private static final boolean DEBUG = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.dltk.ui/debug/ResultCollector")); //$NON-NLS-1$//$NON-NLS-2$
@@ -89,7 +89,7 @@ public abstract class ContentAssistProcessor implements IContentAssistProcessor 
 	/**
 	 * Dialog settings key for the "all categories are disabled" warning dialog.
 	 * See {@link OptionalMessageDialog}.
-	 * 
+	 *
 	 */
 	private static final String PREF_WARN_ABOUT_EMPTY_ASSIST_CATEGORY = "EmptyDefaultAssistCategory"; //$NON-NLS-1$
 
@@ -101,14 +101,7 @@ public abstract class ContentAssistProcessor implements IContentAssistProcessor 
 
 	private char[] fCompletionAutoActivationCharacters;
 
-	private static final Comparator<CompletionProposalCategory> ORDER_COMPARATOR = new Comparator<CompletionProposalCategory>() {
-
-		public int compare(CompletionProposalCategory d1,
-				CompletionProposalCategory d2) {
-			return d1.getSortOrder() - d2.getSortOrder();
-		}
-
-	};
+	private static final Comparator<CompletionProposalCategory> ORDER_COMPARATOR = (d1, d2) -> d1.getSortOrder() - d2.getSortOrder();
 
 	/* cycling stuff */
 	private int fRepetition = -1;
@@ -124,6 +117,7 @@ public abstract class ContentAssistProcessor implements IContentAssistProcessor 
 	class CompletionListener implements ICompletionListener,
 			ICompletionListenerExtension {
 
+		@Override
 		public void assistSessionStarted(ContentAssistEvent event) {
 
 			if (event.processor != ContentAssistProcessor.this) {
@@ -168,9 +162,7 @@ public abstract class ContentAssistProcessor implements IContentAssistProcessor 
 			}
 		}
 
-		/*
-		 * @see ICompletionListener#assistSessionEnded(ContentAssistEvent)
-		 */
+		@Override
 		public void assistSessionEnded(ContentAssistEvent event) {
 
 			if (event.processor != ContentAssistProcessor.this) {
@@ -205,10 +197,12 @@ public abstract class ContentAssistProcessor implements IContentAssistProcessor 
 			}
 		}
 
+		@Override
 		public void selectionChanged(ICompletionProposal proposal,
 				boolean smartToggle) {
 		}
 
+		@Override
 		public void assistSessionRestarted(ContentAssistEvent event) {
 			fRepetition = 0;
 		}
@@ -226,6 +220,7 @@ public abstract class ContentAssistProcessor implements IContentAssistProcessor 
 		fAssistant.addCompletionListener(new CompletionListener());
 	}
 
+	@Override
 	public final ICompletionProposal[] computeCompletionProposals(
 			ITextViewer viewer, int offset) {
 
@@ -301,7 +296,7 @@ public abstract class ContentAssistProcessor implements IContentAssistProcessor 
 	/**
 	 * Filters and sorts the proposals. The passed list may be modified and
 	 * returned, or a new list may be created and returned.
-	 * 
+	 *
 	 * @param proposals
 	 *            the list of collected proposals (element type:
 	 *            {@link ICompletionProposal})
@@ -318,6 +313,7 @@ public abstract class ContentAssistProcessor implements IContentAssistProcessor 
 		return proposals;
 	}
 
+	@Override
 	public IContextInformation[] computeContextInformation(ITextViewer viewer,
 			int offset) {
 		clearState();
@@ -367,7 +363,7 @@ public abstract class ContentAssistProcessor implements IContentAssistProcessor 
 	/**
 	 * Filters and sorts the context information objects. The passed list may be
 	 * modified and returned, or a new list may be created and returned.
-	 * 
+	 *
 	 * @param contexts
 	 *            the list of collected proposals (element type:
 	 *            {@link IContextInformation})
@@ -384,7 +380,7 @@ public abstract class ContentAssistProcessor implements IContentAssistProcessor 
 	/**
 	 * Sets this processor's set of characters triggering the activation of the
 	 * completion proposal computation.
-	 * 
+	 *
 	 * @param activationSet
 	 *            the activation set
 	 */
@@ -393,14 +389,17 @@ public abstract class ContentAssistProcessor implements IContentAssistProcessor 
 		fCompletionAutoActivationCharacters = activationSet;
 	}
 
+	@Override
 	public final char[] getCompletionProposalAutoActivationCharacters() {
 		return fCompletionAutoActivationCharacters;
 	}
 
+	@Override
 	public char[] getContextInformationAutoActivationCharacters() {
 		return null;
 	}
 
+	@Override
 	public String getErrorMessage() {
 		if (fNumberOfComputedResults > 0)
 			return null;
@@ -409,6 +408,7 @@ public abstract class ContentAssistProcessor implements IContentAssistProcessor 
 		return DLTKUIMessages.ScriptEditor_codeassist_noCompletions;
 	}
 
+	@Override
 	public IContextInformationValidator getContextInformationValidator() {
 		return null;
 	}
@@ -418,7 +418,7 @@ public abstract class ContentAssistProcessor implements IContentAssistProcessor 
 	 * <p>
 	 * The default implementation creates a <code>NullProgressMonitor</code>.
 	 * </p>
-	 * 
+	 *
 	 * @return a progress monitor
 	 */
 	protected IProgressMonitor createProgressMonitor() {
@@ -432,7 +432,7 @@ public abstract class ContentAssistProcessor implements IContentAssistProcessor 
 
 	/**
 	 * Creates the context that is passed to the completion proposal computers.
-	 * 
+	 *
 	 * @param viewer
 	 *            the viewer that content assist is invoked on
 	 * @param offset
@@ -516,11 +516,7 @@ public abstract class ContentAssistProcessor implements IContentAssistProcessor 
 					null /* default image */, message, MessageDialog.WARNING,
 					new String[] { restoreButtonLabel,
 							IDialogConstants.CLOSE_LABEL }, 1) {
-				/*
-				 * @see
-				 * org.eclipse.dltk.internal.ui.dialogs.OptionalMessageDialog
-				 * #createCustomArea(org.eclipse.swt.widgets.Composite)
-				 */
+				@Override
 				protected Control createCustomArea(Composite composite) {
 					// wrap link and checkbox in one composite without space
 					Composite parent = new Composite(composite, SWT.NONE);
@@ -540,6 +536,7 @@ public abstract class ContentAssistProcessor implements IContentAssistProcessor 
 					Link link = new Link(linkComposite, SWT.NONE);
 					link.setText(linkMessage);
 					link.addSelectionListener(new SelectionAdapter() {
+						@Override
 						public void widgetSelected(SelectionEvent e) {
 							close();
 							PreferencesUtil
@@ -559,6 +556,7 @@ public abstract class ContentAssistProcessor implements IContentAssistProcessor 
 					return parent;
 				}
 
+				@Override
 				protected void createButtonsForButtonBar(Composite parent) {
 					Button[] buttons = new Button[2];
 					buttons[0] = createButton(parent, restoreId,

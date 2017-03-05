@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,10 +28,8 @@ import org.eclipse.dltk.ui.util.PixelConverter;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -42,8 +40,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
@@ -87,10 +83,12 @@ public class ScriptEditorHoverConfigurationBlock implements
 	private class ScriptEditorTextHoverDescriptorLabelProvider implements
 			ITableLabelProvider {
 
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
 		}
 
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			switch (columnIndex) {
 			case ENABLED_PROP:
@@ -109,16 +107,20 @@ public class ScriptEditorHoverConfigurationBlock implements
 			return null;
 		}
 
+		@Override
 		public void addListener(ILabelProviderListener listener) {
 		}
 
+		@Override
 		public void dispose() {
 		}
 
+		@Override
 		public boolean isLabelProperty(Object element, String property) {
 			return false;
 		}
 
+		@Override
 		public void removeListener(ILabelProviderListener listener) {
 		}
 	}
@@ -126,17 +128,16 @@ public class ScriptEditorHoverConfigurationBlock implements
 	private class ScriptEditorTextHoverDescriptorContentProvider implements
 			IStructuredContentProvider {
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			// Do nothing since the viewer listens to resource deltas
 		}
 
+		@Override
 		public void dispose() {
 		}
 
-		public boolean isDeleted(Object element) {
-			return false;
-		}
-
+		@Override
 		public Object[] getElements(Object element) {
 			return (Object[]) element;
 		}
@@ -158,12 +159,14 @@ public class ScriptEditorHoverConfigurationBlock implements
 
 	private Map fCheckBoxes = new HashMap();
 	private SelectionListener fCheckBoxListener = new SelectionListener() {
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 			Button button = (Button) e.widget;
 			fStore.setValue((String) fCheckBoxes.get(button), button
 					.getSelection());
 		}
 
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Button button = (Button) e.widget;
 			fStore.setValue((String) fCheckBoxes.get(button), button
@@ -205,11 +208,12 @@ public class ScriptEditorHoverConfigurationBlock implements
 
 	/**
 	 * Creates page for hover preferences.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 * @return the control for the preference page
 	 */
+	@Override
 	public Control createControl(Composite parent) {
 
 		Composite hoverComposite = new Composite(parent, SWT.NONE);
@@ -251,10 +255,12 @@ public class ScriptEditorHoverConfigurationBlock implements
 		layouter.setLayoutData(gd);
 
 		fHoverTable.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleHoverListSelection();
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
@@ -280,34 +286,27 @@ public class ScriptEditorHoverConfigurationBlock implements
 				.setLabelProvider(new ScriptEditorTextHoverDescriptorLabelProvider());
 
 		((CheckboxTableViewer) fHoverTableViewer)
-				.addCheckStateListener(new ICheckStateListener() {
-					/*
-					 * @seeorg.eclipse.jface.viewers.ICheckStateListener#
-					 * checkStateChanged
-					 * (org.eclipse.jface.viewers.CheckStateChangedEvent)
-					 */
-					public void checkStateChanged(CheckStateChangedEvent event) {
-						String id = ((EditorTextHoverDescriptor) event
-								.getElement()).getId();
-						if (id == null)
-							return;
-						EditorTextHoverDescriptor[] descriptors = getContributedHovers();
-						HoverConfig hoverConfig = null;
-						int i = 0, length = fHoverConfigs.length;
-						while (i < length) {
-							if (id.equals(descriptors[i].getId())) {
-								hoverConfig = fHoverConfigs[i];
-								hoverConfig.fIsEnabled = event.getChecked();
-								fModifierEditor.setEnabled(event.getChecked());
-								fHoverTableViewer
-										.setSelection(new StructuredSelection(
-												descriptors[i]));
-							}
-							i++;
+				.addCheckStateListener(event -> {
+					String id = ((EditorTextHoverDescriptor) event
+							.getElement()).getId();
+					if (id == null)
+						return;
+					EditorTextHoverDescriptor[] descriptors = getContributedHovers();
+					HoverConfig hoverConfig = null;
+					int i = 0, length = fHoverConfigs.length;
+					while (i < length) {
+						if (id.equals(descriptors[i].getId())) {
+							hoverConfig = fHoverConfigs[i];
+							hoverConfig.fIsEnabled = event.getChecked();
+							fModifierEditor.setEnabled(event.getChecked());
+							fHoverTableViewer
+									.setSelection(new StructuredSelection(
+											descriptors[i]));
 						}
-						handleHoverListSelection();
-						updateStatus(hoverConfig);
+						i++;
 					}
+					handleHoverListSelection();
+					updateStatus(hoverConfig);
 				});
 
 		// Text field for modifier string
@@ -321,11 +320,13 @@ public class ScriptEditorHoverConfigurationBlock implements
 		fModifierEditor.addKeyListener(new KeyListener() {
 			private boolean isModifierCandidate;
 
+			@Override
 			public void keyPressed(KeyEvent e) {
 				isModifierCandidate = e.keyCode > 0 && e.character == 0
 						&& e.stateMask == 0;
 			}
 
+			@Override
 			public void keyReleased(KeyEvent e) {
 				if (isModifierCandidate && e.stateMask > 0
 						&& e.stateMask == e.stateMask && e.character == 0) {
@@ -378,11 +379,7 @@ public class ScriptEditorHoverConfigurationBlock implements
 			}
 		});
 
-		fModifierEditor.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				handleModifierModified();
-			}
-		});
+		fModifierEditor.addModifyListener(e -> handleModifierModified());
 
 		// Description
 		Label descriptionLabel = new Label(hoverComposite, SWT.LEFT);
@@ -413,6 +410,7 @@ public class ScriptEditorHoverConfigurationBlock implements
 				fNature);
 	}
 
+	@Override
 	public void initialize() {
 		EditorTextHoverDescriptor[] hoverDescs = getContributedHovers();
 		fHoverConfigs = new HoverConfig[hoverDescs.length];
@@ -441,6 +439,7 @@ public class ScriptEditorHoverConfigurationBlock implements
 		fHoverTableViewer.refresh();
 	}
 
+	@Override
 	public void performOk() {
 		StringBuffer buf = new StringBuffer();
 		StringBuffer maskBuf = new StringBuffer();
@@ -468,6 +467,7 @@ public class ScriptEditorHoverConfigurationBlock implements
 		DLTKUIPlugin.getDefault().resetEditorTextHoverDescriptors(fNature);
 	}
 
+	@Override
 	public void performDefaults() {
 		restoreFromPreferences();
 		initializeFields();
@@ -649,6 +649,7 @@ public class ScriptEditorHoverConfigurationBlock implements
 		filler.setLayoutData(gd);
 	}
 
+	@Override
 	public void dispose() {
 		// nothing to dispose
 	}

@@ -11,9 +11,10 @@ import org.eclipse.dltk.debug.core.model.IScriptLineBreakpoint;
 import org.eclipse.dltk.ui.util.SWTFactory;
 import org.eclipse.swt.widgets.Composite;
 
-public class ScriptLineBreakpointPropertyPage extends
-		ScriptBreakpointPropertyPage {
+public class ScriptLineBreakpointPropertyPage
+		extends ScriptBreakpointPropertyPage {
 
+	@Override
 	protected void createLocationLabels(Composite parent) throws CoreException {
 		super.createLocationLabels(parent);
 		IScriptLineBreakpoint breakpoint = (IScriptLineBreakpoint) getBreakpoint();
@@ -25,6 +26,7 @@ public class ScriptLineBreakpointPropertyPage extends
 		SWTFactory.createLabel(parent, Integer.toString(lineNumber), 1);
 	}
 
+	@Override
 	protected String getBreakpointLocationLabel() {
 		final IScriptBreakpoint breakpoint = getBreakpoint();
 		if (breakpoint instanceof IScriptLineBreakpoint) {
@@ -37,6 +39,7 @@ public class ScriptLineBreakpointPropertyPage extends
 		return super.getBreakpointLocationLabel();
 	}
 
+	@Override
 	protected String getBreakpointResourceName() throws CoreException {
 		final IScriptBreakpoint breakpoint = getBreakpoint();
 		if (breakpoint instanceof IScriptLineBreakpoint) {

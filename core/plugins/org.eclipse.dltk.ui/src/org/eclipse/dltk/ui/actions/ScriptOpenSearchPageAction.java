@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 xored software, Inc.
+ * Copyright (c) 2010, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -24,10 +24,12 @@ public abstract class ScriptOpenSearchPageAction implements
 
 	private IWorkbenchWindow window;
 
+	@Override
 	public void init(IWorkbenchWindow window) {
 		this.window = window;
 	}
 
+	@Override
 	public void run(IAction action) {
 		if (window == null || window.getActivePage() == null) {
 			beep();
@@ -39,9 +41,11 @@ public abstract class ScriptOpenSearchPageAction implements
 
 	protected abstract String getSearchPageId();
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
 
+	@Override
 	public void dispose() {
 		window = null;
 	}

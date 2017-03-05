@@ -23,8 +23,8 @@ import org.eclipse.swt.widgets.Group;
  * Preference block that can be used to select an installed interpreter for
  * 'internal' editor, etc use.
  */
-public abstract class InternalScriptInterpreterPreferenceBlock extends
-		ImprovedAbstractConfigurationBlock {
+public abstract class InternalScriptInterpreterPreferenceBlock
+		extends ImprovedAbstractConfigurationBlock {
 
 	private ComboViewerBlock viewer;
 
@@ -33,41 +33,45 @@ public abstract class InternalScriptInterpreterPreferenceBlock extends
 		super(store, page);
 	}
 
-	/*
-	 * @see org.eclipse.dltk.ui.preferences.IPreferenceConfigurationBlock#createControl(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public final Control createControl(Composite parent) {
-		Composite composite = SWTFactory.createComposite(parent, parent
-				.getFont(), 1, 1, GridData.FILL);
+		Composite composite = SWTFactory.createComposite(parent,
+				parent.getFont(), 1, 1, GridData.FILL);
 
-		Group group = SWTFactory.createGroup(composite,
-				getSelectorGroupLabel(), 1, 1, GridData.FILL_HORIZONTAL);
+		Group group = SWTFactory.createGroup(composite, getSelectorGroupLabel(),
+				1, 1, GridData.FILL_HORIZONTAL);
 
 		SWTFactory.createLabel(group, getSelectorNameLabel(), 1);
 
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		viewer = new ComboViewerBlock(group, gd) {
+			@Override
 			protected String getObjectName(Object element) {
 				return ((IInterpreterInstall) element).getName();
 			}
 
+			@Override
 			protected void selectedObjectChanged(Object element) {
 				setString(getPreferenceKey(), getObjectId(element));
 			}
 
+			@Override
 			protected Object getDefaultObject() {
 				return getDefaultSelectedInterpreter();
 			}
 
+			@Override
 			protected String getObjectId(Object element) {
-				return ScriptRuntime
-						.getCompositeIdFromInterpreter((IInterpreterInstall) element);
+				return ScriptRuntime.getCompositeIdFromInterpreter(
+						(IInterpreterInstall) element);
 			}
 
+			@Override
 			protected String getSavedObjectId() {
 				return getString(getPreferenceKey());
 			}
 
+			@Override
 			protected Object getObjectById(String id) {
 				return ScriptRuntime.getInterpreterFromCompositeId(id);
 			}
@@ -108,11 +112,9 @@ public abstract class InternalScriptInterpreterPreferenceBlock extends
 				LocalEnvironment.getInstance());
 	}
 
-	/*
-	 * @see org.eclipse.dltk.ui.preferences.ImprovedAbstractConfigurationBlock#createOverlayKeys()
-	 */
+	@Override
 	protected List<OverlayKey> createOverlayKeys() {
-		ArrayList<OverlayKey> keys = new ArrayList<OverlayKey>(1);
+		ArrayList<OverlayKey> keys = new ArrayList<>(1);
 
 		keys.add(new OverlayPreferenceStore.OverlayKey(
 				OverlayPreferenceStore.STRING, getPreferenceKey()));
@@ -120,16 +122,14 @@ public abstract class InternalScriptInterpreterPreferenceBlock extends
 		return keys;
 	}
 
-	/*
-	 * @see org.eclipse.dltk.ui.preferences.ImprovedAbstractConfigurationBlock#performDefaults()
-	 */
+	@Override
 	public void performDefaults() {
 		super.performDefaults();
 		viewer.performDefaults();
 	}
 
 	private IInterpreterInstall[] getInterpreterInstalls() {
-		List<IInterpreterInstall> interpreters = new ArrayList<IInterpreterInstall>();
+		List<IInterpreterInstall> interpreters = new ArrayList<>();
 		IInterpreterInstallType[] types = ScriptRuntime
 				.getInterpreterInstallTypes(getNatureId());
 		for (int i = 0; i < types.length; i++) {

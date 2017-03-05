@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.wizards.buildpath.newsourcepage;
 
@@ -33,7 +32,6 @@ import org.eclipse.dltk.ui.IContextMenuConstants;
 import org.eclipse.dltk.ui.actions.AbstractOpenWizardAction;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
@@ -55,43 +53,43 @@ import org.eclipse.ui.texteditor.IUpdate;
 /**
  * Action group that adds the source and generate actions to a part's context
  * menu and installs handlers for the corresponding global menu actions.
- * 
+ *
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * 
- * 
+ *
+ *
  */
 public class GenerateBuildPathActionGroup extends ActionGroup {
 	/**
 	 * Pop-up menu: id of the source sub menu (value
 	 * <code>org.eclipse.dltk.ui.buildpath.menu</code>).
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	public static final String MENU_ID = "org.eclipse.dltk.ui.buildpath.menu"; //$NON-NLS-1$
 
 	/**
 	 * Pop-up menu: id of the build path (add /remove) group of the build path
 	 * sub menu (value <code>buildpathGroup</code>).
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	public static final String GROUP_BUILDPATH = "buildpathGroup"; //$NON-NLS-1$
 
 	/**
 	 * Pop-up menu: id of the filter (include / exclude) group of the build path
 	 * sub menu (value <code>filterGroup</code>).
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	public static final String GROUP_FILTER = "filterGroup"; //$NON-NLS-1$
 
 	/**
 	 * Pop-up menu: id of the customize (filters / output folder) group of the
 	 * build path sub menu (value <code>customizeGroup</code>).
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	public static final String GROUP_CUSTOMIZE = "customizeGroup"; //$NON-NLS-1$
 
@@ -106,9 +104,7 @@ public class GenerateBuildPathActionGroup extends ActionGroup {
 
 	private static abstract class OpenBuildPathWizardAction extends
 			AbstractOpenWizardAction implements ISelectionChangedListener {
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			ISelection selection = event.getSelection();
 			if (selection instanceof IStructuredSelection) {
@@ -133,9 +129,7 @@ public class GenerateBuildPathActionGroup extends ActionGroup {
 			fIsLinked = isLinked;
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		protected INewWizard createWizard() throws CoreException {
 			BPListElement newEntrie = new BPListElement(fSelectedProject,
 					IBuildpathEntry.BPE_SOURCE, false);
@@ -149,9 +143,7 @@ public class GenerateBuildPathActionGroup extends ActionGroup {
 			return fAddSourceFolderWizard;
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		public boolean selectionChanged(IStructuredSelection selection) {
 			if (selection.size() == 1) {
 				final Object first = selection.getFirstElement();
@@ -219,9 +211,7 @@ public class GenerateBuildPathActionGroup extends ActionGroup {
 			setDisabledImageDescriptor(DLTKPluginImages.DESC_DLCL_CONFIGURE_BUILDPATH_FILTERS);
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		protected INewWizard createWizard() throws CoreException {
 			BPListElement[] existingEntries = BPListElement
 					.createFromExisting(fSelectedProject);
@@ -232,9 +222,7 @@ public class GenerateBuildPathActionGroup extends ActionGroup {
 			return fEditFilterWizard;
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		public boolean selectionChanged(IStructuredSelection selection) {
 			if (selection.size() != 1)
 				return false;
@@ -303,7 +291,7 @@ public class GenerateBuildPathActionGroup extends ActionGroup {
 	 * Creates a new <code>GenerateActionGroup</code>. The group requires that
 	 * the selection provided by the page's selection provider is of type
 	 * <code>org.eclipse.jface.viewers.IStructuredSelection</code>.
-	 * 
+	 *
 	 * @param page
 	 *            the page that owns this action group
 	 */
@@ -315,7 +303,7 @@ public class GenerateBuildPathActionGroup extends ActionGroup {
 	 * Creates a new <code>GenerateActionGroup</code>. The group requires that
 	 * the selection provided by the part's selection provider is of type
 	 * <code>org.eclipse.jface.viewers.IStructuredSelection</code>.
-	 * 
+	 *
 	 * @param part
 	 *            the view part that owns this action group
 	 */
@@ -382,28 +370,20 @@ public class GenerateBuildPathActionGroup extends ActionGroup {
 
 	}
 
-	/*
-	 * (non-Javadoc) Method declared in ActionGroup
-	 */
+	@Override
 	public void fillActionBars(IActionBars actionBar) {
 		super.fillActionBars(actionBar);
 		setGlobalActionHandlers(actionBar);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared in ActionGroup
-	 */
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		super.fillContextMenu(menu);
 		if (!canOperateOnSelection())
 			return;
 		String menuText = ActionMessages.BuildPath_label;
 		IMenuManager subMenu = new MenuManager(menuText, MENU_ID);
-		subMenu.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager) {
-				fillViewSubMenu(manager);
-			}
-		});
+		subMenu.addMenuListener(manager -> fillViewSubMenu(manager));
 		subMenu.setRemoveAllWhenShown(true);
 		subMenu.add(new ConfigureBuildPathAction(fSite));
 		menu.appendToGroup(fGroupName, subMenu);
@@ -474,9 +454,7 @@ public class GenerateBuildPathActionGroup extends ActionGroup {
 		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void dispose() {
 		if (fActions != null) {
 			final ISelectionProvider provider = fSite.getSelectionProvider();

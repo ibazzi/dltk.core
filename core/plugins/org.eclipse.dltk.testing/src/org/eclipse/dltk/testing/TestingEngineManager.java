@@ -11,8 +11,8 @@ import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.internal.testing.util.NumberUtils;
 import org.eclipse.dltk.utils.NatureExtensionManager;
 
-public final class TestingEngineManager extends
-		NatureExtensionManager<ITestingEngine> {
+public final class TestingEngineManager
+		extends NatureExtensionManager<ITestingEngine> {
 
 	private static final String EXTENSION_POINT = DLTKTestingPlugin.PLUGIN_ID
 			+ ".engine"; //$NON-NLS-1$
@@ -46,15 +46,10 @@ public final class TestingEngineManager extends
 		return new Descriptor(confElement, priority);
 	}
 
-	private final Comparator<Object> descriptorComparator = new Comparator<Object>() {
-
-		@Override
-		public int compare(Object o1, Object o2) {
-			Descriptor descriptor1 = (Descriptor) o1;
-			Descriptor descriptor2 = (Descriptor) o2;
-			return descriptor1.priority - descriptor2.priority;
-		}
-
+	private final Comparator<Object> descriptorComparator = (o1, o2) -> {
+		Descriptor descriptor1 = (Descriptor) o1;
+		Descriptor descriptor2 = (Descriptor) o2;
+		return descriptor1.priority - descriptor2.priority;
 	};
 
 	@Override
@@ -90,7 +85,7 @@ public final class TestingEngineManager extends
 	/**
 	 * Returns the {@link ITestingEngine} with the specified engineId or
 	 * <code>null</code>.
-	 * 
+	 *
 	 * @param engineId
 	 * @return
 	 */

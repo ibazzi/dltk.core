@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.text.completion;
 
@@ -55,7 +54,7 @@ public final class CompletionProposalComputerRegistry {
 	 * <p>
 	 * TODO keep this or add some other singleton, e.g. JavaPlugin?
 	 * </p>
-	 * 
+	 *
 	 * @return the singleton instance
 	 */
 	public static synchronized CompletionProposalComputerRegistry getDefault() {
@@ -125,7 +124,7 @@ public final class CompletionProposalComputerRegistry {
 	 * When computing proposals, it is therefore imperative to copy the returned
 	 * list before iterating over it.
 	 * </p>
-	 * 
+	 *
 	 * @param partition
 	 *            the partition type for which to retrieve the computer
 	 *            descriptors
@@ -156,7 +155,7 @@ public final class CompletionProposalComputerRegistry {
 	 * When computing proposals, it is therefore imperative to copy the returned
 	 * list before iterating over it.
 	 * </p>
-	 * 
+	 *
 	 * @return the list of extensions to the
 	 *         <code>javaCompletionProposalComputer</code> extension point
 	 *         (element type: {@link CompletionProposalComputerDescriptor})
@@ -176,7 +175,7 @@ public final class CompletionProposalComputerRegistry {
 	 * list. The returned list may change if plug-ins are loaded or unloaded
 	 * while the application is running.
 	 * </p>
-	 * 
+	 *
 	 * @return list of proposal categories contributed to the
 	 *         <code>javaCompletionProposalComputer</code> extension point
 	 *         (element type: {@link CompletionProposalCategory})
@@ -341,7 +340,7 @@ public final class CompletionProposalComputerRegistry {
 
 	/**
 	 * Log the status and inform the user about a misbehaving extension.
-	 * 
+	 *
 	 * @param descriptor
 	 *            the descriptor of the misbehaving extension
 	 * @param status
@@ -377,10 +376,12 @@ public final class CompletionProposalComputerRegistry {
 				.getActiveWorkbenchShell(), title, null /* default image */,
 				message, MessageDialog.ERROR,
 				new String[] { IDialogConstants.OK_LABEL }, 0) {
+			@Override
 			protected Control createCustomArea(Composite parent) {
 				Link link = new Link(parent, SWT.NONE);
 				link.setText(avoidHint);
 				link.addSelectionListener(new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent e) {
 						PreferencesUtil
 								.createPreferenceDialogOn(
@@ -400,7 +401,7 @@ public final class CompletionProposalComputerRegistry {
 
 	/**
 	 * Returns the names of contributors affected by disabling a category.
-	 * 
+	 *
 	 * @param category
 	 *            the category that would be disabled
 	 * @param culprit

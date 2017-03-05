@@ -10,20 +10,17 @@ import org.eclipse.jface.preference.IPreferenceStore;
  * Base class for initialized preferences for a dltk debugging ui plug-in
  * implementation. This class will initialize all values against the preference
  * store returned by {@link IDLTKUILanguageToolkit#getPreferenceStore()}.
- * 
+ *
  * <p>
  * Any plug-in using a preference page based upon an
  * {@link AbstractScriptPreferencePage} must provide an implementation of this
  * class to properly initialize preference values.
  * </p>
  */
-public abstract class DLTKDebugUIPluginPreferenceInitializer extends
-		AbstractPreferenceInitializer {
+public abstract class DLTKDebugUIPluginPreferenceInitializer
+		extends AbstractPreferenceInitializer {
 
-	/*
-	 * @seeorg.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#
-	 * initializeDefaultPreferences()
-	 */
+	@Override
 	public void initializeDefaultPreferences() {
 		/*
 		 * preferences must be saved to the following preference store, else
@@ -31,8 +28,8 @@ public abstract class DLTKDebugUIPluginPreferenceInitializer extends
 		 * anything that uses the preferences it controls, will not work
 		 * properly.
 		 */
-		IPreferenceStore store = DLTKDebugUILanguageManager.getLanguageToolkit(
-				getNatureId()).getPreferenceStore();
+		IPreferenceStore store = DLTKDebugUILanguageManager
+				.getLanguageToolkit(getNatureId()).getPreferenceStore();
 		Assert.isNotNull(store);
 
 		store.setDefault(
@@ -57,7 +54,7 @@ public abstract class DLTKDebugUIPluginPreferenceInitializer extends
 	 * Initialize any plug-in specific preferences that should be saved to the
 	 * preference store returned from a call to
 	 * {@link IDLTKUILanguageToolkit#getPreferenceStore()}
-	 * 
+	 *
 	 * <p>
 	 * Sub-classes may also use this method to initialized preferences against
 	 * another preference store of their choosing.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
@@ -33,10 +32,7 @@ import org.eclipse.dltk.ui.dialogs.TimeTriggeredProgressMonitorDialog;
 import org.eclipse.dltk.ui.environment.IEnvironmentUI;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -93,7 +89,7 @@ public abstract class AbstractInterpreterLibraryBlock
 
 	/**
 	 * Creates and returns the source lookup control.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent widget of this control
 	 */
@@ -137,17 +133,13 @@ public abstract class AbstractInterpreterLibraryBlock
 			fEnabledButton.setText(
 					InterpretersMessages.AbstractInterpreterLibraryBlock_setPathVisibleToDltk);
 			fEnabledButton.addSelectionListener(this);
-			this.fLibraryViewer
-					.addDoubleClickListener(new IDoubleClickListener() {
-						public void doubleClick(DoubleClickEvent event) {
-							if (fLibraryContentProvider.canEnable(
-									(IStructuredSelection) fLibraryViewer
-											.getSelection())) {
-								fLibraryContentProvider.changeEnabled();
-								updateButtons();
-							}
-						}
-					});
+			this.fLibraryViewer.addDoubleClickListener(event -> {
+				if (fLibraryContentProvider.canEnable(
+						(IStructuredSelection) fLibraryViewer.getSelection())) {
+					fLibraryContentProvider.changeEnabled();
+					updateButtons();
+				}
+			});
 		}
 
 		Composite pathButtonComp = new Composite(comp, SWT.NONE);
@@ -221,17 +213,10 @@ public abstract class AbstractInterpreterLibraryBlock
 			ProgressMonitorDialog dialog = new TimeTriggeredProgressMonitorDialog(
 					null, 1000);
 			try {
-				dialog.run(true, true, new IRunnableWithProgress() {
-
-					public void run(IProgressMonitor monitor)
-							throws InvocationTargetException,
-							InterruptedException {
-						libs[0] = getInterpreterInstallType()
+				dialog.run(true, true,
+						monitor -> libs[0] = getInterpreterInstallType()
 								.getDefaultLibraryLocations(installLocation,
-										environmentVariables, monitor);
-					}
-
-				});
+										environmentVariables, monitor));
 			} catch (InvocationTargetException e) {
 				e.printStackTrace();
 			} catch (InterruptedException e) {
@@ -243,7 +228,7 @@ public abstract class AbstractInterpreterLibraryBlock
 
 	/**
 	 * Creates and returns a button
-	 * 
+	 *
 	 * @param parent
 	 *            parent widget
 	 * @param label
@@ -337,7 +322,7 @@ public abstract class AbstractInterpreterLibraryBlock
 	/**
 	 * Determines if the present setup is the default location s for this
 	 * InterpreterEnvironment
-	 * 
+	 *
 	 * @return true if the current set of locations are the defaults, false
 	 *         otherwise
 	 */
@@ -368,7 +353,7 @@ public abstract class AbstractInterpreterLibraryBlock
 
 	/**
 	 * Returns the Interpreter install associated with this library block.
-	 * 
+	 *
 	 * @return Interpreter install
 	 */
 	protected IInterpreterInstall getInterpreterInstall() {
@@ -377,7 +362,7 @@ public abstract class AbstractInterpreterLibraryBlock
 
 	/**
 	 * Returns the Interpreter install type associated with this library block.
-	 * 
+	 *
 	 * @return Interpreter install
 	 */
 	protected IInterpreterInstallType getInterpreterInstallType() {
@@ -386,11 +371,12 @@ public abstract class AbstractInterpreterLibraryBlock
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt
 	 * .events.SelectionEvent)
 	 */
+	@Override
 	public void widgetSelected(SelectionEvent e) {
 		Object source = e.getSource();
 		if (source == fUpButton) {
@@ -418,10 +404,11 @@ public abstract class AbstractInterpreterLibraryBlock
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.
 	 * eclipse .swt.events.SelectionEvent)
 	 */
+	@Override
 	public void widgetDefaultSelected(SelectionEvent e) {
 	}
 
@@ -439,11 +426,12 @@ public abstract class AbstractInterpreterLibraryBlock
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(
 	 * org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		updateButtons();
 	}
@@ -496,7 +484,7 @@ public abstract class AbstractInterpreterLibraryBlock
 	/**
 	 * Initializes this control based on the settings in the given Interpreter
 	 * install and type.
-	 * 
+	 *
 	 * @param Interpreter
 	 *            Interpreter or <code>null</code> if none
 	 * @param type
@@ -515,16 +503,8 @@ public abstract class AbstractInterpreterLibraryBlock
 			ProgressMonitorDialog dialog = new TimeTriggeredProgressMonitorDialog(
 					null, 3000);
 			try {
-				dialog.run(true, true, new IRunnableWithProgress() {
-
-					public void run(IProgressMonitor monitor)
-							throws InvocationTargetException,
-							InterruptedException {
-						libs[0] = ScriptRuntime.getLibraryLocations(
-								getInterpreterInstall(), monitor);
-					}
-
-				});
+				dialog.run(true, true, monitor -> libs[0] = ScriptRuntime
+						.getLibraryLocations(getInterpreterInstall(), monitor));
 			} catch (InvocationTargetException e) {
 				if (DLTKCore.DEBUG) {
 					e.printStackTrace();
@@ -578,15 +558,15 @@ public abstract class AbstractInterpreterLibraryBlock
 
 	/**
 	 * Rediscover using following technicue:
-	 * 
+	 *
 	 * 1) Keep all user added entries.
-	 * 
+	 *
 	 * 2) Remove all default entries.
-	 * 
+	 *
 	 * 3) Rediscover
-	 * 
+	 *
 	 * 4) Add all new entries to list.
-	 * 
+	 *
 	 * @param environmentVariables
 	 * @param oldVars
 	 */

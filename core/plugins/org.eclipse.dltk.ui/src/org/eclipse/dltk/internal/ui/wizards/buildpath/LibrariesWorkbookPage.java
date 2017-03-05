@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,9 +24,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.dltk.compiler.util.Util;
 import org.eclipse.dltk.core.DLTKLanguageManager;
 import org.eclipse.dltk.core.IAccessRule;
@@ -48,7 +46,6 @@ import org.eclipse.dltk.internal.ui.wizards.dialogfields.TreeListDialogField;
 import org.eclipse.dltk.ui.DLTKUIPlugin;
 import org.eclipse.dltk.ui.util.ExceptionHandler;
 import org.eclipse.dltk.ui.util.PixelConverter;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -131,13 +128,7 @@ public class LibrariesWorkbookPage extends BuildPathBasePage {
 		fLibrariesList.setViewerSorter(new BPListElementSorter());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.dltk.internal.ui.wizards.buildpath.BuildPathBasePage#setTitle
-	 * (java.lang.String)
-	 */
+	@Override
 	public void setTitle(String title) {
 		fLibrariesList.setLabelText(title);
 	}
@@ -148,11 +139,7 @@ public class LibrariesWorkbookPage extends BuildPathBasePage {
 		if (Display.getCurrent() != null) {
 			updateLibrariesList();
 		} else {
-			Display.getDefault().asyncExec(new Runnable() {
-				public void run() {
-					updateLibrariesList();
-				}
-			});
+			Display.getDefault().asyncExec(() -> updateLibrariesList());
 		}
 	}
 
@@ -170,6 +157,7 @@ public class LibrariesWorkbookPage extends BuildPathBasePage {
 	}
 
 	// -------- UI creation
+	@Override
 	public Control getControl(Composite parent) {
 		PixelConverter converter = new PixelConverter(parent);
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -196,22 +184,27 @@ public class LibrariesWorkbookPage extends BuildPathBasePage {
 		private final Object[] EMPTY_ARR = new Object[0];
 
 		// -------- IListAdapter --------
+		@Override
 		public void customButtonPressed(TreeListDialogField field, int index) {
 			libaryPageCustomButtonPressed(field, index);
 		}
 
+		@Override
 		public void selectionChanged(TreeListDialogField field) {
 			libaryPageSelectionChanged(field);
 		}
 
+		@Override
 		public void doubleClicked(TreeListDialogField field) {
 			libaryPageDoubleClicked(field);
 		}
 
+		@Override
 		public void keyPressed(TreeListDialogField field, KeyEvent event) {
 			libaryPageKeyPressed(field, event);
 		}
 
+		@Override
 		public Object[] getChildren(TreeListDialogField field, Object element) {
 			if (element instanceof BPListElement) {
 				return ((BPListElement) element).getChildren();
@@ -224,6 +217,7 @@ public class LibrariesWorkbookPage extends BuildPathBasePage {
 			return EMPTY_ARR;
 		}
 
+		@Override
 		public Object getParent(TreeListDialogField field, Object element) {
 			if (element instanceof BPListElementAttribute) {
 				return ((BPListElementAttribute) element).getParent();
@@ -231,11 +225,13 @@ public class LibrariesWorkbookPage extends BuildPathBasePage {
 			return null;
 		}
 
+		@Override
 		public boolean hasChildren(TreeListDialogField field, Object element) {
 			return getChildren(field, element).length > 0;
 		}
 
 		// ---------- IDialogFieldListener --------
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 			libaryPageDialogFieldChanged(field);
 		}
@@ -297,25 +293,10 @@ public class LibrariesWorkbookPage extends BuildPathBasePage {
 		}
 	}
 
+	@Override
 	public void addElement(BPListElement element) {
 		fLibrariesList.addElement(element);
 		fLibrariesList.postSetSelection(new StructuredSelection(element));
-	}
-
-	private void askForAddingExclusionPatternsDialog(
-			List<BPListElement> newEntries) {
-		HashSet modified = new HashSet();
-		List existing = fBuildPathList.getElements();
-		fixNestingConflicts(
-				newEntries
-				.toArray(new BPListElement[newEntries.size()]),
-				(BPListElement[]) existing.toArray(new BPListElement[existing
-						.size()]), modified);
-		if (!modified.isEmpty()) {
-			String title = NewWizardMessages.LibrariesWorkbookPage_exclusion_added_title;
-			String message = NewWizardMessages.LibrariesWorkbookPage_exclusion_added_message;
-			MessageDialog.openInformation(getShell(), title, message);
-		}
 	}
 
 	protected void libaryPageDoubleClicked(TreeListDialogField field) {
@@ -497,7 +478,7 @@ public class LibrariesWorkbookPage extends BuildPathBasePage {
 		// dialog.getNativeLibraryPath());
 		// String[] changedAttributes= { BPListElement.NATIVE_LIB_PATH };
 		// attributeUpdated(selElement, changedAttributes);
-		//				
+		//
 		// fLibrariesList.refresh(elem);
 		// fBuildPathList.dialogFieldChanged(); // validate
 		// updateEnabledState();
@@ -521,14 +502,9 @@ public class LibrariesWorkbookPage extends BuildPathBasePage {
 			final String[] changedAttributes, final IScriptProject jproject,
 			final IPath containerPath) {
 		try {
-			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) throws CoreException {
-					BuildPathSupport
-							.modifyBuildpathEntry(null, newEntry,
-									changedAttributes, jproject, containerPath,
-									monitor);
-				}
-			};
+			IWorkspaceRunnable runnable = monitor -> BuildPathSupport
+					.modifyBuildpathEntry(null, newEntry, changedAttributes,
+							jproject, containerPath, monitor);
 			PlatformUI.getWorkbench().getProgressService().run(true, true,
 					new WorkbenchRunnableAdapter(runnable));
 		} catch (InvocationTargetException e) {
@@ -536,7 +512,7 @@ public class LibrariesWorkbookPage extends BuildPathBasePage {
 			String message = NewWizardMessages.LibrariesWorkbookPage_configurecontainer_error_message;
 			ExceptionHandler.handle(e, getShell(), title, message);
 		} catch (InterruptedException e) {
-			// 
+			//
 		}
 	}
 
@@ -848,21 +824,18 @@ public class LibrariesWorkbookPage extends BuildPathBasePage {
 		return currEntries;
 	}
 
+	@Override
 	public boolean isEntryKind(int kind) {
 		return kind == IBuildpathEntry.BPE_LIBRARY
 				|| kind == IBuildpathEntry.BPE_CONTAINER;
 	}
 
-	/*
-	 * @see BuildPathBasePage#getSelection
-	 */
+	@Override
 	public List getSelection() {
 		return fLibrariesList.getSelectedElements();
 	}
 
-	/*
-	 * @see BuildPathBasePage#setSelection
-	 */
+	@Override
 	public void setSelection(List selElements, boolean expand) {
 		fLibrariesList.selectElements(new StructuredSelection(selElements));
 		if (expand) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,20 +26,20 @@ import org.eclipse.dltk.ui.DLTKUIPlugin;
 public class BuildpathAttributeConfigurationDescriptors {
 
 	private static class Descriptor {
-	
+
 		private IConfigurationElement fConfigElement;
 		private BuildpathAttributeConfiguration fInstance;
-	
+
 		private static final String ATT_NAME = "attributeName"; //$NON-NLS-1$
-		private static final String ATT_CLASS = "class"; //$NON-NLS-1$	
-	
+		private static final String ATT_CLASS = "class"; //$NON-NLS-1$
+
 		public Descriptor(IConfigurationElement configElement) throws CoreException {
 			fConfigElement = configElement;
 			fInstance= null;
-	
+
 			String name = configElement.getAttribute(ATT_NAME);
 			String pageClassName = configElement.getAttribute(ATT_CLASS);
-	
+
 			if (name == null) {
 				throw new CoreException(new Status(IStatus.ERROR, DLTKUIPlugin.PLUGIN_ID, 0, "Invalid extension (missing attributeName)", null)); //$NON-NLS-1$
 			}
@@ -47,7 +47,7 @@ public class BuildpathAttributeConfigurationDescriptors {
 				throw new CoreException(new Status(IStatus.ERROR, DLTKUIPlugin.PLUGIN_ID, 0, "Invalid extension (missing class name): " + name, null)); //$NON-NLS-1$
 			}
 		}
-	
+
 		public synchronized BuildpathAttributeConfiguration getInstance()
 				throws CoreException {
 			if (fInstance == null) {
@@ -60,31 +60,31 @@ public class BuildpathAttributeConfigurationDescriptors {
 			}
 			return fInstance;
 		}
-		
+
 		public String getKey() {
 			return fConfigElement.getAttribute(ATT_NAME);
 		}
 	}
-	
+
 	private static final String ATT_EXTENSION = "classpathAttributeConfiguration"; //$NON-NLS-1$
-	
+
 	private HashMap fDescriptors;
-	
+
 	public BuildpathAttributeConfigurationDescriptors() {
 		fDescriptors= null;
 	}
-	
+
 	private HashMap getDescriptors() {
 		if (fDescriptors == null) {
 			fDescriptors= readExtensions();
 		}
 		return fDescriptors;
 	}
-	
+
 	public boolean containsKey(String attributeKey) {
 		return getDescriptors().containsKey(attributeKey);
 	}
-	
+
 	public BuildpathAttributeConfiguration get(final String attributeKey) {
 		final Descriptor desc= (Descriptor) getDescriptors().get(attributeKey);
 		if (desc == null) {
@@ -93,18 +93,20 @@ public class BuildpathAttributeConfigurationDescriptors {
 		final BuildpathAttributeConfiguration[] res= { null };
 		SafeRunner.run(new ISafeRunnable() {
 
+			@Override
 			public void handleException(Throwable exception) {
 				DLTKUIPlugin.log(exception);
 				getDescriptors().remove(attributeKey); // remove from list
 			}
 
+			@Override
 			public void run() throws Exception {
 				res[0]= desc.getInstance();
 			}
 		});
 		return res[0];
 	}
-	
+
 	private static HashMap readExtensions() {
 		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(DLTKUIPlugin.PLUGIN_ID, ATT_EXTENSION);
 		HashMap descriptors= new HashMap(elements.length * 2);

@@ -14,10 +14,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 public abstract class AbstractScriptProjectDecorator extends LabelProvider
 		implements ILightweightLabelDecorator {
 
-	/*
-	 * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#decorate(java.lang.Object,
-	 *      org.eclipse.jface.viewers.IDecoration)
-	 */
+	@Override
 	public void decorate(Object element, IDecoration decoration) {
 		IProject project = null;
 		if (element instanceof IScriptProject) {

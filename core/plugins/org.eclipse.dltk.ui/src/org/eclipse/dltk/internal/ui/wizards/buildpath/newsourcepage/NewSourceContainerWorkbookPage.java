@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
-
 package org.eclipse.dltk.internal.ui.wizards.buildpath.newsourcepage;
 
 import java.util.ArrayList;
@@ -62,7 +60,7 @@ public class NewSourceContainerWorkbookPage extends BuildPathBasePage implements
 	 * consists of a tree representing the project, a toolbar with the available
 	 * actions, an area containing hyperlinks that perform the same actions as
 	 * those in the toolbar but additionally with some short description.
-	 * 
+	 *
 	 * @param BuildpathList
 	 * @param outputLocationField
 	 * @param context
@@ -74,6 +72,7 @@ public class NewSourceContainerWorkbookPage extends BuildPathBasePage implements
 		this.fStore = store;
 
 		fPackageExplorer = new DialogPackageExplorer() {
+			@Override
 			protected IPreferenceStore getPreferenceStore() {
 				return fStore;
 			}
@@ -85,10 +84,10 @@ public class NewSourceContainerWorkbookPage extends BuildPathBasePage implements
 	/**
 	 * Initialize the controls displaying the content of the script project and
 	 * saving the '.buildpath' and '.project' file.
-	 * 
+	 *
 	 * Must be called before initializing the controls using
 	 * <code>getControl(Composite)</code>.
-	 * 
+	 *
 	 * @param scriptProject
 	 *            the current script project
 	 */
@@ -100,11 +99,7 @@ public class NewSourceContainerWorkbookPage extends BuildPathBasePage implements
 		if (Display.getCurrent() != null) {
 			doUpdateUI();
 		} else {
-			Display.getDefault().asyncExec(new Runnable() {
-				public void run() {
-					doUpdateUI();
-				}
-			});
+			Display.getDefault().asyncExec(() -> doUpdateUI());
 		}
 		// boolean useFolderOutputs= false;
 		// List cpelements= fBuildpathList.getElements();
@@ -116,16 +111,17 @@ public class NewSourceContainerWorkbookPage extends BuildPathBasePage implements
 
 	/**
 	 * Initializes controls and return composite containing these controls.
-	 * 
+	 *
 	 * Before calling this method, make sure to have initialized this instance
 	 * with a script project using <code>init(IScriptProject)</code>.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 * @return composite containing controls
-	 * 
+	 *
 	 * @see #init(IScriptProject)
 	 */
+	@Override
 	public Control getControl(Composite parent) {
 		final int[] sashWeight = { 60 };
 		final IPreferenceStore preferenceStore = DLTKUIPlugin.getDefault()
@@ -154,6 +150,7 @@ public class NewSourceContainerWorkbookPage extends BuildPathBasePage implements
 		final boolean isExpanded = preferenceStore.getBoolean(OPEN_SETTING);
 		excomposite.setExpanded(isExpanded);
 		excomposite.addExpansionListener(new ExpansionAdapter() {
+			@Override
 			public void expansionStateChanged(ExpansionEvent e) {
 				ScrolledPageContent parentScrolledComposite = getParentScrolledComposite(excomposite);
 				if (parentScrolledComposite != null) {
@@ -208,7 +205,7 @@ public class NewSourceContainerWorkbookPage extends BuildPathBasePage implements
 
 	/**
 	 * Adjust the size of the sash form.
-	 * 
+	 *
 	 * @param sashWeight
 	 *            the weight to be read or written
 	 * @param sashForm
@@ -234,7 +231,7 @@ public class NewSourceContainerWorkbookPage extends BuildPathBasePage implements
 	/**
 	 * Get the scrolled page content of the given control by traversing the
 	 * parents.
-	 * 
+	 *
 	 * @param control
 	 *            the control to get the scrolled page content for
 	 * @return the scrolled page content or <code>null</code> if none found
@@ -252,12 +249,13 @@ public class NewSourceContainerWorkbookPage extends BuildPathBasePage implements
 
 	/**
 	 * Get the active shell.
-	 * 
+	 *
 	 * @return the active shell
 	 */
 	// private Shell getShell() {
 	// return DLTKUIPlugin.getActiveWorkbenchShell();
 	// }
+	@Override
 	public List getSelection() {
 		List selectedList = new ArrayList();
 
@@ -291,6 +289,7 @@ public class NewSourceContainerWorkbookPage extends BuildPathBasePage implements
 		return selectedList;
 	}
 
+	@Override
 	public void setSelection(List selection, boolean expand) {
 		// page switch
 
@@ -332,6 +331,7 @@ public class NewSourceContainerWorkbookPage extends BuildPathBasePage implements
 		fPackageExplorer.setSelection(cpEntries);
 	}
 
+	@Override
 	public boolean isEntryKind(int kind) {
 		return kind == IBuildpathEntry.BPE_SOURCE;
 	}
@@ -339,6 +339,7 @@ public class NewSourceContainerWorkbookPage extends BuildPathBasePage implements
 	/**
 	 * Update <code>fBuildpathList</code>.
 	 */
+	@Override
 	public void buildpathEntryChanged(List newEntries) {
 		fBuildpathList.setElements(newEntries);
 	}

@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 xored software, Inc. and others.
+ * Copyright (c) 2009, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html  
+ * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
  *     xored software, Inc. - initial API and Implementation (Alex Panchenko)
@@ -13,7 +13,6 @@ package org.eclipse.dltk.console.ui.internal;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -58,22 +57,16 @@ public class ConsoleViewManager {
 	 * @param elementType
 	 */
 	public ConsoleViewManager(String extensionPoint) {
-		extensions = new ArrayList<Descriptor>(5);
+		extensions = new ArrayList<>(5);
 		extensions.add(new Descriptor(IConsoleConstants.ID_CONSOLE_VIEW, 0));
-		for (final IConfigurationElement element : Platform
-				.getExtensionRegistry()
+		for (final IConfigurationElement element : Platform.getExtensionRegistry()
 				.getConfigurationElementsFor(extensionPoint)) {
 			final Descriptor descriptor = new Descriptor(element);
 			if (isValidDescriptor(descriptor)) {
 				extensions.add(descriptor);
 			}
 		}
-		Collections.sort(extensions, new Comparator<Descriptor>() {
-			@Override
-			public int compare(Descriptor arg0, Descriptor arg1) {
-				return arg1.priority - arg0.priority;
-			}
-		});
+		Collections.sort(extensions, (arg0, arg1) -> arg1.priority - arg0.priority);
 	}
 
 	// Contains list of descriptors.
@@ -82,7 +75,7 @@ public class ConsoleViewManager {
 	/**
 	 * Return array of descriptors. If there are no contributed instances the
 	 * empty array is returned.
-	 * 
+	 *
 	 * @param natureId
 	 * @return
 	 * @throws CoreException

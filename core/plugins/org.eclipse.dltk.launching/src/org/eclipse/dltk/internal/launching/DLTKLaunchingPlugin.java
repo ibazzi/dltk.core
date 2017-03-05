@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -263,8 +263,7 @@ public class DLTKLaunchingPlugin extends Plugin
 						ID_EXTENSION_POINT_RUNTIME_BUILDPATH_ENTRIES);
 		IConfigurationElement[] configs = extensionPoint
 				.getConfigurationElements();
-		fBuildpathEntryExtensions = new HashMap<>(
-				configs.length);
+		fBuildpathEntryExtensions = new HashMap<>(configs.length);
 		for (int i = 0; i < configs.length; i++) {
 			fBuildpathEntryExtensions.put(configs[i].getAttribute("id"), //$NON-NLS-1$
 					configs[i]);
@@ -664,18 +663,14 @@ public class DLTKLaunchingPlugin extends Plugin
 		}
 
 		protected void doit(IProgressMonitor monitor) throws CoreException {
-			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor1)
-						throws CoreException {
-					IScriptProject[] projects = DLTKCore
-							.create(ResourcesPlugin.getWorkspace().getRoot())
-							.getScriptProjects();
-					monitor1.beginTask(LaunchingMessages.LaunchingPlugin_0,
-							projects.length + 1);
-					rebind(monitor1, projects, fRenamedContainerIds);
-					monitor1.done();
-				}
+			IWorkspaceRunnable runnable = monitor1 -> {
+				IScriptProject[] projects = DLTKCore
+						.create(ResourcesPlugin.getWorkspace().getRoot())
+						.getScriptProjects();
+				monitor1.beginTask(LaunchingMessages.LaunchingPlugin_0,
+						projects.length + 1);
+				rebind(monitor1, projects, fRenamedContainerIds);
+				monitor1.done();
 			};
 			DLTKCore.run(runnable, null, monitor);
 		}

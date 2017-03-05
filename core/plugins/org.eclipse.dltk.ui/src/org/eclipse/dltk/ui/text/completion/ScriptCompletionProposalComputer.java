@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.text.completion;
 
@@ -49,18 +48,22 @@ public abstract class ScriptCompletionProposalComputer extends
 			fContextInformation = contextInformation;
 		}
 
+		@Override
 		public String getContextDisplayString() {
 			return fContextInformation.getContextDisplayString();
 		}
 
+		@Override
 		public Image getImage() {
 			return fContextInformation.getImage();
 		}
 
+		@Override
 		public String getInformationDisplayString() {
 			return fContextInformation.getInformationDisplayString();
 		}
 
+		@Override
 		public int getContextInformationPosition() {
 			return fPosition;
 		}
@@ -220,7 +223,7 @@ public abstract class ScriptCompletionProposalComputer extends
 	 * ScriptContentAssistInvocationContext) {
 	 * ScriptContentAssistInvocationContext scriptContext=
 	 * (ScriptContentAssistInvocationContext) context;
-	 * 
+	 *
 	 * int contextInformationPosition=
 	 * guessContextInformationPosition(scriptContext); List result=
 	 * addContextInformations(scriptContext, contextInformationPosition,
@@ -228,6 +231,7 @@ public abstract class ScriptCompletionProposalComputer extends
 	 */
 
 	// Completion proposals
+	@Override
 	public List<ICompletionProposal> computeCompletionProposals(
 			ContentAssistInvocationContext context, IProgressMonitor monitor) {
 
@@ -255,6 +259,7 @@ public abstract class ScriptCompletionProposalComputer extends
 		return context.getInvocationOffset();
 	}
 
+	@Override
 	public List<IContextInformation> computeContextInformation(
 			ContentAssistInvocationContext context, IProgressMonitor monitor) {//
 
@@ -287,20 +292,23 @@ public abstract class ScriptCompletionProposalComputer extends
 		// return list;
 	}
 
+	@Override
 	public String getErrorMessage() {
 		return fErrorMessage;
 	}
 
+	@Override
 	public void sessionStarted() {
 	}
 
+	@Override
 	public void sessionEnded() {
 		fErrorMessage = null;
 	}
 
 	/**
 	 * Creates the template completion processor
-	 * 
+	 *
 	 * <p>
 	 * Subclasses may return <code>null</code> if they do not wish to provide
 	 * template support.

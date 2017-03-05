@@ -1,12 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
- *          (report 36180: Callers/Callees view)
  *******************************************************************************/
 package org.eclipse.dltk.internal.corext.callhierarchy;
 
@@ -28,34 +26,20 @@ import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.search.IDLTKSearchScope;
 
 class CalleeMethodWrapper extends MethodWrapper {
-	private Comparator fMethodWrapperComparator = new MethodWrapperComparator();
+	private Comparator<MethodWrapper> fMethodWrapperComparator = (m1, m2) -> {
+		CallLocation callLocation1 = m1.getMethodCall().getFirstCallLocation();
+		CallLocation callLocation2 = m2.getMethodCall().getFirstCallLocation();
 
-	private static class MethodWrapperComparator implements Comparator {
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-		 */
-		public int compare(Object o1, Object o2) {
-			MethodWrapper m1 = (MethodWrapper) o1;
-			MethodWrapper m2 = (MethodWrapper) o2;
-
-			CallLocation callLocation1 = m1.getMethodCall()
-					.getFirstCallLocation();
-			CallLocation callLocation2 = m2.getMethodCall()
-					.getFirstCallLocation();
-
-			if ((callLocation1 != null) && (callLocation2 != null)) {
-				if (callLocation1.getStart() == callLocation2.getStart()) {
-					return callLocation1.getEnd() - callLocation2.getEnd();
-				}
-
-				return callLocation1.getStart() - callLocation2.getStart();
+		if ((callLocation1 != null) && (callLocation2 != null)) {
+			if (callLocation1.getStart() == callLocation2.getStart()) {
+				return callLocation1.getEnd() - callLocation2.getEnd();
 			}
 
-			return 0;
+			return callLocation1.getStart() - callLocation2.getStart();
 		}
-	}
+
+		return 0;
+	};
 
 	/**
 	 * Constructor for CalleeMethodWrapper.
@@ -67,6 +51,7 @@ class CalleeMethodWrapper extends MethodWrapper {
 	/*
 	 * Returns the calls sorted after the call location
 	 */
+	@Override
 	public MethodWrapper[] getCalls(IProgressMonitor progressMonitor) {
 		MethodWrapper[] result = super.getCalls(progressMonitor);
 		Arrays.sort(result, fMethodWrapperComparator);
@@ -74,18 +59,21 @@ class CalleeMethodWrapper extends MethodWrapper {
 		return result;
 	}
 
+	@Override
 	protected String getTaskName() {
 		return CallHierarchyMessages.CalleeMethodWrapper_taskname;
 	}
 
+	@Override
 	protected MethodWrapper createMethodWrapper(MethodCall methodCall) {
 		return new CalleeMethodWrapper(this, methodCall);
 	}
 
 	/**
 	 * Find callees called from the current method.
-	 * 
+	 *
 	 */
+	@Override
 	protected Map findChildren(IProgressMonitor progressMonitor) {
 		if (getMember().exists()
 				&& getMember().getElementType() == IModelElement.METHOD) {
@@ -108,8 +96,8 @@ class CalleeMethodWrapper extends MethodWrapper {
 							SimpleReference e = (SimpleReference) i.next();
 							IMethod[] calls = (IMethod[]) result.get(e);
 							for (int j = 0; j < calls.length; ++j) {
-								collector.addMember(getMember(), calls[j], e
-										.sourceStart(), e.sourceEnd());
+								collector.addMember(getMember(), calls[j],
+										e.sourceStart(), e.sourceEnd());
 							}
 						}
 						return collector.getCallers();
@@ -119,8 +107,8 @@ class CalleeMethodWrapper extends MethodWrapper {
 		}
 
 		if (DLTKCore.DEBUG) {
-			System.err
-					.println("TODO:CalleeMethodWrap findChildren not implemented..."); //$NON-NLS-1$
+			System.err.println(
+					"TODO:CalleeMethodWrap findChildren not implemented..."); //$NON-NLS-1$
 		}
 		return new HashMap(0);
 	}

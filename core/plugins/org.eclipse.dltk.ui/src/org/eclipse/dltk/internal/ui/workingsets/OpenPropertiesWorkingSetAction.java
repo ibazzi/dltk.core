@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.workingsets;
 
@@ -17,15 +16,14 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
 
-
-
 public class OpenPropertiesWorkingSetAction extends SelectionDispatchAction {
 
 	public OpenPropertiesWorkingSetAction(IWorkbenchSite site) {
 		super(site);
-		setText(WorkingSetMessages.OpenPropertiesWorkingSetAction_label); 
+		setText(WorkingSetMessages.OpenPropertiesWorkingSetAction_label);
 	}
-	
+
+	@Override
 	public void selectionChanged(IStructuredSelection selection) {
 		setEnabled(getWorkingSet(selection) != null);
 	}
@@ -41,7 +39,8 @@ public class OpenPropertiesWorkingSetAction extends SelectionDispatchAction {
 			return null;
 		return ws;
 	}
-	
+
+	@Override
 	public void run(IStructuredSelection selection) {
 		IWorkingSet ws= getWorkingSet(selection);
 		if (ws == null)

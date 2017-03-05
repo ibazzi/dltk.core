@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * 	   IBM Corporation and others. - initial API and Implementation	
+ * 	   IBM Corporation and others. - initial API and Implementation
  *     xored software, Inc. - Ported to DLTK from JDT
  *     Alon Peled <alon@zend.com> - Fix of bug bug 235137
  *******************************************************************************/
@@ -51,8 +51,6 @@ import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -267,6 +265,7 @@ public abstract class ScriptSearchPage extends DialogPage implements
 		fPreviousSearchPatterns = new ArrayList<SearchPatternData>();
 	}
 
+	@Override
 	public boolean performAction() {
 		return performNewSearch();
 	}
@@ -384,7 +383,7 @@ public abstract class ScriptSearchPage extends DialogPage implements
 		/*
 		 * if (!(searchFor == TYPE) && limitTo == IMPLEMENTORS ) { limitTo =
 		 * REFERENCES; }
-		 * 
+		 *
 		 * if (!(searchFor == FIELD) && (limitTo == READ_ACCESSES || limitTo ==
 		 * WRITE_ACCESSES)) { limitTo = REFERENCES; }
 		 */
@@ -457,6 +456,7 @@ public abstract class ScriptSearchPage extends DialogPage implements
 	/*
 	 * Implements method from IDialogPage
 	 */
+	@Override
 	public void setVisible(boolean visible) {
 		if (visible && fPattern != null) {
 			if (fFirstTime) {
@@ -480,6 +480,7 @@ public abstract class ScriptSearchPage extends DialogPage implements
 	/**
 	 * Creates the page's content.
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
 		readConfiguration();
@@ -518,6 +519,7 @@ public abstract class ScriptSearchPage extends DialogPage implements
 		// createParticipants(result);
 
 		SelectionAdapter modelElementInitializer = new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				// Skip events from non selected buttons
 				if (event.widget instanceof Button) {
@@ -566,17 +568,16 @@ public abstract class ScriptSearchPage extends DialogPage implements
 		// Pattern combo
 		fPattern = new Combo(result, SWT.SINGLE | SWT.BORDER);
 		fPattern.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handlePatternSelected();
 				updateOKStatus();
 			}
 		});
-		fPattern.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				doPatternModified();
-				updateOKStatus();
+		fPattern.addModifyListener(e -> {
+			doPatternModified();
+			updateOKStatus();
 
-			}
 		});
 		TextFieldNavigationHandler.install(fPattern);
 		GridData data = new GridData(GridData.FILL, GridData.FILL, true, false,
@@ -589,6 +590,7 @@ public abstract class ScriptSearchPage extends DialogPage implements
 		fCaseSensitive
 				.setText(SearchMessages.SearchPage_expression_caseSensitive);
 		fCaseSensitive.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fIsCaseSensitive = fCaseSensitive.getSelection();
 			}
@@ -616,11 +618,7 @@ public abstract class ScriptSearchPage extends DialogPage implements
 						SearchPattern.R_EXACT_MATCH, getLanguageToolkit()) != null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
-	 */
+	@Override
 	public void dispose() {
 		writeConfiguration();
 		super.dispose();
@@ -702,6 +700,7 @@ public abstract class ScriptSearchPage extends DialogPage implements
 		result.setLayout(new GridLayout(2, true));
 
 		SelectionAdapter listener = new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (e.widget instanceof Button) {
 					if (((Button) e.widget).getSelection() == false) {
@@ -928,9 +927,7 @@ public abstract class ScriptSearchPage extends DialogPage implements
 				"", null, false); //$NON-NLS-1$
 	}
 
-	/*
-	 * Implements method from ISearchPage
-	 */
+	@Override
 	public void setContainer(ISearchPageContainer container) {
 		fContainer = container;
 	}
@@ -954,7 +951,7 @@ public abstract class ScriptSearchPage extends DialogPage implements
 
 	/**
 	 * Returns the page settings for this Script search page.
-	 * 
+	 *
 	 * @return the page settings to be used
 	 */
 	private IDialogSettings getDialogSettings() {

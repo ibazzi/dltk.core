@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,14 +21,14 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.IWorkingSet;
 
-
 public class RemoveWorkingSetElementAction extends SelectionDispatchAction {
 
 	public RemoveWorkingSetElementAction(IWorkbenchSite site) {
 		super(site);
-		setText(WorkingSetMessages.RemoveWorkingSetElementAction_label); 
+		setText(WorkingSetMessages.RemoveWorkingSetElementAction_label);
 	}
-	
+
+	@Override
 	public void selectionChanged(IStructuredSelection selection) {
 		IWorkingSet workingSet= getWorkingSet(selection);
 		setEnabled(workingSet != null && !WorkingSetIDs.OTHERS.equals(workingSet.getId()));
@@ -60,7 +60,8 @@ public class RemoveWorkingSetElementAction extends SelectionDispatchAction {
 		}
 		return result;
 	}
-	
+
+	@Override
 	public void run(IStructuredSelection selection) {
 		IWorkingSet ws= getWorkingSet(selection);
 		if (ws == null)

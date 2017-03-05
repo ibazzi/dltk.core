@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.refactoring.reorg;
 
@@ -25,10 +24,10 @@ import org.eclipse.swt.widgets.Shell;
 
 
 public class ReorgQueries implements IReorgQueries {
-	
+
 	private final Wizard fWizard;
-	private final Shell fShell;	
-		
+	private final Shell fShell;
+
 	public ReorgQueries(Wizard wizard){
 		Assert.isNotNull(wizard);
 		fWizard= wizard;
@@ -50,14 +49,17 @@ public class ReorgQueries implements IReorgQueries {
 			return fShell;
 	}
 
+	@Override
 	public IConfirmQuery createYesYesToAllNoNoToAllQuery(String dialogTitle, boolean allowCancel, int queryID) {
 		return new YesYesToAllNoNoToAllQuery(getShell(), allowCancel, dialogTitle);
 	}
 
+	@Override
 	public IConfirmQuery createYesNoQuery(String dialogTitle, boolean allowCancel, int queryID) {
 		return new YesNoQuery(getShell(), allowCancel, dialogTitle);
 	}
-	
+
+	@Override
 	public IConfirmQuery createSkipQuery(String dialogTitle, int queryID) {
 		return new SkipQuery(getShell(), dialogTitle);
 	}
@@ -68,30 +70,32 @@ public class ReorgQueries implements IReorgQueries {
 		private boolean fNoToAll= false;
 		private final Shell fShell;
 		private final String fDialogTitle;
-		
+
 		YesYesToAllNoNoToAllQuery(Shell parent, boolean allowCancel, String dialogTitle){
 			fShell= parent;
 			fDialogTitle= dialogTitle;
 			fAllowCancel= allowCancel;
 		}
-				
+
+		@Override
 		public boolean confirm(final String question) throws OperationCanceledException {
-			if (fYesToAll) 
+			if (fYesToAll)
 				return true;
 
-			if (fNoToAll) 
+			if (fNoToAll)
 				return false;
 
 			final int[] result= new int[1];
 			fShell.getDisplay().syncExec(createQueryRunnable(question, result));
 			return getResult(result);
 		}
-		
+
+		@Override
 		public boolean confirm(String question, Object[] elements) throws OperationCanceledException {
-			if (fYesToAll) 
+			if (fYesToAll)
 				return true;
 
-			if (fNoToAll) 
+			if (fNoToAll)
 				return false;
 
 			final int[] result= new int[1];
@@ -101,19 +105,20 @@ public class ReorgQueries implements IReorgQueries {
 
 		private Runnable createQueryRunnable(final String question, final int[] result) {
 			return new Runnable() {
+				@Override
 				public void run() {
 					int[] resultId= getResultIDs();
- 
+
 					MessageDialog dialog= new MessageDialog(
-						fShell, 
-						fDialogTitle, 
+						fShell,
+						fDialogTitle,
 						null,
 						question,
 						MessageDialog.QUESTION,
 						getButtonLabels(),
 						0);
 					dialog.open();
-					
+
 					if (dialog.getReturnCode() == -1) { //MessageDialog closed without choice => cancel | no
 						//see also https://bugs.eclipse.org/bugs/show_bug.cgi?id=48400
 						result[0]= fAllowCancel ? IDialogConstants.CANCEL_ID : IDialogConstants.NO_ID;
@@ -155,28 +160,26 @@ public class ReorgQueries implements IReorgQueries {
 				}
 			};
 		}
-		
-		private Runnable createQueryRunnable(final String question, final Object[] elements, final int[] result) {
-			return new Runnable() {
-				public void run() {
-					ListDialog dialog= new YesNoListDialog(fShell, true);
-					dialog.setAddCancelButton(false);
-					dialog.setBlockOnOpen(true);
-					dialog.setContentProvider(new ArrayContentProvider());
-					dialog.setLabelProvider(new ModelElementLabelProvider());
-					dialog.setTitle(fDialogTitle);
-					dialog.setMessage(question);
-					dialog.setInput(elements);
 
-					dialog.open();
-					result[0]= dialog.getReturnCode();
-				}
+		private Runnable createQueryRunnable(final String question, final Object[] elements, final int[] result) {
+			return () -> {
+				ListDialog dialog = new YesNoListDialog(fShell, true);
+				dialog.setAddCancelButton(false);
+				dialog.setBlockOnOpen(true);
+				dialog.setContentProvider(new ArrayContentProvider());
+				dialog.setLabelProvider(new ModelElementLabelProvider());
+				dialog.setTitle(fDialogTitle);
+				dialog.setMessage(question);
+				dialog.setInput(elements);
+
+				dialog.open();
+				result[0] = dialog.getReturnCode();
 			};
 		}
 
 		private boolean getResult(int[] result) throws OperationCanceledException {
 			switch(result[0]){
-				case IDialogConstants.YES_TO_ALL_ID: 
+				case IDialogConstants.YES_TO_ALL_ID:
 					fYesToAll= true;
 					return true;
 				case IDialogConstants.YES_ID:
@@ -194,7 +197,7 @@ public class ReorgQueries implements IReorgQueries {
 			}
 		}
 	}
-	
+
 	private static class YesNoQuery implements IConfirmQuery{
 
 		private final Shell fShell;
@@ -206,13 +209,15 @@ public class ReorgQueries implements IReorgQueries {
 			fDialogTitle= dialogTitle;
 			fAllowCancel= allowCancel;
 		}
-		
+
+		@Override
 		public boolean confirm(String question) throws OperationCanceledException {
 			final int[] result= new int[1];
 			fShell.getDisplay().syncExec(createQueryRunnable(question, result));
 			return getResult(result);
 		}
 
+		@Override
 		public boolean confirm(String question, Object[] elements) throws OperationCanceledException {
 			final int[] result= new int[1];
 			fShell.getDisplay().syncExec(createQueryRunnable(question, elements, result));
@@ -221,17 +226,18 @@ public class ReorgQueries implements IReorgQueries {
 
 		private Runnable createQueryRunnable(final String question, final int[] result){
 			return new Runnable() {
+				@Override
 				public void run() {
 					MessageDialog dialog= new MessageDialog(
-						fShell, 
-						fDialogTitle, 
+						fShell,
+						fDialogTitle,
 						null,
 						question,
 						MessageDialog.QUESTION,
 						getButtonLabels(),
 						0);
 					dialog.open();
-					
+
 					switch (dialog.getReturnCode()) {
 						case -1 : //MessageDialog closed without choice => cancel | no
 							//see also https://bugs.eclipse.org/bugs/show_bug.cgi?id=48400
@@ -263,25 +269,23 @@ public class ReorgQueries implements IReorgQueries {
 				}
 			};
 		}
-		
-		private Runnable createQueryRunnable(final String question, final Object[] elements, final int[] result) {
-			return new Runnable() {
-				public void run() {
-					ListDialog dialog= new YesNoListDialog(fShell, false);
-					dialog.setAddCancelButton(false);
-					dialog.setBlockOnOpen(true);
-					dialog.setContentProvider(new ArrayContentProvider());
-					dialog.setLabelProvider(new ModelElementLabelProvider());
-					dialog.setTitle(fDialogTitle);
-					dialog.setMessage(question);
-					dialog.setInput(elements);
 
-					dialog.open();
-					result[0]= dialog.getReturnCode();
-				}
+		private Runnable createQueryRunnable(final String question, final Object[] elements, final int[] result) {
+			return () -> {
+				ListDialog dialog = new YesNoListDialog(fShell, false);
+				dialog.setAddCancelButton(false);
+				dialog.setBlockOnOpen(true);
+				dialog.setContentProvider(new ArrayContentProvider());
+				dialog.setLabelProvider(new ModelElementLabelProvider());
+				dialog.setTitle(fDialogTitle);
+				dialog.setMessage(question);
+				dialog.setInput(elements);
+
+				dialog.open();
+				result[0] = dialog.getReturnCode();
 			};
 		}
-		
+
 		private boolean getResult(int[] result) throws OperationCanceledException {
 			switch(result[0]){
 				case IDialogConstants.YES_ID:
@@ -296,7 +300,7 @@ public class ReorgQueries implements IReorgQueries {
 			}
 		}
 	}
-	
+
 	private static class SkipQuery implements IConfirmQuery{
 
 		private final Shell fShell;
@@ -309,6 +313,7 @@ public class ReorgQueries implements IReorgQueries {
 			fSkipAll= false;
 		}
 
+		@Override
 		public boolean confirm(String question) throws OperationCanceledException {
 			if (fSkipAll)
 				return false;
@@ -316,24 +321,26 @@ public class ReorgQueries implements IReorgQueries {
 			fShell.getDisplay().syncExec(createQueryRunnable(question, result));
 			return getResult(result);
 		}
-		
+
+		@Override
 		public boolean confirm(String question, Object[] elements) throws OperationCanceledException {
 			throw new UnsupportedOperationException("Not supported for skip queries"); //$NON-NLS-1$
 		}
 
 		private Runnable createQueryRunnable(final String question, final int[] result){
 			return new Runnable() {
+				@Override
 				public void run() {
 					MessageDialog dialog= new MessageDialog(
-						fShell, 
-						fDialogTitle, 
+						fShell,
+						fDialogTitle,
 						null,
 						question,
 						MessageDialog.QUESTION,
 						getButtonLabels(),
 						0);
 					dialog.open();
-					
+
 					switch (dialog.getReturnCode()) {
 						case -1 : //MessageDialog closed without choice => cancel | no
 							//see also https://bugs.eclipse.org/bugs/show_bug.cgi?id=48400
@@ -345,7 +352,7 @@ public class ReorgQueries implements IReorgQueries {
 				}
 
 				private String[] getButtonLabels() {
-					return new String[] {IDialogConstants.SKIP_LABEL, ReorgMessages.ReorgQueries_skip_all, IDialogConstants.CANCEL_LABEL}; 
+					return new String[] {IDialogConstants.SKIP_LABEL, ReorgMessages.ReorgQueries_skip_all, IDialogConstants.CANCEL_LABEL};
 				}
 			};
 		}
@@ -367,7 +374,7 @@ public class ReorgQueries implements IReorgQueries {
 			}
 		}
 	}
-	
+
 	private static final class YesNoListDialog extends ListDialog {
 		private final boolean fYesToAllNoToAll;
 		private YesNoListDialog(Shell parent, boolean includeYesToAllNoToAll) {
@@ -375,12 +382,14 @@ public class ReorgQueries implements IReorgQueries {
 			fYesToAllNoToAll= includeYesToAllNoToAll;
 		}
 
+		@Override
 		protected void buttonPressed(int buttonId) {
 			super.buttonPressed(buttonId);
 			setReturnCode(buttonId);
 			close();
 		}
 
+		@Override
 		protected void createButtonsForButtonBar(Composite parent) {
 			createButton(parent, IDialogConstants.YES_ID, IDialogConstants.YES_LABEL, true);
 			if (fYesToAllNoToAll)

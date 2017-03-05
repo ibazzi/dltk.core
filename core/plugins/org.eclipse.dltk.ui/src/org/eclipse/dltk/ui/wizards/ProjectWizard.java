@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 xored software, Inc.
+ * Copyright (c) 2009, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -89,6 +89,7 @@ public abstract class ProjectWizard extends NewElementWizard implements
 	 * Stores the configuration element for the wizard. The config element will
 	 * be used in <code>performFinish</code> to set the result perspective.
 	 */
+	@Override
 	public void setInitializationData(IConfigurationElement cfig,
 			String propertyName, Object data) {
 		fConfigElement = cfig;
@@ -139,33 +140,40 @@ public abstract class ProjectWizard extends NewElementWizard implements
 		return true;
 	}
 
+	@Override
 	public boolean isEnabledPage(IWizardPage page) {
 		return true;
 	}
 
+	@Override
 	public IEnvironment getEnvironment() {
 		return getFirstPage().getEnvironment();
 	}
 
+	@Override
 	public IInterpreterInstall getInterpreter() {
 		return getFirstPage().getInterpreter();
 	}
 
+	@Override
 	public IProject getProject() {
 		return getFirstPage().getProjectHandle();
 	}
 
+	@Override
 	public void createProject() {
 		updateSteps(getContainer().getCurrentPage());
 		getProjectCreator().changeToNewProject();
 	}
 
+	@Override
 	public void removeProject() {
 		getProjectCreator().removeProject();
 	}
 
 	private ProjectCreator fCreator;
 
+	@Override
 	public ProjectCreator getProjectCreator() {
 		if (fCreator == null) {
 			fCreator = createProjectCreator();

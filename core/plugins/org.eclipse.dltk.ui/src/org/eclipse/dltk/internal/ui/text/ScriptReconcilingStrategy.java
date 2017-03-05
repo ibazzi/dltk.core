@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.text;
 
@@ -118,6 +117,7 @@ public class ScriptReconcilingStrategy implements IReconcilingStrategy,
 
 		try {
 			SafeRunner.run(new ISafeRunnable() {
+				@Override
 				public void run() throws ModelException {
 					// final ReconcilerFeedback feedback = new
 					// ReconcilerFeedback();
@@ -128,6 +128,7 @@ public class ScriptReconcilingStrategy implements IReconcilingStrategy,
 					// }
 				}
 
+				@Override
 				public void handleException(Throwable ex) {
 					DLTKUIPlugin.logErrorMessage(
 							"Error in DLTK Core during reconcile", ex);//$NON-NLS-1$
@@ -180,22 +181,27 @@ public class ScriptReconcilingStrategy implements IReconcilingStrategy,
 		}
 	}
 
+	@Override
 	public void setDocument(IDocument document) {
 
 	}
 
+	@Override
 	public void reconcile(DirtyRegion dirtyRegion, IRegion subRegion) {
 		reconcile(false);
 	}
 
+	@Override
 	public void reconcile(IRegion partition) {
 		reconcile(false);
 	}
 
+	@Override
 	public void setProgressMonitor(IProgressMonitor monitor) {
 		fProgressMonitor = monitor;
 	}
 
+	@Override
 	public void initialReconcile() {
 		reconcile(true);
 	}

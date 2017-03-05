@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.dltk.compiler.problem.IProblem;
@@ -130,14 +129,11 @@ public abstract class AbstractModelTests extends SuiteOfTestCases {
 		}
 
 		protected void sortDeltas(IModelElementDelta[] elementDeltas) {
-			Comparer comparer = new Comparer() {
-				@Override
-				public int compare(Object a, Object b) {
-					IModelElementDelta deltaA = (IModelElementDelta) a;
-					IModelElementDelta deltaB = (IModelElementDelta) b;
-					return deltaA.getElement().getElementName()
-							.compareTo(deltaB.getElement().getElementName());
-				}
+			Comparer comparer = (a, b) -> {
+				IModelElementDelta deltaA = (IModelElementDelta) a;
+				IModelElementDelta deltaB = (IModelElementDelta) b;
+				return deltaA.getElement().getElementName()
+						.compareTo(deltaB.getElement().getElementName());
 			};
 			org.eclipse.dltk.internal.core.util.Util.sort(elementDeltas,
 					comparer);
@@ -403,12 +399,9 @@ public abstract class AbstractModelTests extends SuiteOfTestCases {
 	protected IProject createProject(final String projectName)
 			throws CoreException {
 		final IProject project = getProject(projectName);
-		IWorkspaceRunnable create = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				project.create(null);
-				project.open(null);
-			}
+		IWorkspaceRunnable create = monitor -> {
+			project.create(null);
+			project.open(null);
 		};
 		getWorkspace().run(create, null);
 		return project;
@@ -439,75 +432,72 @@ public abstract class AbstractModelTests extends SuiteOfTestCases {
 			final String[] projects, final String[] containers)
 			throws CoreException {
 		final IScriptProject[] result = new IScriptProject[1];
-		IWorkspaceRunnable create = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				// create project
-				createProject(projectName);
+		IWorkspaceRunnable create = monitor -> {
+			// create project
+			createProject(projectName);
 
-				IProject project = getWorkspaceRoot().getProject(projectName);
+			IProject project = getWorkspaceRoot().getProject(projectName);
 
-				// add natures
-				IProjectDescription description = project.getDescription();
-				description.setNatureIds(natures);
-				project.setDescription(description, null);
+			// add natures
+			IProjectDescription description = project.getDescription();
+			description.setNatureIds(natures);
+			project.setDescription(description, null);
 
-				// create buildpath entries
-				IPath projectPath = project.getFullPath();
-				int sourceLength = sourceFolders == null ? 0
-						: sourceFolders.length;
-				int containersLength = containers == null ? 0
-						: containers.length;
-				int projectLength = projects == null ? 0 : projects.length;
-				IBuildpathEntry[] entries = new IBuildpathEntry[sourceLength
-						+ projectLength + containersLength];
-				for (int i = 0; i < sourceLength; i++) {
-					IPath sourcePath = new Path(sourceFolders[i]);
-					int segmentCount = sourcePath.segmentCount();
-					if (segmentCount > 0) {
-						// create folder and its parents
-						IContainer container = project;
-						for (int j = 0; j < segmentCount; j++) {
-							IFolder folder = container.getFolder(new Path(
-									sourcePath.segment(j)));
-							if (!folder.exists()) {
-								folder.create(true, true, null);
-							}
-							container = folder;
+			// create buildpath entries
+			IPath projectPath = project.getFullPath();
+			int sourceLength = sourceFolders == null ? 0
+					: sourceFolders.length;
+			int containersLength = containers == null ? 0
+					: containers.length;
+			int projectLength = projects == null ? 0 : projects.length;
+			IBuildpathEntry[] entries = new IBuildpathEntry[sourceLength
+					+ projectLength + containersLength];
+			for (int i1 = 0; i1 < sourceLength; i1++) {
+				IPath sourcePath = new Path(sourceFolders[i1]);
+				int segmentCount = sourcePath.segmentCount();
+				if (segmentCount > 0) {
+					// create folder and its parents
+					IContainer container = project;
+					for (int j = 0; j < segmentCount; j++) {
+						IFolder folder = container.getFolder(new Path(
+								sourcePath.segment(j)));
+						if (!folder.exists()) {
+							folder.create(true, true, null);
 						}
+						container = folder;
 					}
-					// create source entry
-					entries[i] = DLTKCore.newSourceEntry(projectPath
-							.append(sourcePath));
 				}
-
-				for (int i = 0; i < projectLength; i++) {
-
-					// accessible files
-					IPath[] accessibleFiles;
-					accessibleFiles = new IPath[0];
-
-					// non accessible files
-					IPath[] nonAccessibleFiles;
-					nonAccessibleFiles = new IPath[0];
-
-					entries[sourceLength + i] = DLTKCore.newProjectEntry(
-							new Path(projects[i]), BuildpathEntry
-									.getAccessRules(accessibleFiles,
-											nonAccessibleFiles), true,
-							new IBuildpathAttribute[0], false);
-				}
-
-				for (int i = 0; i < containersLength; i++) {
-					entries[sourceLength + projectLength + i] = DLTKCore
-							.newContainerEntry(new Path(containers[i]));
-				}
-				// set buildpath and output location
-				IScriptProject scriptProject = DLTKCore.create(project);
-				scriptProject.setRawBuildpath(entries, null);
-
-				result[0] = scriptProject;
+				// create source entry
+				entries[i1] = DLTKCore.newSourceEntry(projectPath
+						.append(sourcePath));
 			}
+
+			for (int i2 = 0; i2 < projectLength; i2++) {
+
+				// accessible files
+				IPath[] accessibleFiles;
+				accessibleFiles = new IPath[0];
+
+				// non accessible files
+				IPath[] nonAccessibleFiles;
+				nonAccessibleFiles = new IPath[0];
+
+				entries[sourceLength + i2] = DLTKCore.newProjectEntry(
+						new Path(projects[i2]), BuildpathEntry
+								.getAccessRules(accessibleFiles,
+										nonAccessibleFiles), true,
+						new IBuildpathAttribute[0], false);
+			}
+
+			for (int i3 = 0; i3 < containersLength; i3++) {
+				entries[sourceLength + projectLength + i3] = DLTKCore
+						.newContainerEntry(new Path(containers[i3]));
+			}
+			// set buildpath and output location
+			IScriptProject scriptProject = DLTKCore.create(project);
+			scriptProject.setRawBuildpath(entries, null);
+
+			result[0] = scriptProject;
 		};
 		getWorkspace().run(create, null);
 		return result[0];
@@ -579,15 +569,12 @@ public abstract class AbstractModelTests extends SuiteOfTestCases {
 
 	protected IFolder createFolder(IPath path) throws CoreException {
 		final IFolder folder = getWorkspaceRoot().getFolder(path);
-		getWorkspace().run(new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				IContainer parent = folder.getParent();
-				if (parent instanceof IFolder && !parent.exists()) {
-					createFolder(parent.getFullPath());
-				}
-				folder.create(true, true, null);
+		getWorkspace().run(monitor -> {
+			IContainer parent = folder.getParent();
+			if (parent instanceof IFolder && !parent.exists()) {
+				createFolder(parent.getFullPath());
 			}
+			folder.create(true, true, null);
 		}, null);
 
 		return folder;
@@ -610,14 +597,11 @@ public abstract class AbstractModelTests extends SuiteOfTestCases {
 	 */
 	protected void deleteProjects(final String... projectNames)
 			throws CoreException {
-		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				if (projectNames != null) {
-					for (int i = 0, max = projectNames.length; i < max; i++) {
-						if (projectNames[i] != null)
-							deleteProject(projectNames[i]);
-					}
+		ResourcesPlugin.getWorkspace().run(monitor -> {
+			if (projectNames != null) {
+				for (int i = 0, max = projectNames.length; i < max; i++) {
+					if (projectNames[i] != null)
+						deleteProject(projectNames[i]);
 				}
 			}
 		}, null);
@@ -647,24 +631,21 @@ public abstract class AbstractModelTests extends SuiteOfTestCases {
 	}
 
 	protected void sortElements(IModelElement[] elements) {
-		Comparer comparer = new Comparer() {
-			@Override
-			public int compare(Object a, Object b) {
-				ModelElement elementA = (ModelElement) a;
-				ModelElement elementB = (ModelElement) b;
-				// char[] tempJCLPath = "<externalJCLPath>".toCharArray();
-				// String idA = new String(CharOperation.replace(
-				// elementA.toStringWithAncestors().toCharArray(),
-				// getExternalJCLPathString().toCharArray(),
-				// tempJCLPath));
-				// String idB = new String(CharOperation.replace(
-				// elementB.toStringWithAncestors().toCharArray(),
-				// getExternalJCLPathString().toCharArray(),
-				// tempJCLPath));
-				return elementA.toStringWithAncestors().compareTo(
-						elementB.toStringWithAncestors().toString());
-				// return idA.compareTo(idB);
-			}
+		Comparer comparer = (a, b) -> {
+			ModelElement elementA = (ModelElement) a;
+			ModelElement elementB = (ModelElement) b;
+			// char[] tempJCLPath = "<externalJCLPath>".toCharArray();
+			// String idA = new String(CharOperation.replace(
+			// elementA.toStringWithAncestors().toCharArray(),
+			// getExternalJCLPathString().toCharArray(),
+			// tempJCLPath));
+			// String idB = new String(CharOperation.replace(
+			// elementB.toStringWithAncestors().toCharArray(),
+			// getExternalJCLPathString().toCharArray(),
+			// tempJCLPath));
+			return elementA.toStringWithAncestors().compareTo(
+					elementB.toStringWithAncestors().toString());
+			// return idA.compareTo(idB);
 		};
 		org.eclipse.dltk.internal.core.util.Util.sort(elements, comparer);
 	}
@@ -711,14 +692,11 @@ public abstract class AbstractModelTests extends SuiteOfTestCases {
 	}
 
 	protected void sortResources(Object[] resources) {
-		Util.Comparer comparer = new Util.Comparer() {
-			@Override
-			public int compare(Object a, Object b) {
-				IResource resourceA = (IResource) a;
-				IResource resourceB = (IResource) b;
-				return resourceA.getFullPath().toString()
-						.compareTo(resourceB.getFullPath().toString());
-			}
+		Util.Comparer comparer = (a, b) -> {
+			IResource resourceA = (IResource) a;
+			IResource resourceB = (IResource) b;
+			return resourceA.getFullPath().toString()
+					.compareTo(resourceB.getFullPath().toString());
 		};
 		Util.sort(resources, comparer);
 	}
@@ -788,14 +766,11 @@ public abstract class AbstractModelTests extends SuiteOfTestCases {
 	}
 
 	protected void sortMarkers(IMarker[] markers) {
-		org.eclipse.dltk.internal.core.util.Util.Comparer comparer = new org.eclipse.dltk.internal.core.util.Util.Comparer() {
-			@Override
-			public int compare(Object a, Object b) {
-				IMarker markerA = (IMarker) a;
-				IMarker markerB = (IMarker) b;
-				return markerA
-						.getAttribute(IMarker.MESSAGE, "").compareTo(markerB.getAttribute(IMarker.MESSAGE, "")); //$NON-NLS-1$ //$NON-NLS-2$
-			}
+		org.eclipse.dltk.internal.core.util.Util.Comparer comparer = (a, b) -> {
+			IMarker markerA = (IMarker) a;
+			IMarker markerB = (IMarker) b;
+			return markerA
+					.getAttribute(IMarker.MESSAGE, "").compareTo(markerB.getAttribute(IMarker.MESSAGE, "")); //$NON-NLS-1$ //$NON-NLS-2$
 		};
 		org.eclipse.dltk.internal.core.util.Util.sort(markers, comparer);
 	}

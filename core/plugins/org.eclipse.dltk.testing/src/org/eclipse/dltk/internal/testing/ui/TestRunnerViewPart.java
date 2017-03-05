@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Julien Ruaux: jruaux@octo.com see bug 25324 Ability to know when tests are finished [junit] 
+ *     Julien Ruaux: jruaux@octo.com see bug 25324 Ability to know when tests are finished [junit]
  *     Vincent Massol: vmassol@octo.com 25324 Ability to know when tests are finished [junit]
  *     Sebastian Davids: sdavids@gmx.de 35762 JUnit View wasting a lot of screen space [JUnit]
  *******************************************************************************/
@@ -52,8 +52,8 @@ import org.eclipse.dltk.testing.DLTKTestingPlugin;
 import org.eclipse.dltk.testing.ITestRunnerUI;
 import org.eclipse.dltk.testing.ITestSession;
 import org.eclipse.dltk.testing.model.ITestElement;
-import org.eclipse.dltk.testing.model.ITestRunSession;
 import org.eclipse.dltk.testing.model.ITestElement.Result;
+import org.eclipse.dltk.testing.model.ITestRunSession;
 import org.eclipse.dltk.ui.DLTKUIPlugin;
 import org.eclipse.dltk.ui.viewsupport.ViewHistory;
 import org.eclipse.jface.action.Action;
@@ -149,7 +149,6 @@ public class TestRunnerViewPart extends ViewPart {
 	 */
 	private int fLayout = LAYOUT_HIERARCHICAL;
 
-	
 	private int fSortDirection = SORT_DIRECTION_NO_SORT;
 	// private boolean fTestIsRunning= false;
 
@@ -280,7 +279,7 @@ public class TestRunnerViewPart extends ViewPart {
 	static final String TAG_RATIO = "ratio"; //$NON-NLS-1$
 	static final String TAG_ORIENTATION = "orientation"; //$NON-NLS-1$
 	static final String TAG_SORT_DIRECTION = "sort_direction"; //$NON-NLS-1$
-	
+
 	static final String TAG_SCROLL = "scroll"; //$NON-NLS-1$
 	/**
 	 * @since 3.2
@@ -290,19 +289,19 @@ public class TestRunnerViewPart extends ViewPart {
 	 * @since 3.2
 	 */
 	static final String TAG_FAILURES_ONLY = "failuresOnly"; //$NON-NLS-1$
-	
-	static final String TAG_SHOW_TIME= "time";
+
+	static final String TAG_SHOW_TIME = "time";
 
 	// orientations
 	static final int VIEW_ORIENTATION_VERTICAL = 0;
 	static final int VIEW_ORIENTATION_HORIZONTAL = 1;
 	static final int VIEW_ORIENTATION_AUTOMATIC = 2;
 
-	//sort direction
+	// sort direction
 	static final int SORT_DIRECTION_NO_SORT = 0;
 	static final int SORT_DIRECTION_ASCENDING = 1;
 	static final int SORT_DIRECTION_DESCENDING = 2;
-	
+
 	private IMemento fMemento;
 
 	Image fOriginalViewImage;
@@ -380,8 +379,8 @@ public class TestRunnerViewPart extends ViewPart {
 
 		@Override
 		public void configureHistoryDropDownAction(IAction action) {
-			action
-					.setToolTipText(DLTKTestingMessages.TestRunnerViewPart_test_run_history);
+			action.setToolTipText(
+					DLTKTestingMessages.TestRunnerViewPart_test_run_history);
 			DLTKTestingPlugin.setLocalImageDescriptors(action,
 					"history_list.gif"); //$NON-NLS-1$
 		}
@@ -424,16 +423,19 @@ public class TestRunnerViewPart extends ViewPart {
 		}
 
 		@Override
-		public void setHistoryEntries(List<TestRunSession> remainingEntries, TestRunSession activeEntry) {
+		public void setHistoryEntries(List<TestRunSession> remainingEntries,
+				TestRunSession activeEntry) {
 			setActiveTestRunSession(activeEntry);
 
 			List<TestRunSession> testRunSessions = DLTKTestingPlugin.getModel()
 					.getTestRunSessions();
 			testRunSessions.removeAll(remainingEntries);
-			for (Iterator<TestRunSession> iter = testRunSessions.iterator(); iter.hasNext();) {
+			for (Iterator<TestRunSession> iter = testRunSessions
+					.iterator(); iter.hasNext();) {
 				DLTKTestingPlugin.getModel().removeTestRunSession(iter.next());
 			}
-			for (Iterator<TestRunSession> iter = remainingEntries.iterator(); iter.hasNext();) {
+			for (Iterator<TestRunSession> iter = remainingEntries
+					.iterator(); iter.hasNext();) {
 				TestRunSession remaining = iter.next();
 				remaining.swapOut();
 			}
@@ -463,13 +465,11 @@ public class TestRunnerViewPart extends ViewPart {
 			if (session.getStartTime() == 0) {
 				return session.getTestRunName();
 			} else {
-				String startTime = DateFormat.getDateTimeInstance().format(
-						new Date(session.getStartTime()));
-				return Messages
-						.format(
-								DLTKTestingMessages.TestRunnerViewPart_testName_startTime,
-								new Object[] { session.getTestRunName(),
-										startTime });
+				String startTime = DateFormat.getDateTimeInstance()
+						.format(new Date(session.getStartTime()));
+				return Messages.format(
+						DLTKTestingMessages.TestRunnerViewPart_testName_startTime,
+						new Object[] { session.getTestRunName(), startTime });
 			}
 		}
 
@@ -508,16 +508,15 @@ public class TestRunnerViewPart extends ViewPart {
 		private final Shell fShell;
 
 		public ImportTestRunSessionAction(Shell shell) {
-			super(
-					DLTKTestingMessages.TestRunnerViewPart_ImportTestRunSessionAction_name);
+			super(DLTKTestingMessages.TestRunnerViewPart_ImportTestRunSessionAction_name);
 			fShell = shell;
 		}
 
 		@Override
 		public void run() {
 			FileDialog importDialog = new FileDialog(fShell, SWT.OPEN);
-			importDialog
-					.setText(DLTKTestingMessages.TestRunnerViewPart_ImportTestRunSessionAction_title);
+			importDialog.setText(
+					DLTKTestingMessages.TestRunnerViewPart_ImportTestRunSessionAction_title);
 			importDialog.setFilterExtensions(new String[] { "*.xml", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
 			String path = importDialog.open();
 			if (path == null)
@@ -530,11 +529,9 @@ public class TestRunnerViewPart extends ViewPart {
 				DLTKTestingModel.importTestRunSession(file);
 			} catch (CoreException e) {
 				DLTKTestingPlugin.log(e);
-				ErrorDialog
-						.openError(
-								fShell,
-								DLTKTestingMessages.TestRunnerViewPart_ImportTestRunSessionAction_error_title,
-								e.getStatus().getMessage(), e.getStatus());
+				ErrorDialog.openError(fShell,
+						DLTKTestingMessages.TestRunnerViewPart_ImportTestRunSessionAction_error_title,
+						e.getStatus().getMessage(), e.getStatus());
 			}
 		}
 	}
@@ -545,8 +542,7 @@ public class TestRunnerViewPart extends ViewPart {
 
 		public ExportTestRunSessionAction(Shell shell,
 				TestRunSession testRunSession) {
-			super(
-					DLTKTestingMessages.TestRunnerViewPart_ExportTestRunSessionAction_name);
+			super(DLTKTestingMessages.TestRunnerViewPart_ExportTestRunSessionAction_name);
 			fShell = shell;
 			fTestRunSession = testRunSession;
 		}
@@ -554,8 +550,8 @@ public class TestRunnerViewPart extends ViewPart {
 		@Override
 		public void run() {
 			FileDialog exportDialog = new FileDialog(fShell, SWT.SAVE);
-			exportDialog
-					.setText(DLTKTestingMessages.TestRunnerViewPart_ExportTestRunSessionAction_title);
+			exportDialog.setText(
+					DLTKTestingMessages.TestRunnerViewPart_ExportTestRunSessionAction_title);
 			exportDialog.setFileName(getFileName());
 			exportDialog.setFilterExtensions(new String[] { "*.xml", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
 			String path = exportDialog.open();
@@ -569,11 +565,9 @@ public class TestRunnerViewPart extends ViewPart {
 				DLTKTestingModel.exportTestRunSession(fTestRunSession, file);
 			} catch (CoreException e) {
 				DLTKTestingPlugin.log(e);
-				ErrorDialog
-						.openError(
-								fShell,
-								DLTKTestingMessages.TestRunnerViewPart_ExportTestRunSessionAction_error_title,
-								e.getStatus().getMessage(), e.getStatus());
+				ErrorDialog.openError(fShell,
+						DLTKTestingMessages.TestRunnerViewPart_ExportTestRunSessionAction_error_title,
+						e.getStatus().getMessage(), e.getStatus());
 			}
 		}
 
@@ -583,7 +577,8 @@ public class TestRunnerViewPart extends ViewPart {
 			if (startTime == 0)
 				return testRunName;
 
-			String isoTime = new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date(startTime)); //$NON-NLS-1$
+			String isoTime = new SimpleDateFormat("yyyyMMdd-HHmmss") //$NON-NLS-1$
+					.format(new Date(startTime));
 			return testRunName + " " + isoTime + ".xml"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
@@ -593,7 +588,8 @@ public class TestRunnerViewPart extends ViewPart {
 		public void sessionAdded(TestRunSession testRunSession) {
 			if (getSite().getWorkbenchWindow() == DLTKTestingPlugin
 					.getActiveWorkbenchWindow()) {
-				TestRunSession deactivatedSession = setActiveTestRunSession(testRunSession);
+				TestRunSession deactivatedSession = setActiveTestRunSession(
+						testRunSession);
 				if (deactivatedSession != null)
 					deactivatedSession.swapOut();
 				String testRunName = fTestRunSession.getTestRunName();
@@ -612,11 +608,12 @@ public class TestRunnerViewPart extends ViewPart {
 		@Override
 		public void sessionRemoved(TestRunSession testRunSession) {
 			if (testRunSession.equals(fTestRunSession)) {
-				List<TestRunSession> testRunSessions = DLTKTestingPlugin.getModel()
-						.getTestRunSessions();
+				List<TestRunSession> testRunSessions = DLTKTestingPlugin
+						.getModel().getTestRunSessions();
 				TestRunSession deactivatedSession;
 				if (!testRunSessions.isEmpty()) {
-					deactivatedSession = setActiveTestRunSession(testRunSessions.get(0));
+					deactivatedSession = setActiveTestRunSession(
+							testRunSessions.get(0));
 				} else {
 					deactivatedSession = setActiveTestRunSession(null);
 				}
@@ -643,29 +640,25 @@ public class TestRunnerViewPart extends ViewPart {
 			fTestViewer.registerAutoScrollTarget(null);
 
 			String[] keys = { elapsedTimeAsString(elapsedTime) };
-			String msg = Messages
-					.format(
-							DLTKTestingMessages.TestRunnerViewPart_message_finish,
-							keys);
+			String msg = Messages.format(
+					DLTKTestingMessages.TestRunnerViewPart_message_finish,
+					keys);
 			registerInfoMessage(msg);
 
-			postSyncRunnable(new Runnable() {
-				@Override
-				public void run() {
-					if (isDisposed())
-						return;
-					fStopAction.setEnabled(lastLaunchIsKeptAlive());
-					updateRerunFailedFirstAction();
-					processChangesInUI();
-					if (hasErrorsOrFailures()) {
-						selectFirstFailure();
-					}
-					if (fDirtyListener == null) {
-						fDirtyListener = new DirtyListener();
-						DLTKCore.addElementChangedListener(fDirtyListener);
-					}
-					warnOfContentChange();
+			postSyncRunnable(() -> {
+				if (isDisposed())
+					return;
+				fStopAction.setEnabled(lastLaunchIsKeptAlive());
+				updateRerunFailedFirstAction();
+				processChangesInUI();
+				if (hasErrorsOrFailures()) {
+					selectFirstFailure();
 				}
+				if (fDirtyListener == null) {
+					fDirtyListener = new DirtyListener();
+					DLTKCore.addElementChangedListener(fDirtyListener);
+				}
+				warnOfContentChange();
 			});
 			stopUpdateJobs();
 		}
@@ -674,7 +667,8 @@ public class TestRunnerViewPart extends ViewPart {
 		public void sessionStopped(final long elapsedTime) {
 			fTestViewer.registerAutoScrollTarget(null);
 
-			registerInfoMessage(DLTKTestingMessages.TestRunnerViewPart_message_stopped);
+			registerInfoMessage(
+					DLTKTestingMessages.TestRunnerViewPart_message_stopped);
 			handleStopped();
 		}
 
@@ -682,7 +676,8 @@ public class TestRunnerViewPart extends ViewPart {
 		public void sessionTerminated() {
 			fTestViewer.registerAutoScrollTarget(null);
 
-			registerInfoMessage(DLTKTestingMessages.TestRunnerViewPart_message_terminated);
+			registerInfoMessage(
+					DLTKTestingMessages.TestRunnerViewPart_message_terminated);
 			handleStopped();
 		}
 
@@ -696,8 +691,8 @@ public class TestRunnerViewPart extends ViewPart {
 		public void testStarted(TestCaseElement testCaseElement) {
 			fTestViewer.registerAutoScrollTarget(testCaseElement);
 			fTestViewer.registerViewerUpdate(testCaseElement);
-			registerInfoMessage(getTestRunnerUI().getTestStartedMessage(
-					testCaseElement));
+			registerInfoMessage(
+					getTestRunnerUI().getTestStartedMessage(testCaseElement));
 		}
 
 		@Override
@@ -803,9 +798,11 @@ public class TestRunnerViewPart extends ViewPart {
 			boolean enabled = false;
 			List<TestRunSession> testRunSessions = DLTKTestingPlugin.getModel()
 					.getTestRunSessions();
-			for (Iterator<TestRunSession> iter = testRunSessions.iterator(); iter.hasNext();) {
+			for (Iterator<TestRunSession> iter = testRunSessions
+					.iterator(); iter.hasNext();) {
 				ITestSession testRunSession = iter.next();
-				if (!testRunSession.isRunning() && !testRunSession.isStarting()) {
+				if (!testRunSession.isRunning()
+						&& !testRunSession.isStarting()) {
 					enabled = true;
 					break;
 				}
@@ -824,9 +821,11 @@ public class TestRunnerViewPart extends ViewPart {
 		private List<TestRunSession> getRunningSessions() {
 			List<TestRunSession> testRunSessions = DLTKTestingPlugin.getModel()
 					.getTestRunSessions();
-			for (Iterator<TestRunSession> iter = testRunSessions.iterator(); iter.hasNext();) {
+			for (Iterator<TestRunSession> iter = testRunSessions
+					.iterator(); iter.hasNext();) {
 				ITestSession testRunSession = iter.next();
-				if (!testRunSession.isRunning() && !testRunSession.isStarting()) {
+				if (!testRunSession.isRunning()
+						&& !testRunSession.isStarting()) {
 					iter.remove();
 				}
 			}
@@ -837,7 +836,8 @@ public class TestRunnerViewPart extends ViewPart {
 	private class StopAction extends Action {
 		public StopAction() {
 			setText(DLTKTestingMessages.TestRunnerViewPart_stopaction_text);
-			setToolTipText(DLTKTestingMessages.TestRunnerViewPart_stopaction_tooltip);
+			setToolTipText(
+					DLTKTestingMessages.TestRunnerViewPart_stopaction_tooltip);
 			DLTKTestingPlugin.setLocalImageDescriptors(this, "stop.gif"); //$NON-NLS-1$
 		}
 
@@ -851,7 +851,8 @@ public class TestRunnerViewPart extends ViewPart {
 	private class RerunLastAction extends Action {
 		public RerunLastAction() {
 			setText(DLTKTestingMessages.TestRunnerViewPart_rerunaction_label);
-			setToolTipText(DLTKTestingMessages.TestRunnerViewPart_rerunaction_tooltip);
+			setToolTipText(
+					DLTKTestingMessages.TestRunnerViewPart_rerunaction_tooltip);
 			DLTKTestingPlugin.setLocalImageDescriptors(this, "relaunch.gif"); //$NON-NLS-1$
 			setEnabled(false);
 			setActionDefinitionId(RERUN_LAST_COMMAND);
@@ -866,7 +867,8 @@ public class TestRunnerViewPart extends ViewPart {
 	private class RerunLastFailedFirstAction extends Action {
 		public RerunLastFailedFirstAction() {
 			setText(DLTKTestingMessages.TestRunnerViewPart_rerunfailuresaction_label);
-			setToolTipText(DLTKTestingMessages.TestRunnerViewPart_rerunfailuresaction_tooltip);
+			setToolTipText(
+					DLTKTestingMessages.TestRunnerViewPart_rerunfailuresaction_tooltip);
 			DLTKTestingPlugin.setLocalImageDescriptors(this, "relaunchf.gif"); //$NON-NLS-1$
 			setEnabled(false);
 			setActionDefinitionId(RERUN_FAILED_FIRST_COMMAND);
@@ -907,23 +909,19 @@ public class TestRunnerViewPart extends ViewPart {
 			if (orientation == TestRunnerViewPart.VIEW_ORIENTATION_HORIZONTAL) {
 				setText(DLTKTestingMessages.TestRunnerViewPart_toggle_horizontal_label);
 				setImageDescriptor(DLTKTestingPlugin
-						.getImageDescriptor("elcl16/th_horizontal.gif")); //$NON-NLS-1$				
+						.getImageDescriptor("elcl16/th_horizontal.gif")); //$NON-NLS-1$
 			} else if (orientation == TestRunnerViewPart.VIEW_ORIENTATION_VERTICAL) {
 				setText(DLTKTestingMessages.TestRunnerViewPart_toggle_vertical_label);
 				setImageDescriptor(DLTKTestingPlugin
-						.getImageDescriptor("elcl16/th_vertical.gif")); //$NON-NLS-1$				
+						.getImageDescriptor("elcl16/th_vertical.gif")); //$NON-NLS-1$
 			} else if (orientation == TestRunnerViewPart.VIEW_ORIENTATION_AUTOMATIC) {
 				setText(DLTKTestingMessages.TestRunnerViewPart_toggle_automatic_label);
 				setImageDescriptor(DLTKTestingPlugin
-						.getImageDescriptor("elcl16/th_automatic.gif")); //$NON-NLS-1$				
+						.getImageDescriptor("elcl16/th_automatic.gif")); //$NON-NLS-1$
 			}
 			fActionOrientation = orientation;
-			PlatformUI
-					.getWorkbench()
-					.getHelpSystem()
-					.setHelp(
-							this,
-							IDLTKTestingHelpContextIds.RESULTS_VIEW_TOGGLE_ORIENTATION_ACTION);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+					IDLTKTestingHelpContextIds.RESULTS_VIEW_TOGGLE_ORIENTATION_ACTION);
 		}
 
 		public int getOrientation() {
@@ -938,7 +936,7 @@ public class TestRunnerViewPart extends ViewPart {
 			}
 		}
 	}
-	
+
 	private class ToggleSortDirectionAction extends Action {
 		private final int fActionSortDirection;
 
@@ -946,26 +944,29 @@ public class TestRunnerViewPart extends ViewPart {
 			super("", AS_RADIO_BUTTON); //$NON-NLS-1$
 			if (sortDirection == TestRunnerViewPart.SORT_DIRECTION_NO_SORT) {
 				setText(DLTKTestingMessages.TestRunnerViewPart_toggle_sort_no_sort);
-//				setImageDescriptor(DLTKTestingPlugin
-//						.getImageDescriptor("elcl16/th_horizontal.gif")); //$NON-NLS-1$				
+				// setImageDescriptor(DLTKTestingPlugin
+				// .getImageDescriptor("elcl16/th_horizontal.gif"));
+				// //$NON-NLS-1$
 			} else if (sortDirection == TestRunnerViewPart.SORT_DIRECTION_ASCENDING) {
 				setText(DLTKTestingMessages.TestRunnerViewPart_toggle_sort_ascending);
-//				setImageDescriptor(DLTKTestingPlugin
-//						.getImageDescriptor("elcl16/th_vertical.gif")); //$NON-NLS-1$				
+				// setImageDescriptor(DLTKTestingPlugin
+				// .getImageDescriptor("elcl16/th_vertical.gif")); //$NON-NLS-1$
 			} else if (sortDirection == TestRunnerViewPart.SORT_DIRECTION_DESCENDING) {
 				setText(DLTKTestingMessages.TestRunnerViewPart_toggle_sort_descending);
-//				setImageDescriptor(DLTKTestingPlugin
-//						.getImageDescriptor("elcl16/th_automatic.gif")); //$NON-NLS-1$				
+				// setImageDescriptor(DLTKTestingPlugin
+				// .getImageDescriptor("elcl16/th_automatic.gif"));
+				// //$NON-NLS-1$
 			}
-			fActionSortDirection = sortDirection;			
+			fActionSortDirection = sortDirection;
 		}
-		public int getSortDirection(){
+
+		public int getSortDirection() {
 			return fActionSortDirection;
 		}
 
 		@Override
 		public void run() {
-			fSortDirection =fActionSortDirection;
+			fSortDirection = fActionSortDirection;
 			fTestViewer.setSortDirection(fActionSortDirection);
 		}
 	}
@@ -1027,9 +1028,10 @@ public class TestRunnerViewPart extends ViewPart {
 		public FailuresOnlyFilterAction() {
 			super(DLTKTestingMessages.TestRunnerViewPart_show_failures_only,
 					AS_CHECK_BOX);
-			setToolTipText(DLTKTestingMessages.TestRunnerViewPart_show_failures_only);
-			setImageDescriptor(DLTKTestingPlugin
-					.getImageDescriptor("obj16/failures.gif")); //$NON-NLS-1$
+			setToolTipText(
+					DLTKTestingMessages.TestRunnerViewPart_show_failures_only);
+			setImageDescriptor(
+					DLTKTestingPlugin.getImageDescriptor("obj16/failures.gif")); //$NON-NLS-1$
 		}
 
 		@Override
@@ -1037,12 +1039,14 @@ public class TestRunnerViewPart extends ViewPart {
 			setShowFailuresOnly(isChecked());
 		}
 	}
+
 	private class ShowTimeAction extends Action {
-		
+
 		public ShowTimeAction() {
-			super(DLTKTestingMessages.TestRunnerViewPart_show_execution_time, IAction.AS_CHECK_BOX);
+			super(DLTKTestingMessages.TestRunnerViewPart_show_execution_time,
+					IAction.AS_CHECK_BOX);
 		}
-		
+
 		@Override
 		public void run() {
 			setShowExecutionTime(isChecked());
@@ -1067,10 +1071,10 @@ public class TestRunnerViewPart extends ViewPart {
 
 	private class ActivateOnErrorAction extends Action {
 		public ActivateOnErrorAction() {
-			super(
-					DLTKTestingMessages.TestRunnerViewPart_activate_on_failure_only,
+			super(DLTKTestingMessages.TestRunnerViewPart_activate_on_failure_only,
 					IAction.AS_CHECK_BOX);
-			//setImageDescriptor(JUnitPlugin.getImageDescriptor("obj16/failures.gif")); //$NON-NLS-1$
+			// setImageDescriptor(JUnitPlugin.getImageDescriptor("obj16/failures.gif"));
+			// //$NON-NLS-1$
 			update();
 		}
 
@@ -1090,7 +1094,8 @@ public class TestRunnerViewPart extends ViewPart {
 	}
 
 	@Override
-	public void init(IViewSite site, IMemento memento) throws PartInitException {
+	public void init(IViewSite site, IMemento memento)
+			throws PartInitException {
 		super.init(site, memento);
 		fMemento = memento;
 		IWorkbenchSiteProgressService progressService = getProgressService();
@@ -1100,8 +1105,8 @@ public class TestRunnerViewPart extends ViewPart {
 	}
 
 	private IWorkbenchSiteProgressService getProgressService() {
-		IWorkbenchSiteProgressService siteService = getSite().getAdapter(
-				IWorkbenchSiteProgressService.class);
+		IWorkbenchSiteProgressService siteService = getSite()
+				.getAdapter(IWorkbenchSiteProgressService.class);
 		if (siteService != null)
 			return siteService;
 		return null;
@@ -1125,11 +1130,12 @@ public class TestRunnerViewPart extends ViewPart {
 		memento.putInteger(TAG_RATIO, ratio);
 		memento.putInteger(TAG_ORIENTATION, fOrientation);
 		memento.putInteger(TAG_SORT_DIRECTION, fSortDirection);
-		
-		memento.putString(TAG_FAILURES_ONLY, fFailuresOnlyFilterAction
-				.isChecked() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+
+		memento.putString(TAG_FAILURES_ONLY,
+				fFailuresOnlyFilterAction.isChecked() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		memento.putInteger(TAG_LAYOUT, fLayout);
-		memento.putString(TAG_SHOW_TIME, fShowTimeAction.isChecked() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+		memento.putString(TAG_SHOW_TIME,
+				fShowTimeAction.isChecked() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	}
 
@@ -1145,26 +1151,26 @@ public class TestRunnerViewPart extends ViewPart {
 		// }
 		Integer ratio = memento.getInteger(TAG_RATIO);
 		if (ratio != null)
-			fSashForm.setWeights(new int[] { ratio.intValue(),
-					1000 - ratio.intValue() });
+			fSashForm.setWeights(
+					new int[] { ratio.intValue(), 1000 - ratio.intValue() });
 		Integer orientation = memento.getInteger(TAG_ORIENTATION);
 		if (orientation != null)
 			fOrientation = orientation.intValue();
 		computeOrientation();
 		Integer sortDirection = memento.getInteger(TAG_SORT_DIRECTION);
-		if(sortDirection !=null) {
+		if (sortDirection != null) {
 			fSortDirection = sortDirection.intValue();
 			fTestViewer.setSortDirection(fSortDirection);
-			for(ToggleSortDirectionAction act :fToggleSortDirectionActions){
-				if(act.getSortDirection() ==fSortDirection){
+			for (ToggleSortDirectionAction act : fToggleSortDirectionActions) {
+				if (act.getSortDirection() == fSortDirection) {
 					act.setChecked(true);
 					break;
 				}
 			}
-		}else{
+		} else {
 			fToggleSortDirectionActions[0].setChecked(true);
 		}
-		
+
 		String scrollLock = memento.getString(TAG_SCROLL);
 		if (scrollLock != null) {
 			fScrollLockAction.setChecked(scrollLock.equals("true")); //$NON-NLS-1$
@@ -1181,12 +1187,12 @@ public class TestRunnerViewPart extends ViewPart {
 		if (failuresOnly != null)
 			showFailuresOnly = failuresOnly.equals("true"); //$NON-NLS-1$
 
-		String time= memento.getString(TAG_SHOW_TIME);
-		boolean showTime= true;
+		String time = memento.getString(TAG_SHOW_TIME);
+		boolean showTime = true;
 		if (time != null)
-			showTime= time.equals("true"); //$NON-NLS-1$
-		
-		setFilterAndLayout(showFailuresOnly, layoutValue);	
+			showTime = time.equals("true"); //$NON-NLS-1$
+
+		setFilterAndLayout(showFailuresOnly, layoutValue);
 		setShowExecutionTime(showTime);
 	}
 
@@ -1196,7 +1202,8 @@ public class TestRunnerViewPart extends ViewPart {
 	public void stopTest() {
 		if (fTestRunSession != null) {
 			if (fTestRunSession.isRunning()) {
-				setContentDescription(DLTKTestingMessages.TestRunnerViewPart_message_stopping);
+				setContentDescription(
+						DLTKTestingMessages.TestRunnerViewPart_message_stopping);
 			}
 			fTestRunSession.stopTestRun();
 		}
@@ -1276,23 +1283,24 @@ public class TestRunnerViewPart extends ViewPart {
 		if (launchConfiguration == null)
 			return;
 		try {
-			if (launchConfiguration.getAttribute(
-					IDebugUIConstants.ATTR_PRIVATE, false)) {
+			if (launchConfiguration.getAttribute(IDebugUIConstants.ATTR_PRIVATE,
+					false)) {
 				return;
 			}
 		} catch (CoreException e) {
 			DLTKTestingPlugin.log(e);
 		}
 
-		ILaunchConfiguration configuration = prepareLaunchConfigForRelaunch(launchConfiguration);
+		ILaunchConfiguration configuration = prepareLaunchConfigForRelaunch(
+				launchConfiguration);
 		relaunch(configuration, launch.getLaunchMode());
 	}
 
 	private ILaunchConfiguration prepareLaunchConfigForRelaunch(
 			ILaunchConfiguration configuration) {
 		try {
-			String attribute = configuration.getAttribute(
-					DLTKTestingConstants.ATTR_FAILURES_NAMES, ""); //$NON-NLS-1$
+			String attribute = configuration
+					.getAttribute(DLTKTestingConstants.ATTR_FAILURES_NAMES, ""); //$NON-NLS-1$
 			if (attribute.length() != 0) {
 				String configName = Messages.format(
 						DLTKTestingMessages.TestRunnerViewPart_configName,
@@ -1333,35 +1341,31 @@ public class TestRunnerViewPart extends ViewPart {
 					if (oldFailuresFilename != null) {
 						configName = oldName;
 					} else {
-						configName = Messages
-								.format(
-										DLTKTestingMessages.TestRunnerViewPart_rerunFailedFirstLaunchConfigName,
-										oldName);
+						configName = Messages.format(
+								DLTKTestingMessages.TestRunnerViewPart_rerunFailedFirstLaunchConfigName,
+								oldName);
 					}
 					ILaunchConfigurationWorkingCopy tmp = launchConfiguration
 							.copy(configName);
 					tmp.setAttribute(DLTKTestingConstants.ATTR_FAILURES_NAMES,
-							fTestRunSession.getTestRunnerUI().collectFailures(
-									fTestRunSession));
+							fTestRunSession.getTestRunnerUI()
+									.collectFailures(fTestRunSession));
 					relaunch(tmp, launch.getLaunchMode());
 					return;
 				} catch (CoreException e) {
-					ErrorDialog
-							.openError(
-									getSite().getShell(),
-									DLTKTestingMessages.TestRunnerViewPart_error_cannotrerun,
-									e.getMessage(), e.getStatus());
+					ErrorDialog.openError(getSite().getShell(),
+							DLTKTestingMessages.TestRunnerViewPart_error_cannotrerun,
+							e.getMessage(), e.getStatus());
 				}
 			}
-			MessageDialog
-					.openInformation(
-							getSite().getShell(),
-							DLTKTestingMessages.TestRunnerViewPart_cannotrerun_title,
-							DLTKTestingMessages.TestRunnerViewPart_cannotrerurn_message);
+			MessageDialog.openInformation(getSite().getShell(),
+					DLTKTestingMessages.TestRunnerViewPart_cannotrerun_title,
+					DLTKTestingMessages.TestRunnerViewPart_cannotrerurn_message);
 		}
 	}
 
-	private void relaunch(ILaunchConfiguration configuration, String launchMode) {
+	private void relaunch(ILaunchConfiguration configuration,
+			String launchMode) {
 		DebugUITools.launch(configuration, launchMode);
 	}
 
@@ -1402,15 +1406,12 @@ public class TestRunnerViewPart extends ViewPart {
 	}
 
 	private void handleStopped() {
-		postSyncRunnable(new Runnable() {
-			@Override
-			public void run() {
-				if (isDisposed())
-					return;
-				resetViewIcon();
-				fStopAction.setEnabled(false);
-				updateRerunFailedFirstAction();
-			}
+		postSyncRunnable(() -> {
+			if (isDisposed())
+				return;
+			resetViewIcon();
+			fStopAction.setEnabled(false);
+			updateRerunFailedFirstAction();
 		});
 		stopUpdateJobs();
 	}
@@ -1435,10 +1436,11 @@ public class TestRunnerViewPart extends ViewPart {
 	private void updateViewTitleProgress() {
 		if (fTestRunSession != null) {
 			if (fTestRunSession.isRunning()) {
-				Image progress = fProgressImages.getImage(fTestRunSession
-						.getStartedCount(), fTestRunSession.getTotalCount(),
-						fTestRunSession.getErrorCount(), fTestRunSession
-								.getFailureCount());
+				Image progress = fProgressImages.getImage(
+						fTestRunSession.getStartedCount(),
+						fTestRunSession.getTotalCount(),
+						fTestRunSession.getErrorCount(),
+						fTestRunSession.getFailureCount());
 				if (progress != fViewImage) {
 					fViewImage = progress;
 					firePropertyChange(IWorkbenchPart.PROP_TITLE);
@@ -1457,13 +1459,14 @@ public class TestRunnerViewPart extends ViewPart {
 	 * @return deactivated session, or <code>null</code> iff no session got
 	 *         deactivated
 	 */
-	private TestRunSession setActiveTestRunSession(TestRunSession testRunSession) {
+	private TestRunSession setActiveTestRunSession(
+			TestRunSession testRunSession) {
 		/*
 		 * - State: fTestRunSession fTestSessionListener Jobs
 		 * fTestViewer.processChangesInUI(); - UI: fCounterPanel fProgressBar
 		 * setContentDescription / fInfoMessage setTitleToolTip view icons
 		 * statusLine fFailureTrace
-		 * 
+		 *
 		 * action enablement
 		 */
 		if (fTestRunSession == testRunSession)
@@ -1516,7 +1519,7 @@ public class TestRunnerViewPart extends ViewPart {
 
 				fStopAction.setEnabled(true);
 
-			} else /* old or fresh session: don't want jobs at this stage */{
+			} else /* old or fresh session: don't want jobs at this stage */ {
 				stopUpdateJobs();
 
 				fStopAction.setEnabled(fTestRunSession.isKeptAlive());
@@ -1556,11 +1559,11 @@ public class TestRunnerViewPart extends ViewPart {
 			}
 		}
 		if (fTestRunSessionListener != null)
-			DLTKTestingPlugin.getModel().removeTestRunSessionListener(
-					fTestRunSessionListener);
+			DLTKTestingPlugin.getModel()
+					.removeTestRunSessionListener(fTestRunSessionListener);
 
-		IHandlerService handlerService = getSite()
-				.getWorkbenchWindow().getService(IHandlerService.class);
+		IHandlerService handlerService = getSite().getWorkbenchWindow()
+				.getService(IHandlerService.class);
 		handlerService.deactivateHandler(fRerunLastActivation);
 		handlerService.deactivateHandler(fRerunFailedFirstActivation);
 		setActiveTestRunSession(null);
@@ -1573,8 +1576,8 @@ public class TestRunnerViewPart extends ViewPart {
 		if (fClipboard != null)
 			fClipboard.dispose();
 		if (fViewMenuListener != null) {
-			getViewSite().getActionBars().getMenuManager().removeMenuListener(
-					fViewMenuListener);
+			getViewSite().getActionBars().getMenuManager()
+					.removeMenuListener(fViewMenuListener);
 		}
 		if (fDirtyListener != null) {
 			DLTKCore.removeElementChangedListener(fDirtyListener);
@@ -1665,13 +1668,10 @@ public class TestRunnerViewPart extends ViewPart {
 	}
 
 	protected void postShowTestResultsView() {
-		postSyncRunnable(new Runnable() {
-			@Override
-			public void run() {
-				if (isDisposed())
-					return;
-				showTestResultsView();
-			}
+		postSyncRunnable(() -> {
+			if (isDisposed())
+				return;
+			showTestResultsView();
 		});
 	}
 
@@ -1775,8 +1775,8 @@ public class TestRunnerViewPart extends ViewPart {
 		configureToolBar();
 
 		fCounterComposite = createProgressCountPanel(parent);
-		fCounterComposite.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
-				| GridData.HORIZONTAL_ALIGN_FILL));
+		fCounterComposite.setLayoutData(new GridData(
+				GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
 		SashForm sashForm = createSashForm(parent);
 		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 
@@ -1800,10 +1800,10 @@ public class TestRunnerViewPart extends ViewPart {
 		fMemento = null;
 
 		fTestRunSessionListener = new TestRunSessionListener();
-		DLTKTestingPlugin.getModel().addTestRunSessionListener(
-				fTestRunSessionListener);
-		IContextService ctxService = getSite().getService(
-				IContextService.class);
+		DLTKTestingPlugin.getModel()
+				.addTestRunSessionListener(fTestRunSessionListener);
+		IContextService ctxService = getSite()
+				.getService(IContextService.class);
 		if (ctxService != null) {
 			fContextActivation = ctxService
 					.activateContext(DLTKUIPlugin.CONTEXT_VIEWS);
@@ -1857,16 +1857,16 @@ public class TestRunnerViewPart extends ViewPart {
 		fStopAction.setEnabled(false);
 
 		fRerunLastTestAction = new RerunLastAction();
-		IHandlerService handlerService = getSite()
-				.getWorkbenchWindow().getService(IHandlerService.class);
+		IHandlerService handlerService = getSite().getWorkbenchWindow()
+				.getService(IHandlerService.class);
 		fRerunLastActivation = handlerService.activateHandler(
-				RERUN_LAST_COMMAND, new ActionHandlerWrapper(
-						fRerunLastTestAction));
+				RERUN_LAST_COMMAND,
+				new ActionHandlerWrapper(fRerunLastTestAction));
 
 		fRerunFailedFirstAction = new RerunLastFailedFirstAction();
 		fRerunFailedFirstActivation = handlerService.activateHandler(
-				RERUN_FAILED_FIRST_COMMAND, new ActionHandlerWrapper(
-						fRerunFailedFirstAction));
+				RERUN_FAILED_FIRST_COMMAND,
+				new ActionHandlerWrapper(fRerunFailedFirstAction));
 
 		fFailuresOnlyFilterAction = new FailuresOnlyFilterAction();
 
@@ -1878,15 +1878,14 @@ public class TestRunnerViewPart extends ViewPart {
 				new ToggleOrientationAction(VIEW_ORIENTATION_HORIZONTAL),
 				new ToggleOrientationAction(VIEW_ORIENTATION_AUTOMATIC) };
 
-		fToggleSortDirectionActions =  new ToggleSortDirectionAction[]{
+		fToggleSortDirectionActions = new ToggleSortDirectionAction[] {
 				new ToggleSortDirectionAction(SORT_DIRECTION_NO_SORT),
 				new ToggleSortDirectionAction(SORT_DIRECTION_ASCENDING),
-				new ToggleSortDirectionAction(SORT_DIRECTION_DESCENDING)
-		};
-		
+				new ToggleSortDirectionAction(SORT_DIRECTION_DESCENDING) };
+
 		fShowTestHierarchyAction = new ShowTestHierarchyAction();
-		fShowTimeAction= new ShowTimeAction();
-		
+		fShowTimeAction = new ShowTimeAction();
+
 		toolBar.add(fNextAction);
 		toolBar.add(fPreviousAction);
 		toolBar.add(fFailuresOnlyFilterAction);
@@ -1919,12 +1918,7 @@ public class TestRunnerViewPart extends ViewPart {
 
 		fActivateOnErrorAction = new ActivateOnErrorAction();
 		viewMenu.add(fActivateOnErrorAction);
-		fViewMenuListener = new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				fActivateOnErrorAction.update();
-			}
-		};
+		fViewMenuListener = manager -> fActivateOnErrorAction.update();
 
 		viewMenu.addMenuListener(fViewMenuListener);
 
@@ -1963,11 +1957,11 @@ public class TestRunnerViewPart extends ViewPart {
 		setCounterColumns(layout);
 
 		fCounterPanel = new CounterPanel(composite);
-		fCounterPanel.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
-				| GridData.HORIZONTAL_ALIGN_FILL));
+		fCounterPanel.setLayoutData(new GridData(
+				GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
 		fProgressBar = new DLTKTestingProgressBar(composite);
-		fProgressBar.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
-				| GridData.HORIZONTAL_ALIGN_FILL));
+		fProgressBar.setLayoutData(new GridData(
+				GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
 		return composite;
 	}
 
@@ -1977,12 +1971,9 @@ public class TestRunnerViewPart extends ViewPart {
 	}
 
 	private void showFailure(final TestElement test) {
-		postSyncRunnable(new Runnable() {
-			@Override
-			public void run() {
-				if (!isDisposed())
-					fFailureTrace.showFailure(test);
-			}
+		postSyncRunnable(() -> {
+			if (!isDisposed())
+				fFailureTrace.showFailure(test);
 		});
 	}
 
@@ -1995,8 +1986,8 @@ public class TestRunnerViewPart extends ViewPart {
 	 * @return the Java project, or <code>null</code>
 	 */
 	public IScriptProject getLaunchedProject() {
-		return fTestRunSession == null ? null : fTestRunSession
-				.getLaunchedProject();
+		return fTestRunSession == null ? null
+				: fTestRunSession.getLaunchedProject();
 	}
 
 	public ILaunch getLaunch() {
@@ -2038,13 +2029,10 @@ public class TestRunnerViewPart extends ViewPart {
 		else if (fViewImage == fTestRunFailIcon)
 			fViewImage = fTestRunFailDirtyIcon;
 
-		Runnable r = new Runnable() {
-			@Override
-			public void run() {
-				if (isDisposed())
-					return;
-				firePropertyChange(IWorkbenchPart.PROP_TITLE);
-			}
+		Runnable r = () -> {
+			if (isDisposed())
+				return;
+			firePropertyChange(IWorkbenchPart.PROP_TITLE);
 		};
 		if (!isDisposed())
 			getDisplay().asyncExec(r);
@@ -2060,11 +2048,9 @@ public class TestRunnerViewPart extends ViewPart {
 			boolean couldLaunch = fTestRunSession.rerunTest(testElement,
 					launchMode);
 			if (!couldLaunch) {
-				MessageDialog
-						.openInformation(
-								getSite().getShell(),
-								DLTKTestingMessages.TestRunnerViewPart_cannotrerun_title,
-								DLTKTestingMessages.TestRunnerViewPart_cannotrerurn_message);
+				MessageDialog.openInformation(getSite().getShell(),
+						DLTKTestingMessages.TestRunnerViewPart_cannotrerun_title,
+						DLTKTestingMessages.TestRunnerViewPart_cannotrerurn_message);
 			} else if (fTestRunSession.isKeptAlive()) {
 				TestCaseElement testCaseElement = (TestCaseElement) fTestRunSession
 						.getTestElement(testElement.getId());
@@ -2076,18 +2062,13 @@ public class TestRunnerViewPart extends ViewPart {
 
 		} catch (CoreException e) {
 			ErrorDialog.openError(getSite().getShell(),
-					DLTKTestingMessages.TestRunnerViewPart_error_cannotrerun, e
-							.getMessage(), e.getStatus());
+					DLTKTestingMessages.TestRunnerViewPart_error_cannotrerun,
+					e.getMessage(), e.getStatus());
 		}
 	}
 
 	private void postSyncProcessChanges() {
-		postSyncRunnable(new Runnable() {
-			@Override
-			public void run() {
-				processChangesInUI();
-			}
-		});
+		postSyncRunnable(() -> processChangesInUI());
 	}
 
 	public void warnOfContentChange() {
@@ -2136,11 +2117,11 @@ public class TestRunnerViewPart extends ViewPart {
 	void setShowFailuresOnly(boolean failuresOnly) {
 		setFilterAndLayout(failuresOnly, fLayout);
 	}
-	
+
 	private void setShowExecutionTime(boolean showTime) {
 		fTestViewer.setShowTime(showTime);
 		fShowTimeAction.setChecked(showTime);
-		
+
 	}
 
 	private void setLayoutMode(int mode) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 xored software, Inc.
+ * Copyright (c) 2011, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -88,6 +88,7 @@ public class ContributedSemanticHighlighter extends AbstractSemanticHighlighter 
 
 		final Map<String, SemanticHighlighting> map = new HashMap<String, SemanticHighlighting>();
 
+		@Override
 		public void addPreference(IColoringPreferenceKey key, String name,
 				RGB color, EnablementStyle enablementStyle,
 				FontStyle... fontStyles) {
@@ -97,6 +98,7 @@ public class ContributedSemanticHighlighter extends AbstractSemanticHighlighter 
 
 	}
 
+	@Override
 	public SemanticHighlighting[] getSemanticHighlightings() {
 		if (!initialized) {
 			initialized = true;

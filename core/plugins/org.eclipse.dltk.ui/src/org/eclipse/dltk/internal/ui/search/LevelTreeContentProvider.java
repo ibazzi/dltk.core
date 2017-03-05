@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
-
 package org.eclipse.dltk.internal.ui.search;
 
 import java.util.HashMap;
@@ -44,6 +42,7 @@ public class LevelTreeContentProvider extends DLTKSearchContentProvider
 
 	static class FastModelElementProvider extends
 			StandardModelElementContentProvider {
+		@Override
 		public Object getParent(Object element) {
 			Object parent = getExtendedParent(element);
 			if (parent != null) {
@@ -59,6 +58,7 @@ public class LevelTreeContentProvider extends DLTKSearchContentProvider
 		fContentProvider = new FastModelElementProvider();
 	}
 
+	@Override
 	public Object getParent(Object child) {
 		Object possibleParent = internalGetParent(child);
 		if (possibleParent instanceof IModelElement) {
@@ -93,10 +93,12 @@ public class LevelTreeContentProvider extends DLTKSearchContentProvider
 		return fContentProvider.getParent(child);
 	}
 
+	@Override
 	public Object[] getElements(Object inputElement) {
 		return getChildren(inputElement);
 	}
 
+	@Override
 	protected synchronized void initialize(DLTKSearchResult result) {
 		super.initialize(result);
 		fChildrenMap = new HashMap();
@@ -186,6 +188,7 @@ public class LevelTreeContentProvider extends DLTKSearchContentProvider
 		}
 	}
 
+	@Override
 	public Object[] getChildren(Object parentElement) {
 		Set children = (Set) fChildrenMap.get(parentElement);
 		if (children == null)
@@ -202,10 +205,12 @@ public class LevelTreeContentProvider extends DLTKSearchContentProvider
 		return children.toArray();
 	}
 
+	@Override
 	public boolean hasChildren(Object element) {
 		return getChildren(element).length > 0;
 	}
 
+	@Override
 	public synchronized void elementsChanged(Object[] updatedElements) {
 		AbstractTreeViewer viewer = (AbstractTreeViewer) getPage().getViewer();
 		if (fResult == null)
@@ -233,6 +238,7 @@ public class LevelTreeContentProvider extends DLTKSearchContentProvider
 
 	}
 
+	@Override
 	public void clear() {
 		initialize(fResult);
 		getPage().getViewer().refresh();

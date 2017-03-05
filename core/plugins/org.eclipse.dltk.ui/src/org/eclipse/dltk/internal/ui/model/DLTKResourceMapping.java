@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.model;
 
@@ -19,7 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * Resource mapping for the script model provider.
- * 
+ *
  */
 public final class DLTKResourceMapping extends ResourceMapping {
 
@@ -28,7 +27,7 @@ public final class DLTKResourceMapping extends ResourceMapping {
 
 	/**
 	 * Creates a new script resource mapping.
-	 * 
+	 *
 	 * @param resource
 	 *            the resource to map
 	 */
@@ -37,30 +36,22 @@ public final class DLTKResourceMapping extends ResourceMapping {
 		fResource= resource;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Object getModelObject() {
 		return fResource;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public String getModelProviderId() {
 		return ScriptModelProvider.DLTK_MODEL_PROVIDER_ID;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public IProject[] getProjects() {
 		return new IProject[] { fResource.getProject() };
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public ResourceTraversal[] getTraversals(final ResourceMappingContext context, final IProgressMonitor monitor) {
 		return new ResourceTraversal[] { new ResourceTraversal(new IResource[] { fResource }, IResource.DEPTH_INFINITE, IResource.NONE) };
 	}

@@ -1,6 +1,7 @@
 package org.eclipse.dltk.debug.tests;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
@@ -13,26 +14,23 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.tests.model.SuiteOfTestCases;
 
 public class MyDebugTests extends SuiteOfTestCases {
 	private static class FileHelper {
-		public static byte[] readFile(java.io.File file)
-				throws java.io.IOException {
+		public static byte[] readFile(java.io.File file) throws java.io.IOException {
 			int fileLength = (int) file.length();
 			byte[] fileBytes = new byte[fileLength];
-			java.io.FileInputStream stream = new java.io.FileInputStream(file);
-			int bytesRead = 0;
-			int lastReadSize = 0;
-			while ((lastReadSize != -1) && (bytesRead != fileLength)) {
-				lastReadSize = stream.read(fileBytes, bytesRead, fileLength
-						- bytesRead);
-				bytesRead += lastReadSize;
+			try (FileInputStream stream = new java.io.FileInputStream(file)) {
+				int bytesRead = 0;
+				int lastReadSize = 0;
+				while ((lastReadSize != -1) && (bytesRead != fileLength)) {
+					lastReadSize = stream.read(fileBytes, bytesRead, fileLength - bytesRead);
+					bytesRead += lastReadSize;
+				}
 			}
-			stream.close();
 			return fileBytes;
 		}
 
@@ -40,8 +38,7 @@ public class MyDebugTests extends SuiteOfTestCases {
 		 * Copy the given source directory (and all its contents) to the given
 		 * target directory.
 		 */
-		public static void copyDirectory(File source, File target)
-				throws IOException {
+		public static void copyDirectory(File source, File target) throws IOException {
 			if (!target.exists()) {
 				target.mkdirs();
 			}
@@ -66,31 +63,20 @@ public class MyDebugTests extends SuiteOfTestCases {
 		 * Copy file from src (path to the original file) to dest (path to the
 		 * destination file).
 		 */
-		public static void copyFile(File source, File target)
-				throws IOException {
+		public static void copyFile(File source, File target) throws IOException {
 			// read source bytes
 			byte[] srcBytes = readFile(source);
 
 			// write bytes to dest
-			FileOutputStream out = new FileOutputStream(target);
-			out.write(srcBytes);
-			out.close();
+			try (FileOutputStream out = new FileOutputStream(target)) {
+				out.write(srcBytes);
+			}
 		}
 	}
 
 	public MyDebugTests(String name) {
 		super(name);
 		// TODO Auto-generated constructor stub
-	}
-
-	public void setUpSuite() throws Exception {
-		// TODO Auto-generated method stub
-		super.setUpSuite();
-	}
-
-	public void tearDownSuite() throws Exception {
-		// TODO Auto-generated method stub
-		super.tearDownSuite();
 	}
 
 	// Helper methods
@@ -107,14 +93,11 @@ public class MyDebugTests extends SuiteOfTestCases {
 	}
 
 	// Create project
-	protected IProject createProject(final String projectName)
-			throws CoreException {
+	protected IProject createProject(final String projectName) throws CoreException {
 		final IProject project = getProject(projectName);
-		IWorkspaceRunnable create = new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				project.create(null);
-				project.open(null);
-			}
+		IWorkspaceRunnable create = monitor -> {
+			project.create(null);
+			project.open(null);
 		};
 		getWorkspace().run(create, null);
 		return project;
@@ -134,32 +117,28 @@ public class MyDebugTests extends SuiteOfTestCases {
 		return new File(getPluginDirectoryPath(), "workspace");
 	}
 
-	protected IProject createProjectWithContent(final String projectName)
-			throws CoreException, IOException {
+	protected IProject createProjectWithContent(final String projectName) throws CoreException, IOException {
 		final File source = getSourceWorkspacePath();
 		final File target = getWorkspaceRoot().getLocation().toFile();
-		FileHelper.copyDirectory(new File(source, projectName), new File(
-				target, projectName));
+		FileHelper.copyDirectory(new File(source, projectName), new File(target, projectName));
 
 		return createProject(projectName);
 	}
 
-	protected IScriptProject createScriptProject(final String projectName,
-			final String[] natureIds) throws CoreException {
+	protected IScriptProject createScriptProject(final String projectName, final String[] natureIds)
+			throws CoreException {
 		final IScriptProject[] result = new IScriptProject[1];
 
-		IWorkspaceRunnable create = new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				final IProject project = createProject(projectName);
+		IWorkspaceRunnable create = monitor -> {
+			final IProject project = createProject(projectName);
 
-				// Natures
-				IProjectDescription description = project.getDescription();
-				description.setNatureIds(natureIds);
-				project.setDescription(description, null);
+			// Natures
+			IProjectDescription description = project.getDescription();
+			description.setNatureIds(natureIds);
+			project.setDescription(description, null);
 
-				// Script project
-				result[0] = DLTKCore.create(project);
-			}
+			// Script project
+			result[0] = DLTKCore.create(project);
 		};
 
 		getWorkspace().run(create, null);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,11 +36,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -65,9 +61,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -93,7 +87,7 @@ public abstract class InterpretersBlock
 	/**
 	 * Interpreters being displayed
 	 */
-	protected List<IInterpreterInstall> fInterpreters = new ArrayList<IInterpreterInstall>();
+	protected List<IInterpreterInstall> fInterpreters = new ArrayList<>();
 
 	/**
 	 * The main list control
@@ -112,7 +106,7 @@ public abstract class InterpretersBlock
 	/**
 	 * Environment to checked interpreter.
 	 */
-	private Map<IEnvironment, IInterpreterInstall> checkedInterpreters = new HashMap<IEnvironment, IInterpreterInstall>();
+	private Map<IEnvironment, IInterpreterInstall> checkedInterpreters = new HashMap<>();
 
 	// index of column used for sorting
 	private int fSortColumn = 0;
@@ -133,14 +127,17 @@ public abstract class InterpretersBlock
 	 * Content provider to show a list of InterpreterEnvironments
 	 */
 	class InterpretersContentProvider implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object input) {
 			return getCurrentInterprers();
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput,
 				Object newInput) {
 		}
 
+		@Override
 		public void dispose() {
 		}
 	}
@@ -154,6 +151,7 @@ public abstract class InterpretersBlock
 		/**
 		 * @see ITableLabelProvider#getColumnText(Object, int)
 		 */
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			if (element instanceof IInterpreterInstall) {
 				IInterpreterInstall interp = (IInterpreterInstall) element;
@@ -172,6 +170,7 @@ public abstract class InterpretersBlock
 		/**
 		 * @see ITableLabelProvider#getColumnImage(Object, int)
 		 */
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			if (columnIndex == 0) {
 				// TODO: instert interpreter logo here
@@ -183,11 +182,12 @@ public abstract class InterpretersBlock
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener
 	 * (org.eclipse.jface.viewers.ISelectionChangedListener)
 	 */
+	@Override
 	public void addSelectionChangedListener(
 			ISelectionChangedListener listener) {
 		fSelectionListeners.add(listener);
@@ -195,20 +195,22 @@ public abstract class InterpretersBlock
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
 	 */
+	@Override
 	public ISelection getSelection() {
 		return new StructuredSelection(fInterpreterList.getCheckedElements());
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#
 	 * removeSelectionChangedListener
 	 * (org.eclipse.jface.viewers.ISelectionChangedListener)
 	 */
+	@Override
 	public void removeSelectionChangedListener(
 			ISelectionChangedListener listener) {
 		fSelectionListeners.remove(listener);
@@ -216,11 +218,12 @@ public abstract class InterpretersBlock
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse
 	 * .jface.viewers.ISelection)
 	 */
+	@Override
 	public void setSelection(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
 			if (!selection.equals(fPrevSelection)) {
@@ -243,7 +246,7 @@ public abstract class InterpretersBlock
 
 	/**
 	 * Creates this block's control in the given control.
-	 * 
+	 *
 	 * @param ancestor
 	 *            containing control
 	 * @param useManageButton
@@ -296,6 +299,7 @@ public abstract class InterpretersBlock
 		this.fEnvironments.select(local);
 
 		this.fEnvironments.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Object install = checkedInterpreters
 						.get(getCurrentEnvironment());
@@ -337,6 +341,7 @@ public abstract class InterpretersBlock
 		TableColumn column1 = new TableColumn(fTable, SWT.NULL);
 		column1.setText(InterpretersMessages.InstalledInterpretersBlock_0);
 		column1.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				sortByName();
 			}
@@ -346,6 +351,7 @@ public abstract class InterpretersBlock
 		TableColumn column2 = new TableColumn(fTable, SWT.NULL);
 		column2.setText(InterpretersMessages.InstalledInterpretersBlock_2);
 		column2.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				sortByType();
 			}
@@ -355,6 +361,7 @@ public abstract class InterpretersBlock
 		TableColumn column3 = new TableColumn(fTable, SWT.NULL);
 		column3.setText(InterpretersMessages.InstalledInterpretersBlock_1);
 		column3.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				sortByLocation();
 			}
@@ -367,32 +374,23 @@ public abstract class InterpretersBlock
 		// by default, sort by name
 		sortByName();
 
-		fInterpreterList
-				.addSelectionChangedListener(new ISelectionChangedListener() {
-					public void selectionChanged(SelectionChangedEvent evt) {
-						enableButtons();
-					}
-				});
+		fInterpreterList.addSelectionChangedListener(evt -> enableButtons());
 
-		fInterpreterList.addCheckStateListener(new ICheckStateListener() {
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				if (event.getChecked()) {
-					setCheckedInterpreter(
-							(IInterpreterInstall) event.getElement());
-				} else {
-					setCheckedInterpreter(null);
-				}
+		fInterpreterList.addCheckStateListener(event -> {
+			if (event.getChecked()) {
+				setCheckedInterpreter((IInterpreterInstall) event.getElement());
+			} else {
+				setCheckedInterpreter(null);
 			}
 		});
 
-		fInterpreterList.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent e) {
-				if (!fInterpreterList.getSelection().isEmpty()) {
-					editInterpreter();
-				}
+		fInterpreterList.addDoubleClickListener(e -> {
+			if (!fInterpreterList.getSelection().isEmpty()) {
+				editInterpreter();
 			}
 		});
 		fTable.addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyPressed(KeyEvent event) {
 				if (event.character == SWT.DEL && event.stateMask == 0) {
 					if (fRemoveButton.getEnabled())
@@ -413,35 +411,19 @@ public abstract class InterpretersBlock
 
 		fAddButton = createPushButton(buttons,
 				InterpretersMessages.InstalledInterpretersBlock_3);
-		fAddButton.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event evt) {
-				addInterpreter();
-			}
-		});
+		fAddButton.addListener(SWT.Selection, evt -> addInterpreter());
 
 		fEditButton = createPushButton(buttons,
 				InterpretersMessages.InstalledInterpretersBlock_4);
-		fEditButton.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event evt) {
-				editInterpreter();
-			}
-		});
+		fEditButton.addListener(SWT.Selection, evt -> editInterpreter());
 
 		fCopyButton = createPushButton(buttons,
 				InterpretersMessages.InstalledInterpretersBlock_16);
-		fCopyButton.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event evt) {
-				copyInterpreter();
-			}
-		});
+		fCopyButton.addListener(SWT.Selection, evt -> copyInterpreter());
 
 		fRemoveButton = createPushButton(buttons,
 				InterpretersMessages.InstalledInterpretersBlock_5);
-		fRemoveButton.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event evt) {
-				removeInterpreters();
-			}
-		});
+		fRemoveButton.addListener(SWT.Selection, evt -> removeInterpreters());
 
 		// copied from ListDialogField.CreateSeparator()
 		Label separator = new Label(buttons, SWT.NONE);
@@ -454,11 +436,7 @@ public abstract class InterpretersBlock
 
 		fSearchButton = createPushButton(buttons,
 				InterpretersMessages.InstalledInterpretersBlock_6);
-		fSearchButton.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event evt) {
-				search();
-			}
-		});
+		fSearchButton.addListener(SWT.Selection, evt -> search());
 
 		fillWithWorkspaceInterpreters();
 		enableButtons();
@@ -484,6 +462,7 @@ public abstract class InterpretersBlock
 	 */
 	private void sortByType() {
 		fInterpreterList.setSorter(new ViewerSorter() {
+			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				if ((e1 instanceof IInterpreterInstall)
 						&& (e2 instanceof IInterpreterInstall)) {
@@ -502,6 +481,7 @@ public abstract class InterpretersBlock
 				return super.compare(viewer, e1, e2);
 			}
 
+			@Override
 			public boolean isSorterProperty(Object element, String property) {
 				return true;
 			}
@@ -514,6 +494,7 @@ public abstract class InterpretersBlock
 	 */
 	private void sortByName() {
 		fInterpreterList.setSorter(new ViewerSorter() {
+			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				if ((e1 instanceof IInterpreterInstall)
 						&& (e2 instanceof IInterpreterInstall)) {
@@ -524,6 +505,7 @@ public abstract class InterpretersBlock
 				return super.compare(viewer, e1, e2);
 			}
 
+			@Override
 			public boolean isSorterProperty(Object element, String property) {
 				return true;
 			}
@@ -536,6 +518,7 @@ public abstract class InterpretersBlock
 	 */
 	private void sortByLocation() {
 		fInterpreterList.setSorter(new ViewerSorter() {
+			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				if ((e1 instanceof IInterpreterInstall)
 						&& (e2 instanceof IInterpreterInstall)) {
@@ -548,6 +531,7 @@ public abstract class InterpretersBlock
 				return super.compare(viewer, e1, e2);
 			}
 
+			@Override
 			public boolean isSorterProperty(Object element, String property) {
 				return true;
 			}
@@ -587,7 +571,7 @@ public abstract class InterpretersBlock
 
 	/**
 	 * Returns this block's control
-	 * 
+	 *
 	 * @return control
 	 */
 	public Control getControl() {
@@ -596,7 +580,7 @@ public abstract class InterpretersBlock
 
 	/**
 	 * Sets the InterpreterEnvironments to be displayed in this block
-	 * 
+	 *
 	 * @param Interpreters
 	 *            InterpreterEnvironments to be displayed
 	 */
@@ -612,7 +596,7 @@ public abstract class InterpretersBlock
 	/**
 	 * Returns the InterpreterEnvironments currently being displayed in this
 	 * block
-	 * 
+	 *
 	 * @return InterpreterEnvironments currently being displayed in this block
 	 */
 	public IInterpreterInstall[] getInterpreters() {
@@ -622,7 +606,7 @@ public abstract class InterpretersBlock
 
 	public IInterpreterInstall[] getCurrentInterprers() {
 		IEnvironment environment = getCurrentEnvironment();
-		List<IInterpreterInstall> result = new ArrayList<IInterpreterInstall>();
+		List<IInterpreterInstall> result = new ArrayList<>();
 		for (Iterator<IInterpreterInstall> iterator = fInterpreters
 				.iterator(); iterator.hasNext();) {
 			IInterpreterInstall install = iterator.next();
@@ -637,6 +621,7 @@ public abstract class InterpretersBlock
 	/**
 	 * @see IAddInterpreterDialogRequestor#isDuplicateName(String)
 	 */
+	@Override
 	public boolean isDuplicateName(String name,
 			IInterpreterInstall editedInterpreter) {
 		for (int i = 0; i < fInterpreters.size(); i++) {
@@ -679,7 +664,7 @@ public abstract class InterpretersBlock
 
 	/**
 	 * Removes the given Interpreters from the table.
-	 * 
+	 *
 	 * @param Interpreters
 	 */
 	public void removeInterpreters(IInterpreterInstall[] Interpreters) {
@@ -707,7 +692,7 @@ public abstract class InterpretersBlock
 
 		// choose a root directory for the search
 		// ignore installed locations
-		final Set<IFileHandle> exstingLocations = new HashSet<IFileHandle>();
+		final Set<IFileHandle> exstingLocations = new HashSet<>();
 		Iterator<IInterpreterInstall> iter = fInterpreters.iterator();
 		while (iter.hasNext()) {
 			exstingLocations.add(iter.next().getInstallLocation());
@@ -718,18 +703,16 @@ public abstract class InterpretersBlock
 
 		final IEnvironment currentEnvironment = getCurrentEnvironment();
 
-		IRunnableWithProgress r = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) {
-				try {
-					monitor.beginTask(
-							InterpretersMessages.InstalledInterpretersBlock_11,
-							IProgressMonitor.UNKNOWN);
+		IRunnableWithProgress r = monitor -> {
+			try {
+				monitor.beginTask(
+						InterpretersMessages.InstalledInterpretersBlock_11,
+						IProgressMonitor.UNKNOWN);
 
-					searcher.search(currentEnvironment, getCurrentNature(),
-							exstingLocations, 1, monitor);
-				} finally {
-					monitor.done();
-				}
+				searcher.search(currentEnvironment, getCurrentNature(),
+						exstingLocations, 1, monitor);
+			} finally {
+				monitor.done();
 			}
 		};
 
@@ -792,18 +775,16 @@ public abstract class InterpretersBlock
 						InterpretersMessages.InstalledInterpretersBlock_12,
 						InterpretersMessages.InstalledInterpretersBlock_113);
 			}
-			fTable.getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					PixelConverter conv = new PixelConverter(fTable);
-					for (int i = 0; i < 2; i++) {
-						int nw1 = conv.convertWidthInCharsToPixels(widths[i]);
-						TableColumn cl0 = fTable.getColumn(i);
-						if (cl0.getWidth() < nw1) {
-							cl0.setWidth(nw1);
-						}
+			fTable.getDisplay().asyncExec(() -> {
+				PixelConverter conv = new PixelConverter(fTable);
+				for (int i = 0; i < 2; i++) {
+					int nw1 = conv.convertWidthInCharsToPixels(widths[i]);
+					TableColumn cl0 = fTable.getColumn(i);
+					if (cl0.getWidth() < nw1) {
+						cl0.setWidth(nw1);
 					}
-					fTable.layout();
 				}
+				fTable.layout();
 			});
 		}
 	}
@@ -814,7 +795,7 @@ public abstract class InterpretersBlock
 
 	/**
 	 * Sets the checked InterpreterEnvironment, possible <code>null</code>
-	 * 
+	 *
 	 * @param interpreter
 	 *            InterpreterEnvironment or <code>null</code>
 	 */
@@ -831,7 +812,7 @@ public abstract class InterpretersBlock
 
 	/**
 	 * Returns the checked Interpreter or <code>null</code> if none.
-	 * 
+	 *
 	 * @return the checked Interpreter or <code>null</code> if none
 	 */
 	public IInterpreterInstall[] getCheckedInterpreters() {
@@ -849,7 +830,7 @@ public abstract class InterpretersBlock
 	/**
 	 * Persist table settings into the give dialog store, prefixed with the
 	 * given key.
-	 * 
+	 *
 	 * @param settings
 	 *            dialog store
 	 * @param qualifier
@@ -866,7 +847,7 @@ public abstract class InterpretersBlock
 
 	/**
 	 * Restore table settings from the given dialog store using the given key.
-	 * 
+	 *
 	 * @param settings
 	 *            dialog settings store
 	 * @param qualifier
@@ -919,7 +900,7 @@ public abstract class InterpretersBlock
 	 */
 	protected void fillWithWorkspaceInterpreters() {
 		// fill with interpreters
-		List<InterpreterStandin> standins = new ArrayList<InterpreterStandin>();
+		List<InterpreterStandin> standins = new ArrayList<>();
 		IInterpreterInstallType[] types = ScriptRuntime
 				.getInterpreterInstallTypes(getCurrentNature());
 		for (int i = 0; i < types.length; i++) {
@@ -935,6 +916,7 @@ public abstract class InterpretersBlock
 				standins.toArray(new IInterpreterInstall[standins.size()]));
 	}
 
+	@Override
 	public void interpreterAdded(IInterpreterInstall Interpreter) {
 		fInterpreters.add(Interpreter);
 		fInterpreterList.refresh();
@@ -981,11 +963,11 @@ public abstract class InterpretersBlock
 	/**
 	 * Compares the given name against current names and adds the appropriate
 	 * numerical suffix to ensure that it is unique.
-	 * 
+	 *
 	 * @param name
 	 *            the name with which to ensure uniqueness
 	 * @return the unique version of the given name
-	 * 
+	 *
 	 */
 	protected String generateName(String name) {
 		if (!isDuplicateName(name, null)) {
@@ -1010,7 +992,7 @@ public abstract class InterpretersBlock
 	/**
 	 * Creates the {@link IInterpreterInstall} add/edit dialog. Should be
 	 * overridden.
-	 * 
+	 *
 	 * @param environment
 	 * @param standin
 	 * @return @
@@ -1044,7 +1026,7 @@ public abstract class InterpretersBlock
 				.getSelection();
 		Iterator it = selection.iterator();
 
-		ArrayList<InterpreterStandin> newEntries = new ArrayList<InterpreterStandin>();
+		ArrayList<InterpreterStandin> newEntries = new ArrayList<>();
 		while (it.hasNext()) {
 			IInterpreterInstall selectedInterpreter = (IInterpreterInstall) it
 					.next();

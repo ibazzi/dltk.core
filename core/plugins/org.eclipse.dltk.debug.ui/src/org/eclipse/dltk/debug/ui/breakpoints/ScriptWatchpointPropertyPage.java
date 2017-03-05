@@ -17,6 +17,7 @@ public class ScriptWatchpointPropertyPage extends ScriptBreakpointPropertyPage {
 
 	}
 
+	@Override
 	protected void createTypeSpecificLabels(Composite parent)
 			throws CoreException {
 		setTitle(BreakpointMessages.WatchpointTitle);
@@ -28,6 +29,7 @@ public class ScriptWatchpointPropertyPage extends ScriptBreakpointPropertyPage {
 		SWTFactory.createLabel(parent, watchPoint.getFieldName(), 1);
 	}
 
+	@Override
 	protected boolean hasExpressionEditor() {
 		IScriptBreakpointPropertyPageExtension extension = getBreakpointPropertyPageExtension();
 		if (extension != null) {
@@ -36,6 +38,7 @@ public class ScriptWatchpointPropertyPage extends ScriptBreakpointPropertyPage {
 		return false;
 	}
 
+	@Override
 	protected void createTypeSpecificButtons(Composite parent) {
 		suspendOnAccessButton = SWTFactory.createCheckButton(parent,
 				BreakpointMessages.SuspendOnAccessLabel, null, false, 1);
@@ -43,6 +46,7 @@ public class ScriptWatchpointPropertyPage extends ScriptBreakpointPropertyPage {
 				BreakpointMessages.SuspendOnModificationLabel, null, false, 1);
 	}
 
+	@Override
 	protected void loadValues() throws CoreException {
 		super.loadValues();
 
@@ -51,8 +55,8 @@ public class ScriptWatchpointPropertyPage extends ScriptBreakpointPropertyPage {
 				.getDebugToolkitByDebugModel(watchpoint.getModelIdentifier());
 		if (debugToolkit.isAccessWatchpointSupported()) {
 			suspendOnAccessButton.setSelection(watchpoint.isAccess());
-			suspendOnModificationButton.setSelection(watchpoint
-					.isModification());
+			suspendOnModificationButton
+					.setSelection(watchpoint.isModification());
 		} else {
 			suspendOnAccessButton.setEnabled(false);
 			suspendOnModificationButton.setEnabled(false);
@@ -60,6 +64,7 @@ public class ScriptWatchpointPropertyPage extends ScriptBreakpointPropertyPage {
 		}
 	}
 
+	@Override
 	protected void saveValues() throws CoreException {
 		super.saveValues();
 
@@ -68,8 +73,8 @@ public class ScriptWatchpointPropertyPage extends ScriptBreakpointPropertyPage {
 				.getDebugToolkitByDebugModel(watchpoint.getModelIdentifier());
 		if (debugToolkit.isAccessWatchpointSupported()) {
 			watchpoint.setAccess(suspendOnAccessButton.getSelection());
-			watchpoint.setModification(suspendOnModificationButton
-					.getSelection());
+			watchpoint.setModification(
+					suspendOnModificationButton.getSelection());
 		}
 	}
 }

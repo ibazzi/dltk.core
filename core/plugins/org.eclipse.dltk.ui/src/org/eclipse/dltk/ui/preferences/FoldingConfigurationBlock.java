@@ -1,12 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  *******************************************************************************/
-
 package org.eclipse.dltk.ui.preferences;
 
 import java.util.ArrayList;
@@ -32,8 +31,6 @@ import org.eclipse.swt.widgets.Label;
 
 /**
  * Configures Script Editor folding preferences.
- * 
- * 
  */
 public abstract class FoldingConfigurationBlock implements
 		IPreferenceConfigurationBlock {
@@ -45,6 +42,7 @@ public abstract class FoldingConfigurationBlock implements
 			fMessage = message;
 		}
 
+		@Override
 		public Control createControl(Composite composite) {
 			Composite inner = new Composite(composite, SWT.NONE);
 			inner.setLayout(new FillLayout(SWT.VERTICAL));
@@ -55,15 +53,19 @@ public abstract class FoldingConfigurationBlock implements
 			return inner;
 		}
 
+		@Override
 		public void initialize() {
 		}
 
+		@Override
 		public void performOk() {
 		}
 
+		@Override
 		public void performDefaults() {
 		}
 
+		@Override
 		public void dispose() {
 		}
 
@@ -119,11 +121,12 @@ public abstract class FoldingConfigurationBlock implements
 
 	/**
 	 * Creates page for folding preferences.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 * @return the control for the preference page
 	 */
+	@Override
 	public Control createControl(Composite parent) {
 
 		Composite composite = new Composite(parent, SWT.NULL);
@@ -143,6 +146,7 @@ public abstract class FoldingConfigurationBlock implements
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		fFoldingCheckbox.setLayoutData(gd);
 		fFoldingCheckbox.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean enabled = fFoldingCheckbox.getSelection();
 				fStore.setValue(PreferenceConstants.EDITOR_FOLDING_ENABLED,
@@ -187,6 +191,7 @@ public abstract class FoldingConfigurationBlock implements
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		fCommentsFoldingCheckbox.setLayoutData(gd);
 		fCommentsFoldingCheckbox.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean enabled = fCommentsFoldingCheckbox.getSelection();
 				fStore.setValue(
@@ -236,21 +241,25 @@ public abstract class FoldingConfigurationBlock implements
 		prefs.initialize();
 	}
 
+	@Override
 	public void initialize() {
 		restoreFromPreferences();
 	}
 
+	@Override
 	public void performOk() {
 		IFoldingPreferenceBlock prefs = getPreferenceBlock();
 		prefs.performOk();
 	}
 
+	@Override
 	public void performDefaults() {
 		restoreFromPreferences();
 		IFoldingPreferenceBlock prefs = getPreferenceBlock();
 		prefs.performDefaults();
 	}
 
+	@Override
 	public void dispose() {
 		IFoldingPreferenceBlock prefs = getPreferenceBlock();
 		prefs.dispose();

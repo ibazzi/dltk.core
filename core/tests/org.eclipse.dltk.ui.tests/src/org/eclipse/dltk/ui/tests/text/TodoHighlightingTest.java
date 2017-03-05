@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -11,23 +11,21 @@
  *******************************************************************************/
 package org.eclipse.dltk.ui.tests.text;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 import org.eclipse.dltk.ui.text.DLTKColorConstants;
 import org.eclipse.dltk.ui.text.rules.CombinedWordRule;
 import org.eclipse.jface.text.rules.IToken;
+import org.junit.Test;
 
-public class TodoHighlightingTest extends TestCase {
+public class TodoHighlightingTest {
 
 	private static final String COMMENT_KEY = DLTKColorConstants.DLTK_SINGLE_LINE_COMMENT;
 	private static final String TODO_KEY = DLTKColorConstants.TASK_TAG;
-
-	public TodoHighlightingTest(String name) {
-		super(name);
-	}
 
 	private TestScriptCommentScanner createScanner(String[] tags,
 			boolean caseSensitive) {
@@ -76,7 +74,7 @@ public class TodoHighlightingTest extends TestCase {
 
 	private static final String TODO = "TODO";
 	private static final String FIXME = "FIXME";
-
+	@Test
 	public void testTodoRuleMiss1() {
 		final TestScriptCommentScanner scanner = createScanner(new String[] {
 				TODO, FIXME }, true);
@@ -85,7 +83,7 @@ public class TodoHighlightingTest extends TestCase {
 		assertEquals(token, getDefaultToken(scanner));
 		assertEquals(scanner.getText().length(), scanner.getTokenLength());
 	}
-
+	@Test
 	public void testTodoRuleMiss2() {
 		final TestScriptCommentScanner scanner = createScanner(new String[] {
 				TODO, FIXME }, true);
@@ -94,7 +92,7 @@ public class TodoHighlightingTest extends TestCase {
 		assertEquals(token, getDefaultToken(scanner));
 		assertEquals(scanner.getText().length(), scanner.getTokenLength());
 	}
-
+	@Test
 	public void testTodoRuleMiss3() {
 		final TestScriptCommentScanner scanner = createScanner(new String[] {
 				TODO, FIXME }, true);
@@ -103,7 +101,7 @@ public class TodoHighlightingTest extends TestCase {
 		assertEquals(token, getDefaultToken(scanner));
 		assertEquals(scanner.getText().length(), scanner.getTokenLength());
 	}
-
+	@Test
 	public void testTodoRuleMiss4() {
 		final TestScriptCommentScanner scanner = createScanner(new String[] {
 				TODO, FIXME }, true);
@@ -112,7 +110,7 @@ public class TodoHighlightingTest extends TestCase {
 		assertEquals(token, getDefaultToken(scanner));
 		assertEquals(scanner.getText().length(), scanner.getTokenLength());
 	}
-
+	@Test
 	public void testTodoRuleMiss5() {
 		final TestScriptCommentScanner scanner = createScanner(new String[] {
 				TODO, FIXME }, true);
@@ -121,7 +119,7 @@ public class TodoHighlightingTest extends TestCase {
 		assertEquals(token, getDefaultToken(scanner));
 		assertEquals(scanner.getText().length(), scanner.getTokenLength());
 	}
-
+	@Test
 	public void testTodoRuleMatch1() {
 		final TestScriptCommentScanner scanner = createScanner(new String[] {
 				TODO, FIXME }, true);
@@ -130,7 +128,7 @@ public class TodoHighlightingTest extends TestCase {
 		assertTrue(token.isOther());
 		assertEquals(TODO.length(), scanner.getTokenLength());
 	}
-
+	@Test
 	public void testTodoRuleMatch2() {
 		final TestScriptCommentScanner scanner = createScanner(new String[] {
 				TODO, FIXME }, true);
@@ -139,7 +137,7 @@ public class TodoHighlightingTest extends TestCase {
 		assertTrue(token.isOther());
 		assertEquals(FIXME.length(), scanner.getTokenLength());
 	}
-
+	@Test
 	public void testTodoRuleMatch3() {
 		final TestScriptCommentScanner scanner = createScanner(new String[] {
 				TODO, FIXME }, true);
@@ -148,7 +146,7 @@ public class TodoHighlightingTest extends TestCase {
 		assertTrue(token.isOther());
 		assertEquals(TODO.length(), scanner.getTokenLength());
 	}
-
+	@Test
 	public void testTodoRuleMatch4() {
 		final TestScriptCommentScanner scanner = createScanner(new String[] {
 				TODO, FIXME }, true);
@@ -157,14 +155,14 @@ public class TodoHighlightingTest extends TestCase {
 		assertTrue(token.isOther());
 		assertEquals(FIXME.length(), scanner.getTokenLength());
 	}
-
+	@Test
 	public void testBare() {
 		final String data = "#TODO";
 		List<TokenPos> tokens = findTodoTokens(data, TODO);
 		assertEquals(1, tokens.size());
 		assertEquals(newTokenPos(data, TODO), tokens.get(0));
 	}
-
+	@Test
 	public void testBare1() {
 		final String data = "#TODO";
 		List<TokenPos> tokens = findTodoTokens(data,
@@ -172,7 +170,7 @@ public class TodoHighlightingTest extends TestCase {
 		assertEquals(1, tokens.size());
 		assertEquals(newTokenPos(data, TODO), tokens.get(0));
 	}
-
+	@Test
 	public void testBare2() {
 		final String data = "#FIXME";
 		List<TokenPos> tokens = findTodoTokens(data,
@@ -180,53 +178,53 @@ public class TodoHighlightingTest extends TestCase {
 		assertEquals(1, tokens.size());
 		assertEquals(newTokenPos(data, FIXME), tokens.get(0));
 	}
-
+	@Test
 	public void testNormal() {
 		final String data = "#TODO comment";
 		List<TokenPos> tokens = findTodoTokens(data, TODO);
 		assertEquals(1, tokens.size());
 		assertEquals(newTokenPos(data, TODO), tokens.get(0));
 	}
-
+	@Test
 	public void testSpaced() {
 		final String data = "#   TODO comment";
 		List<TokenPos> tokens = findTodoTokens(data, TODO);
 		assertEquals(1, tokens.size());
 		assertEquals(newTokenPos(data, TODO), tokens.get(0));
 	}
-
+	@Test
 	public void testPrefixed() {
 		final String data = "# aTODO comment";
 		List<TokenPos> tokens = findTodoTokens(data, TODO);
 		assertEquals(0, tokens.size());
 	}
-
+	@Test
 	public void testNoTodo() {
 		final String data = "#hello";
 		List<TokenPos> tokens = findTodoTokens(data, TODO);
 		assertEquals(0, tokens.size());
 	}
-
+	@Test
 	public void testSuffixed() {
 		final String data = "# TODOa comment";
 		List<TokenPos> tokens = findTodoTokens(data, TODO);
 		assertEquals(0, tokens.size());
 	}
-
+	@Test
 	public void testLegallySuffixed() {
 		final String data = "# TODO: comment";
 		List<TokenPos> tokens = findTodoTokens(data, TODO);
 		assertEquals(1, tokens.size());
 		assertEquals(newTokenPos(data, TODO), tokens.get(0));
 	}
-
+	@Test
 	public void testDoubleTagOccurence() throws Exception {
 		String data = "# TODO add TODO tag support";
 		List<TokenPos> tokens = findTodoTokens(data, TODO);
 		assertEquals(1, tokens.size());
 		assertEquals(newTokenPos(data, TODO), tokens.get(0));
 	}
-
+	@Test
 	public void testDifferentTags() {
 		String data = "#FIXME tag support";
 		List<TokenPos> tokens = findTodoTokens(data,

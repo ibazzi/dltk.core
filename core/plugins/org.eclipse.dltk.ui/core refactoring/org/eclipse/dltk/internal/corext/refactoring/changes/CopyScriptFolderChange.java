@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,12 +28,14 @@ public class CopyScriptFolderChange extends PackageReorgChange {
 		super(pack, dest, nameQuery);
 	}
 
+	@Override
 	protected Change doPerformReorg(IProgressMonitor pm) throws ModelException,
 			OperationCanceledException {
 		getPackage().copy(getDestination(), null, getNewName(), true, pm);
 		return null;
 	}
 
+	@Override
 	public String getName() {
 		String packageName = ScriptElementLabels.getDefault().getElementLabel(
 				getPackage(), ScriptElementLabels.ALL_DEFAULT);

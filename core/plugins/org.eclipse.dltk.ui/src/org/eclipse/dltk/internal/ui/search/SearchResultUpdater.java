@@ -1,11 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
+
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.search;
 
@@ -29,11 +29,11 @@ import org.eclipse.search.ui.text.Match;
 public class SearchResultUpdater implements IElementChangedListener, IQueryListener {
 
 	DLTKSearchResult fResult;
-	private static final int REMOVED_FLAGS= IModelElementDelta.F_MOVED_TO | 
+	private static final int REMOVED_FLAGS= IModelElementDelta.F_MOVED_TO |
 									IModelElementDelta.F_REMOVED_FROM_BUILDPATH |
 									IModelElementDelta.F_CLOSED |
 									IModelElementDelta.F_CONTENT;
-	
+
 	public SearchResultUpdater(DLTKSearchResult result) {
 		fResult= result;
 		NewSearchUI.addQueryListener(this);
@@ -41,6 +41,7 @@ public class SearchResultUpdater implements IElementChangedListener, IQueryListe
 		// TODO make this work with resources
 	}
 
+	@Override
 	public void elementChanged(ElementChangedEvent event) {
 		//long t0= System.currentTimeMillis();
 		IModelElementDelta delta= event.getDelta();
@@ -76,7 +77,7 @@ public class SearchResultUpdater implements IElementChangedListener, IQueryListe
 							fResult.removeMatch(matches[j]);
 						}
 					}
-					
+
 				}
 			}
 		}
@@ -105,7 +106,7 @@ public class SearchResultUpdater implements IElementChangedListener, IQueryListe
 	}
 
 	private void collectRemoved(Set potentiallyRemovedSet, Set removedElements, IModelElementDelta delta) {
-		if (delta.getKind() == IModelElementDelta.REMOVED) 
+		if (delta.getKind() == IModelElementDelta.REMOVED)
 			removedElements.add(delta.getElement());
 		else if (delta.getKind() == IModelElementDelta.CHANGED) {
 			int flags= delta.getFlags();
@@ -126,15 +127,17 @@ public class SearchResultUpdater implements IElementChangedListener, IQueryListe
 		}
 	}
 
+	@Override
 	public void queryAdded(ISearchQuery query) {
 		// don't care
 	}
 
+	@Override
 	public void queryRemoved(ISearchQuery query) {
 		if (fResult.equals(query.getSearchResult())) {
 			DLTKCore.removeElementChangedListener(this);
 			NewSearchUI.removeQueryListener(this);
-		}		
+		}
 	}
 
 	private void collectRemovals(Set removals, IResourceDelta delta) {
@@ -148,10 +151,12 @@ public class SearchResultUpdater implements IElementChangedListener, IQueryListe
 		}
 	}
 
+	@Override
 	public void queryStarting(ISearchQuery query) {
 		// not interested
 	}
 
+	@Override
 	public void queryFinished(ISearchQuery query) {
 		// not interested
 	}

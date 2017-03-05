@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -20,8 +20,6 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.dltk.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.dltk.internal.ui.wizards.dialogfields.IDialogFieldListener;
 import org.eclipse.dltk.internal.ui.wizards.dialogfields.StringDialogField;
 import org.eclipse.dltk.ui.DLTKUIPlugin;
 import org.eclipse.dltk.ui.dialogs.StatusInfo;
@@ -82,6 +80,7 @@ public abstract class FormatterModifyDialog extends StatusDialog implements
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
+	@Override
 	public void setProfileManager(IProfileManager manager) {
 		this.manager = manager;
 		this.profile = manager.getSelected();
@@ -161,11 +160,7 @@ public abstract class FormatterModifyDialog extends StatusDialog implements
 				new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		fProfileNameField.getTextControl(nameComposite).setLayoutData(
 				new GridData(SWT.FILL, SWT.CENTER, true, false));
-		fProfileNameField.setDialogFieldListener(new IDialogFieldListener() {
-			public void dialogFieldChanged(DialogField field) {
-				validate();
-			}
-		});
+		fProfileNameField.setDialogFieldListener(field -> validate());
 
 		fSaveButton = createButton(nameComposite, SAVE_BUTTON_ID,
 				FormatterMessages.FormatterModifyDialog_export, false);
@@ -198,6 +193,7 @@ public abstract class FormatterModifyDialog extends StatusDialog implements
 		fTabPages.add(tabPage);
 	}
 
+	@Override
 	public final void statusChanged(IStatus status) {
 		tabStatus = status;
 		validate();
@@ -206,10 +202,12 @@ public abstract class FormatterModifyDialog extends StatusDialog implements
 		}
 	}
 
+	@Override
 	public IFormatterModifyDialogOwner getOwner() {
 		return dialogOwner;
 	}
 
+	@Override
 	public IScriptFormatterFactory getFormatterFactory() {
 		return formatterFactory;
 	}
@@ -263,6 +261,7 @@ public abstract class FormatterModifyDialog extends StatusDialog implements
 		return StatusInfo.OK_STATUS;
 	}
 
+	@Override
 	public String getProfileName() {
 		return fProfileNameField.getText().trim();
 	}
@@ -335,6 +334,7 @@ public abstract class FormatterModifyDialog extends StatusDialog implements
 		}
 	}
 
+	@Override
 	public void setPreferences(Map<String, String> prefs) {
 		preferences.set(prefs);
 		final Shell shell = getShell();
@@ -343,6 +343,7 @@ public abstract class FormatterModifyDialog extends StatusDialog implements
 		}
 	}
 
+	@Override
 	public Map<String, String> getPreferences() {
 		return preferences.get();
 	}

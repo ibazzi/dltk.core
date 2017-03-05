@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -112,7 +112,7 @@ public class OccurrencesFinder {
 
 	/**
 	 * Finds and marks occurrence annotations.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	class OccurrencesFinderJob extends Job {
@@ -153,6 +153,7 @@ public class OccurrencesFinder {
 		/*
 		 * @see Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
+		@Override
 		public IStatus run(IProgressMonitor progressMonitor) {
 			if (isCanceled(progressMonitor))
 				return Status.CANCEL_STATUS;
@@ -188,7 +189,7 @@ public class OccurrencesFinder {
 						location.getLength());
 
 				String description = location.getDescription();
-				String annotationType = "org.eclipse.dltk.ui.occurrences"; //$NON-NLS-1$ 
+				String annotationType = "org.eclipse.dltk.ui.occurrences"; //$NON-NLS-1$
 
 				annotationMap.put(new Annotation(annotationType, false,
 						description), position);
@@ -220,7 +221,7 @@ public class OccurrencesFinder {
 
 	/**
 	 * Cancels the occurrences finder job upon document changes.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	class OccurrencesFinderJobCanceler implements IDocumentListener,
@@ -261,6 +262,7 @@ public class OccurrencesFinder {
 		 * org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org
 		 * .eclipse.jface.text.DocumentEvent)
 		 */
+		@Override
 		public void documentAboutToBeChanged(DocumentEvent event) {
 			if (fOccurrencesFinderJob != null)
 				fOccurrencesFinderJob.doCancel();
@@ -271,6 +273,7 @@ public class OccurrencesFinder {
 		 * org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.
 		 * jface.text.DocumentEvent)
 		 */
+		@Override
 		public void documentChanged(DocumentEvent event) {
 		}
 
@@ -279,6 +282,7 @@ public class OccurrencesFinder {
 		 * org.eclipse.jface.text.ITextInputListener#inputDocumentAboutToBeChanged
 		 * (org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
 		 */
+		@Override
 		public void inputDocumentAboutToBeChanged(IDocument oldInput,
 				IDocument newInput) {
 			if (oldInput == null)
@@ -292,6 +296,7 @@ public class OccurrencesFinder {
 		 * org.eclipse.jface.text.ITextInputListener#inputDocumentChanged(org
 		 * .eclipse .jface.text.IDocument, org.eclipse.jface.text.IDocument)
 		 */
+		@Override
 		public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
 			if (newInput == null)
 				return;
@@ -304,7 +309,7 @@ public class OccurrencesFinder {
 
 	/**
 	 * Internal activation listener.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private class ActivationListener implements IWindowListener {
@@ -312,9 +317,10 @@ public class OccurrencesFinder {
 		/*
 		 * @see org.eclipse.ui.IWindowListener#windowActivated(org.eclipse.ui.
 		 * IWorkbenchWindow)
-		 * 
+		 *
 		 * @since 3.1
 		 */
+		@Override
 		public void windowActivated(IWorkbenchWindow window) {
 			if (window == getEditorSite().getWorkbenchWindow()
 					&& fMarkOccurrenceAnnotations && isActivePart()) {
@@ -332,9 +338,10 @@ public class OccurrencesFinder {
 		/*
 		 * @see org.eclipse.ui.IWindowListener#windowDeactivated(org.eclipse.ui.
 		 * IWorkbenchWindow)
-		 * 
+		 *
 		 * @since 3.1
 		 */
+		@Override
 		public void windowDeactivated(IWorkbenchWindow window) {
 			if (window == getEditorSite().getWorkbenchWindow()
 					&& fMarkOccurrenceAnnotations && isActivePart())
@@ -344,18 +351,20 @@ public class OccurrencesFinder {
 		/*
 		 * @see org.eclipse.ui.IWindowListener#windowClosed(org.eclipse.ui.
 		 * IWorkbenchWindow)
-		 * 
+		 *
 		 * @since 3.1
 		 */
+		@Override
 		public void windowClosed(IWorkbenchWindow window) {
 		}
 
 		/*
 		 * @see org.eclipse.ui.IWindowListener#windowOpened(org.eclipse.ui.
 		 * IWorkbenchWindow)
-		 * 
+		 *
 		 * @since 3.1
 		 */
+		@Override
 		public void windowOpened(IWorkbenchWindow window) {
 		}
 	}
@@ -390,7 +399,7 @@ public class OccurrencesFinder {
 
 	/**
 	 * Checks if "mark occurrences" is enabled in preferences
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean isMarkingOccurrences() {
@@ -423,6 +432,7 @@ public class OccurrencesFinder {
 		fMarkOccurrenceAnnotations = true;
 
 		fPostSelectionListenerWithAST = new ISelectionListenerWithAST() {
+			@Override
 			public void selectionChanged(IEditorPart part,
 					ITextSelection selection, ISourceModule module,
 					IModuleDeclaration astRoot) {
@@ -493,7 +503,7 @@ public class OccurrencesFinder {
 
 	/**
 	 * Updates the occurrences annotations based on the current selection.
-	 * 
+	 *
 	 * @param selection
 	 *            the text selection
 	 * @param astRoot
@@ -591,7 +601,7 @@ public class OccurrencesFinder {
 
 	/**
 	 * Returns the lock object for the given annotation model.
-	 * 
+	 *
 	 * @param annotationModel
 	 *            the annotation model
 	 * @return the annotation model's lock object
@@ -648,7 +658,7 @@ public class OccurrencesFinder {
 	/**
 	 * Checks if this object is correctly configured, i.e. has necessary finders
 	 * installed, etc.
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean isValid() {

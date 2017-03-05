@@ -14,7 +14,6 @@ import org.eclipse.dltk.core.environment.IFileHandle;
 import org.eclipse.dltk.internal.ui.wizards.dialogfields.SelectionButtonDialogField;
 import org.eclipse.dltk.internal.ui.wizards.dialogfields.StringDialogField;
 import org.eclipse.dltk.ui.environment.EnvironmentPathBlock;
-import org.eclipse.dltk.ui.environment.IEnvironmentPathBlockListener;
 import org.eclipse.dltk.validators.internal.externalchecker.core.ExternalChecker;
 import org.eclipse.dltk.validators.internal.externalchecker.core.ExternalCheckerPlugin;
 import org.eclipse.dltk.validators.internal.externalchecker.core.Rule;
@@ -40,8 +39,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 
-public class ExternalCheckerConfigurationPage extends
-		ValidatorConfigurationPage {
+public class ExternalCheckerConfigurationPage extends ValidatorConfigurationPage {
 
 	private StringDialogField fArguments;
 	private EnvironmentPathBlock fPath;
@@ -68,6 +66,7 @@ public class ExternalCheckerConfigurationPage extends
 	public ExternalCheckerConfigurationPage() {
 	}
 
+	@Override
 	public IStatus getStatus() {
 		return new Status(messageType, ExternalCheckerPlugin.PLUGIN_ID, message);
 	}
@@ -91,9 +90,9 @@ public class ExternalCheckerConfigurationPage extends
 	}
 
 	protected void validateTclCheckerPath() {
-		Map envs = fPath.getPaths();
-		for (Iterator it = envs.keySet().iterator(); it.hasNext();) {
-			IEnvironment env = (IEnvironment) it.next();
+		Map<IEnvironment, String> envs = fPath.getPaths();
+		for (Iterator<IEnvironment> it = envs.keySet().iterator(); it.hasNext();) {
+			IEnvironment env = it.next();
 			String txtPath = envs.get(env).toString();
 			txtPath = txtPath.trim();
 
@@ -110,16 +109,13 @@ public class ExternalCheckerConfigurationPage extends
 			IFileHandle file = env.getFile(path);
 
 			if (file == null) {
-				setMessage(env, Messages.ValidatorMessages_path_isinvalid,
-						IStatus.ERROR);
+				setMessage(env, Messages.ValidatorMessages_path_isinvalid, IStatus.ERROR);
 				continue;
 			} else if (!file.isFile()) {
-				setMessage(env, Messages.ValidatorMessages_path_notexists,
-						IStatus.ERROR);
+				setMessage(env, Messages.ValidatorMessages_path_notexists, IStatus.ERROR);
 				continue;
 			} else if (!file.exists()) {
-				setMessage(env, Messages.ValidatorMessages_path_notexists,
-						IStatus.ERROR);
+				setMessage(env, Messages.ValidatorMessages_path_notexists, IStatus.ERROR);
 				continue;
 			}
 		}
@@ -131,27 +127,23 @@ public class ExternalCheckerConfigurationPage extends
 		updateStatus();
 	}
 
+	@Override
 	public void applyChanges() {
 		ExternalChecker externalChecker = getExtrenalChecker();
 		externalChecker.setArguments(this.fArguments.getText());
 		externalChecker.setCommand(this.fPath.getPaths());
 		externalChecker.setRules(rulesList.getRules());
 		externalChecker.setExtensions(this.fExtensions.getText());
-		externalChecker
-				.setPassInterpreterEnvironmentVars(this.fPassInterpreterEnvironmentVars
-						.isSelected());
+		externalChecker.setPassInterpreterEnvironmentVars(this.fPassInterpreterEnvironmentVars.isSelected());
 	}
 
 	private void createPathBrowse(final Composite parent, int columns) {
 		this.fPath = new EnvironmentPathBlock();
 		this.fPath.createControl(parent, columns);
-		fPath.addListener(new IEnvironmentPathBlockListener() {
-			public void valueChanged(Map paths) {
-				validate();
-			}
-		});
+		fPath.addListener(paths -> validate());
 	}
 
+	@Override
 	public void createControl(final Composite ancestor, int columns) {
 		createFields();
 
@@ -161,8 +153,7 @@ public class ExternalCheckerConfigurationPage extends
 		this.fPassInterpreterEnvironmentVars.doFillIntoGrid(ancestor, columns);
 
 		Label label = new Label(ancestor, SWT.WRAP);
-		label
-				.setText(Messages.ExternalCheckerConfigurationPage_commaSeparatedListOfExtensions);
+		label.setText(Messages.ExternalCheckerConfigurationPage_commaSeparatedListOfExtensions);
 		GridData data = new GridData(SWT.FILL, SWT.FILL, false, false);
 		data.horizontalSpan = columns;
 		data.minimumWidth = 100;
@@ -181,8 +172,7 @@ public class ExternalCheckerConfigurationPage extends
 		group.setLayout(layout);
 
 		label = new Label(ancestor, SWT.WRAP);
-		label
-				.setText(Messages.ExternalCheckerConfigurationPage_patternIsARegularExpression);
+		label.setText(Messages.ExternalCheckerConfigurationPage_patternIsARegularExpression);
 		data = new GridData(SWT.FILL, SWT.FILL, false, false);
 		data.horizontalSpan = columns;
 		data.minimumWidth = 100;
@@ -191,8 +181,8 @@ public class ExternalCheckerConfigurationPage extends
 		// label.
 		// label.setSize(label.computeSize(100, SWT.DEFAULT));
 
-		fTable = new Table(group, SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL
-				| SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.HIDE_SELECTION);
+		fTable = new Table(group,
+				SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.HIDE_SELECTION);
 		data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		data.widthHint = 300;
 		data.heightHint = 100;
@@ -219,8 +209,7 @@ public class ExternalCheckerConfigurationPage extends
 		((Text) textEditor.getControl()).setTextLimit(60);
 		editors[0] = textEditor;
 
-		ComboBoxCellEditor comboEditor = new ComboBoxCellEditor(fTable,
-				rulesList.getTypes(), SWT.READ_ONLY);
+		ComboBoxCellEditor comboEditor = new ComboBoxCellEditor(fTable, rulesList.getTypes(), SWT.READ_ONLY);
 		editors[1] = comboEditor;
 
 		tableViewer.setCellEditors(editors);
@@ -243,6 +232,7 @@ public class ExternalCheckerConfigurationPage extends
 		addRule.setLayoutData(data);
 		addRule.setText(Messages.ExternalCheckerConfigurationPage_addRule);
 		addRule.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent ev) {
 				rulesList.addRule();
 			}
@@ -252,9 +242,9 @@ public class ExternalCheckerConfigurationPage extends
 		delRule.setLayoutData(data);
 		delRule.setText(Messages.ExternalCheckerConfigurationPage_deleteRule);
 		delRule.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent ev) {
-				Rule rule = (Rule) ((IStructuredSelection) tableViewer
-						.getSelection()).getFirstElement();
+				Rule rule = (Rule) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
 				if (rule != null)
 					rulesList.removeRule(rule);
 			}
@@ -274,8 +264,7 @@ public class ExternalCheckerConfigurationPage extends
 
 		this.fPath.setPaths(externalChecker.getCommand());
 		this.fExtensions.setText(externalChecker.getExtensions());
-		this.fPassInterpreterEnvironmentVars.setSelection(externalChecker
-				.isPassInterpreterEnvironmentVars());
+		this.fPassInterpreterEnvironmentVars.setSelection(externalChecker.isPassInterpreterEnvironmentVars());
 
 		this.rulesList.getRules().clear();
 		for (int i = 0; i < externalChecker.getNRules(); i++) {
@@ -286,28 +275,27 @@ public class ExternalCheckerConfigurationPage extends
 
 	private void createFields() {
 		this.fArguments = new StringDialogField();
-		this.fArguments
-				.setLabelText(Messages.ExternalCheckerConfigurationPage_CheckerArguments);
+		this.fArguments.setLabelText(Messages.ExternalCheckerConfigurationPage_CheckerArguments);
 		this.fExtensions = new StringDialogField();
-		this.fExtensions
-				.setLabelText(Messages.ExternalCheckerConfigurationPage_filenameExtensions);
-		this.fPassInterpreterEnvironmentVars = new SelectionButtonDialogField(
-				SWT.CHECK);
+		this.fExtensions.setLabelText(Messages.ExternalCheckerConfigurationPage_filenameExtensions);
+		this.fPassInterpreterEnvironmentVars = new SelectionButtonDialogField(SWT.CHECK);
 		this.fPassInterpreterEnvironmentVars
 				.setLabelText(Messages.ExternalCheckerConfigurationPage_passInterpreterEnvironmentVariables);
 	}
 
-	public class RulesContentProvider implements IStructuredContentProvider,
-			IRulesListViewer {
+	public class RulesContentProvider implements IStructuredContentProvider, IRulesListViewer {
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return rulesList.getRules().toArray();
 		}
 
+		@Override
 		public void dispose() {
 			rulesList.removeChangeListener(this);
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			if (newInput != null)
 				((RulesList) newInput).addChangeListener(this);
@@ -315,22 +303,25 @@ public class ExternalCheckerConfigurationPage extends
 				((RulesList) oldInput).removeChangeListener(this);
 		}
 
+		@Override
 		public void addRule(Rule r) {
 			tableViewer.add(r);
 			tableViewer.editElement(r, 0);
 		}
 
+		@Override
 		public void removeRule(Rule r) {
 			tableViewer.remove(r);
 		}
 
+		@Override
 		public void updateRule(Rule r) {
 			tableViewer.update(r, null);
 		}
 
 	}
 
-	public List getColumnNames() {
+	public List<String> getColumnNames() {
 		return Arrays.asList(columnNames);
 	}
 

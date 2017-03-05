@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.dnd;
 
@@ -32,7 +31,7 @@ public class DelegatingDropAdapter implements DropTargetListener {
 
 	/**
 	 * Creates a new delegating drop adapter.
-	 * 
+	 *
 	 * @param listeners an array of potential listeners
 	 */
 	public DelegatingDropAdapter(TransferDropTargetListener[] listeners) {
@@ -43,10 +42,11 @@ public class DelegatingDropAdapter implements DropTargetListener {
 	 * The cursor has entered the drop target boundaries. The current listener
 	 * is updated, and <code>#dragEnter()</code> is forwarded to the current
 	 * listener.
-	 * 
+	 *
 	 * @param event the drop target event
 	 * @see DropTargetListener#dragEnter(DropTargetEvent)
 	 */
+	@Override
 	public void dragEnter(DropTargetEvent event) {
 		fOriginalDropType= event.detail;
 		updateCurrentListener(event);
@@ -55,10 +55,11 @@ public class DelegatingDropAdapter implements DropTargetListener {
 	/**
 	 * The cursor has left the drop target boundaries. The event is forwarded to
 	 * the current listener.
-	 * 
+	 *
 	 * @param event the drop target event
 	 * @see DropTargetListener#dragLeave(DropTargetEvent)
 	 */
+	@Override
 	public void dragLeave(final DropTargetEvent event) {
 		setCurrentListener(null, event);
 	}
@@ -67,10 +68,11 @@ public class DelegatingDropAdapter implements DropTargetListener {
 	 * The operation being performed has changed (usually due to the user
 	 * changing a drag modifier key while dragging). Updates the current
 	 * listener and forwards this event to that listener.
-	 * 
+	 *
 	 * @param event the drop target event
 	 * @see DropTargetListener#dragOperationChanged(DropTargetEvent)
 	 */
+	@Override
 	public void dragOperationChanged(final DropTargetEvent event) {
 		fOriginalDropType= event.detail;
 		TransferDropTargetListener oldListener= getCurrentListener();
@@ -81,6 +83,7 @@ public class DelegatingDropAdapter implements DropTargetListener {
 		// followed by a dragOperationChanged with the exact same event.
 		if (newListener != null && newListener == oldListener) {
 			SafeRunner.run(new SafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					newListener.dragOperationChanged(event);
 				}
@@ -93,10 +96,11 @@ public class DelegatingDropAdapter implements DropTargetListener {
 	 * and forwards this event to that listener. If no listener can handle the
 	 * drag operation the <code>event.detail</code> field is set to
 	 * <code>DND.DROP_NONE</code> to indicate an invalid drop.
-	 * 
+	 *
 	 * @param event the drop target event
 	 * @see DropTargetListener#dragOver(DropTargetEvent)
 	 */
+	@Override
 	public void dragOver(final DropTargetEvent event) {
 		TransferDropTargetListener oldListener= getCurrentListener();
 		updateCurrentListener(event);
@@ -107,6 +111,7 @@ public class DelegatingDropAdapter implements DropTargetListener {
 		// followed by a dragOver with the exact same event.
 		if (newListener != null && newListener == oldListener) {
 			SafeRunner.run(new SafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					newListener.dragOver(event);
 				}
@@ -117,14 +122,16 @@ public class DelegatingDropAdapter implements DropTargetListener {
 	/**
 	 * Forwards this event to the current listener, if there is one. Sets the
 	 * current listener to <code>null</code> afterwards.
-	 * 
+	 *
 	 * @param event the drop target event
 	 * @see DropTargetListener#drop(DropTargetEvent)
 	 */
+	@Override
 	public void drop(final DropTargetEvent event) {
 		updateCurrentListener(event);
 		if (getCurrentListener() != null) {
 			SafeRunner.run(new SafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					getCurrentListener().drop(event);
 				}
@@ -135,13 +142,15 @@ public class DelegatingDropAdapter implements DropTargetListener {
 
 	/**
 	 * Forwards this event to the current listener if there is one.
-	 * 
+	 *
 	 * @param event the drop target event
 	 * @see DropTargetListener#dropAccept(DropTargetEvent)
 	 */
+	@Override
 	public void dropAccept(final DropTargetEvent event) {
 		if (getCurrentListener() != null) {
 			SafeRunner.run(new SafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					getCurrentListener().dropAccept(event);
 				}
@@ -151,7 +160,7 @@ public class DelegatingDropAdapter implements DropTargetListener {
 
 	/**
 	 * Returns the listener which currently handles drop events.
-	 * 
+	 *
 	 * @return the <code>TransferDropTargetListener</code> which currently
 	 *         handles drop events.
 	 */
@@ -163,7 +172,7 @@ public class DelegatingDropAdapter implements DropTargetListener {
 	 * Returns the transfer data type supported by the given listener. Returns
 	 * <code>null</code> if the listener does not support any of the specified
 	 * data types.
-	 * 
+	 *
 	 * @param dataTypes available data types
 	 * @param listener <code>TransferDropTargetListener</code> to use for
 	 *        testing supported data types.
@@ -182,7 +191,7 @@ public class DelegatingDropAdapter implements DropTargetListener {
 	/**
 	 * Returns the combined set of <code>Transfer</code> types of all
 	 * <code>TransferDropTargetListeners</code>.
-	 * 
+	 *
 	 * @return the combined set of <code>Transfer</code> types
 	 */
 	public Transfer[] getTransfers() {
@@ -196,7 +205,7 @@ public class DelegatingDropAdapter implements DropTargetListener {
 	/**
 	 * Sets the current listener to <code>listener</code>. Sends the given
 	 * <code>DropTargetEvent</code> if the current listener changes.
-	 * 
+	 *
 	 * @return <code>true</code> if the new listener is different than the
 	 *         previous <code>false</code> otherwise
 	 */
@@ -205,6 +214,7 @@ public class DelegatingDropAdapter implements DropTargetListener {
 			return false;
 		if (fCurrentListener != null) {
 			SafeRunner.run(new SafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					fCurrentListener.dragLeave(event);
 				}
@@ -213,6 +223,7 @@ public class DelegatingDropAdapter implements DropTargetListener {
 		fCurrentListener= listener;
 		if (fCurrentListener != null) {
 			SafeRunner.run(new SafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					fCurrentListener.dragEnter(event);
 				}
@@ -229,14 +240,14 @@ public class DelegatingDropAdapter implements DropTargetListener {
 	 * be selected. If no listener can handle the drag operation the
 	 * <code>event.detail</code> field is set to <code>DND.DROP_NONE</code>
 	 * to indicate an invalid drop.
-	 * 
+	 *
 	 * @param event the drop target event
 	 */
 	private void updateCurrentListener(DropTargetEvent event) {
 		int originalDetail= event.detail;
 		// Revert the detail to the "original" drop type that the User
-		// indicated. This is necessary because the previous listener 
-		// may have changed the detail to something other than what the 
+		// indicated. This is necessary because the previous listener
+		// may have changed the detail to something other than what the
 		// user indicated.
 		event.detail= fOriginalDropType;
 

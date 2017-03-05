@@ -1,22 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.tests.navigator.scriptexplorer;
 
 import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.IModelElementDelta;
 import org.eclipse.dltk.core.IScriptFolder;
 import org.eclipse.dltk.core.IScriptModel;
+import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.ISourceModule;
-import org.eclipse.dltk.internal.core.SourceModule;
 
 
 /**
@@ -35,10 +33,12 @@ public class TestDelta implements IModelElementDelta {
 		fElement= element;
 	}
 	
+	@Override
 	public IModelElementDelta[] getAddedChildren() {
 		return null;
 	}
 	
+	@Override
 	public IModelElementDelta[] getAffectedChildren() {
 		if (fAffectedChildren == null)
 			return new IModelElementDelta[0];
@@ -50,22 +50,27 @@ public class TestDelta implements IModelElementDelta {
 		return null;
 	}
 	
+	@Override
 	public IModelElement getElement() {
 		return fElement;
 	}
 	
+	@Override
 	public int getFlags() {
 		return 0;
 	}
 	
+	@Override
 	public int getKind() {
 		return fKind;
 	}
 	
+	@Override
 	public IModelElement getMovedFromElement() {
 		return null;
 	}
 	
+	@Override
 	public IModelElement getMovedToElement() {
 		return null;
 	}
@@ -74,6 +79,7 @@ public class TestDelta implements IModelElementDelta {
 		return null;
 	}
 	
+	@Override
 	public IResourceDelta[] getResourceDeltas() {
 		return null;
 	}
@@ -114,11 +120,6 @@ public class TestDelta implements IModelElementDelta {
 	public static IModelElementDelta createDelta(IScriptFolder frag, int action) {
 		TestDelta delta= new TestDelta(action, frag);
 		return createParentDeltas(frag, delta);
-	}
-		
-	public SourceModule getSourceModuleAST() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

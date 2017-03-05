@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.debug.ui.interpreters;
 
@@ -25,8 +24,6 @@ import org.eclipse.dltk.launching.ScriptRuntime;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -54,9 +51,7 @@ public abstract class ScriptInterpreterPreferencePage extends PreferencePage
 		setDescription(InterpretersMessages.InterpretersPreferencePage_2);
 	}
 
-	/*
-	 * @see IWorkbenchPreferencePage#init(IWorkbench)
-	 */
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 
@@ -89,9 +84,11 @@ public abstract class ScriptInterpreterPreferencePage extends PreferencePage
 
 			if (!verified) {
 				if (fInterpretersBlock.getInterpreters().length > 0)
-					setErrorMessage(InterpretersMessages.InterpreterPreferencePage_pleaseSetDefaultInterpreter);
+					setErrorMessage(
+							InterpretersMessages.InterpreterPreferencePage_pleaseSetDefaultInterpreter);
 				else
-					setErrorMessage(InterpretersMessages.InterpreterPreferencePage_addInterpreter);
+					setErrorMessage(
+							InterpretersMessages.InterpreterPreferencePage_addInterpreter);
 			}
 		}
 	}
@@ -121,22 +118,21 @@ public abstract class ScriptInterpreterPreferencePage extends PreferencePage
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(ancestor,
 				IScriptDebugHelpContextIds.INTERPRETER_PREFERENCE_PAGE);
 		initDefaultInterpreter();
-		fInterpretersBlock
-				.addSelectionChangedListener(new ISelectionChangedListener() {
-					public void selectionChanged(SelectionChangedEvent event) {
-						IInterpreterInstall[] install = getCurrentDefaultInterpreters();
+		fInterpretersBlock.addSelectionChangedListener(event -> {
+			IInterpreterInstall[] install = getCurrentDefaultInterpreters();
 
-						setErrorMessage(null);
-						if (fInterpretersBlock.getInterpreters().length > 0
-								&& install.length < fInterpretersBlock
-										.getEnvironmentsCount()) {
-							setErrorMessage(InterpretersMessages.InterpreterPreferencePage_pleaseSetDefaultInterpreter);
+			setErrorMessage(null);
+			if (fInterpretersBlock.getInterpreters().length > 0
+					&& install.length < fInterpretersBlock
+							.getEnvironmentsCount()) {
+				setErrorMessage(
+						InterpretersMessages.InterpreterPreferencePage_pleaseSetDefaultInterpreter);
 
-						} else if (fInterpretersBlock.getInterpreters().length == 0) {
-							setErrorMessage(InterpretersMessages.InterpreterPreferencePage_addInterpreter);
-						}
-					}
-				});
+			} else if (fInterpretersBlock.getInterpreters().length == 0) {
+				setErrorMessage(
+						InterpretersMessages.InterpreterPreferencePage_addInterpreter);
+			}
+		});
 		applyDialogFont(ancestor);
 		return ancestor;
 	}
@@ -144,17 +140,16 @@ public abstract class ScriptInterpreterPreferencePage extends PreferencePage
 	@Override
 	public boolean performOk() {
 		final boolean[] canceled = new boolean[] { false };
-		BusyIndicator.showWhile(null, new Runnable() {
-			public void run() {
-				IInterpreterInstall[] defaultInterpreter = getCurrentDefaultInterpreters();
-				IInterpreterInstall[] interpreters = fInterpretersBlock
-						.getInterpreters();
+		BusyIndicator.showWhile(null, () -> {
+			IInterpreterInstall[] defaultInterpreter = getCurrentDefaultInterpreters();
+			IInterpreterInstall[] interpreters = fInterpretersBlock
+					.getInterpreters();
 
-				InterpretersUpdater updater = new InterpretersUpdater();
-				if (!updater.updateInterpreterSettings(fInterpretersBlock
-						.getCurrentNature(), interpreters, defaultInterpreter)) {
-					canceled[0] = true;
-				}
+			InterpretersUpdater updater = new InterpretersUpdater();
+			if (!updater.updateInterpreterSettings(
+					fInterpretersBlock.getCurrentNature(), interpreters,
+					defaultInterpreter)) {
+				canceled[0] = true;
 			}
 		});
 
@@ -206,8 +201,8 @@ public abstract class ScriptInterpreterPreferencePage extends PreferencePage
 			if (exist) {
 				fInterpretersBlock.setCheckedInterpreter(interpreter);
 			} else {
-				fInterpretersBlock
-						.removeInterpreters(new IInterpreterInstall[] { interpreter });
+				fInterpretersBlock.removeInterpreters(
+						new IInterpreterInstall[] { interpreter });
 				IInterpreterInstall def = null;
 				def = ScriptRuntime.getDefaultInterpreterInstall(
 						fInterpretersBlock.getCurrentNature(),
@@ -217,17 +212,13 @@ public abstract class ScriptInterpreterPreferencePage extends PreferencePage
 				} else {
 					fInterpretersBlock.setCheckedInterpreter(def);
 				}
-				ErrorDialog
-						.openError(
-								getControl().getShell(),
-								InterpretersMessages.InterpretersPreferencePage_1,
-								InterpretersMessages.InterpretersPreferencePage_10,
-								new Status(
-										IStatus.ERROR,
-										DLTKDebugUIPlugin.PLUGIN_ID,
-										IDLTKDebugUIConstants.INTERNAL_ERROR,
-										InterpretersMessages.InterpretersPreferencePage_11,
-										null));
+				ErrorDialog.openError(getControl().getShell(),
+						InterpretersMessages.InterpretersPreferencePage_1,
+						InterpretersMessages.InterpretersPreferencePage_10,
+						new Status(IStatus.ERROR, DLTKDebugUIPlugin.PLUGIN_ID,
+								IDLTKDebugUIConstants.INTERNAL_ERROR,
+								InterpretersMessages.InterpretersPreferencePage_11,
+								null));
 				return;
 			}
 		} else {

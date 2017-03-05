@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
-
 package org.eclipse.dltk.internal.ui.refactoring.reorg;
 
 import org.eclipse.core.runtime.Assert;
@@ -35,7 +33,7 @@ public class CreateTargetQueries implements ICreateTargetQueries {
 		fWizard= wizard;
 		fShell= null;
 	}
-	
+
 	public CreateTargetQueries(Shell shell) {
 		fShell = shell;
 		fWizard= null;
@@ -50,38 +48,43 @@ public class CreateTargetQueries implements ICreateTargetQueries {
 		else
 			return DLTKUIPlugin.getActiveWorkbenchShell();
 	}
-	
+
+	@Override
 	public ICreateTargetQuery createNewPackageQuery() {
 		return new ICreateTargetQuery() {
+			@Override
 			public Object getCreatedTarget(Object selection) {
 				IWorkbenchWizard packageCreationWizard= new NewPackageCreationWizard() {
+					@Override
 					protected NewPackageWizardPage createNewPackageWizardPage() {
 						return new NewPackageWizardPage() {
+							@Override
 							protected String getRequiredNature() {
 								if (DLTKCore.DEBUG) {
 									System.err.println("TODO: Add correct create new package for move case."); //$NON-NLS-1$
 								}
 								return null;
-							}							
+							}
 						};
-					}					
+					}
 				};
-				
+
 				IWizardPage[] pages= openNewElementWizard(packageCreationWizard, getShell(), selection);
-				
+
 				NewPackageWizardPage page= (NewPackageWizardPage) pages[0];
 				return page.getNewScriptFolder();
 			}
-			
+
+			@Override
 			public String getNewButtonLabel() {
 				return ReorgMessages.ReorgMoveWizard_newPackage;
 			}
 		};
 	}
-	
+
 	private IWizardPage[] openNewElementWizard(IWorkbenchWizard wizard, Shell shell, Object selection) {
 		wizard.init(DLTKUIPlugin.getDefault().getWorkbench(), new StructuredSelection(selection));
-		
+
 		WizardDialog dialog= new WizardDialog(shell, wizard);
 		PixelConverter converter= new PixelConverter(shell);
 

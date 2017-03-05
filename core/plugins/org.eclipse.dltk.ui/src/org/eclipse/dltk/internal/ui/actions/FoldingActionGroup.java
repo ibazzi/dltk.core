@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,8 +29,8 @@ import org.eclipse.ui.texteditor.TextOperationAction;
 
 /**
  * Groups the folding actions.
- * 
- * 
+ *
+ *
  */
 public class FoldingActionGroup extends ActionGroup {
 	private static abstract class PreferenceAction extends ResourceAction
@@ -46,6 +46,7 @@ public class FoldingActionGroup extends ActionGroup {
 			super(bundle, prefix, IAction.AS_PUSH_BUTTON);
 		}
 
+		@Override
 		public void update() {
 			setEnabled(FoldingActionGroup.this.isEnabled()
 					&& fViewer.isProjectionMode());
@@ -71,7 +72,7 @@ public class FoldingActionGroup extends ActionGroup {
 	 * Creates a new projection action group for <code>editor</code>. If the
 	 * supplied viewer is not an instance of <code>ProjectionViewer</code>,
 	 * the action group is disabled.
-	 * 
+	 *
 	 * @param editor
 	 *            the text editor to operate on
 	 * @param viewer
@@ -97,10 +98,12 @@ public class FoldingActionGroup extends ActionGroup {
 
 		fProjectionListener = new IProjectionListener() {
 
+			@Override
 			public void projectionEnabled() {
 				update();
 			}
 
+			@Override
 			public void projectionDisabled() {
 				update();
 			}
@@ -110,6 +113,7 @@ public class FoldingActionGroup extends ActionGroup {
 
 		fToggle = new PreferenceAction(FoldingMessages.getResourceBundle(),
 				"Projection.Toggle.", IAction.AS_CHECK_BOX) { //$NON-NLS-1$
+			@Override
 			public void run() {
 				boolean current = fStore
 						.getBoolean(PreferenceConstants.EDITOR_FOLDING_ENABLED);
@@ -117,6 +121,7 @@ public class FoldingActionGroup extends ActionGroup {
 						!current);
 			}
 
+			@Override
 			public void update() {
 				ITextOperationTarget target = editor
 						.getAdapter(ITextOperationTarget.class);
@@ -156,6 +161,7 @@ public class FoldingActionGroup extends ActionGroup {
 
 		fRestoreDefaults = new FoldingAction(FoldingMessages
 				.getResourceBundle(), "Projection.Restore.") { //$NON-NLS-1$
+			@Override
 			public void run() {
 				if (editor instanceof ScriptEditor) {
 					ScriptEditor javaEditor = (ScriptEditor) editor;
@@ -169,6 +175,7 @@ public class FoldingActionGroup extends ActionGroup {
 
 		fCollapseMembers = new FoldingAction(FoldingMessages
 				.getResourceBundle(), "Projection.CollapseMembers.") { //$NON-NLS-1$
+			@Override
 			public void run() {
 				if (editor instanceof ScriptEditor) {
 					ScriptEditor javaEditor = (ScriptEditor) editor;
@@ -182,6 +189,7 @@ public class FoldingActionGroup extends ActionGroup {
 
 		fCollapseComments = new FoldingAction(FoldingMessages
 				.getResourceBundle(), "Projection.CollapseComments.") { //$NON-NLS-1$
+			@Override
 			public void run() {
 				if (editor instanceof ScriptEditor) {
 					ScriptEditor javaEditor = (ScriptEditor) editor;
@@ -196,17 +204,18 @@ public class FoldingActionGroup extends ActionGroup {
 
 	/**
 	 * Returns <code>true</code> if the group is enabled.
-	 * 
+	 *
 	 * <pre>
 	 *   Invariant: isEnabled() &lt;=&gt; fViewer and all actions are != null.
 	 * </pre>
-	 * 
+	 *
 	 * @return <code>true</code> if the group is enabled
 	 */
 	protected boolean isEnabled() {
 		return fViewer != null;
 	}
 
+	@Override
 	public void dispose() {
 		if (isEnabled()) {
 			fViewer.removeProjectionListener(fProjectionListener);
@@ -234,7 +243,7 @@ public class FoldingActionGroup extends ActionGroup {
 
 	/**
 	 * Fills the menu with all folding actions.
-	 * 
+	 *
 	 * @param manager
 	 *            the menu manager for the folding submenu
 	 */
@@ -252,6 +261,7 @@ public class FoldingActionGroup extends ActionGroup {
 		}
 	}
 
+	@Override
 	public void updateActionBars() {
 		update();
 	}

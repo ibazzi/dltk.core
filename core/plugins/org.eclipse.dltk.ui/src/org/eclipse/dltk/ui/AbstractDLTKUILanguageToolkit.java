@@ -27,15 +27,18 @@ import org.eclipse.ui.texteditor.ITextEditor;
 public abstract class AbstractDLTKUILanguageToolkit implements
 		IDLTKUILanguageToolkit {
 
+	@Override
 	public ScriptUILabelProvider createScriptUILabelProvider() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public ScriptSourceViewerConfiguration createSourceViewerConfiguration() {
 		return null;
 	}
 
+	@Override
 	public String getDebugPreferencePage() {
 		return null;
 	}
@@ -47,9 +50,10 @@ public abstract class AbstractDLTKUILanguageToolkit implements
 
 	/**
 	 * Returns a combined preference store, this store is read-only.
-	 * 
+	 *
 	 * @return the combined preference store
 	 */
+	@Override
 	public IPreferenceStore getCombinedPreferenceStore() {
 		if (fCombinedPreferenceStore == null) {
 			final List<IPreferenceStore> scopes = new ArrayList<IPreferenceStore>();
@@ -69,10 +73,12 @@ public abstract class AbstractDLTKUILanguageToolkit implements
 		return fCombinedPreferenceStore;
 	}
 
+	@Override
 	public boolean getProvideMembers(ISourceModule element) {
 		return true;
 	}
 
+	@Override
 	public ScriptElementLabels getScriptElementLabels() {
 		return new ScriptElementLabels();
 	}
@@ -85,6 +91,7 @@ public abstract class AbstractDLTKUILanguageToolkit implements
 		return null;
 	}
 
+	@Override
 	public String getEditorId(Object inputElement) {
 		IDLTKLanguageToolkit toolkit = this.getCoreToolkit();
 		String contentTypeID = toolkit.getLanguageContentType();
@@ -116,18 +123,22 @@ public abstract class AbstractDLTKUILanguageToolkit implements
 		return null;
 	}
 
+	@Override
 	public String getInterpreterContainerId() {
 		return null;
 	}
 
+	@Override
 	public String getInterpreterPreferencePage() {
 		return null;
 	}
 
+	@Override
 	public String getPartitioningId() {
 		return "__default_dltk_partitioning"; //$NON-NLS-1$
 	}
 
+	@Override
 	public ScriptTextTools getTextTools() {
 		return new ScriptTextTools(getPartitioningId(),
 				CharOperation.NO_STRINGS, true) {
@@ -140,10 +151,12 @@ public abstract class AbstractDLTKUILanguageToolkit implements
 		};
 	}
 
+	@Override
 	public String[] getEditorPreferencePages() {
 		return null;
 	}
 
+	@Override
 	public String getEditorTemplatesPreferencePageId() {
 		final String[] pages = getEditorPreferencePages();
 		if (pages != null && pages.length != 0) {
@@ -161,6 +174,7 @@ public abstract class AbstractDLTKUILanguageToolkit implements
 		return null;
 	}
 
+	@Override
 	public ITemplateAccess getEditorTemplates() {
 		return null;
 	}
@@ -168,6 +182,7 @@ public abstract class AbstractDLTKUILanguageToolkit implements
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public boolean getBoolean(String name) {
 		return getPreferenceStore().getBoolean(name);
 	}
@@ -175,6 +190,7 @@ public abstract class AbstractDLTKUILanguageToolkit implements
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public int getInt(String name) {
 		return getPreferenceStore().getInt(name);
 	}
@@ -182,6 +198,7 @@ public abstract class AbstractDLTKUILanguageToolkit implements
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public String getString(String name) {
 		return getPreferenceStore().getString(name);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,9 +43,7 @@ public class ScriptEditorErrorTickUpdater implements IProblemChangedListener {
 		DLTKUIPlugin.getDefault().getProblemMarkerManager().addListener(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see IProblemChangedListener#problemsChanged(IResource[], boolean)
-	 */
+	@Override
 	public void problemsChanged(IResource[] changedResources, boolean isMarkerChange) {
 		if (!isMarkerChange)
 			return;
@@ -82,11 +80,8 @@ public class ScriptEditorErrorTickUpdater implements IProblemChangedListener {
 	private void postImageChange(final Image newImage) {
 		Shell shell= fScriptEditor.getEditorSite().getShell();
 		if (shell != null && !shell.isDisposed()) {
-			shell.getDisplay().syncExec(new Runnable() {
-				public void run() {
-					fScriptEditor.updatedTitleImage(newImage);
-				}
-			});
+			shell.getDisplay()
+					.syncExec(() -> fScriptEditor.updatedTitleImage(newImage));
 		}
 	}
 

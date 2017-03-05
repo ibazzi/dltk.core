@@ -19,8 +19,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 
-public abstract class RemoteLaunchConfigurationTab extends
-		ScriptLaunchConfigurationTab {
+public abstract class RemoteLaunchConfigurationTab
+		extends ScriptLaunchConfigurationTab {
 
 	private static int DEFAULT_PORT = 10000;
 	private static String DEFAULT_IDEKEY = "idekey"; //$NON-NLS-1$
@@ -35,30 +35,21 @@ public abstract class RemoteLaunchConfigurationTab extends
 		super(mode);
 	}
 
-	/*
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
-	 */
+	@Override
 	public String getName() {
 		return DLTKLaunchConfigurationsMessages.remoteTab_title;
 	}
 
-	/*
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return DebugUITools.getImage(IDebugUIConstants.IMG_LCL_DISCONNECT);
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.dltk.debug.ui.launchConfigurations.ScriptLaunchConfigurationTab
-	 * #doInitializeForm(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
+	@Override
 	protected void doInitializeForm(ILaunchConfiguration config) {
 		port.setText(LaunchConfigurationUtils.getString(config,
-				ScriptLaunchConfigurationConstants.ATTR_DLTK_DBGP_PORT, Integer
-						.toString(getDefaultPort())));
+				ScriptLaunchConfigurationConstants.ATTR_DLTK_DBGP_PORT,
+				Integer.toString(getDefaultPort())));
 
 		ideKey.setText(LaunchConfigurationUtils.getString(config,
 				ScriptLaunchConfigurationConstants.ATTR_DLTK_DBGP_SESSION_ID,
@@ -68,18 +59,13 @@ public abstract class RemoteLaunchConfigurationTab extends
 				.toString(LaunchConfigurationUtils.getConnectionTimeout(config,
 						getDefaultRemoteTimeout()) / 1000));
 
-		remoteWorkingDir
-				.setText(LaunchConfigurationUtils
-						.getString(
-								config,
-								ScriptLaunchConfigurationConstants.ATTR_DLTK_DBGP_REMOTE_WORKING_DIR,
-								getDefaultRemoteWorkingDir()));
-		stripSourceFolders
-				.setSelection(LaunchConfigurationUtils
-						.getBoolean(
-								config,
-								ScriptLaunchConfigurationConstants.ATTR_DLTK_DBGP_STRIP_SOURCE_FOLDERS,
-								getDefaultStripSourceFolders()));
+		remoteWorkingDir.setText(LaunchConfigurationUtils.getString(config,
+				ScriptLaunchConfigurationConstants.ATTR_DLTK_DBGP_REMOTE_WORKING_DIR,
+				getDefaultRemoteWorkingDir()));
+		stripSourceFolders.setSelection(LaunchConfigurationUtils.getBoolean(
+				config,
+				ScriptLaunchConfigurationConstants.ATTR_DLTK_DBGP_STRIP_SOURCE_FOLDERS,
+				getDefaultStripSourceFolders()));
 	}
 
 	/**
@@ -107,15 +93,11 @@ public abstract class RemoteLaunchConfigurationTab extends
 		return false;
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.dltk.debug.ui.launchConfigurations.ScriptLaunchConfigurationTab
-	 * #doPerformApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
+	@Override
 	protected void doPerformApply(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(
-				ScriptLaunchConfigurationConstants.ATTR_DLTK_DBGP_PORT, port
-						.getText().trim());
+				ScriptLaunchConfigurationConstants.ATTR_DLTK_DBGP_PORT,
+				port.getText().trim());
 		config.setAttribute(
 				ScriptLaunchConfigurationConstants.ATTR_DLTK_DBGP_SESSION_ID,
 				ideKey.getText().trim());
@@ -125,25 +107,23 @@ public abstract class RemoteLaunchConfigurationTab extends
 		} catch (NumberFormatException e) {
 			timeout = getDefaultRemoteTimeout() / 1000;
 		}
-		config
-				.setAttribute(
-						ScriptLaunchConfigurationConstants.ATTR_DLTK_DBGP_WAITING_TIMEOUT,
-						timeout * 1000);
+		config.setAttribute(
+				ScriptLaunchConfigurationConstants.ATTR_DLTK_DBGP_WAITING_TIMEOUT,
+				timeout * 1000);
 
-		config
-				.setAttribute(
-						ScriptLaunchConfigurationConstants.ATTR_DLTK_DBGP_REMOTE_WORKING_DIR,
-						remoteWorkingDir.getText().trim());
-		config
-				.setAttribute(
-						ScriptLaunchConfigurationConstants.ATTR_DLTK_DBGP_STRIP_SOURCE_FOLDERS,
-						stripSourceFolders.getSelection());
+		config.setAttribute(
+				ScriptLaunchConfigurationConstants.ATTR_DLTK_DBGP_REMOTE_WORKING_DIR,
+				remoteWorkingDir.getText().trim());
+		config.setAttribute(
+				ScriptLaunchConfigurationConstants.ATTR_DLTK_DBGP_STRIP_SOURCE_FOLDERS,
+				stripSourceFolders.getSelection());
 	}
 
 	private int getDefaultRemoteTimeout() {
 		return DLTKDebugPlugin.getConnectionTimeout() * 3;
 	}
 
+	@Override
 	protected boolean validate() {
 		return super.validate() && validatePort() && validateIdeKey()
 				&& validateRemoteWorkingDir();
@@ -164,7 +144,8 @@ public abstract class RemoteLaunchConfigurationTab extends
 	protected boolean validateIdeKey() {
 		String key = ideKey.getText().trim();
 		if (key.length() == 0) {
-			setErrorMessage(DLTKLaunchConfigurationsMessages.remoteError_ideKeyEmpty);
+			setErrorMessage(
+					DLTKLaunchConfigurationsMessages.remoteError_ideKeyEmpty);
 			return false;
 		}
 
@@ -176,17 +157,11 @@ public abstract class RemoteLaunchConfigurationTab extends
 		return true;
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.dltk.debug.ui.launchConfigurations.ScriptLaunchConfigurationTab
-	 * #doCreateControl(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	protected void doCreateControl(Composite composite) {
-		Group group = SWTFactory
-				.createGroup(
-						composite,
-						DLTKLaunchConfigurationsMessages.remoteTab_connectionProperties,
-						2, 1, GridData.FILL_HORIZONTAL);
+		Group group = SWTFactory.createGroup(composite,
+				DLTKLaunchConfigurationsMessages.remoteTab_connectionProperties,
+				2, 1, GridData.FILL_HORIZONTAL);
 
 		SWTFactory.createLabel(group,
 				DLTKLaunchConfigurationsMessages.remoteTab_connectionPort, 1);

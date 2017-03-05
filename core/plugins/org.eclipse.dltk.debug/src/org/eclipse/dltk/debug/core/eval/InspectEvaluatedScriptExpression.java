@@ -14,6 +14,7 @@ public class InspectEvaluatedScriptExpression extends EvaluatedScriptExpression
 		DebugPlugin.getDefault().addDebugEventListener(this);
 	}
 
+	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (int i = 0; i < events.length; i++) {
 			DebugEvent event = events[i];
@@ -42,6 +43,7 @@ public class InspectEvaluatedScriptExpression extends EvaluatedScriptExpression
 		}
 	}
 
+	@Override
 	public void dispose() {
 		super.dispose();
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 xored software, Inc.
+ * Copyright (c) 2009, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -42,9 +42,10 @@ public class TodoTaskOptionsBlock extends AbstractTodoTaskOptionsBlock {
 	/**
 	 * Returns the preference key that will be used to store the 'case
 	 * sensitive' preference
-	 * 
+	 *
 	 * @see #createCaseSensitiveKey(String)
 	 */
+	@Override
 	protected final PreferenceKey getCaseSensitiveKey() {
 		return caseSensitiveKey;
 	}
@@ -52,18 +53,20 @@ public class TodoTaskOptionsBlock extends AbstractTodoTaskOptionsBlock {
 	/**
 	 * Returns the preference key that will be used to store the 'enabled'
 	 * preference
-	 * 
+	 *
 	 * @see #createEnabledKey(String)
 	 */
+	@Override
 	protected final PreferenceKey getEnabledKey() {
 		return enabledKey;
 	}
 
 	/**
 	 * Returns the preference key that will be used to store the task tags
-	 * 
+	 *
 	 * @see #createTagKey(String)
 	 */
+	@Override
 	protected final PreferenceKey getTags() {
 		return tagsKey;
 	}

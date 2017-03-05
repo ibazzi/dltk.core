@@ -5,67 +5,25 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.debug.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.dltk.debug.dbgp.tests.DbgpBase64Tests;
-import org.eclipse.dltk.debug.dbgp.tests.DbgpBreakpointCommandsTests;
-import org.eclipse.dltk.debug.dbgp.tests.DbgpContextCommandsTests;
-import org.eclipse.dltk.debug.dbgp.tests.DbgpContinuationCommandsTests;
-import org.eclipse.dltk.debug.dbgp.tests.DbgpFeatureCommandsTests;
 import org.eclipse.dltk.debug.dbgp.tests.DbgpPropertyCommandsTests;
 import org.eclipse.dltk.debug.dbgp.tests.DbgpRequestTests;
 import org.eclipse.dltk.debug.dbgp.tests.DbgpStackCommandsTests;
 import org.eclipse.dltk.debug.dbgp.tests.DbgpStackLevelTests;
-import org.eclipse.dltk.debug.dbgp.tests.DbgpStatusCommandsTests;
 import org.eclipse.dltk.debug.dbgp.tests.DbgpStatusTests;
-import org.eclipse.dltk.debug.dbgp.tests.DbgpStreamCommandsTests;
-import org.eclipse.dltk.debug.dbgp.tests.service.DbgpServiceDispatcherTests;
 import org.eclipse.dltk.debug.dbgp.tests.service.DbgpServiceTests;
 import org.eclipse.dltk.debug.tests.breakpoints.BreakpointTests;
 import org.eclipse.dltk.internal.debug.tests.VariableNameComparatorTest;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ DbgpRequestTests.class, DbgpStackLevelTests.class, DbgpPropertyCommandsTests.class,
+		DbgpStackCommandsTests.class, DbgpBase64Tests.class, DbgpStatusTests.class,
+		DbgpServiceTests.class, BreakpointTests.class, VariableNameComparatorTest.class })
 public class AllTests {
 
-	public static Test suite() {
-		final TestSuite suite = new TestSuite("org.eclipse.dltk.debug");
-
-		// // $JUnit-BEGIN$
-
-		// Dbgp
-		final TestSuite dbgpSuite = new TestSuite("DBGP tests");
-		dbgpSuite.addTestSuite(DbgpRequestTests.class);
-		dbgpSuite.addTestSuite(DbgpStackLevelTests.class);
-		dbgpSuite.addTestSuite(DbgpPropertyCommandsTests.class);
-		dbgpSuite.addTestSuite(DbgpFeatureCommandsTests.class);
-		dbgpSuite.addTestSuite(DbgpBreakpointCommandsTests.class);
-		dbgpSuite.addTestSuite(DbgpContextCommandsTests.class);
-		dbgpSuite.addTestSuite(DbgpContinuationCommandsTests.class);
-		dbgpSuite.addTestSuite(DbgpStackCommandsTests.class);
-		dbgpSuite.addTestSuite(DbgpStreamCommandsTests.class);
-		dbgpSuite.addTestSuite(DbgpStatusCommandsTests.class);
-		dbgpSuite.addTestSuite(DbgpBase64Tests.class);
-		dbgpSuite.addTestSuite(DbgpStatusTests.class);
-		suite.addTest(dbgpSuite);
-
-		final TestSuite serviceSuite = new TestSuite("DBGP Service tests");
-		serviceSuite.addTestSuite(DbgpServiceTests.class);
-//		serviceSuite.addTestSuite(DbgpServiceDispatcherTests.class);
-		suite.addTest(serviceSuite);
-
-		// Breakpoints
-		suite.addTest(BreakpointTests.suite());
-
-		// Internal debug tests
-		final TestSuite internalSuite = new TestSuite("Internal debug tests");
-		internalSuite.addTestSuite(VariableNameComparatorTest.class);
-		suite.addTest(internalSuite);
-
-		// // $JUnit-END$
-		return suite;
-	}
 }

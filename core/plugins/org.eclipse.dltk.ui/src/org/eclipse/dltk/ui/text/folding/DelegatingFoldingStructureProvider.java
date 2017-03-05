@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,7 +49,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 /**
  * This implementation of {@link IFoldingStructureProvider} delegates the actual
  * work to the contributed {@link IFoldingBlockProvider}s
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class DelegatingFoldingStructureProvider implements
@@ -87,7 +87,7 @@ public class DelegatingFoldingStructureProvider implements
 		 * <code>false</code> when updating the folding structure while typing;
 		 * it may be <code>true</code> when computing or restoring the initial
 		 * folding structure.
-		 * 
+		 *
 		 * @return <code>true</code> if newly created folding regions may be
 		 *         collapsed, <code>false</code> if not
 		 */
@@ -97,7 +97,7 @@ public class DelegatingFoldingStructureProvider implements
 
 		/**
 		 * Returns the document which contains the code being folded.
-		 * 
+		 *
 		 * @return the document which contains the code being folded
 		 */
 		IDocument getDocument() {
@@ -113,7 +113,7 @@ public class DelegatingFoldingStructureProvider implements
 		 * annotation / position pair will be added to the
 		 * {@link ProjectionAnnotationModel} of the {@link ProjectionViewer} of
 		 * the editor.
-		 * 
+		 *
 		 * @param annotation
 		 *            the annotation to add
 		 * @param position
@@ -165,7 +165,7 @@ public class DelegatingFoldingStructureProvider implements
 
 		/**
 		 * Creates a new projection annotation.
-		 * 
+		 *
 		 * @param isCollapsed
 		 *            <code>true</code> to set the initial state to collapsed,
 		 *            <code>false</code> to set it to expanded
@@ -229,6 +229,7 @@ public class DelegatingFoldingStructureProvider implements
 		public CommentFilter() {
 		}
 
+		@Override
 		public boolean match(ScriptProjectionAnnotation annotation) {
 			if (annotation.getKind().isComment()
 					&& !annotation.isMarkedDeleted()) {
@@ -245,6 +246,7 @@ public class DelegatingFoldingStructureProvider implements
 		public MemberFilter() {
 		}
 
+		@Override
 		public boolean match(ScriptProjectionAnnotation annotation) {
 			if (!annotation.isMarkedDeleted()
 					&& annotation.getElement() instanceof IMember) {
@@ -265,10 +267,7 @@ public class DelegatingFoldingStructureProvider implements
 			super(offset, length);
 		}
 
-		/*
-		 * @seeorg.eclipse.jface.text.source.projection.IProjectionPosition#
-		 * computeFoldingRegions(org.eclipse.jface.text.IDocument)
-		 */
+		@Override
 		public IRegion[] computeProjectionRegions(IDocument document)
 				throws BadLocationException {
 			DocumentCharacterIterator sequence = new DocumentCharacterIterator(
@@ -310,7 +309,7 @@ public class DelegatingFoldingStructureProvider implements
 		/**
 		 * Finds the offset of the first identifier part within
 		 * <code>content</code>. Returns 0 if none is found.
-		 * 
+		 *
 		 * @param content
 		 *            the content to search
 		 * @return the first index of a unicode identifier part, or zero if none
@@ -325,10 +324,7 @@ public class DelegatingFoldingStructureProvider implements
 			return 0;
 		}
 
-		/*
-		 * @seeorg.eclipse.jface.text.source.projection.IProjectionPosition#
-		 * computeCaptionOffset(org.eclipse.jface.text.IDocument)
-		 */
+		@Override
 		public int computeCaptionOffset(IDocument document) {
 			DocumentCharacterIterator sequence = new DocumentCharacterIterator(
 					document, offset, offset + length);
@@ -347,10 +343,7 @@ public class DelegatingFoldingStructureProvider implements
 			super(offset, length);
 		}
 
-		/*
-		 * @seeorg.eclipse.jface.text.source.projection.IProjectionPosition#
-		 * computeFoldingRegions(org.eclipse.jface.text.IDocument)
-		 */
+		@Override
 		public IRegion[] computeProjectionRegions(IDocument document)
 				throws BadLocationException {
 			int nameStart = offset;
@@ -389,10 +382,7 @@ public class DelegatingFoldingStructureProvider implements
 			return null;
 		}
 
-		/*
-		 * @seeorg.eclipse.jface.text.source.projection.IProjectionPosition#
-		 * computeCaptionOffset(org.eclipse.jface.text.IDocument)
-		 */
+		@Override
 		public int computeCaptionOffset(IDocument document) {
 			return 0;
 		}
@@ -406,7 +396,7 @@ public class DelegatingFoldingStructureProvider implements
 
 		/**
 		 * Registers the listener with the viewer.
-		 * 
+		 *
 		 * @param viewer
 		 *            the viewer to register a listener with
 		 */
@@ -426,18 +416,12 @@ public class DelegatingFoldingStructureProvider implements
 			}
 		}
 
-		/*
-		 * @seeorg.eclipse.jface.text.source.projection.IProjectionListener#
-		 * projectionEnabled()
-		 */
+		@Override
 		public void projectionEnabled() {
 			handleProjectionEnabled();
 		}
 
-		/*
-		 * @seeorg.eclipse.jface.text.source.projection.IProjectionListener#
-		 * projectionDisabled()
-		 */
+		@Override
 		public void projectionDisabled() {
 			handleProjectionDisabled();
 		}
@@ -447,11 +431,7 @@ public class DelegatingFoldingStructureProvider implements
 		public ElementChangedListener() {
 		}
 
-		/*
-		 * @see
-		 * org.eclipse.dltk.core.IElementChangedListener#elementChanged(org.
-		 * eclipse.dltk.core.ElementChangedEvent)
-		 */
+		@Override
 		public void elementChanged(ElementChangedEvent e) {
 			IModelElementDelta delta = findElement(fInput, e.getDelta());
 			if (delta != null
@@ -509,12 +489,13 @@ public class DelegatingFoldingStructureProvider implements
 	 * <p>
 	 * Subclasses may extend.
 	 * </p>
-	 * 
+	 *
 	 * @param editor
 	 *            {@inheritDoc}
 	 * @param viewer
 	 *            {@inheritDoc}
 	 */
+	@Override
 	public void install(ITextEditor editor, ProjectionViewer viewer,
 			IPreferenceStore store) {
 		internalUninstall();
@@ -534,6 +515,7 @@ public class DelegatingFoldingStructureProvider implements
 	 * Subclasses may extend.
 	 * </p>
 	 */
+	@Override
 	public void uninstall() {
 		internalUninstall();
 	}
@@ -554,7 +536,7 @@ public class DelegatingFoldingStructureProvider implements
 	/**
 	 * Returns <code>true</code> if the provider is installed,
 	 * <code>false</code> otherwise.
-	 * 
+	 *
 	 * @return <code>true</code> if the provider is installed,
 	 *         <code>false</code> otherwise
 	 */
@@ -598,10 +580,12 @@ public class DelegatingFoldingStructureProvider implements
 		}
 	}
 
+	@Override
 	public final void initialize() {
 		initialize(false);
 	}
 
+	@Override
 	public final void initialize(boolean isReinit) {
 		update(createInitialContext(isReinit));
 	}
@@ -801,7 +785,7 @@ public class DelegatingFoldingStructureProvider implements
 
 	/**
 	 * Tests if the specified region contains only space or tab characters.
-	 * 
+	 *
 	 * @param document
 	 * @param region
 	 * @return
@@ -829,7 +813,7 @@ public class DelegatingFoldingStructureProvider implements
 	 * Creates a comment folding position from an
 	 * {@link #alignRegion(IRegion, DelegatingFoldingStructureProvider.FoldingStructureComputationContext)
 	 * aligned} region.
-	 * 
+	 *
 	 * @param aligned
 	 *            an aligned region
 	 * @return a folding position corresponding to <code>aligned</code>
@@ -842,10 +826,10 @@ public class DelegatingFoldingStructureProvider implements
 	 * Creates a folding position that remembers its member from an
 	 * {@link #alignRegion(IRegion, DelegatingFoldingStructureProvider.FoldingStructureComputationContext)
 	 * aligned} region.
-	 * 
+	 *
 	 * @param aligned
 	 *            an aligned region
-	 * 
+	 *
 	 * @return a folding position corresponding to <code>aligned</code>
 	 */
 	protected static final Position createMemberPosition(IRegion aligned) {
@@ -860,7 +844,7 @@ public class DelegatingFoldingStructureProvider implements
 	 * <code>null</code> is returned if <code>region</code> is <code>null</code>
 	 * itself or does not comprise at least one line delimiter, as a single line
 	 * cannot be folded.
-	 * 
+	 *
 	 * @param region
 	 *            the region to align, may be <code>null</code>
 	 * @param ctx
@@ -923,11 +907,7 @@ public class DelegatingFoldingStructureProvider implements
 				list.add(new Tuple(ann, position));
 			}
 		}
-		Comparator<Tuple> comparator = new Comparator<Tuple>() {
-			public int compare(Tuple o1, Tuple o2) {
-				return o1.position.getOffset() - o2.position.getOffset();
-			}
-		};
+		Comparator<Tuple> comparator = (o1, o2) -> o1.position.getOffset() - o2.position.getOffset();
 		for (Iterator<List<Tuple>> it = map.values().iterator(); it.hasNext();) {
 			List<Tuple> list = it.next();
 			Collections.sort(list, comparator);
@@ -938,6 +918,7 @@ public class DelegatingFoldingStructureProvider implements
 	/*
 	 * @see IScriptFoldingStructureProviderExtension#collapseMembers()
 	 */
+	@Override
 	public final void collapseMembers() {
 		modifyFiltered(fMemberFilter, false);
 	}
@@ -945,13 +926,14 @@ public class DelegatingFoldingStructureProvider implements
 	/*
 	 * @see IScriptFoldingStructureProviderExtension#collapseComments()
 	 */
+	@Override
 	public final void collapseComments() {
 		modifyFiltered(fCommentFilter, false);
 	}
 
 	/**
 	 * Collapses or expands all annotations matched by the passed filter.
-	 * 
+	 *
 	 * @param filter
 	 *            the filter to use to select which annotations to collapse
 	 * @param expand
@@ -987,25 +969,23 @@ public class DelegatingFoldingStructureProvider implements
 		return fInput;
 	}
 
+	@Override
 	public void expandElements(final IModelElement[] array) {
-		modifyFiltered(new Filter() {
-
-			public boolean match(ScriptProjectionAnnotation annotation) {
-				Object element = annotation.getElement();
-				if (!(element instanceof IModelElement))
-					return false;
-				for (int a = 0; a < array.length; a++) {
-					IModelElement e = array[a];
-					if (e.equals(element)) {
-						return true;
-					}
-				}
+		modifyFiltered(annotation -> {
+			Object element = annotation.getElement();
+			if (!(element instanceof IModelElement))
 				return false;
+			for (int a = 0; a < array.length; a++) {
+				IModelElement e = array[a];
+				if (e.equals(element)) {
+					return true;
+				}
 			}
-
+			return false;
 		}, true);
 	}
 
+	@Override
 	public void collapseElements(IModelElement[] modelElements) {
 		// empty implementation
 	}
@@ -1056,30 +1036,37 @@ public class DelegatingFoldingStructureProvider implements
 			return contents;
 		}
 
+		@Override
 		public String get(int offset, int length) {
 			return contents.substring(offset, offset + length);
 		}
 
+		@Override
 		public String substring(int beginIndex, int endIndex) {
 			return contents.substring(beginIndex, endIndex);
 		}
 
+		@Override
 		public String get(IRegion region) {
 			return get(region.getOffset(), region.getLength());
 		}
 
+		@Override
 		public char[] getContentsAsCharArray() {
 			return get().toCharArray();
 		}
 
+		@Override
 		public IModelElement getModelElement() {
 			return input;
 		}
 
+		@Override
 		public String getSourceContents() {
 			return get();
 		}
 
+		@Override
 		public String getFileName() {
 			return input.getElementName();
 		}
@@ -1098,6 +1085,7 @@ public class DelegatingFoldingStructureProvider implements
 			this.ctx = ctx;
 		}
 
+		@Override
 		public void acceptBlock(int start, int end, IFoldingBlockKind kind,
 				Object element, boolean collapse) {
 			try {

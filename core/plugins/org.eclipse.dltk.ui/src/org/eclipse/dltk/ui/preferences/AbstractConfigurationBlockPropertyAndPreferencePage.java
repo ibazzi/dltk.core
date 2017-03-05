@@ -28,11 +28,7 @@ public abstract class AbstractConfigurationBlockPropertyAndPreferencePage
 		setPreferenceStore();
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse
-	 * .swt.widgets.Composite)
-	 */
+	@Override
 	public final void createControl(Composite parent) {
 		// create the configuration block here so the page works as both types
 		IWorkbenchPreferenceContainer container = (IWorkbenchPreferenceContainer) getContainer();
@@ -47,9 +43,7 @@ public abstract class AbstractConfigurationBlockPropertyAndPreferencePage
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), helpId);
 	}
 
-	/*
-	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
-	 */
+	@Override
 	public final void dispose() {
 		if (block != null) {
 			block.dispose();
@@ -58,18 +52,14 @@ public abstract class AbstractConfigurationBlockPropertyAndPreferencePage
 		super.dispose();
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.PreferencePage#performApply()
-	 */
+	@Override
 	public final void performApply() {
 		if (block != null) {
 			block.performApply();
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
-	 */
+	@Override
 	public final boolean performOk() {
 		if ((block != null) && !block.performOk()) {
 			return false;
@@ -78,11 +68,7 @@ public abstract class AbstractConfigurationBlockPropertyAndPreferencePage
 		return super.performOk();
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.dltk.internal.ui.preferences.PropertyAndPreferencePage#setElement
-	 * (org.eclipse.core.runtime.IAdaptable)
-	 */
+	@Override
 	public final void setElement(IAdaptable element) {
 		super.setElement(element);
 		// no description for property page
@@ -127,18 +113,12 @@ public abstract class AbstractConfigurationBlockPropertyAndPreferencePage
 	 */
 	protected abstract void setPreferenceStore();
 
-	/*
-	 * @seeorg.eclipse.dltk.internal.ui.preferences.PropertyAndPreferencePage#
-	 * createPreferenceContent(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	protected final Control createPreferenceContent(Composite composite) {
 		return block.createContents(composite);
 	}
 
-	/*
-	 * @seeorg.eclipse.dltk.internal.ui.preferences.PropertyAndPreferencePage#
-	 * enableProjectSpecificSettings(boolean)
-	 */
+	@Override
 	protected final void enableProjectSpecificSettings(
 			boolean useProjectSpecificSettings) {
 		super.enableProjectSpecificSettings(useProjectSpecificSettings);
@@ -147,18 +127,12 @@ public abstract class AbstractConfigurationBlockPropertyAndPreferencePage
 		}
 	}
 
-	/*
-	 * @seeorg.eclipse.dltk.internal.ui.preferences.PropertyAndPreferencePage#
-	 * hasProjectSpecificOptions(org.eclipse.core.resources.IProject)
-	 */
+	@Override
 	protected final boolean hasProjectSpecificOptions(IProject project) {
 		return block.hasProjectSpecificOptions(project);
 	}
 
-	/*
-	 * @seeorg.eclipse.dltk.internal.ui.preferences.PropertyAndPreferencePage#
-	 * performDefaults()
-	 */
+	@Override
 	protected final void performDefaults() {
 		super.performDefaults();
 		if (block != null) {

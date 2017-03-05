@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,7 @@
  *******************************************************************************/
 package org.eclipse.dltk.ui;
 
-import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -45,7 +42,7 @@ import com.ibm.icu.text.Collator;
 /**
  * Sorter for Script elements. Ordered by element category, then by element
  * name. Package fragment roots are sorted as ordered on the buildpath.
- * 
+ *
  */
 public class ModelElementSorter extends ViewerSorter implements
 		IModelCompareCategories {
@@ -74,9 +71,7 @@ public class ModelElementSorter extends ViewerSorter implements
 		this.innerElements = innerElements;
 	}
 
-	/*
-	 * @see ViewerSorter#category
-	 */
+	@Override
 	public int category(Object element) {
 
 		IModelCompareProvider[] providers = getCompareProviders(element);
@@ -163,49 +158,12 @@ public class ModelElementSorter extends ViewerSorter implements
 		return providers;
 	}
 
-	private IModelCompareProvider[] getCompareProviders(Object element,
-			Object element2) {
-		String toolkit1 = null;
-		String toolkit2 = null;
-		if (element instanceof IModelElement) {
-			IDLTKLanguageToolkit tk = DLTKLanguageManager
-					.getLanguageToolkit((IModelElement) element);
-			if (tk != null) {
-				toolkit1 = tk.getNatureId();
-			}
-		}
-		if (element2 instanceof IModelElement) {
-			IDLTKLanguageToolkit tk = DLTKLanguageManager
-					.getLanguageToolkit((IModelElement) element2);
-			if (tk != null) {
-				toolkit2 = tk.getNatureId();
-			}
-		}
-		if (toolkit1 == null || toolkit2 == null) {
-			return UIModelProviderManager.getCompareProviders(null);
-		}
-		if (toolkit1 != toolkit2) {
-			IModelCompareProvider[] tk1 = UIModelProviderManager
-					.getCompareProviders(toolkit1);
-			IModelCompareProvider[] tk2 = UIModelProviderManager
-					.getCompareProviders(toolkit1);
-			Set<IModelCompareProvider> result = new HashSet<IModelCompareProvider>();
-			result.addAll(Arrays.asList(tk1));
-			result.addAll(Arrays.asList(tk2));
-			return result.toArray(new IModelCompareProvider[result.size()]);
-		} else {
-			return UIModelProviderManager.getCompareProviders(toolkit1);
-		}
-	}
-
 	private int getMemberCategory(int kind) {
 		int offset = fMemberOrderCache.getCategoryIndex(kind);
 		return offset + MEMBERSOFFSET;
 	}
 
-	/*
-	 * @see ViewerSorter#compare
-	 */
+	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
 		int cat1 = category(e1);
 		int cat2 = category(e2);

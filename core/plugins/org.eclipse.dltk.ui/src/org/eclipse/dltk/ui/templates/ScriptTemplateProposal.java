@@ -72,6 +72,7 @@ public class ScriptTemplateProposal extends TemplateProposal implements
 		return getTemplate().getPattern();
 	}
 
+	@Override
 	public boolean isAutoInsertable() {
 		if (isSelectionTemplate())
 			return false;
@@ -81,7 +82,7 @@ public class ScriptTemplateProposal extends TemplateProposal implements
 	/**
 	 * Returns <code>true</code> if the proposal has a selection, e.g. will wrap
 	 * some code.
-	 * 
+	 *
 	 * @return <code>true</code> if the proposals completion length is non zero
 	 */
 	private boolean isSelectionTemplate() {

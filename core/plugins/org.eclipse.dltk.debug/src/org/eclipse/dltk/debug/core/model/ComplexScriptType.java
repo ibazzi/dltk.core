@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2011 xored software, Inc.
+ * Copyright (c) 2007, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -20,14 +20,17 @@ public class ComplexScriptType extends AtomicScriptType {
 		super(name);
 	}
 
+	@Override
 	public boolean isAtomic() {
 		return false;
 	}
 
+	@Override
 	public boolean isComplex() {
 		return true;
 	}
 
+	@Override
 	public String formatDetails(IScriptValue value) {
 		StringBuffer sb = new StringBuffer();
 		sb.append(getName());
@@ -42,6 +45,7 @@ public class ComplexScriptType extends AtomicScriptType {
 		return sb.toString();
 	}
 
+	@Override
 	public String formatValue(IScriptValue value) {
 		StringBuffer sb = new StringBuffer();
 		sb.append(getName());

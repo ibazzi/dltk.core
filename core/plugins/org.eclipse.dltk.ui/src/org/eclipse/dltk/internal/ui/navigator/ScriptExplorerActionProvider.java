@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.navigator;
 
@@ -44,6 +43,7 @@ public class ScriptExplorerActionProvider extends CommonActionProvider {
 	public ScriptExplorerActionProvider() {
 	}
 
+	@Override
 	public void fillActionBars(IActionBars actionBars) {
 		if (!fHasFilledViewMenu) {
 			fLayoutActionGroup.fillActionBars(actionBars);
@@ -56,6 +56,7 @@ public class ScriptExplorerActionProvider extends CommonActionProvider {
 		}
 	}
 
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		if (fInViewPart) {
 			fOpenViewGroup.fillContextMenu(menu);
@@ -63,6 +64,7 @@ public class ScriptExplorerActionProvider extends CommonActionProvider {
 		}
 	}
 
+	@Override
 	public void init(ICommonActionExtensionSite site) {
 		ICommonViewerWorkbenchSite workbenchSite = null;
 
@@ -82,6 +84,7 @@ public class ScriptExplorerActionProvider extends CommonActionProvider {
 
 				fOpenViewGroup = new OpenViewActionGroup(viewPart, site
 						.getStructuredViewer()) {
+					@Override
 					protected boolean getShowProperties() {
 						return false;
 					}
@@ -92,6 +95,7 @@ public class ScriptExplorerActionProvider extends CommonActionProvider {
 		}
 	}
 
+	@Override
 	public void setContext(ActionContext context) {
 		super.setContext(context);
 		if (fInViewPart) {
@@ -100,6 +104,7 @@ public class ScriptExplorerActionProvider extends CommonActionProvider {
 		}
 	}
 
+	@Override
 	public void restoreState(IMemento memento) {
 		super.restoreState(memento);
 		restoreLayoutState(memento);
@@ -128,6 +133,7 @@ public class ScriptExplorerActionProvider extends CommonActionProvider {
 		fLayoutActionGroup.setFlatLayout(isCurrentLayoutFlat);
 	}
 
+	@Override
 	public void saveState(IMemento aMemento) {
 		super.saveState(aMemento);
 

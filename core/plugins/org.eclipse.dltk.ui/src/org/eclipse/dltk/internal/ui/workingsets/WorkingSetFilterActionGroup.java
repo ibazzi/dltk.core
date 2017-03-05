@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.workingsets;
 
@@ -46,16 +45,16 @@ public class WorkingSetFilterActionGroup extends ActionGroup implements IWorking
 	private static final String LRU_GROUP= "workingSet_lru_group"; //$NON-NLS-1$
 
 	private final WorkingSetFilter fWorkingSetFilter;
-	
+
 	private IWorkingSet fWorkingSet= null;
-	
+
 	private final ClearWorkingSetAction fClearWorkingSetAction;
 	private final SelectWorkingSetAction fSelectWorkingSetAction;
 	private final EditWorkingSetAction fEditWorkingSetAction;
-	
+
 	private IPropertyChangeListener fWorkingSetListener;
 	private IPropertyChangeListener fChangeListener;
-	
+
 	private int fLRUMenuCount;
 	private IMenuManager fMenuManager;
 	private IMenuListener fMenuListener;
@@ -71,23 +70,19 @@ public class WorkingSetFilterActionGroup extends ActionGroup implements IWorking
 		fSelectWorkingSetAction= new SelectWorkingSetAction(this, site);
 		fEditWorkingSetAction= new EditWorkingSetAction(this, site);
 
-		fWorkingSetListener= new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				doPropertyChange(event);
-			}
-		};
+		fWorkingSetListener = event -> doPropertyChange(event);
 		fWorkingSetFilter= new WorkingSetFilter();
 
 		IWorkingSetManager manager= PlatformUI.getWorkbench().getWorkingSetManager();
 		manager.addPropertyChangeListener(fWorkingSetListener);
-		
+
 		if (useWindowWorkingSetByDefault()) {
 			setWorkingSet(site.getPage().getAggregateWorkingSet(), false);
 		}
 	}
-	
+
 	public WorkingSetFilterActionGroup(Shell shell, IWorkbenchPage page, IPropertyChangeListener changeListener) {
-		
+
 		fWorkbenchPage= page;
 		fAllowWindowWorkingSetByDefault= false;
 		fChangeListener= changeListener;
@@ -95,23 +90,19 @@ public class WorkingSetFilterActionGroup extends ActionGroup implements IWorking
 		fSelectWorkingSetAction= new SelectWorkingSetAction(this, shell);
 		fEditWorkingSetAction= new EditWorkingSetAction(this, shell);
 
-		fWorkingSetListener= new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				doPropertyChange(event);
-			}
-		};
+		fWorkingSetListener = event -> doPropertyChange(event);
 
 		fWorkingSetFilter= new WorkingSetFilter();
 
 		IWorkingSetManager manager= PlatformUI.getWorkbench().getWorkingSetManager();
 		manager.addPropertyChangeListener(fWorkingSetListener);
-		
+
 		setWorkingSet(null, false);
 	}
 
 	/**
 	 * Returns whether the current working set filters the given element
-	 * 
+	 *
 	 * @param parent the parent
 	 * @param object the element to test
 	 * @return the working set
@@ -121,20 +112,20 @@ public class WorkingSetFilterActionGroup extends ActionGroup implements IWorking
 	        return false;
 	    return !fWorkingSetFilter.select(null, parent, object);
 	}
-	
+
 
 	/**
 	 * Returns the working set which is used by the filter.
-	 * 
+	 *
 	 * @return the working set
 	 */
 	public IWorkingSet getWorkingSet() {
 		return fWorkingSet;
 	}
-		
+
 	/**
 	 * Sets this filter's working set.
-	 * 
+	 *
 	 * @param workingSet the working set
 	 * @param refreshViewer Indicates if the viewer should be refreshed.
 	 */
@@ -150,17 +141,17 @@ public class WorkingSetFilterActionGroup extends ActionGroup implements IWorking
 			fChangeListener.propertyChange(new PropertyChangeEvent(this, IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE, null, workingSet));
 		}
 	}
-	
+
 	/**
 	 * Saves the state of the filter actions in a memento.
-	 * 
+	 *
 	 * @param memento the memento
 	 */
 	public void saveState(IMemento memento) {
 		String workingSetName= ""; //$NON-NLS-1$
 		boolean isWindowWorkingSet= false;
 		if (fWorkingSet != null) {
-			if (fWorkingSet.isAggregateWorkingSet()) { 
+			if (fWorkingSet.isAggregateWorkingSet()) {
 				isWindowWorkingSet= true;
 			} else {
 				workingSetName= fWorkingSet.getName();
@@ -176,7 +167,7 @@ public class WorkingSetFilterActionGroup extends ActionGroup implements IWorking
 	 * Note: This method does not refresh the viewer.
 	 * </p>
 	 * @param memento
-	 */	
+	 */
 	public void restoreState(IMemento memento) {
 		boolean isWindowWorkingSet;
 		if (memento.getString(TAG_IS_WINDOW_WORKING_SET) != null) {
@@ -186,7 +177,7 @@ public class WorkingSetFilterActionGroup extends ActionGroup implements IWorking
 		}
 		String workingSetName= memento.getString(TAG_WORKING_SET_NAME);
 		boolean hasWorkingSetName= workingSetName != null && workingSetName.length() > 0;
-		
+
 		IWorkingSet ws= null;
 		// First handle name if present.
 		if (hasWorkingSetName) {
@@ -200,19 +191,17 @@ public class WorkingSetFilterActionGroup extends ActionGroup implements IWorking
 	private boolean useWindowWorkingSetByDefault() {
 		return fAllowWindowWorkingSetByDefault && PlatformUI.getPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.USE_WINDOW_WORKING_SET_BY_DEFAULT);
 	}
-	
 
-	/* (non-Javadoc)
-	 * @see ActionGroup#fillActionBars(IActionBars)
-	 */
+
+	@Override
 	public void fillActionBars(IActionBars actionBars) {
 		fillToolBar(actionBars.getToolBarManager());
 		fillViewMenu(actionBars.getMenuManager());
 	}
-	
+
 	/**
 	 * Adds the filter actions to the tool bar
-	 * 
+	 *
 	 * @param tbm the tool bar manager
 	 */
 	private void fillToolBar(IToolBarManager tbm) {
@@ -221,12 +210,13 @@ public class WorkingSetFilterActionGroup extends ActionGroup implements IWorking
 
 	/**
 	 * Adds the filter actions to the menu
-	 * 
+	 *
 	 * @param mm the menu manager
 	 */
+	@Override
 	public void fillViewMenu(IMenuManager mm) {
 		if (mm.find(IWorkingSetActionGroup.ACTION_GROUP) == null) {
-			mm.add(new Separator(IWorkingSetActionGroup.ACTION_GROUP));			
+			mm.add(new Separator(IWorkingSetActionGroup.ACTION_GROUP));
 		}
 		add(mm, fSelectWorkingSetAction);
 		add(mm, fClearWorkingSetAction);
@@ -235,26 +225,24 @@ public class WorkingSetFilterActionGroup extends ActionGroup implements IWorking
 		add(mm, new Separator(LRU_GROUP));
 
 		fMenuManager= mm;
-		fMenuListener= new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager) {
-				removePreviousLRUWorkingSetActions(manager);
-				addLRUWorkingSetActions(manager);
-			}
+		fMenuListener = manager -> {
+			removePreviousLRUWorkingSetActions(manager);
+			addLRUWorkingSetActions(manager);
 		};
 		fMenuManager.addMenuListener(fMenuListener);
 	}
-	
+
 	private void add(IMenuManager mm, IAction action) {
 		IContributionItem item= new ActionContributionItem(action);
 		mm.appendToGroup(ACTION_GROUP, item);
 		fContributions.add(item);
 	}
-	
+
 	private void add(IMenuManager mm, IContributionItem item) {
 		mm.appendToGroup(ACTION_GROUP, item);
 		fContributions.add(item);
 	}
-	
+
 	private void removePreviousLRUWorkingSetActions(IMenuManager mm) {
 		for (int i= 1; i < fLRUMenuCount; i++) {
 			String id= WorkingSetMenuContributionItem.getId(i);
@@ -266,12 +254,12 @@ public class WorkingSetFilterActionGroup extends ActionGroup implements IWorking
 	private void addLRUWorkingSetActions(IMenuManager mm) {
 		IWorkingSet[] workingSets= PlatformUI.getWorkbench().getWorkingSetManager().getRecentWorkingSets();
 		Arrays.sort(workingSets, new WorkingSetComparator());
-		
+
 		int currId= 1;
 		if (fWorkbenchPage != null) {
 			addLRUWorkingSetAction(mm, currId++, fWorkbenchPage.getAggregateWorkingSet());
 		}
-		
+
 		for (int i= 0; i < workingSets.length; i++) {
 			if (!workingSets[i].isAggregateWorkingSet()) {
 				addLRUWorkingSetAction(mm, currId++, workingSets[i]);
@@ -279,14 +267,15 @@ public class WorkingSetFilterActionGroup extends ActionGroup implements IWorking
 		}
 		fLRUMenuCount= currId;
 	}
-	
+
 	private void addLRUWorkingSetAction(IMenuManager mm, int id, IWorkingSet workingSet) {
 		IContributionItem item= new WorkingSetMenuContributionItem(id, this, workingSet);
 		mm.insertBefore(LRU_GROUP, item);
 		fContributions.add(item);
 	}
-	
-	
+
+
+	@Override
 	public void cleanViewMenu(IMenuManager menuManager) {
 		for (Iterator iter= fContributions.iterator(); iter.hasNext();) {
 			menuManager.remove((IContributionItem)iter.next());
@@ -295,30 +284,31 @@ public class WorkingSetFilterActionGroup extends ActionGroup implements IWorking
 		fMenuManager.removeMenuListener(fMenuListener);
 		fMenuListener= null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see ActionGroup#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (fMenuManager != null && fMenuListener != null)
 			fMenuManager.removeMenuListener(fMenuListener);
-		
+
 		if (fWorkingSetListener != null) {
 			PlatformUI.getWorkbench().getWorkingSetManager().removePropertyChangeListener(fWorkingSetListener);
 			fWorkingSetListener= null;
 		}
 		fChangeListener= null; // clear the reference to the viewer
-		
+
 		super.dispose();
 	}
-	
+
 	/**
-	 * @return Returns viewer filter always configured with the current working set. 
+	 * @return Returns viewer filter always configured with the current working set.
 	 */
 	public ViewerFilter getWorkingSetFilter() {
 		return fWorkingSetFilter;
 	}
-		
+
 	/*
 	 * Called by the working set change listener
 	 */

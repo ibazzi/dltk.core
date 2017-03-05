@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.debug.ui.launcher;
 
@@ -68,46 +67,45 @@ public class WorkingDirectoryBlock extends CommonScriptLaunchTab {
 	/**
 	 * A listener to update for text changes and widget selection
 	 */
-	private class WidgetListener extends SelectionAdapter implements
-			ModifyListener {
+	private class WidgetListener extends SelectionAdapter
+			implements ModifyListener {
+		@Override
 		public void modifyText(ModifyEvent e) {
 			updateLaunchConfigurationDialog();
 		}// end modifyText
 
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Object source = e.getSource();
 			if (source == fWorkspaceButton) {
 				handleWorkspaceDirBrowseButtonSelected();
-			}// end if
+			} // end if
 			else if (source == fFileSystemButton) {
 				handleWorkingDirBrowseButtonSelected();
-			}// end if
+			} // end if
 			else if (source == fVariablesButton) {
 				handleWorkingDirVariablesButtonSelected();
-			}// end if
+			} // end if
 			else if (source == fUseDefaultDirButton) {
 				// only perform the action if this is the button that was
 				// selected
 				if (fUseDefaultDirButton.getSelection()) {
 					setDefaultWorkingDir();
-				}// end if
-			}// end if
+				} // end if
+			} // end if
 			else if (source == fUseOtherDirButton) {
 				// only perform the action if this is the button that was
 				// selected
 				if (fUseOtherDirButton.getSelection()) {
 					handleUseOtherWorkingDirButtonSelected();
-				}// end if
-			}// end if
+				} // end if
+			} // end if
 		}// end widgetSelected
 	}// end WidgetListener class
 
 	private WidgetListener fListener = new WidgetListener();
 
-	/*
-	 * @see
-	 * org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(Composite)
-	 */
+	@Override
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
 
@@ -170,11 +168,7 @@ public class WorkingDirectoryBlock extends CommonScriptLaunchTab {
 		fVariablesButton.addSelectionListener(fListener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
-	 */
+	@Override
 	public void dispose() {
 	}
 
@@ -189,12 +183,12 @@ public class WorkingDirectoryBlock extends CommonScriptLaunchTab {
 			File path = new File(currentWorkingDir);
 			if (path.exists()) {
 				dialog.setFilterPath(currentWorkingDir);
-			}// end if
-		}// end if
+			} // end if
+		} // end if
 		String selectedDirectory = dialog.open();
 		if (selectedDirectory != null) {
 			fOtherWorkingText.setText(selectedDirectory);
-		}// end if
+		} // end if
 	}// end handleQWrokingDirBrowseBUttonSelected
 
 	/**
@@ -205,7 +199,7 @@ public class WorkingDirectoryBlock extends CommonScriptLaunchTab {
 		IContainer currentContainer = getContainer();
 		if (currentContainer == null) {
 			currentContainer = ResourcesPlugin.getWorkspace().getRoot();
-		}// end if
+		} // end if
 		ContainerSelectionDialog dialog = new ContainerSelectionDialog(
 				getShell(), currentContainer, false,
 				ScriptLaunchMessages.WorkingDirectoryBlock_4);
@@ -216,8 +210,9 @@ public class WorkingDirectoryBlock extends CommonScriptLaunchTab {
 				&& (results[0] instanceof IPath)) {
 			IPath path = (IPath) results[0];
 			String containerName = path.makeRelative().toString();
-			setOtherWorkingDirectoryText("${workspace_loc:" + containerName + "}"); //$NON-NLS-1$ //$NON-NLS-2$
-		}// end if
+			setOtherWorkingDirectoryText(
+					"${workspace_loc:" + containerName + "}"); //$NON-NLS-1$ //$NON-NLS-2$
+		} // end if
 	}// end handleWorkspaceDirBrowseButtonSelected
 
 	/**
@@ -237,18 +232,18 @@ public class WorkingDirectoryBlock extends CommonScriptLaunchTab {
 							.findContainersForLocation(new Path(path));
 					if (containers.length > 0) {
 						res = containers[0];
-					}// end if
-				}// end try
+					} // end if
+				} // end try
 				catch (CoreException e) {
 				}
-			}// end if
+			} // end if
 			else {
 				res = root.findMember(path);
-			}// end else
+			} // end else
 			if (res instanceof IContainer) {
 				return (IContainer) res;
-			}// end if
-		}// end if
+			} // end if
+		} // end if
 		return null;
 	}// end getContainer
 
@@ -265,8 +260,8 @@ public class WorkingDirectoryBlock extends CommonScriptLaunchTab {
 
 	/**
 	 * The other working dir radio button has been selected
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	private void handleUseOtherWorkingDirButtonSelected() {
 		fOtherWorkingText.setEnabled(true);
@@ -286,7 +281,7 @@ public class WorkingDirectoryBlock extends CommonScriptLaunchTab {
 		String variableText = dialog.getVariableExpression();
 		if (variableText != null) {
 			fOtherWorkingText.insert(variableText);
-		}// end if
+		} // end if
 	}// end handleWorkingDirVariablesButtonSelected
 
 	/**
@@ -311,8 +306,8 @@ public class WorkingDirectoryBlock extends CommonScriptLaunchTab {
 					IEnvironment environment = EnvironmentManager
 							.getEnvironment(project);
 					if (environment != null) {
-						path = path
-								.replace('/', environment.getSeparatorChar());
+						path = path.replace('/',
+								environment.getSeparatorChar());
 					}
 					setDefaultWorkingDirectoryText(path);
 					return;
@@ -326,7 +321,7 @@ public class WorkingDirectoryBlock extends CommonScriptLaunchTab {
 	/**
 	 * Returns the project associated with the specified launch configuration or
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @param configuration
 	 * @return
 	 * @throws CoreException
@@ -337,17 +332,13 @@ public class WorkingDirectoryBlock extends CommonScriptLaunchTab {
 				ScriptLaunchConfigurationConstants.ATTR_PROJECT_NAME,
 				Util.EMPTY_STRING);
 		if (!projectName.equals(Util.EMPTY_STRING)) {
-			return DLTKCore.create(getWorkspaceRoot()).getScriptProject(
-					projectName);
+			return DLTKCore.create(getWorkspaceRoot())
+					.getScriptProject(projectName);
 		}
 		return null;
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(ILaunchConfiguration
-	 * )
-	 */
+	@Override
 	public boolean isValid(ILaunchConfiguration config) {
 		setErrorMessage(null);
 		setMessage(null);
@@ -358,22 +349,22 @@ public class WorkingDirectoryBlock extends CommonScriptLaunchTab {
 					.getStringVariableManager();
 			try {
 				manager.validateStringVariables(workingDirPath);
-			}// end try
+			} // end try
 			catch (CoreException e) {
 				setErrorMessage(e.getMessage());
 				return false;
-			}// end catch
-		}// end if
+			} // end catch
+		} // end if
 		else if (workingDirPath.length() > 0) {
 			IContainer container = getContainer();
 			if (container == null) {
 				File dir = new File(workingDirPath);
 				if (dir.isDirectory()) {
 					return true;
-				}// end if
+				} // end if
 				setErrorMessage(ScriptLaunchMessages.WorkingDirectoryBlock_10);
 				return false;
-			}// end if
+			} // end if
 		} else if (workingDirPath.length() == 0) {
 			setErrorMessage(ScriptLaunchMessages.WorkingDirectoryBlock_20);
 		}
@@ -382,23 +373,18 @@ public class WorkingDirectoryBlock extends CommonScriptLaunchTab {
 
 	/**
 	 * Defaults are empty.
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.
 	 *      debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(
 				ScriptLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY,
 				(String) null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse
-	 * .debug.core.ILaunchConfiguration)
-	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		super.initializeFrom(configuration);
 		try {
@@ -408,77 +394,69 @@ public class WorkingDirectoryBlock extends CommonScriptLaunchTab {
 			setDefaultWorkingDir();
 			if (wd != null) {
 				setOtherWorkingDirectoryText(wd);
-			}// end else
-		}// end try
+			} // end else
+		} // end try
 		catch (CoreException e) {
-			setErrorMessage(NLS
-					.bind(
-							ScriptLaunchMessages.ArgumentsTab_Exception_occurred_reading_configuration___15,
-							e.getStatus().getMessage()));
+			setErrorMessage(NLS.bind(
+					ScriptLaunchMessages.ArgumentsTab_Exception_occurred_reading_configuration___15,
+					e.getStatus().getMessage()));
 			DLTKLaunchingPlugin.log(e);
-		}// end catch
+		} // end catch
 	}
 
-	/*
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(
-	 * ILaunchConfigurationWorkingCopy)
-	 */
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		if (fUseDefaultDirButton.getSelection()) {
 			configuration.setAttribute(
 					ScriptLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY,
 					(String) null);
-		}// end if
+		} // end if
 		else {
 			configuration.setAttribute(
 					ScriptLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY,
 					getWorkingDirectoryText());
-		}// end else
+		} // end else
 	}// end performApply
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
-	 */
+	@Override
 	public String getName() {
 		return ScriptLaunchMessages.WorkingDirectoryBlock_Working_Directory_8;
 	}// end getName
 
 	/**
 	 * gets the path from the text box that is selected
-	 * 
+	 *
 	 * @return the working directory the user wishes to use
-	 * 
+	 *
 	 */
 	protected String getWorkingDirectoryText() {
 		if (fUseDefaultDirButton.getSelection()) {
 			return fWorkingDirText.getText().trim();
-		}// end if
+		} // end if
 		return fOtherWorkingText.getText().trim();
 	}// end getWorkingDirectoryPath
 
 	/**
 	 * sets the default working directory text
-	 * 
+	 *
 	 * @param dir
 	 *            the dir to set the widget to
-	 * 
+	 *
 	 */
 	protected void setDefaultWorkingDirectoryText(String dir) {
 		if (dir != null) {
 			fWorkingDirText.setText(dir);
 			fUseDefaultDirButton.setSelection(true);
 			handleUseDefaultWorkingDirButtonSelected();
-		}// end if
+		} // end if
 	}// setDefaultWorkingDirectoryText
 
 	/**
 	 * sets the other dir text
-	 * 
+	 *
 	 * @param dir
 	 *            the new text
-	 * 
+	 *
 	 */
 	protected void setOtherWorkingDirectoryText(String dir) {
 		if (dir != null) {
@@ -486,12 +464,12 @@ public class WorkingDirectoryBlock extends CommonScriptLaunchTab {
 			fUseDefaultDirButton.setSelection(false);
 			fUseOtherDirButton.setSelection(true);
 			handleUseOtherWorkingDirButtonSelected();
-		}// end if
+		} // end if
 	}// end setOtherWorkingDirectoryText
 
 	/**
 	 * Allows this entire block to be enabled/disabled
-	 * 
+	 *
 	 * @param enabled
 	 *            whether to enable it or not
 	 */
@@ -503,12 +481,12 @@ public class WorkingDirectoryBlock extends CommonScriptLaunchTab {
 			fWorkspaceButton.setEnabled(enabled);
 			fVariablesButton.setEnabled(enabled);
 			fFileSystemButton.setEnabled(enabled);
-		}// end if
-		// in the case where the' other' text is selected and we want to enable
+		} // end if
+			// in the case where the' other' text is selected and we want to
+			// enable
 		if (fUseOtherDirButton.getSelection() && enabled == true) {
 			fOtherWorkingText.setEnabled(enabled);
-		}// end if
+		} // end if
 	}// end setEnabled
 
 }// end class
-

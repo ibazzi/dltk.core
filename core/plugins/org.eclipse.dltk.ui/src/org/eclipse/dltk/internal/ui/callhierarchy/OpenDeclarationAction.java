@@ -1,12 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
- * 			(report 36180: Callers/Callees view)
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.callhierarchy;
 
@@ -29,7 +27,7 @@ class OpenDeclarationAction extends OpenAction {
     public boolean canActionBeAdded() {
         // It is safe to cast to IMember since the selection has already been converted
         IMember member = (IMember) SelectionUtil.getSingleElement(getSelection());
-        
+
         if (member != null) {
             return true;
         }
@@ -37,14 +35,16 @@ class OpenDeclarationAction extends OpenAction {
         return false;
     }
 
-    public ISelection getSelection() {
+	@Override
+	public ISelection getSelection() {
         return CallHierarchyUI.convertSelection(getSelectionProvider().getSelection());
     }
 
-    public Object getElementToOpen(Object object) {
+	@Override
+	public Object getElementToOpen(Object object) {
         if (object instanceof MethodWrapper) {
             return ((MethodWrapper) object).getMember();
         }
         return object;
-    }   
+    }
 }

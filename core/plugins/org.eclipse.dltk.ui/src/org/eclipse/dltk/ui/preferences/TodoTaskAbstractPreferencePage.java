@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -17,7 +17,7 @@ import org.eclipse.dltk.ui.PreferencesAdapter;
 /**
  * @deprecated use an implementation of
  *             {@link AbstractConfigurationBlockPropertyAndPreferencePage}
- * 
+ *
  * @see AbstractTodoTaskOptionsBlock
  */
 @Deprecated
@@ -26,12 +26,14 @@ public abstract class TodoTaskAbstractPreferencePage extends
 
 	protected abstract Preferences getPluginPreferences();
 
+	@Override
 	protected IPreferenceConfigurationBlock createConfigurationBlock(
 			OverlayPreferenceStore overlayPreferenceStore) {
 		return new TodoTaskConfigurationBlock(getPluginPreferences(),
 				overlayPreferenceStore, this);
 	}
 
+	@Override
 	protected void setPreferenceStore() {
 		setPreferenceStore(new PreferencesAdapter(getPluginPreferences()));
 	}

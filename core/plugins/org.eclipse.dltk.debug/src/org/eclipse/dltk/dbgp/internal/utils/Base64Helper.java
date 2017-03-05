@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,26 +7,13 @@
  *
  * Contributors:
  *     xored software, Inc. - initial API and implementation
- *     xored software, Inc. - fix decode chunked base64 (Bug# 230825) (Alex Panchenko) 
+ *     xored software, Inc. - fix decode chunked base64 (Bug# 230825) (Alex Panchenko)
  *******************************************************************************/
 package org.eclipse.dltk.dbgp.internal.utils;
 
-import java.io.UnsupportedEncodingException;
-
-import org.eclipse.dltk.debug.core.DLTKDebugPlugin;
+import java.nio.charset.StandardCharsets;
 
 public class Base64Helper {
-
-	/**
-	 * Encoding of the data
-	 */
-	private static final String DATA_ENCODING = "UTF-8"; //$NON-NLS-1$
-
-	/**
-	 * Encoding of the base64 digits - to be used instead of the default
-	 * encoding.
-	 */
-	private static final String BYTE_ENCODING = "ISO-8859-1"; //$NON-NLS-1$
 
 	/**
 	 * Empty string constant
@@ -35,28 +22,21 @@ public class Base64Helper {
 
 	public static String encodeString(String s) {
 		if (s != null && s.length() != 0) {
-			try {
-				final byte[] encode = Base64.encode(s.getBytes(DATA_ENCODING));
-				return new String(encode, BYTE_ENCODING);
-			} catch (UnsupportedEncodingException e) {
-				DLTKDebugPlugin.log(e);
-			}
+			final byte[] encode = Base64
+					.encode(s.getBytes(StandardCharsets.UTF_8));
+			return new String(encode, StandardCharsets.ISO_8859_1);
 		}
 		return EMPTY;
 	}
 
 	public static String decodeString(String base64) {
 		if (base64 != null && base64.length() != 0) {
-			try {
-				final byte[] bytes = base64.getBytes(BYTE_ENCODING);
-				final int length = discardWhitespace(bytes);
-				if (length > 0) {
-					final int decodedLength = Base64.decodeInlplace(bytes,
-							length);
-					return new String(bytes, 0, decodedLength, DATA_ENCODING);
-				}
-			} catch (UnsupportedEncodingException e) {
-				DLTKDebugPlugin.log(e);
+			final byte[] bytes = base64.getBytes(StandardCharsets.ISO_8859_1);
+			final int length = discardWhitespace(bytes);
+			if (length > 0) {
+				final int decodedLength = Base64.decodeInlplace(bytes, length);
+				return new String(bytes, 0, decodedLength,
+						StandardCharsets.UTF_8);
 			}
 		}
 		return EMPTY;
@@ -66,10 +46,10 @@ public class Base64Helper {
 	 * Discards any whitespace from a base-64 encoded block. The base64 data in
 	 * responses could be chunked in the multiple lines, so we need to remove
 	 * extra whitespaces.
-	 * 
+	 *
 	 * The bytes are copied in-place and the length of the actual data bytes is
 	 * returned.
-	 * 
+	 *
 	 * @param bytes
 	 * @return
 	 */

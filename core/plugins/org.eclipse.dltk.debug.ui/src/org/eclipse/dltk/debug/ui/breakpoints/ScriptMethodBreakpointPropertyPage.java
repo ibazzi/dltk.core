@@ -6,8 +6,8 @@ import org.eclipse.dltk.ui.util.SWTFactory;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
-public class ScriptMethodBreakpointPropertyPage extends
-		ScriptBreakpointPropertyPage {
+public class ScriptMethodBreakpointPropertyPage
+		extends ScriptBreakpointPropertyPage {
 
 	private Button breakOnEntryButton;
 	private Button breakOnExitButton;
@@ -16,6 +16,7 @@ public class ScriptMethodBreakpointPropertyPage extends
 
 	}
 
+	@Override
 	protected void createTypeSpecificButtons(Composite parent) {
 		setTitle(BreakpointMessages.MethodBreakpointTitle);
 
@@ -26,6 +27,7 @@ public class ScriptMethodBreakpointPropertyPage extends
 				BreakpointMessages.SuspendOnMethodExitLabel, null, false, 1);
 	}
 
+	@Override
 	protected void loadValues() throws CoreException {
 		super.loadValues();
 
@@ -35,6 +37,7 @@ public class ScriptMethodBreakpointPropertyPage extends
 		breakOnExitButton.setSelection(breakpoint.breakOnExit());
 	}
 
+	@Override
 	protected void saveValues() throws CoreException {
 		super.saveValues();
 

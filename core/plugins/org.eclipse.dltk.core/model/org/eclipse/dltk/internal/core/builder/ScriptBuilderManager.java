@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,14 +87,10 @@ public class ScriptBuilderManager extends
 
 	@Override
 	protected void initializeDescriptors(List<Object> descriptors) {
-		Collections.sort(descriptors, new Comparator<Object>() {
-
-			@Override
-			public int compare(Object o1, Object o2) {
-				final IConfigurationElement e1 = (IConfigurationElement) o1;
-				final IConfigurationElement e2 = (IConfigurationElement) o2;
-				return priorityOf(e2) - priorityOf(e1);
-			}
+		Collections.sort(descriptors, (o1, o2) -> {
+			final IConfigurationElement e1 = (IConfigurationElement) o1;
+			final IConfigurationElement e2 = (IConfigurationElement) o2;
+			return priorityOf(e2) - priorityOf(e1);
 		});
 	}
 

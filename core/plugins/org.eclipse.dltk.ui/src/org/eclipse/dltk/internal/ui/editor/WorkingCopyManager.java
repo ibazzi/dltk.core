@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.editor;
 
@@ -29,7 +28,7 @@ public class WorkingCopyManager implements IWorkingCopyManager {
 	/**
 	 * Creates a new working copy manager that co-operates with the given
 	 * compilation unit document provider.
-	 * 
+	 *
 	 * @param provider
 	 *            the provider
 	 */
@@ -38,16 +37,19 @@ public class WorkingCopyManager implements IWorkingCopyManager {
 	}
 
 	// XXX: never called
+	@Override
 	public void connect(IEditorInput input) throws CoreException {
 		fDocumentProvider.connect(input);
 	}
 
 	// XXX: never called
+	@Override
 	public void disconnect(IEditorInput input) {
 		fDocumentProvider.disconnect(input);
 	}
 
 	// XXX: never called
+	@Override
 	public void shutdown() {
 		if (!fIsShuttingDown) {
 			fIsShuttingDown = true;
@@ -63,6 +65,7 @@ public class WorkingCopyManager implements IWorkingCopyManager {
 		}
 	}
 
+	@Override
 	public ISourceModule getWorkingCopy(IEditorInput input) {
 		return getWorkingCopy(input, true);
 	}
@@ -74,7 +77,7 @@ public class WorkingCopyManager implements IWorkingCopyManager {
 	 * Note: This method must not be part of the public
 	 * {@link IWorkingCopyManager} API.
 	 * </p>
-	 * 
+	 *
 	 * @param input
 	 *            the editor input
 	 * @param primaryOnly
@@ -83,8 +86,9 @@ public class WorkingCopyManager implements IWorkingCopyManager {
 	 * @return the working copy of the compilation unit, or <code>null</code>
 	 *         if the input does not encode an editor input, or if there is no
 	 *         remembered working copy for this compilation unit
-	 * 
+	 *
 	 */
+	@Override
 	public ISourceModule getWorkingCopy(IEditorInput input, boolean primaryOnly) {
 		ISourceModule unit = fMap == null ? null : (ISourceModule) fMap
 				.get(input);

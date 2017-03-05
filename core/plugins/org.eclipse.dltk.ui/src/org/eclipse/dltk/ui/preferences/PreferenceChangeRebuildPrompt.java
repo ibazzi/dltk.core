@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 xored software, Inc.
+ * Copyright (c) 2009, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -32,7 +32,7 @@ public class PreferenceChangeRebuildPrompt implements
 
 	/**
 	 * Creates instance with the specified messageTemplate
-	 * 
+	 *
 	 * @param messageTemplate
 	 */
 	public PreferenceChangeRebuildPrompt(String messageTemplate) {
@@ -42,7 +42,7 @@ public class PreferenceChangeRebuildPrompt implements
 	/**
 	 * Creates instances with default messageTemplate depends on the
 	 * <code>workspaceSettings</code> parameter
-	 * 
+	 *
 	 * @param workspaceSettings
 	 */
 	public PreferenceChangeRebuildPrompt(boolean workspaceSettings) {
@@ -65,6 +65,7 @@ public class PreferenceChangeRebuildPrompt implements
 		this.messageTemplate = messageTemplate;
 	}
 
+	@Override
 	public String getMessage() {
 		if (messageTemplate == null || messageTemplate.length() == 0) {
 			return message;
@@ -73,13 +74,14 @@ public class PreferenceChangeRebuildPrompt implements
 		}
 	}
 
+	@Override
 	public String getTitle() {
 		return title;
 	}
 
 	/**
 	 * Factory method to create the instance with the specified parameters
-	 * 
+	 *
 	 * @param workspaceSettings
 	 * @param title
 	 * @param message
@@ -96,7 +98,7 @@ public class PreferenceChangeRebuildPrompt implements
 
 	/**
 	 * Factory method to create the instance with the specified parameters
-	 * 
+	 *
 	 * @param title
 	 * @param message
 	 * @return
@@ -105,10 +107,12 @@ public class PreferenceChangeRebuildPrompt implements
 			final String message) {
 		return new IPreferenceChangeRebuildPrompt() {
 
+			@Override
 			public String getMessage() {
 				return message;
 			}
 
+			@Override
 			public String getTitle() {
 				return title;
 			}

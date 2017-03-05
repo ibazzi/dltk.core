@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.dbgp.internal.commands;
 
@@ -20,8 +19,8 @@ import org.eclipse.dltk.dbgp.exceptions.DbgpException;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-public class DbgpDataTypeCommands extends DbgpBaseCommands implements
-		IDbgpDataTypeCommands {
+public class DbgpDataTypeCommands extends DbgpBaseCommands
+		implements IDbgpDataTypeCommands {
 	private static final String TYPEMAP_GET_COMMAND = "typemap_get"; //$NON-NLS-1$
 
 	private static final String ATTR_TYPE = "type"; //$NON-NLS-1$
@@ -50,6 +49,7 @@ public class DbgpDataTypeCommands extends DbgpBaseCommands implements
 		converter.put("resource", Integer.valueOf(RESOURCE_TYPE)); //$NON-NLS-1$
 	}
 
+	@Override
 	public Map getTypeMap() throws DbgpException {
 		DbgpRequest request = createRequest(TYPEMAP_GET_COMMAND);
 		Element element = communicate(request);

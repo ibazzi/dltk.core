@@ -1,15 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.editor;
-
-
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -20,7 +17,6 @@ import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationModelEvent;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
-
 
 /**
  * Event sent out by changes of the compilation unit annotation model.
@@ -59,34 +55,26 @@ public class SourceModuleAnnotationModelEvent  extends AnnotationModelEvent {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.AnnotationModelEvent#annotationAdded(org.eclipse.jface.text.source.Annotation)
-	 */
+	@Override
 	public void annotationAdded(Annotation annotation) {
 		super.annotationAdded(annotation);
 		testIfProblemMarker(annotation);
 	}
 
 
-	/*
-	 * @see org.eclipse.jface.text.source.AnnotationModelEvent#annotationRemoved(org.eclipse.jface.text.source.Annotation)
-	 */
+	@Override
 	public void annotationRemoved(Annotation annotation) {
 		super.annotationRemoved(annotation);
 		testIfProblemMarker(annotation);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.AnnotationModelEvent#annotationRemoved(org.eclipse.jface.text.source.Annotation, org.eclipse.jface.text.Position)
-	 */
+	@Override
 	public void annotationRemoved(Annotation annotation, Position position) {
 		super.annotationRemoved(annotation, position);
 		testIfProblemMarker(annotation);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.AnnotationModelEvent#annotationChanged(org.eclipse.jface.text.source.Annotation)
-	 */
+	@Override
 	public void annotationChanged(Annotation annotation) {
 		testIfProblemMarker(annotation);
 		super.annotationChanged(annotation);

@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.corext.refactoring.nls.changes;
 
@@ -76,6 +75,7 @@ public class CreateFileChange extends DLTKChange {
 		fExplicitEncoding= explicit;
 	}
 
+	@Override
 	public String getName() {
 		if (fChangeName == null)
 			return Messages.format(NLSChangesMessages.createFile_Create_file, fPath.toOSString());
@@ -86,7 +86,7 @@ public class CreateFileChange extends DLTKChange {
 	public void setName(String name) {
 		fChangeName= name;
 	}
-	
+
 	protected void setSource(String source) {
 		fSource= source;
 	}
@@ -103,37 +103,40 @@ public class CreateFileChange extends DLTKChange {
 		return fPath;
 	}
 
+	@Override
 	public Object getModifiedElement() {
 		return ResourcesPlugin.getWorkspace().getRoot().getFile(fPath);
 	}
 
+	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
 		RefactoringStatus result= new RefactoringStatus();
 		IFile file= ResourcesPlugin.getWorkspace().getRoot().getFile(fPath);
-		
+
 		URI location= file.getLocationURI();
 		if (location == null) {
 			result.addFatalError(Messages.format(
-				NLSChangesMessages.CreateFileChange_error_unknownLocation, 
+				NLSChangesMessages.CreateFileChange_error_unknownLocation,
 				file.getFullPath().toString()));
 			return result;
 		}
-		
+
 		IFileInfo jFile= EFS.getStore(location).fetchInfo();
 		if (jFile.exists()) {
 			result.addFatalError(Messages.format(
-				NLSChangesMessages.CreateFileChange_error_exists, 
+				NLSChangesMessages.CreateFileChange_error_exists,
 				file.getFullPath().toString()));
 			return result;
 		}
 		return result;
 	}
 
+	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
 
 		InputStream is= null;
 		try {
-			pm.beginTask(NLSChangesMessages.createFile_creating_resource, 3); 
+			pm.beginTask(NLSChangesMessages.createFile_creating_resource, 3);
 
 			initializeEncoding();
 			IFile file= getOldFile(new SubProgressMonitor(pm, 1));

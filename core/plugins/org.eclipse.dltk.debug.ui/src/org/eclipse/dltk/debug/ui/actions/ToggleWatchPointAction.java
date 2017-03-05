@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -36,7 +36,7 @@ import org.eclipse.ui.texteditor.IUpdate;
  * Clients may instantiate this class. This class is not intended to be
  * subclassed.
  * </p>
- * 
+ *
  * @since 3.1
  * @see org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate
  */
@@ -49,7 +49,7 @@ public class ToggleWatchPointAction extends Action implements IUpdate {
 	/**
 	 * Constructs a new action to toggle a breakpoint in the given part
 	 * containing the given document and ruler.
-	 * 
+	 *
 	 * @param part
 	 *            the part in which to toggle the breakpoint - provides an
 	 *            <code>IToggleBreakpointsTarget</code> adapter
@@ -67,11 +67,7 @@ public class ToggleWatchPointAction extends Action implements IUpdate {
 		fRulerInfo = rulerInfo;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
+	@Override
 	public void run() {
 		IDocument document = getDocument();
 		if (document == null) {
@@ -122,7 +118,7 @@ public class ToggleWatchPointAction extends Action implements IUpdate {
 
 	/**
 	 * Report an error to the user.
-	 * 
+	 *
 	 * @param e
 	 *            underlying exception
 	 */
@@ -144,7 +140,7 @@ public class ToggleWatchPointAction extends Action implements IUpdate {
 
 	/**
 	 * Returns the document on which this action operates.
-	 * 
+	 *
 	 * @return the document or <code>null</code> if none
 	 */
 	private IDocument getDocument() {
@@ -166,11 +162,7 @@ public class ToggleWatchPointAction extends Action implements IUpdate {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.texteditor.IUpdate#update()
-	 */
+	@Override
 	public void update() {
 		IDocument document = getDocument();
 		if (document != null) {

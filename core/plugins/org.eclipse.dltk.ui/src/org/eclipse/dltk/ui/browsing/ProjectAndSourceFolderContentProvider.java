@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,9 +37,7 @@ public class ProjectAndSourceFolderContentProvider extends
 		super(false, browsingPart, languageToolkit);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on ITreeContentProvider.
-	 */
+	@Override
 	public Object[] getChildren(Object element) {
 		if (!exists(element))
 			return NO_CHILDREN;
@@ -76,7 +74,7 @@ public class ProjectAndSourceFolderContentProvider extends
 				return NO_CHILDREN;
 
 			Object[] children = super.getChildren(element);
-			
+
 			// We need to filter all elements with different nature
 			List newObjs = new ArrayList();
 			for (int i = 0; i < children.length; i++) {
@@ -104,6 +102,7 @@ public class ProjectAndSourceFolderContentProvider extends
 		}
 	}
 
+	@Override
 	protected Object[] getProjectFragments(IScriptProject project)
 			throws ModelException {
 		if (!project.getProject().isOpen())
@@ -121,10 +120,7 @@ public class ProjectAndSourceFolderContentProvider extends
 		return list.toArray();
 	}
 
-	/*
-	 * 
-	 * @see ITreeContentProvider
-	 */
+	@Override
 	public boolean hasChildren(Object element) {
 		return element instanceof IScriptProject && super.hasChildren(element);
 	}

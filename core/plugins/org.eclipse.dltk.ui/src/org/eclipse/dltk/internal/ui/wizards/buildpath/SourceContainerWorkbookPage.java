@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,16 +60,12 @@ public class SourceContainerWorkbookPage extends BuildPathBasePage {
 			fSelectedElements = fFoldersList.getSelectedElements();
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		protected INewWizard createWizard() throws CoreException {
 			return fWizard;
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		public void propertyChange(PropertyChangeEvent event) {
 			if (event.getProperty().equals(IAction.RESULT)) {
 				if (event.getNewValue().equals(Boolean.TRUE)) {
@@ -186,13 +182,7 @@ public class SourceContainerWorkbookPage extends BuildPathBasePage {
 		fFoldersList.enableButton(getIDX_EDIT(), false);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.dltk.internal.ui.wizards.buildpath.BuildPathBasePage#setTitle
-	 * (java.lang.String)
-	 */
+	@Override
 	public void setTitle(String title) {
 		fFoldersList.setLabelText(title);
 	}
@@ -203,11 +193,7 @@ public class SourceContainerWorkbookPage extends BuildPathBasePage {
 		if (Display.getCurrent() != null) {
 			updateFoldersList();
 		} else {
-			Display.getDefault().asyncExec(new Runnable() {
-				public void run() {
-					updateFoldersList();
-				}
-			});
+			Display.getDefault().asyncExec(() -> updateFoldersList());
 		}
 	}
 
@@ -235,6 +221,7 @@ public class SourceContainerWorkbookPage extends BuildPathBasePage {
 		}
 	}
 
+	@Override
 	public Control getControl(Composite parent) {
 
 		initContainerElements();
@@ -280,22 +267,27 @@ public class SourceContainerWorkbookPage extends BuildPathBasePage {
 		private final Object[] EMPTY_ARR = new Object[0];
 
 		// -------- IListAdapter --------
+		@Override
 		public void customButtonPressed(TreeListDialogField field, int index) {
 			sourcePageCustomButtonPressed(field, index);
 		}
 
+		@Override
 		public void selectionChanged(TreeListDialogField field) {
 			sourcePageSelectionChanged(field);
 		}
 
+		@Override
 		public void doubleClicked(TreeListDialogField field) {
 			sourcePageDoubleClicked(field);
 		}
 
+		@Override
 		public void keyPressed(TreeListDialogField field, KeyEvent event) {
 			sourcePageKeyPressed(field, event);
 		}
 
+		@Override
 		public Object[] getChildren(TreeListDialogField field, Object element) {
 			if (element instanceof BPListElement) {
 				return ((BPListElement) element).getChildren();
@@ -303,6 +295,7 @@ public class SourceContainerWorkbookPage extends BuildPathBasePage {
 			return EMPTY_ARR;
 		}
 
+		@Override
 		public Object getParent(TreeListDialogField field, Object element) {
 			if (element instanceof BPListElementAttribute) {
 				return ((BPListElementAttribute) element).getParent();
@@ -310,11 +303,13 @@ public class SourceContainerWorkbookPage extends BuildPathBasePage {
 			return null;
 		}
 
+		@Override
 		public boolean hasChildren(TreeListDialogField field, Object element) {
 			return (element instanceof BPListElement);
 		}
 
 		// ---------- IDialogFieldListener --------
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 			sourcePageDialogFieldChanged(field);
 		}
@@ -602,16 +597,12 @@ public class SourceContainerWorkbookPage extends BuildPathBasePage {
 		}
 	}
 
-	/*
-	 * @see BuildPathBasePage#getSelection
-	 */
+	@Override
 	public List getSelection() {
 		return fFoldersList.getSelectedElements();
 	}
 
-	/*
-	 * @see BuildPathBasePage#setSelection
-	 */
+	@Override
 	public void setSelection(List selElements, boolean expand) {
 		fFoldersList.selectElements(new StructuredSelection(selElements));
 		if (expand) {
@@ -621,6 +612,7 @@ public class SourceContainerWorkbookPage extends BuildPathBasePage {
 		}
 	}
 
+	@Override
 	public boolean isEntryKind(int kind) {
 		return kind == IBuildpathEntry.BPE_SOURCE;
 	}

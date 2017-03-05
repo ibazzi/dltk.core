@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -162,14 +162,12 @@ public class ModelElementUtil {
 	}
 
 	public static IMember[] sortByOffset(IMember[] members) {
-		Comparator<IMember> comparator = new Comparator<IMember>() {
-			public int compare(IMember o1, IMember o2) {
-				try {
-					return o1.getNameRange().getOffset()
-							- o2.getNameRange().getOffset();
-				} catch (ModelException e) {
-					return 0;
-				}
+		Comparator<IMember> comparator = (o1, o2) -> {
+			try {
+				return o1.getNameRange().getOffset()
+						- o2.getNameRange().getOffset();
+			} catch (ModelException e) {
+				return 0;
 			}
 		};
 		Arrays.sort(members, comparator);

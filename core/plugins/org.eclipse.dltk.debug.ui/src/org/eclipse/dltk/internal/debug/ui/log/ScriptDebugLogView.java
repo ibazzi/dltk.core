@@ -1,12 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  *******************************************************************************/
-
 package org.eclipse.dltk.internal.debug.ui.log;
 
 import java.util.ArrayList;
@@ -15,7 +14,6 @@ import java.util.List;
 import org.eclipse.dltk.ui.DLTKUIPlugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
@@ -26,16 +24,12 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -59,10 +53,12 @@ public class ScriptDebugLogView extends ViewPart {
 		super();
 	}
 
+	@Override
 	public void setFocus() {
 		viewer.getControl().setFocus();
 	}
 
+	@Override
 	public void createPartControl(Composite parent) {
 		final SashForm sashForm = new SashForm(parent, SWT.HORIZONTAL);
 		viewer = new TableViewer(sashForm, SWT.H_SCROLL | SWT.V_SCROLL
@@ -74,36 +70,27 @@ public class ScriptDebugLogView extends ViewPart {
 		addColumn(Messages.Column_Type, 80, true);
 		addColumn(Messages.Column_Session, 80, true);
 		addColumn(Messages.Column_Message, 400, false);
-		viewer.getTable().addListener(SWT.Resize, new Listener() {
-
-			public void handleEvent(Event event) {
-				final Table table = (Table) event.widget;
-				final int columnCount = table.getColumnCount();
-				int w = table.getClientArea().width;
-				for (int i = 0; i < columnCount - 1; ++i) {
-					w -= table.getColumn(i).getWidth();
-				}
-				if (w > 0) {
-					table.getColumn(columnCount - 1).setWidth(w);
-				}
+		viewer.getTable().addListener(SWT.Resize, event -> {
+			final Table table = (Table) event.widget;
+			final int columnCount = table.getColumnCount();
+			int w = table.getClientArea().width;
+			for (int i = 0; i < columnCount - 1; ++i) {
+				w -= table.getColumn(i).getWidth();
 			}
-
+			if (w > 0) {
+				table.getColumn(columnCount - 1).setWidth(w);
+			}
 		});
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-
-			public void selectionChanged(SelectionChangedEvent event) {
-				if (event.getSelection() instanceof IStructuredSelection) {
-					final Object first = ((IStructuredSelection) event
-							.getSelection()).getFirstElement();
-					if (first instanceof ScriptDebugLogItem) {
-						textDocument
-								.set(((ScriptDebugLogItem) first).getMessage());
-						return;
-					}
+		viewer.addSelectionChangedListener(event -> {
+			if (event.getSelection() instanceof IStructuredSelection) {
+				final Object first = ((IStructuredSelection) event
+						.getSelection()).getFirstElement();
+				if (first instanceof ScriptDebugLogItem) {
+					textDocument.set(((ScriptDebugLogItem) first).getMessage());
+					return;
 				}
-				textDocument.set(""); //$NON-NLS-1$
 			}
-
+			textDocument.set(""); //$NON-NLS-1$
 		});
 		viewer.setContentProvider(new ScriptDebugLogContentProvider());
 		viewer.setLabelProvider(new ScriptDebugLogLabelProvider());
@@ -112,11 +99,7 @@ public class ScriptDebugLogView extends ViewPart {
 		textViewer = new TextViewer(sashForm,
 				SWT.V_SCROLL | SWT.H_SCROLL | SWT.WRAP | SWT.READ_ONLY);
 		textViewer.setDocument(textDocument);
-		fontRegistryChangeListener = new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				handlePropertyChangeEvent(event);
-			}
-		};
+		fontRegistryChangeListener = event -> handlePropertyChangeEvent(event);
 		JFaceResources.getFontRegistry()
 				.addListener(fontRegistryChangeListener);
 
@@ -134,6 +117,7 @@ public class ScriptDebugLogView extends ViewPart {
 		}
 	}
 
+	@Override
 	public void dispose() {
 		if (fContextActivation != null) {
 			IContextService ctxService = getSite()
@@ -184,18 +168,14 @@ public class ScriptDebugLogView extends ViewPart {
 		final Display display = table.getDisplay();
 		if (display.isDisposed())
 			return;
-		display.asyncExec(new Runnable() {
-
-			public void run() {
-				viewer.refresh(false, false);
-				if (table.isDisposed() || table.getDisplay().isDisposed())
-					return;
-				final int itemCount = table.getItemCount();
-				if (itemCount > 0) {
-					table.showItem(table.getItem(itemCount - 1));
-				}
+		display.asyncExec(() -> {
+			viewer.refresh(false, false);
+			if (table.isDisposed() || table.getDisplay().isDisposed())
+				return;
+			final int itemCount = table.getItemCount();
+			if (itemCount > 0) {
+				table.showItem(table.getItem(itemCount - 1));
 			}
-
 		});
 	}
 
@@ -205,6 +185,7 @@ public class ScriptDebugLogView extends ViewPart {
 	public void createActions() {
 		copyAction = new ScriptDebugLogCopyAction(viewer);
 		clearAction = new Action(Messages.ScriptDebugLogView_clear) {
+			@Override
 			public void run() {
 				synchronized (items) {
 					items.clear();
@@ -231,11 +212,7 @@ public class ScriptDebugLogView extends ViewPart {
 		// Create menu manager.
 		MenuManager menuManager = new MenuManager();
 		menuManager.setRemoveAllWhenShown(true);
-		menuManager.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager) {
-				fillContextMenu(manager);
-			}
-		});
+		menuManager.addMenuListener(manager -> fillContextMenu(manager));
 
 		// Create menu.
 		Menu menu = menuManager.createContextMenu(viewer.getControl());

@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.validators.core;
 
@@ -32,14 +31,17 @@ public abstract class AbstractValidator implements IValidator, Cloneable {
 		this.name = name;
 	}
 
+	@Override
 	public String getID() {
 		return this.id;
 	}
 
+	@Override
 	public String getName() {
 		return this.name;
 	}
 
+	@Override
 	public final void loadFrom(Element element) {
 		final boolean savedWorkingCopy = workingCopy;
 		workingCopy = true;
@@ -61,28 +63,34 @@ public abstract class AbstractValidator implements IValidator, Cloneable {
 		return Boolean.valueOf(element.getAttribute(attribute)).booleanValue();
 	}
 
+	@Override
 	public void storeTo(Document doc, Element element) {
 		element.setAttribute(ATTR_NAME, getName());
 		element.setAttribute(ATTR_ACTIVE, Boolean.toString(isAutomatic()));
 	}
 
+	@Override
 	public IValidatorType getValidatorType() {
 		return this.type;
 	}
 
+	@Override
 	public void setName(String name) {
 		this.name = name;
 		fireChanged();
 	}
 
+	@Override
 	public boolean isAutomatic() {
 		return automatic;
 	}
 
+	@Override
 	public boolean isAutomatic(IScriptProject project) {
 		return isAutomatic();
 	}
 
+	@Override
 	public void setAutomatic(boolean value) {
 		this.automatic = value;
 		fireChanged();
@@ -94,10 +102,12 @@ public abstract class AbstractValidator implements IValidator, Cloneable {
 		}
 	}
 
+	@Override
 	public boolean isWorkingCopy() {
 		return workingCopy;
 	}
 
+	@Override
 	public IValidator getWorkingCopy() {
 		if (isWorkingCopy()) {
 			return this;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@ package org.eclipse.dltk.internal.debug.ui.interpreters;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -90,7 +89,7 @@ public abstract class AbstractInterpreterEnvironmentVariablesBlock
 
 	/**
 	 * Creates and returns the source lookup control.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent widget of this control
 	 */
@@ -166,7 +165,7 @@ public abstract class AbstractInterpreterEnvironmentVariablesBlock
 
 	/**
 	 * Creates and returns a button
-	 * 
+	 *
 	 * @param parent
 	 *            parent widget
 	 * @param label
@@ -230,7 +229,7 @@ public abstract class AbstractInterpreterEnvironmentVariablesBlock
 	/**
 	 * Determines if the present setup is the default location s for this
 	 * InterpreterEnvironment
-	 * 
+	 *
 	 * @return true if the current set of locations are the defaults, false
 	 *         otherwise
 	 */
@@ -260,7 +259,7 @@ public abstract class AbstractInterpreterEnvironmentVariablesBlock
 	/**
 	 * Returns the Interpreter install associated with this library block or
 	 * <code>null</code> if new interpreter is being added.
-	 * 
+	 *
 	 * @return Interpreter install
 	 */
 	protected IInterpreterInstall getInterpreterInstall() {
@@ -280,20 +279,14 @@ public abstract class AbstractInterpreterEnvironmentVariablesBlock
 
 	/**
 	 * Returns the Interpreter install type associated with this library block.
-	 * 
+	 *
 	 * @return Interpreter install
 	 */
 	protected IInterpreterInstallType getInterpreterInstallType() {
 		return fInterpreterInstallType;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt
-	 * .events.SelectionEvent)
-	 */
+	@Override
 	public void widgetSelected(SelectionEvent e) {
 		Object source = e.getSource();
 		/*
@@ -388,7 +381,7 @@ public abstract class AbstractInterpreterEnvironmentVariablesBlock
 			if (vars != null) {
 				EnvironmentVariable[] variables = this.fEnvironmentVariablesContentProvider
 						.getVariables();
-				Set<EnvironmentVariable> nvars = new HashSet<EnvironmentVariable>();
+				Set<EnvironmentVariable> nvars = new HashSet<>();
 				nvars.addAll(Arrays.asList(vars));
 				nvars.addAll(Arrays.asList(variables));
 				this.fEnvironmentVariablesContentProvider.setVariables(
@@ -433,12 +426,7 @@ public abstract class AbstractInterpreterEnvironmentVariablesBlock
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.
-	 * eclipse .swt.events.SelectionEvent)
-	 */
+	@Override
 	public void widgetDefaultSelected(SelectionEvent e) {
 	}
 
@@ -490,13 +478,7 @@ public abstract class AbstractInterpreterEnvironmentVariablesBlock
 		fDialog.updateValidateInterpreterLocation();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(
-	 * org.eclipse.jface.viewers.SelectionChangedEvent)
-	 */
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		updateButtons();
 	}
@@ -538,7 +520,7 @@ public abstract class AbstractInterpreterEnvironmentVariablesBlock
 	/**
 	 * Initializes this control based on the settings in the given Interpreter
 	 * install and type.
-	 * 
+	 *
 	 * @param interpreter
 	 *            Interpreter or <code>null</code> if none
 	 * @param type
@@ -634,6 +616,7 @@ public abstract class AbstractInterpreterEnvironmentVariablesBlock
 
 	private IStructuredContentProvider createSelectionDialogContentProvider() {
 		return new IStructuredContentProvider() {
+			@Override
 			public Object[] getElements(Object inputElement) {
 				if (inputElement instanceof Map<?, ?>) {
 					@SuppressWarnings("unchecked")
@@ -641,21 +624,18 @@ public abstract class AbstractInterpreterEnvironmentVariablesBlock
 					final EnvironmentVariable[] elements = env.values()
 							.toArray(new EnvironmentVariable[env.size()]);
 					Arrays.sort(elements,
-							new Comparator<EnvironmentVariable>() {
-								public int compare(EnvironmentVariable s1,
-										EnvironmentVariable s2) {
-									return s1.getName().compareTo(s2.getName());
-								}
-							});
+							(s1, s2) -> s1.getName().compareTo(s2.getName()));
 					return elements;
 				} else {
 					return new EnvironmentVariable[0];
 				}
 			}
 
+			@Override
 			public void dispose() {
 			}
 
+			@Override
 			public void inputChanged(Viewer viewer, Object oldInput,
 					Object newInput) {
 			}
@@ -668,7 +648,7 @@ public abstract class AbstractInterpreterEnvironmentVariablesBlock
 				.getAdapter(IExecutionEnvironment.class);
 		Map<String, String> stringVars = execEnvironment
 				.getEnvironmentVariables(true);
-		HashMap<String, EnvironmentVariable> vars = new HashMap<String, EnvironmentVariable>();
+		HashMap<String, EnvironmentVariable> vars = new HashMap<>();
 		if (stringVars != null) {
 			for (Map.Entry<String, String> entry : stringVars.entrySet()) {
 				vars.put(entry.getKey(), new EnvironmentVariable(entry.getKey(),

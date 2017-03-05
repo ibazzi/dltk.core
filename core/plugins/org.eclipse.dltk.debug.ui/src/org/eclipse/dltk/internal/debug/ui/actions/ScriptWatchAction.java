@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
-
 package org.eclipse.dltk.internal.debug.ui.actions;
 
 import java.util.Iterator;
@@ -27,8 +25,9 @@ public class ScriptWatchAction extends ScriptEvaluationAction {
 	private void createWatchExpression(String snippet) {
 		IWatchExpression expression = DebugPlugin.getDefault()
 				.getExpressionManager().newWatchExpression(snippet);
-		DebugPlugin.getDefault().getExpressionManager().addExpression(expression);
-		
+		DebugPlugin.getDefault().getExpressionManager()
+				.addExpression(expression);
+
 		IAdaptable object = DebugUITools.getDebugContext();
 		IDebugElement context = null;
 		if (object instanceof IDebugElement) {
@@ -36,10 +35,11 @@ public class ScriptWatchAction extends ScriptEvaluationAction {
 		} else if (object instanceof ILaunch) {
 			context = ((ILaunch) object).getDebugTarget();
 		}
-		
+
 		expression.setExpressionContext(context);
 	}
 
+	@Override
 	public void run() {
 		Object selectedObject = getSelectedObject();
 
@@ -48,8 +48,8 @@ public class ScriptWatchAction extends ScriptEvaluationAction {
 			Iterator elements = selection.iterator();
 			while (elements.hasNext()) {
 				try {
-					createWatchExpression(((IScriptVariable) elements.next())
-							.getName());
+					createWatchExpression(
+							((IScriptVariable) elements.next()).getName());
 				} catch (DebugException e) {
 					DLTKDebugUIPlugin.log(e);
 					return;

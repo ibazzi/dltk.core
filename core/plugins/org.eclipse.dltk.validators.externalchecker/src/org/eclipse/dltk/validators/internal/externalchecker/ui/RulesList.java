@@ -8,20 +8,20 @@ import java.util.Vector;
 import org.eclipse.dltk.validators.internal.externalchecker.core.Rule;
 
 public class RulesList {
-	
-	private Vector rules = new Vector();
-	private Set changeListeners = new HashSet();
-	private String[] types = {Messages.RulesList_error, Messages.RulesList_warning};
-	
-	
-	public void addRule(){
+
+	private Vector<Rule> rules = new Vector<>();
+	private Set<IRulesListViewer> changeListeners = new HashSet<>();
+	private String[] types = { Messages.RulesList_error, Messages.RulesList_warning };
+
+	public void addRule() {
 		Rule r = new Rule("%f:%n:%m", Messages.RulesList_error); //$NON-NLS-1$
 		rules.add(r);
-		Iterator iterator = changeListeners.iterator();
-		while(iterator.hasNext()){
-			((IRulesListViewer)iterator.next()).addRule(r);
+		Iterator<IRulesListViewer> iterator = changeListeners.iterator();
+		while (iterator.hasNext()) {
+			iterator.next().addRule(r);
 		}
 	}
+
 	public void removeChangeListener(IRulesListViewer viewer) {
 		changeListeners.remove(viewer);
 	}
@@ -29,33 +29,33 @@ public class RulesList {
 	public void addChangeListener(IRulesListViewer viewer) {
 		changeListeners.add(viewer);
 	}
-	
-	public Vector getRules(){
+
+	public Vector<Rule> getRules() {
 		return rules;
 	}
-	
+
 	public void ruleChanged(Rule r) {
-		Iterator iterator = changeListeners.iterator();
+		Iterator<IRulesListViewer> iterator = changeListeners.iterator();
 		while (iterator.hasNext())
-			((IRulesListViewer) iterator.next()).updateRule(r);
+			iterator.next().updateRule(r);
 	}
-	
-	public  void addRule(Rule r){
+
+	public void addRule(Rule r) {
 		rules.add(r);
-		Iterator iterator = changeListeners.iterator();
-		while(iterator.hasNext()){
-			((IRulesListViewer)iterator.next()).addRule(r);
+		Iterator<IRulesListViewer> iterator = changeListeners.iterator();
+		while (iterator.hasNext()) {
+			iterator.next().addRule(r);
 		}
 	}
-	
+
 	public void removeRule(Rule task) {
 		rules.remove(task);
-		Iterator iterator = changeListeners.iterator();
+		Iterator<IRulesListViewer> iterator = changeListeners.iterator();
 		while (iterator.hasNext())
-			((IRulesListViewer) iterator.next()).removeRule(task);
+			iterator.next().removeRule(task);
 	}
-	
-	public  String[] getTypes(){
+
+	public String[] getTypes() {
 		return types;
 	}
 }

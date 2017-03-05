@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.text;
 
@@ -47,7 +46,6 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.ITextViewerExtension2;
@@ -66,7 +64,6 @@ import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
@@ -99,17 +96,17 @@ public abstract class ScriptSourceViewerConfiguration extends
 	/**
 	 * Returns a scanner that is capable of detecting single line comments that
 	 * contain todo tasks.
-	 * 
+	 *
 	 * <p>
 	 * Clients should make a call to this method to create the scanner in their
 	 * overriden <code>initalizeScanners()</code> implementation.
 	 * </p>
-	 * 
+	 *
 	 * @param commentColor
 	 *            comment color key
 	 * @param tagColor
 	 *            tag color key
-	 * 
+	 *
 	 * @see #createCommentScanner(String, String, ITodoTaskPreferences)
 	 */
 	protected final AbstractScriptScanner createCommentScanner(
@@ -121,13 +118,13 @@ public abstract class ScriptSourceViewerConfiguration extends
 	/**
 	 * Returns a scanner that is capable of detecting single line comments that
 	 * contain todo tasks.
-	 * 
+	 *
 	 * <p>
 	 * Default implementation returns an instance of
 	 * {@link ScriptCommentScanner}. Clients that need to define an alternate
 	 * comment scanner implementation should override this method.
 	 * </p>
-	 * 
+	 *
 	 * @see #createCommentScanner(String, String)
 	 */
 	protected AbstractScriptScanner createCommentScanner(String commentColor,
@@ -196,7 +193,7 @@ public abstract class ScriptSourceViewerConfiguration extends
 
 	/**
 	 * Returns the comment prefix.
-	 * 
+	 *
 	 * <p>
 	 * Default implementation returns a <code>#</code>, sub-classes may override
 	 * if their language uses a different prefix.
@@ -211,23 +208,21 @@ public abstract class ScriptSourceViewerConfiguration extends
 	 * creating outline presenter controls for the given source viewer. This
 	 * implementation always returns a creator for
 	 * <code>ScriptOutlineInformationControl</code> instances.
-	 * 
+	 *
 	 * @param sourceViewer
 	 *            the source viewer to be configured by this configuration
 	 * @param commandId
 	 *            the ID of the command that opens this control
 	 * @return an information control creator
-	 * 
+	 *
 	 */
 	protected IInformationControlCreator getOutlinePresenterControlCreator(
 			ISourceViewer sourceViewer, final String commandId) {
-		return new IInformationControlCreator() {
-			public IInformationControl createInformationControl(Shell parent) {
-				int shellStyle = SWT.RESIZE;
-				int treeStyle = SWT.V_SCROLL | SWT.H_SCROLL;
-				return new ScriptOutlineInformationControl(parent, shellStyle,
-						treeStyle, commandId, fPreferenceStore);
-			}
+		return parent -> {
+			int shellStyle = SWT.RESIZE;
+			int treeStyle = SWT.V_SCROLL | SWT.H_SCROLL;
+			return new ScriptOutlineInformationControl(parent, shellStyle,
+					treeStyle, commandId, fPreferenceStore);
 		};
 	}
 
@@ -329,7 +324,7 @@ public abstract class ScriptSourceViewerConfiguration extends
 	/**
 	 * Returns the additional registered hyperlink detectors which are used to
 	 * detect hyperlinks in the given source viewer.
-	 * 
+	 *
 	 * @param sourceViewer
 	 *            the source viewer to be configured by this configuration
 	 * @return an array with hyperlink detectors or <code>null</code> if no
@@ -365,7 +360,7 @@ public abstract class ScriptSourceViewerConfiguration extends
 	/**
 	 * Similar to {@link #getHyperlinkDetectorTargets(ISourceViewer)}, but these
 	 * detectors are always added in the end.
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	protected Map<String, IAdaptable> getAdditionalHyperlinkDetectorTargets(
@@ -455,21 +450,19 @@ public abstract class ScriptSourceViewerConfiguration extends
 	 * factory creating the presenter controls for the given source viewer. This
 	 * implementation always returns a creator for
 	 * <code>DefaultInformationControl</code> instances.
-	 * 
+	 *
 	 * @param sourceViewer
 	 *            the source viewer to be configured by this configuration
 	 * @return an information control creator
-	 * 
+	 *
 	 */
 	private IInformationControlCreator getInformationPresenterControlCreator(
 			ISourceViewer sourceViewer) {
-		return new IInformationControlCreator() {
-			public IInformationControl createInformationControl(Shell parent) {
-				int shellStyle = SWT.RESIZE | SWT.TOOL;
-				int style = SWT.V_SCROLL | SWT.H_SCROLL;
-				return new DefaultInformationControl(parent, shellStyle, style,
-						new HTMLTextPresenter(false));
-			}
+		return parent -> {
+			int shellStyle = SWT.RESIZE | SWT.TOOL;
+			int style = SWT.V_SCROLL | SWT.H_SCROLL;
+			return new DefaultInformationControl(parent, shellStyle, style,
+					new HTMLTextPresenter(false));
 		};
 	}
 
@@ -595,7 +588,7 @@ public abstract class ScriptSourceViewerConfiguration extends
 	/**
 	 * Computes and returns the indent prefixes for space indentation and the
 	 * given <code>tabWidth</code>.
-	 * 
+	 *
 	 * @param tabWidth
 	 *            the display tab width
 	 * @return the indent prefixes
@@ -614,22 +607,18 @@ public abstract class ScriptSourceViewerConfiguration extends
 	/*
 	 * @see
 	 * SourceViewerConfiguration#getInformationControlCreator(ISourceViewer)
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	@Override
 	public IInformationControlCreator getInformationControlCreator(
 			ISourceViewer sourceViewer) {
-		return new IInformationControlCreator() {
-			public IInformationControl createInformationControl(Shell parent) {
-				return new DefaultInformationControl(parent, false);
-			}
-		};
+		return parent -> new DefaultInformationControl(parent, false);
 	}
 
 	/*
 	 * @see SourceViewerConfiguration#getAnnotationHover(ISourceViewer)
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	@Override
@@ -645,7 +634,7 @@ public abstract class ScriptSourceViewerConfiguration extends
 	/*
 	 * @see
 	 * SourceViewerConfiguration#getOverviewRulerAnnotationHover(ISourceViewer)
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	@Override

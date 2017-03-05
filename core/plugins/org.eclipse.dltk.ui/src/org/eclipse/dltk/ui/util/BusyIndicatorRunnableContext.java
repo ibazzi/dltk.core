@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.util;
 
@@ -28,18 +27,19 @@ import org.eclipse.swt.custom.BusyIndicator;
 public class BusyIndicatorRunnableContext implements IRunnableContext {
 
 	private static class BusyRunnable implements Runnable {
-		
+
 		private static class ThreadContext extends Thread {
 			IRunnableWithProgress fRunnable;
 			Throwable fThrowable;
-			
+
 			public ThreadContext(IRunnableWithProgress runnable) {
 				this(runnable, "BusyCursorRunnableContext-Thread"); //$NON-NLS-1$
-			}			
+			}
 			protected ThreadContext(IRunnableWithProgress runnable, String name) {
 				super(name);
 				fRunnable= runnable;
 			}
+			@Override
 			public void run() {
 				try {
 					fRunnable.run(new NullProgressMonitor());
@@ -64,7 +64,7 @@ public class BusyIndicatorRunnableContext implements IRunnableContext {
 				}
 			}
 		}
-		
+
 		public Throwable fThrowable;
 		private boolean fFork;
 		private IRunnableWithProgress fRunnable;
@@ -72,6 +72,7 @@ public class BusyIndicatorRunnableContext implements IRunnableContext {
 			fFork= fork;
 			fRunnable= runnable;
 		}
+		@Override
 		public void run() {
 			try {
 				internalRun(fFork, fRunnable);
@@ -87,7 +88,7 @@ public class BusyIndicatorRunnableContext implements IRunnableContext {
 			// thread or inside a busy context thread.
 			if (thread instanceof ThreadContext || ModalContext.isModalContextThread(thread))
 				fork= false;
-				
+
 			if (fork) {
 				final ThreadContext t= new ThreadContext(runnable);
 				t.start();
@@ -110,14 +111,12 @@ public class BusyIndicatorRunnableContext implements IRunnableContext {
 					runnable.run(new NullProgressMonitor());
 				} catch (OperationCanceledException e) {
 					throw new InterruptedException();
-				}	
+				}
 			}
 		}
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on IRunnableContext.
-	 */
+	@Override
 	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
 		BusyRunnable busyRunnable= new BusyRunnable(fork, runnable);
 		BusyIndicator.showWhile(null, busyRunnable);
@@ -127,5 +126,5 @@ public class BusyIndicatorRunnableContext implements IRunnableContext {
 		} else if (throwable instanceof InterruptedException) {
 			throw (InterruptedException)throwable;
 		}
-	}	
+	}
 }

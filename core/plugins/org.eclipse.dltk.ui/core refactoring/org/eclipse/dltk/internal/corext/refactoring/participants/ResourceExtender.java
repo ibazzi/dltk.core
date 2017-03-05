@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.corext.refactoring.participants;
 
@@ -16,17 +15,16 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.dltk.internal.ui.util.StringMatcher;
 
-
-
 public class ResourceExtender extends PropertyTester {
 
 	private static final String PROPERTY_MATCHES_PATTERN= "matchesPattern";	 //$NON-NLS-1$
 	private static final String PROJECT_NATURE = "projectNature";	 //$NON-NLS-1$
 	private static final String CAN_DELETE= "canDelete"; //$NON-NLS-1$
-		
+
+	@Override
 	public boolean test(Object receiver, String method, Object[] args, Object expectedValue) {
 		IResource resource= (IResource)receiver;
-		if (PROPERTY_MATCHES_PATTERN.equals(method)) { 
+		if (PROPERTY_MATCHES_PATTERN.equals(method)) {
 			String fileName= resource.getName();
 			StringMatcher matcher= new StringMatcher((String)expectedValue, false, false);
 			return matcher.match(fileName);
@@ -35,7 +33,7 @@ public class ResourceExtender extends PropertyTester {
 				IProject proj = resource.getProject();
 				return proj.isAccessible() && proj.hasNature((String)expectedValue);
 			} catch (CoreException e) {
-				return false;		
+				return false;
 			}
 		} else if (CAN_DELETE.equals(method)) {
 			return canDelete(resource);
@@ -43,7 +41,7 @@ public class ResourceExtender extends PropertyTester {
 		Assert.isTrue(false);
 		return false;
 	}
-	
+
 	private boolean canDelete(IResource resource) {
 		if (!resource.exists() || resource.isPhantom())
 			return false;

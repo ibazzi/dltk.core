@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,9 +50,10 @@ class DeleteChangeCreator {
 	private DeleteChangeCreator() {
 		//private
 	}
-	
+
 	static Change createDeleteChange(TextChangeManager manager, IResource[] resources, IModelElement[] modelElements, String changeName) throws CoreException {
 		final DynamicValidationStateChange result= new DynamicValidationStateChange(changeName) {
+			@Override
 			public Change perform(IProgressMonitor pm) throws CoreException {
 				super.perform(pm);
 				return null;
@@ -67,7 +68,7 @@ class DeleteChangeCreator {
 		for (int i= 0; i < resources.length; i++) {
 			result.add(createDeleteChange(resources[i]));
 		}
-		
+
 		Map grouped= ReorgUtils.groupBySourceModule(getElementsSmallerThanCu(modelElements));
 		if (grouped.size() != 0 ){
 			Assert.isNotNull(manager);
@@ -82,7 +83,7 @@ class DeleteChangeCreator {
 
 		return result;
 	}
-	
+
 	private static Change createDeleteChange(IResource resource) {
 		Assert.isTrue(! (resource instanceof IWorkspaceRoot));//cannot be done
 		Assert.isTrue(! (resource instanceof IProject)); //project deletion is handled by the workbench
@@ -124,7 +125,7 @@ class DeleteChangeCreator {
 		  }
 		  if (sourceRange != null) {
 		    DeleteEdit edit = new DeleteEdit(sourceRange.getOffset(), sourceRange.getLength());
-		    
+
 		    fileChangeRootEdit.addChild(edit);
 		    if (cu.isWorkingCopy()) {
 		      textFileChange.setSaveMode(TextFileChange.LEAVE_DIRTY);
@@ -133,7 +134,7 @@ class DeleteChangeCreator {
 		  }
         }
 	  }
-		
+
 		//		ASTNodeDeleteUtil.markAsDeleted(elements, rewriter, null);
 //		return addTextEditFromRewrite(manager, cu, rewriter.getASTRewrite());
 	  return textFileChange;
@@ -149,7 +150,7 @@ class DeleteChangeCreator {
 //				if (cu.isWorkingCopy())
 //					tfc.setSaveMode(TextFileChange.LEAVE_DIRTY);
 //			}
-//			String message= RefactoringCoreMessages.DeleteChangeCreator_1; 
+//			String message= RefactoringCoreMessages.DeleteChangeCreator_1;
 //			TextChangeCompatibility.addTextEdit(textChange, message, resultingEdits);
 //			return textChange;
 //		} finally {
@@ -170,16 +171,16 @@ class DeleteChangeCreator {
 
 	private static Change createDeleteChange(IModelElement modelElement) {
 		Assert.isTrue(! ReorgUtils.isInsideSourceModule(modelElement));
-		
+
 		switch(modelElement.getElementType()){
 			case IModelElement.PROJECT_FRAGMENT:
 				return createProjectFragmentDeleteChange((IProjectFragment)modelElement);
 
-			case IModelElement.SCRIPT_FOLDER:				
+			case IModelElement.SCRIPT_FOLDER:
 				return createSourceManipulationDeleteChange((IScriptFolder)modelElement);
 
-			case IModelElement.SOURCE_MODULE:				
-				return createSourceManipulationDeleteChange((ISourceModule)modelElement);			
+			case IModelElement.SOURCE_MODULE:
+				return createSourceManipulationDeleteChange((ISourceModule)modelElement);
 
 			case IModelElement.SCRIPT_MODEL: //cannot be done
 				Assert.isTrue(false);
@@ -209,31 +210,31 @@ class DeleteChangeCreator {
 			IResource resource;
 			if (element instanceof ISourceModule)
 				resource= ReorgUtils.getResource((ISourceModule)element);
-			else 
+			else
 				resource= ((IScriptFolder)element).getResource();
 			if (resource != null && resource.isLinked())
 				return createDeleteChange(resource);
 		}
 		return new DeleteSourceManipulationChange(element, true);
 	}
-	
+
 	private static Change createProjectFragmentDeleteChange(IProjectFragment root) {
 		IResource resource= root.getResource();
 		if (resource != null && resource.isLinked()){
 			//XXX using this code is a workaround for jcore bug 31998
 			//jcore cannot handle linked stuff
 			//normally, we should always create DeleteProjectFragmentChange
-			CompositeChange composite= new DynamicValidationStateChange(RefactoringCoreMessages.DeleteRefactoring_delete_package_fragment_root); 
-	
+			CompositeChange composite= new DynamicValidationStateChange(RefactoringCoreMessages.DeleteRefactoring_delete_package_fragment_root);
+
 			composite.add(new DeleteFromBuildpathChange(root));
 			Assert.isTrue(! Checks.isBuildpathDelete(root));//checked in preconditions
 			composite.add(createDeleteChange(resource));
-	
+
 			return composite;
 		} else {
 			Assert.isTrue(! root.isExternal());
 			// TODO remove the query argument
-			return new DeleteProjectFragmentChange(root, true, null); 
+			return new DeleteProjectFragmentChange(root, true, null);
 		}
 	}
 }

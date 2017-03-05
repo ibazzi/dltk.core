@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -42,8 +42,8 @@ public class OpenConsoleAction extends Action implements IMenuCreator {
 		fFactoryExtensions = factories;
 		setText(ConsoleMessages.OpenConsoleAction_0);
 		setToolTipText(ConsoleMessages.OpenConsoleAction_1);
-		setImageDescriptor(ConsolePluginImages
-				.getImageDescriptor(IInternalConsoleConstants.IMG_ELCL_NEW_CON));
+		setImageDescriptor(ConsolePluginImages.getImageDescriptor(
+				IInternalConsoleConstants.IMG_ELCL_NEW_CON));
 		setMenuCreator(this);
 		// PlatformUI
 		// .getWorkbench()
@@ -52,11 +52,7 @@ public class OpenConsoleAction extends Action implements IMenuCreator {
 		// IConsoleHelpContextIds.CONSOLE_OPEN_CONSOLE_ACTION);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.action.IMenuCreator#dispose()
-	 */
+	@Override
 	public void dispose() {
 		fFactoryExtensions = null;
 	}
@@ -65,9 +61,10 @@ public class OpenConsoleAction extends Action implements IMenuCreator {
 	 * @see
 	 * org.eclipse.jface.action.Action#runWithEvent(org.eclipse.swt.widgets.
 	 * Event)
-	 * 
+	 *
 	 * @since 3.5
 	 */
+	@Override
 	public void runWithEvent(Event event) {
 		if (event.widget instanceof ToolItem) {
 			ToolItem toolItem = (ToolItem) event.widget;
@@ -81,13 +78,7 @@ public class OpenConsoleAction extends Action implements IMenuCreator {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets
-	 * .Control)
-	 */
+	@Override
 	public Menu getMenu(Control parent) {
 		if (fMenu != null) {
 			fMenu.dispose();
@@ -101,8 +92,9 @@ public class OpenConsoleAction extends Action implements IMenuCreator {
 					&& extension.isEnabled()) {
 				String label = extension.getLabel();
 				ImageDescriptor image = extension.getImageDescriptor();
-				addActionToMenu(fMenu, new ConsoleFactoryAction(label, image,
-						extension), accel);
+				addActionToMenu(fMenu,
+						new ConsoleFactoryAction(label, image, extension),
+						accel);
 				accel++;
 			}
 		}
@@ -124,13 +116,7 @@ public class OpenConsoleAction extends Action implements IMenuCreator {
 		item.fill(parent, -1);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets
-	 * .Menu)
-	 */
+	@Override
 	public Menu getMenu(Menu parent) {
 		return null;
 	}
@@ -148,11 +134,7 @@ public class OpenConsoleAction extends Action implements IMenuCreator {
 			fConfig = extension;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.action.IAction#run()
-		 */
+		@Override
 		public void run() {
 			final IEvaluateConsole console = fConfig.create();
 			if (console != null) {
@@ -160,13 +142,7 @@ public class OpenConsoleAction extends Action implements IMenuCreator {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.jface.action.IAction#runWithEvent(org.eclipse.swt.widgets
-		 * .Event)
-		 */
+		@Override
 		public void runWithEvent(Event event) {
 			run();
 		}

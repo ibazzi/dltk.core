@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.text;
 
@@ -72,22 +71,22 @@ public abstract class AbstractScriptScanner extends BufferedRuleBasedScanner
 	/**
 	 * Preference keys for boolean preferences which are <code>true</code>, iff
 	 * the corresponding token should be rendered italic.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	private String[] fPropertyNamesItalic;
 	/**
 	 * Preference keys for boolean preferences which are <code>true</code>, iff
 	 * the corresponding token should be rendered strikethrough.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	private String[] fPropertyNamesStrikethrough;
 	/**
 	 * Preference keys for boolean preferences which are <code>true</code>, iff
 	 * the corresponding token should be rendered underline.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	private String[] fPropertyNamesUnderline;
 
@@ -250,7 +249,7 @@ public abstract class AbstractScriptScanner extends BufferedRuleBasedScanner
 	/**
 	 * Create a text attribute based on the given color, bold, italic,
 	 * strikethrough and underline preference keys.
-	 * 
+	 *
 	 * @param colorKey
 	 *            the color preference key
 	 * @param boldKey
@@ -262,7 +261,7 @@ public abstract class AbstractScriptScanner extends BufferedRuleBasedScanner
 	 * @param underlineKey
 	 *            the italic preference key
 	 * @return the created text attribute
-	 * 
+	 *
 	 */
 	private TextAttribute createTextAttribute(String colorKey, String boldKey,
 			String italicKey, String strikethroughKey, String underlineKey) {
@@ -284,6 +283,7 @@ public abstract class AbstractScriptScanner extends BufferedRuleBasedScanner
 		return new TextAttribute(color, null, style);
 	}
 
+	@Override
 	public Token getToken(String key) {
 		doResolveProxyAttributes();
 		Token token = fTokenMap.get(key);
@@ -405,10 +405,10 @@ public abstract class AbstractScriptScanner extends BufferedRuleBasedScanner
 
 	/**
 	 * Returns the preference store.
-	 * 
+	 *
 	 * @return the preference store.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	protected IPreferenceStore getPreferenceStore() {
 		return fPreferenceStore;

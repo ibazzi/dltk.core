@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2017 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,6 +51,7 @@ public class FileTemplateContextType extends TemplateContextType {
 			super(type, description);
 		}
 
+		@Override
 		protected String resolve(TemplateContext context) {
 			String value = context.getVariable(getType());
 			return value != null ? value : Util.EMPTY_STRING;
@@ -68,12 +69,7 @@ public class FileTemplateContextType extends TemplateContextType {
 					"date", TemplateMessages.FileTemplateContextType_variable_description_date); //$NON-NLS-1$
 		}
 
-		/*
-		 * @see
-		 * org.eclipse.jface.text.templates.TemplateVariableResolver#resolve
-		 * (org.eclipse.jface.text.templates.TemplateVariable,
-		 * org.eclipse.jface.text.templates.TemplateContext)
-		 */
+		@Override
 		public void resolve(TemplateVariable variable, TemplateContext context) {
 			fFormat = null;
 			TemplateVariableType type = variable.getVariableType();
@@ -84,11 +80,7 @@ public class FileTemplateContextType extends TemplateContextType {
 			super.resolve(variable, context);
 		}
 
-		/*
-		 * @see
-		 * org.eclipse.jface.text.templates.SimpleTemplateVariableResolver#resolve
-		 * (org.eclipse.jface.text.templates.TemplateContext)
-		 */
+		@Override
 		protected String resolve(TemplateContext context) {
 			DateFormat f;
 			if (fFormat == null) {
@@ -113,12 +105,7 @@ public class FileTemplateContextType extends TemplateContextType {
 					TemplateMessages.FileTemplateContextType__variable_description_eclipse);
 		}
 
-		/*
-		 * @see
-		 * org.eclipse.jface.text.templates.TemplateVariableResolver#resolve
-		 * (org.eclipse.jface.text.templates.TemplateVariable,
-		 * org.eclipse.jface.text.templates.TemplateContext)
-		 */
+		@Override
 		public void resolve(TemplateVariable variable, TemplateContext context) {
 			fVariableName = variable.getName();
 			TemplateVariableType type = variable.getVariableType();
@@ -127,11 +114,7 @@ public class FileTemplateContextType extends TemplateContextType {
 			super.resolve(variable, context);
 		}
 
-		/*
-		 * @see
-		 * org.eclipse.jface.text.templates.SimpleTemplateVariableResolver#resolve
-		 * (org.eclipse.jface.text.templates.TemplateContext)
-		 */
+		@Override
 		protected String resolve(TemplateContext context) {
 			StringBuffer expr = new StringBuffer("${"); //$NON-NLS-1$
 			expr.append(fVariableName);
@@ -179,6 +162,7 @@ public class FileTemplateContextType extends TemplateContextType {
 				TemplateMessages.FileTemplateContextType_variable_description_projectname));
 	}
 
+	@Override
 	protected TemplateVariableResolver getResolver(String type) {
 		// compatibility with editor template variables
 		if ("file".equals(type)) { //$NON-NLS-1$
@@ -189,6 +173,7 @@ public class FileTemplateContextType extends TemplateContextType {
 		return super.getResolver(type);
 	}
 
+	@Override
 	protected void validateVariables(TemplateVariable[] variables)
 			throws TemplateException {
 		ArrayList required = new ArrayList(5);
@@ -214,12 +199,7 @@ public class FileTemplateContextType extends TemplateContextType {
 		super.validateVariables(variables);
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.jface.text.templates.TemplateContextType#resolve(org.eclipse
-	 * .jface.text.templates.TemplateVariable,
-	 * org.eclipse.jface.text.templates.TemplateContext)
-	 */
+	@Override
 	public void resolve(TemplateVariable variable, TemplateContext context) {
 		String type = variable.getType();
 		TemplateVariableResolver resolver = getResolver(type);
@@ -228,53 +208,5 @@ public class FileTemplateContextType extends TemplateContextType {
 		}
 		resolver.resolve(variable, context);
 	}
-
-	// public static void registerContextTypes(ContextTypeRegistry registry) {
-	// IContentTypeManager contentTypeMgr = Platform.getContentTypeManager();
-	// IContentType[] contentTypes = contentTypeMgr.getAllContentTypes();
-	// for (int i = 0; i < contentTypes.length; i++) {
-	// IContentType contentType = contentTypes[i];
-	// if (isTextContentType(contentType)
-	// && contentType
-	// .getFileSpecs(IContentType.FILE_EXTENSION_SPEC).length > 0) {
-	// final String contextTypeId = contextTypeIdForContentType(contentType);
-	// if (registry.getContextType(contextTypeId) == null) {
-	// registry.addContextType(new FileTemplateContextType(
-	// contextTypeId, contentType.getName()));
-	// }
-	// }
-	// }
-	// }
-
-	// public static String contextTypeIdForContentType(IContentType
-	// contentType) {
-	// return contentType.getId() + CONTEXTTYPE_SUFFIX;
-	// }
-	// public static boolean isFileTemplateContextType(String contextTypeId) {
-	// return contextTypeId.endsWith(CONTEXTTYPE_SUFFIX);
-	// }
-	// public static boolean isContextTypeForContentType(String contextTypeId,
-	// String contentTypeId) {
-	// return contextTypeId.endsWith(CONTEXTTYPE_SUFFIX) &&
-	// contextTypeId.startsWith(contentTypeId);
-	// }
-	// public static String contentTypeIdForContextType(String contextTypeId) {
-	// return contextTypeId.substring(0, contextTypeId.length() -
-	// CONTEXTTYPE_SUFFIX.length());
-	// }
-
-	// private static boolean isTextContentType(IContentType contentType) {
-	// if (contentType == null) {
-	// return false;
-	// }
-	// String id = contentType.getId();
-	// if (id.equals(CONTENTTYPE_TEXT)) {
-	// return true;
-	// }
-	//		if (id.indexOf(".pde.") != -1 || id.indexOf(".jdt.") != -1) { //$NON-NLS-1$ //$NON-NLS-2$
-	// return false;
-	// }
-	// return isTextContentType(contentType.getBaseType());
-	// }
 
 }

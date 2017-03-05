@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ import org.eclipse.ui.texteditor.spelling.SpellingProblem;
 
 /**
  * Spelling problem to be accepted by problem requesters.
- * 
+ *
  * @since 4.0
  */
 public class ScriptSpellingProblem extends CategorizedProblem {
@@ -61,7 +61,7 @@ public class ScriptSpellingProblem extends CategorizedProblem {
 
 	/**
 	 * Initialize with the given parameters.
-	 * 
+	 *
 	 * @param start
 	 *            the start offset
 	 * @param end
@@ -102,9 +102,7 @@ public class ScriptSpellingProblem extends CategorizedProblem {
 		return fSpellingProblem;
 	}
 
-	/*
-	 * @see org.eclipse.jdt.core.compiler.IProblem#getArguments()
-	 */
+	@Override
 	public String[] getArguments() {
 
 		String prefix = ""; //$NON-NLS-1$
@@ -127,101 +125,77 @@ public class ScriptSpellingProblem extends CategorizedProblem {
 				fMatch ? Boolean.toString(true) : Boolean.toString(false) };
 	}
 
-	/*
-	 * @see org.eclipse.jdt.core.compiler.IProblem#getID()
-	 */
+	@Override
 	public IProblemIdentifier getID() {
 		return SpellingProblems.SPELLING_PROBLEM;
 	}
 
-	/*
-	 * @see org.eclipse.jdt.core.compiler.IProblem#getMessage()
-	 */
+	@Override
 	public String getMessage() {
 		return fMessage;
 	}
 
-	/*
-	 * @see org.eclipse.jdt.core.compiler.IProblem#getOriginatingFileName()
-	 */
+	@Override
 	public String getOriginatingFileName() {
 		return fOrigin;
 	}
 
-	/*
-	 * @see org.eclipse.jdt.core.compiler.IProblem#getSourceEnd()
-	 */
+	@Override
 	public int getSourceEnd() {
 		return fSourceEnd;
 	}
 
-	/*
-	 * @see org.eclipse.jdt.core.compiler.IProblem#getSourceLineNumber()
-	 */
+	@Override
 	public int getSourceLineNumber() {
 		return fLineNumber;
 	}
 
-	/*
-	 * @see org.eclipse.jdt.core.compiler.IProblem#getSourceStart()
-	 */
+	@Override
 	public int getSourceStart() {
 		return fSourceStart;
 	}
 
+	@Override
 	public void setSeverity(ProblemSeverity severity) {
 		// unsupported
 	}
 
-	/*
-	 * @see org.eclipse.jdt.core.compiler.IProblem#isError()
-	 */
+	@Override
 	public boolean isError() {
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.jdt.core.compiler.IProblem#isWarning()
-	 */
+	@Override
 	public boolean isWarning() {
 		return true;
 	}
 
+	@Override
 	public boolean isTask() {
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.jdt.core.compiler.IProblem#setSourceStart(int)
-	 */
+	@Override
 	public void setSourceStart(int sourceStart) {
 		fSourceStart = sourceStart;
 	}
 
-	/*
-	 * @see org.eclipse.jdt.core.compiler.IProblem#setSourceEnd(int)
-	 */
+	@Override
 	public void setSourceEnd(int sourceEnd) {
 		fSourceEnd = sourceEnd;
 	}
 
-	/*
-	 * @see org.eclipse.jdt.core.compiler.IProblem#setSourceLineNumber(int)
-	 */
+	@Override
 	public void setSourceLineNumber(int lineNumber) {
 		fLineNumber = lineNumber;
 	}
 
-	/*
-	 * @see org.eclipse.jdt.core.compiler.CategorizedProblem#getCategoryID()
-	 */
+	@Override
 	public int getCategoryID() {
 		return 0;
 	}
 
-	/*
-	 * @see org.eclipse.jdt.core.compiler.CategorizedProblem#getMarkerType()
-	 */
+	@Override
 	public String getMarkerType() {
 		return MARKER_TYPE;
 	}

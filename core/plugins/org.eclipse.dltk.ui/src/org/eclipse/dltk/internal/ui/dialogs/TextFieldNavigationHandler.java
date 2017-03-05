@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,8 +19,6 @@ import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyAdapter;
@@ -45,7 +43,7 @@ import com.ibm.icu.text.BreakIterator;
  * Support for camelCase-aware sub-word navigation in dialog fields.
  */
 public class TextFieldNavigationHandler {
-	
+
 	public static void install(Text text) {
 		if (isSubWordNavigationEnabled())
 			new FocusHandler(new TextNavigable(text));
@@ -55,12 +53,12 @@ public class TextFieldNavigationHandler {
 		if (isSubWordNavigationEnabled())
 			new FocusHandler(new StyledTextNavigable(styledText));
 	}
-	
+
 	public static void install(Combo combo) {
 		if (isSubWordNavigationEnabled())
 			new FocusHandler(new ComboNavigable(combo));
 	}
-	
+
 	private static boolean isSubWordNavigationEnabled() {
 		if (DLTKCore.DEBUG) {
 			System.err.println("Add language dependent code here"); //$NON-NLS-1$
@@ -69,15 +67,15 @@ public class TextFieldNavigationHandler {
 //		return preferenceStore.getBoolean(PreferenceConstants.EDITOR_SUB_WORD_NAVIGATION);
 		return true;
 	}
-	
+
 	private abstract static class WorkaroundNavigable extends Navigable {
 		/* workarounds for:
 		 * - bug 103630: Add API: Combo#getCaretPosition()
 		 * - bug 106024: Text#setSelection(int, int) does not handle start > end with SWT.SINGLE
-		 */ 
+		 */
 		Point fLastSelection;
 		int fCaretPosition;
-		
+
 		void selectionChanged() {
 			Point selection= getSelection();
 			if (selection.equals(fLastSelection)) {
@@ -92,29 +90,29 @@ public class TextFieldNavigationHandler {
 			fLastSelection= selection;
 		}
 	}
-	
+
 	private abstract static class Navigable {
 		public abstract Control getControl();
-		
+
 		public abstract String getText();
 
 		public abstract void setText(String text);
-		
+
 		public abstract Point getSelection();
 
 		public abstract void setSelection(int start, int end);
-		
+
 		public abstract int getCaretPosition();
 	}
-	
+
 	private static class TextNavigable extends WorkaroundNavigable {
 		static final boolean BUG_106024_TEXT_SELECTION=
 				"win32".equals(SWT.getPlatform()) //$NON-NLS-1$
 				// on carbon, getCaretPosition() always returns getSelection().x
 				|| "carbon".equals(SWT.getPlatform()); //$NON-NLS-1$
-		
+
 		private final Text fText;
-		
+
 		public TextNavigable(Text text) {
 			fText= text;
 			// workaround for bug 106024:
@@ -122,34 +120,41 @@ public class TextFieldNavigationHandler {
 				fLastSelection= getSelection();
 				fCaretPosition= fLastSelection.y;
 				fText.addKeyListener(new KeyAdapter() {
+					@Override
 					public void keyReleased(KeyEvent e) {
 						selectionChanged();
 					}
 				});
 				fText.addMouseListener(new MouseAdapter() {
+					@Override
 					public void mouseUp(MouseEvent e) {
 						selectionChanged();
 					}
 				});
 			}
 		}
-		
+
+		@Override
 		public Control getControl() {
 			return fText;
 		}
 
+		@Override
 		public String getText() {
 			return fText.getText();
 		}
 
+		@Override
 		public void setText(String text) {
 			fText.setText(text);
 		}
-		
+
+		@Override
 		public Point getSelection() {
 			return fText.getSelection();
 		}
 
+		@Override
 		public int getCaretPosition() {
 			if (BUG_106024_TEXT_SELECTION) {
 				selectionChanged();
@@ -159,117 +164,130 @@ public class TextFieldNavigationHandler {
 			}
 		}
 
+		@Override
 		public void setSelection(int start, int end) {
 			fText.setSelection(start, end);
 		}
 	}
-	
+
 	private static class StyledTextNavigable extends Navigable {
 		private final StyledText fStyledText;
-		
+
 		public StyledTextNavigable(StyledText styledText) {
 			fStyledText= styledText;
 		}
-		
+
+		@Override
 		public Control getControl() {
 			return fStyledText;
 		}
-		
+
+		@Override
 		public String getText() {
 			return fStyledText.getText();
 		}
-		
+
+		@Override
 		public void setText(String text) {
 			fStyledText.setText(text);
 		}
-		
+
+		@Override
 		public Point getSelection() {
 			return fStyledText.getSelection();
 		}
-		
+
+		@Override
 		public int getCaretPosition() {
 			return fStyledText.getCaretOffset();
 		}
-		
+
+		@Override
 		public void setSelection(int start, int end) {
 			fStyledText.setSelection(start, end);
 		}
 	}
-	
+
 	private static class ComboNavigable extends WorkaroundNavigable {
 		private final Combo fCombo;
-		
+
 		public ComboNavigable(Combo combo) {
 			fCombo= combo;
 			// workaround for bug 103630:
 			fLastSelection= getSelection();
 			fCaretPosition= fLastSelection.y;
 			fCombo.addKeyListener(new KeyAdapter() {
+				@Override
 				public void keyReleased(KeyEvent e) {
 					selectionChanged();
 				}
 			});
 			fCombo.addMouseListener(new MouseAdapter() {
+				@Override
 				public void mouseUp(MouseEvent e) {
 					selectionChanged();
 				}
 			});
 		}
-		
+
+		@Override
 		public Control getControl() {
 			return fCombo;
 		}
 
+		@Override
 		public String getText() {
 			return fCombo.getText();
 		}
-		
+
+		@Override
 		public void setText(String text) {
 			fCombo.setText(text);
 		}
-		
+
+		@Override
 		public Point getSelection() {
 			return fCombo.getSelection();
 		}
-		
+
+		@Override
 		public int getCaretPosition() {
 			selectionChanged();
 			return fCaretPosition;
 //			return fCombo.getCaretPosition(); // not available: bug 103630
 		}
-		
+
+		@Override
 		public void setSelection(int start, int end) {
 			fCombo.setSelection(new Point(start, end));
 		}
 	}
-	
+
 	private static class FocusHandler implements FocusListener {
-		
+
 		private static final String EMPTY_TEXT= ""; //$NON-NLS-1$
-		
+
 		private final DLTKWordIterator fIterator;
 		private final Navigable fNavigable;
 		private KeyAdapter fKeyListener;
-		
+
 		private FocusHandler(Navigable navigable) {
 			fIterator= new DLTKWordIterator();
 			fNavigable= navigable;
-			
+
 			Control control= navigable.getControl();
 			control.addFocusListener(this);
 			if (control.isFocusControl())
 				activate();
-			control.addDisposeListener(new DisposeListener() {
-				public void widgetDisposed(DisposeEvent e) {
-					deactivate();
-				}
-			});
+			control.addDisposeListener(e -> deactivate());
 		}
 
+		@Override
 		public void focusGained(FocusEvent e) {
 			activate();
 		}
 
+		@Override
 		public void focusLost(FocusEvent e) {
 			deactivate();
 		}
@@ -277,7 +295,7 @@ public class TextFieldNavigationHandler {
 		private void activate() {
 			fNavigable.getControl().addKeyListener(getKeyListener());
 		}
-		
+
 		private void deactivate() {
 			if (fKeyListener != null) {
 				Control control= fNavigable.getControl();
@@ -286,7 +304,7 @@ public class TextFieldNavigationHandler {
 				fKeyListener= null;
 			}
 		}
-		
+
 		private KeyAdapter getKeyListener() {
 			if (fKeyListener == null) {
 				fKeyListener= new KeyAdapter() {
@@ -295,6 +313,7 @@ public class TextFieldNavigationHandler {
 							|| (fNavigable instanceof TextNavigable && TextNavigable.BUG_106024_TEXT_SELECTION);
 					private List/*<Submission>*/ fSubmissions;
 
+					@Override
 					public void keyPressed(KeyEvent e) {
 						if (IS_WORKAROUND) {
 							if (e.keyCode == SWT.ARROW_LEFT && e.stateMask == SWT.MOD2) {
@@ -308,7 +327,7 @@ public class TextFieldNavigationHandler {
 								}
 								e.doit= false;
 								return;
-								
+
 							} else if (e.keyCode == SWT.ARROW_RIGHT && e.stateMask == SWT.MOD2) {
 								String text= fNavigable.getText();
 								int caretPosition= fNavigable.getCaretPosition();
@@ -338,13 +357,13 @@ public class TextFieldNavigationHandler {
 							}
 						}
 					}
-					
+
 					private List/*<Submission>*/ getSubmissions() {
 						if (fSubmissions != null)
 							return fSubmissions;
-						
+
 						fSubmissions= new ArrayList();
-						
+
 						IContextService contextService = PlatformUI
 								.getWorkbench()
 								.getAdapter(IContextService.class);
@@ -359,14 +378,15 @@ public class TextFieldNavigationHandler {
 								.getAdapter(IBindingService.class);
 						if (contextService == null || commandService == null || handlerService == null || bindingService == null)
 							return fSubmissions;
-						
+
 						IContextActivation[] contextActivations;
 						contextActivations= new IContextActivation[] {
 								contextService.activateContext(IContextService.CONTEXT_ID_WINDOW), // XXX relying on workbench feature https://bugs.eclipse.org/bugs/show_bug.cgi?id=115460#c11
 								contextService.activateContext(TEXT_EDITOR_CONTEXT_ID)
 						};
-						
+
 						fSubmissions.add(new Submission(bindingService.getActiveBindingsFor(ITextEditorActionDefinitionIds.SELECT_WORD_NEXT)) {
+							@Override
 							public void execute() {
 								fIterator.setText(fNavigable.getText());
 								int caretPosition= fNavigable.getCaretPosition();
@@ -382,6 +402,7 @@ public class TextFieldNavigationHandler {
 							}
 						});
 						fSubmissions.add(new Submission(bindingService.getActiveBindingsFor(ITextEditorActionDefinitionIds.SELECT_WORD_PREVIOUS)) {
+							@Override
 							public void execute() {
 								fIterator.setText(fNavigable.getText());
 								int caretPosition= fNavigable.getCaretPosition();
@@ -397,6 +418,7 @@ public class TextFieldNavigationHandler {
 							}
 						});
 						fSubmissions.add(new Submission(bindingService.getActiveBindingsFor(ITextEditorActionDefinitionIds.WORD_NEXT)) {
+							@Override
 							public void execute() {
 								fIterator.setText(fNavigable.getText());
 								int caretPosition= fNavigable.getCaretPosition();
@@ -407,6 +429,7 @@ public class TextFieldNavigationHandler {
 							}
 						});
 						fSubmissions.add(new Submission(bindingService.getActiveBindingsFor(ITextEditorActionDefinitionIds.WORD_PREVIOUS)) {
+							@Override
 							public void execute() {
 								fIterator.setText(fNavigable.getText());
 								int caretPosition= fNavigable.getCaretPosition();
@@ -417,6 +440,7 @@ public class TextFieldNavigationHandler {
 							}
 						});
 						fSubmissions.add(new Submission(bindingService.getActiveBindingsFor(ITextEditorActionDefinitionIds.DELETE_NEXT_WORD)) {
+							@Override
 							public void execute() {
 								Point selection= fNavigable.getSelection();
 								String text= fNavigable.getText();
@@ -438,6 +462,7 @@ public class TextFieldNavigationHandler {
 							}
 						});
 						fSubmissions.add(new Submission(bindingService.getActiveBindingsFor(ITextEditorActionDefinitionIds.DELETE_PREVIOUS_WORD)) {
+							@Override
 							public void execute() {
 								Point selection= fNavigable.getSelection();
 								String text= fNavigable.getText();
@@ -458,32 +483,32 @@ public class TextFieldNavigationHandler {
 								fNavigable.setSelection(start, start);
 							}
 						});
-						
+
 						for (int i= 0; i < contextActivations.length; i++) {
 							contextService.deactivateContext(contextActivations[i]);
 						}
-						
+
 						return fSubmissions;
 					}
-					
+
 				};
 			}
 			return fKeyListener;
 		}
 	}
-	
+
 	private abstract static class Submission {
 		private TriggerSequence[] fTriggerSequences;
-		
+
 		public Submission(TriggerSequence[] triggerSequences) {
 			fTriggerSequences= triggerSequences;
 		}
-		
+
 		public TriggerSequence[] getTriggerSequences() {
 			return fTriggerSequences;
 		}
-		
+
 		public abstract void execute();
 	}
-	
+
 }

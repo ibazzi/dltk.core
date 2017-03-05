@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     xored software, Inc. - initial API and Implementation
- *     xored software, Inc. - remove DbgpService dependency on DLTKDebugPlugin preferences (Alex Panchenko) 
+ *     xored software, Inc. - remove DbgpService dependency on DLTKDebugPlugin preferences (Alex Panchenko)
  *******************************************************************************/
 package org.eclipse.dltk.debug.core;
 
@@ -21,9 +21,9 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchManager;
@@ -54,11 +54,13 @@ public class DLTKDebugPlugin extends Plugin {
 		fgPlugin = this;
 	}
 
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		HotCodeReplaceManager.getDefault().startup();
 	}
 
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		HotCodeReplaceManager.getDefault().shutdown();
 
@@ -90,9 +92,10 @@ public class DLTKDebugPlugin extends Plugin {
 		return dbgpService;
 	}
 
-	private class DbgpServicePreferenceUpdater implements
-			IPropertyChangeListener {
+	private class DbgpServicePreferenceUpdater
+			implements IPropertyChangeListener {
 
+		@Override
 		public void propertyChange(PropertyChangeEvent event) {
 			final String property = event.getProperty();
 			if (DLTKDebugPreferenceConstants.PREF_DBGP_PORT.equals(property)) {
@@ -117,7 +120,8 @@ public class DLTKDebugPlugin extends Plugin {
 
 		log(new Status(IStatus.ERROR, PLUGIN_ID, INTERNAL_ERROR,
 				Messages.DLTKDebugPlugin_internalErrorLoggedFromDltkDebugPlugin
-						+ top.getMessage(), top));
+						+ top.getMessage(),
+				top));
 	}
 
 	public static void log(IStatus status) {
@@ -150,16 +154,15 @@ public class DLTKDebugPlugin extends Plugin {
 	}
 
 	private int getPreferencePort() {
-		return getPluginPreferences().getInt(
-				DLTKDebugPreferenceConstants.PREF_DBGP_PORT);
+		return getPluginPreferences()
+				.getInt(DLTKDebugPreferenceConstants.PREF_DBGP_PORT);
 	}
 
 	public String getBindAddress() {
-		String address = getPluginPreferences().getString(
-				DLTKDebugPreferenceConstants.PREF_DBGP_BIND_ADDRESS);
+		String address = getPluginPreferences()
+				.getString(DLTKDebugPreferenceConstants.PREF_DBGP_BIND_ADDRESS);
 		if (DLTKDebugPreferenceConstants.DBGP_AUTODETECT_BIND_ADDRESS
-				.equals(address)
-				|| address.trim().length() == 0) {
+				.equals(address) || address.trim().length() == 0) {
 			String[] ipAddresses = DLTKDebugPlugin.getLocalAddresses();
 			if (ipAddresses.length > 0) {
 				address = ipAddresses[0];
@@ -195,7 +198,8 @@ public class DLTKDebugPlugin extends Plugin {
 					InetAddress ip = (InetAddress) inetAddresses.nextElement();
 					// ignore loopback address (127.0.0.1)
 					// use only IPv4 addresses (ignore IPv6)
-					if (!ip.isLoopbackAddress() && ip.getAddress().length == 4) {
+					if (!ip.isLoopbackAddress()
+							&& ip.getAddress().length == 4) {
 						addresses.add(ip.getHostAddress());
 					}
 				}
@@ -222,7 +226,8 @@ public class DLTKDebugPlugin extends Plugin {
 		return sourceOffsetLookup;
 	}
 
-	public static void setSourceOffsetRetriever(ISourceOffsetLookup offsetLookup) {
+	public static void setSourceOffsetRetriever(
+			ISourceOffsetLookup offsetLookup) {
 		sourceOffsetLookup = offsetLookup;
 	}
 

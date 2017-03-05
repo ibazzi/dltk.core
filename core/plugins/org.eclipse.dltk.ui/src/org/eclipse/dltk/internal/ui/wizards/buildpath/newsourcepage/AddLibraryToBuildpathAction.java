@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,9 +67,7 @@ public class AddLibraryToBuildpathAction extends Action implements
 		fSite = site;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void run() {
 		final IScriptProject project = fSelectedProject;
 
@@ -89,21 +87,15 @@ public class AddLibraryToBuildpathAction extends Action implements
 		BuildpathContainerWizard wizard = new BuildpathContainerWizard(
 				(IBuildpathEntry) null, project, Buildpath) {
 
-			/**
-			 * {@inheritDoc}
-			 */
+			@Override
 			public boolean performFinish() {
 				if (super.performFinish()) {
-					IWorkspaceRunnable op = new IWorkspaceRunnable() {
-						public void run(IProgressMonitor monitor)
-								throws CoreException,
-								OperationCanceledException {
-							try {
-								finishPage(monitor);
-							} catch (InterruptedException e) {
-								throw new OperationCanceledException(e
-										.getMessage());
-							}
+					IWorkspaceRunnable op = monitor -> {
+						try {
+							finishPage(monitor);
+						} catch (InterruptedException e) {
+							throw new OperationCanceledException(
+									e.getMessage());
 						}
 					};
 					try {
@@ -190,6 +182,7 @@ public class AddLibraryToBuildpathAction extends Action implements
 		dialog.open();
 	}
 
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		ISelection selection = event.getSelection();
 		if (selection instanceof IStructuredSelection) {
@@ -268,11 +261,7 @@ public class AddLibraryToBuildpathAction extends Action implements
 				// select and reveal resource
 				final ISetSelectionTarget finalTarget = target;
 				page.getWorkbenchWindow().getShell().getDisplay().asyncExec(
-						new Runnable() {
-							public void run() {
-								finalTarget.selectReveal(selection);
-							}
-						});
+						() -> finalTarget.selectReveal(selection));
 			}
 		}
 	}

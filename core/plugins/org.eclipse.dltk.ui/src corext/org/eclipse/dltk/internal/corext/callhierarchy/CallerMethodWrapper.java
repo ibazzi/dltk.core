@@ -1,12 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
- *          (report 36180: Callers/Callees view)
  *******************************************************************************/
 package org.eclipse.dltk.internal.corext.callhierarchy;
 
@@ -43,10 +41,12 @@ class CallerMethodWrapper extends MethodWrapper {
 		return CallHierarchy.getDefault().getSearchScope(toolkit);
 	}
 
+	@Override
 	protected String getTaskName() {
 		return CallHierarchyMessages.CallerMethodWrapper_taskname;
 	}
-	
+
+	@Override
 	protected MethodWrapper createMethodWrapper(MethodCall methodCall) {
 		return new CallerMethodWrapper(this, methodCall);
 	}
@@ -54,8 +54,9 @@ class CallerMethodWrapper extends MethodWrapper {
 	/**
 	 * @return The result of the search for children
 	 */
+	@Override
 	protected Map findChildren(IProgressMonitor progressMonitor) {
-		try {			
+		try {
 			CallSearchResultCollector fSearchResults = new CallSearchResultCollector();
 
 			IProgressMonitor monitor = new SubProgressMonitor(progressMonitor, 95, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL);

@@ -18,26 +18,32 @@ public class ScriptEvaluationResult implements IScriptEvaluationResult {
 		this.snippet = snippet;
 	}
 
+	@Override
 	public String getSnippet() {
 		return snippet;
 	}
 
+	@Override
 	public IScriptValue getValue() {
 		return value;
 	}
 
+	@Override
 	public IScriptThread getThread() {
 		return thread;
 	}
 
+	@Override
 	public String[] getErrorMessages() {
 		return CharOperation.NO_STRINGS;
 	}
 
+	@Override
 	public DebugException getException() {
 		return null;
 	}
 
+	@Override
 	public boolean hasErrors() {
 		return false;
 	}

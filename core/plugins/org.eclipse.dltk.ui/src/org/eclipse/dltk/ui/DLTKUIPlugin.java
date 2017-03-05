@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
@@ -34,7 +33,6 @@ import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.core.IBuffer;
 import org.eclipse.dltk.core.IExternalSourceModule;
 import org.eclipse.dltk.core.IModelElement;
-import org.eclipse.dltk.core.IModelElementVisitor;
 import org.eclipse.dltk.core.IProjectFragment;
 import org.eclipse.dltk.core.IScriptFolder;
 import org.eclipse.dltk.core.IScriptModel;
@@ -77,7 +75,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Display;
@@ -114,10 +111,10 @@ public class DLTKUIPlugin extends AbstractUIPlugin {
 	public static final String ID_TYPE_HIERARCHY = "org.eclipse.dltk.ui.TypeHierarchy"; //$NON-NLS-1$
 	/**
 	 * The preference page id of the build path variables preference page (value
-	 * 
+	 *
 	 * <code>"org.eclipse.dltk.ui.preferences.BuildpathVariablesPreferencePage"</code>
 	 * ).
-	 * 
+	 *
 	 */
 	public static final String ID_BUILDPATH_VARIABLES_PREFERENCE_PAGE = "org.eclipse.dltk.ui.preferences.BuildpathVariablesPreferencePage"; //$NON-NLS-1$
 	public static final String CONTEXT_VIEWS = "org.eclipse.dltk.ui.context.views"; //$NON-NLS-1$
@@ -130,8 +127,8 @@ public class DLTKUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Content assist history.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	private ContentAssistHistory fContentAssistHistory;
 
@@ -147,10 +144,12 @@ public class DLTKUIPlugin extends AbstractUIPlugin {
 	/**
 	 * This method is called upon plug-in activation
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 
 		WorkingCopyOwner.setPrimaryBufferProvider(new WorkingCopyOwner() {
+			@Override
 			public IBuffer createBuffer(ISourceModule workingCopy) {
 				ISourceModule original = workingCopy.getPrimary();
 				IResource resource = original.getResource();
@@ -207,16 +206,20 @@ public class DLTKUIPlugin extends AbstractUIPlugin {
 
 	static class ShutdownCloseRemoteEditorsListener implements
 			IWorkbenchListener {
+		@Override
 		public void postShutdown(IWorkbench workbench) {
 			// empty
 		}
 
+		@Override
 		public boolean preShutdown(final IWorkbench workbench, boolean forced) {
 			SafeRunner.run(new ISafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					preShutdownInternal(workbench);
 				}
 
+				@Override
 				public void handleException(Throwable exception) {
 					// Logged by SafeRunner
 				}
@@ -258,6 +261,7 @@ public class DLTKUIPlugin extends AbstractUIPlugin {
 
 		private boolean active = false;
 
+		@Override
 		public void executeInBackground(final IExecutableOperation operation) {
 			if (!isRunningInUIThread()) {
 				operation.execute(new NullProgressMonitor());
@@ -275,11 +279,9 @@ public class DLTKUIPlugin extends AbstractUIPlugin {
 				};
 				active = true;
 				try {
-					dialog.run(true, false, new IRunnableWithProgress() {
-						public void run(IProgressMonitor monitor) {
-							if (!isRunningInUIThread()) {
-								operation.execute(monitor);
-							}
+					dialog.run(true, false, monitor -> {
+						if (!isRunningInUIThread()) {
+							operation.execute(monitor);
 						}
 					});
 				} catch (InvocationTargetException e) {
@@ -292,6 +294,7 @@ public class DLTKUIPlugin extends AbstractUIPlugin {
 			}
 		}
 
+		@Override
 		public boolean isRunningInUIThread() {
 			return Display.getCurrent() != null;
 		}
@@ -367,7 +370,7 @@ public class DLTKUIPlugin extends AbstractUIPlugin {
 	/**
 	 * Returns an image descriptor for the image file at the given plug-in
 	 * relative path.
-	 * 
+	 *
 	 * @param path
 	 *            the path
 	 * @return the image descriptor
@@ -415,7 +418,7 @@ public class DLTKUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the model element wrapped by the given editor input.
-	 * 
+	 *
 	 * @param editorInput
 	 *            the editor input
 	 * @return the model element wrapped by <code>editorInput</code> or
@@ -497,7 +500,7 @@ public class DLTKUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Creates the DLTK plug-in's standard groups for view context menus.
-	 * 
+	 *
 	 * @param menu
 	 *            the menu manager to be populated
 	 */
@@ -531,9 +534,9 @@ public class DLTKUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the Script content assist history.
-	 * 
+	 *
 	 * @return the Script content assist history
-	 * 
+	 *
 	 */
 	public ContentAssistHistory getContentAssistHistory() {
 		if (fContentAssistHistory == null) {
@@ -560,7 +563,7 @@ public class DLTKUIPlugin extends AbstractUIPlugin {
 	 * This will force a rebuild of the descriptors the next time a client asks
 	 * for them.
 	 * </p>
-	 * 
+	 *
 	 * @deprecated
 	 */
 	@Deprecated
@@ -586,7 +589,7 @@ public class DLTKUIPlugin extends AbstractUIPlugin {
 	/**
 	 * Returns all editor text hovers contributed to the workbench without
 	 * specified nature.
-	 * 
+	 *
 	 * @param store
 	 * @return
 	 * @deprecated
@@ -600,7 +603,7 @@ public class DLTKUIPlugin extends AbstractUIPlugin {
 	/**
 	 * Returns all editor text hovers contributed to the workbench for the
 	 * specified nature.
-	 * 
+	 *
 	 * @param store
 	 *            preference store to initialize settings from
 	 * @param natureId
@@ -634,6 +637,7 @@ public class DLTKUIPlugin extends AbstractUIPlugin {
 			 * @see org.eclipse.ui.texteditor.ConfigurationElementSorter#
 			 * getConfigurationElement(java.lang.Object)
 			 */
+			@Override
 			public IConfigurationElement getConfigurationElement(Object object) {
 				return ((EditorTextHoverDescriptor) object)
 						.getConfigurationElement();
@@ -660,7 +664,7 @@ public class DLTKUIPlugin extends AbstractUIPlugin {
 	 * elements inside a compilation unit or class file, the parent is opened in
 	 * the editor is opened and the element revealed. If there already is an
 	 * open Java editor for the given element, it is returned.
-	 * 
+	 *
 	 * @param element
 	 *            the input element; either a compilation unit (
 	 *            <code>ICompilationUnit</code>) or a class file (
@@ -686,7 +690,7 @@ public class DLTKUIPlugin extends AbstractUIPlugin {
 	 * elements inside a compilation unit or class file, the parent is opened in
 	 * the editor is opened. If there already is an open Java editor for the
 	 * given element, it is returned.
-	 * 
+	 *
 	 * @param element
 	 *            the input element; either a compilation unit (
 	 *            <code>ICompilationUnit</code>) or a class file (
@@ -743,56 +747,50 @@ public class DLTKUIPlugin extends AbstractUIPlugin {
 		IScriptModel scriptModel = DLTKCore.create(ResourcesPlugin
 				.getWorkspace().getRoot());
 		try {
-			scriptModel.accept(new IModelElementVisitor() {
+			scriptModel.accept(element -> {
+				boolean shouldDescend = (modules[0] == null);
 
-				public boolean visit(IModelElement element) {
-					boolean shouldDescend = (modules[0] == null);
+				if (shouldDescend == true) {
+					if (element instanceof ExternalProjectFragment) {
+						ExternalProjectFragment fragment = (ExternalProjectFragment) element;
 
-					if (shouldDescend == true) {
-						if (element instanceof ExternalProjectFragment) {
-							ExternalProjectFragment fragment = (ExternalProjectFragment) element;
-
-							try {
-								if (filePath
-										.removeLastSegments(1)
-										.toFile()
-										.getCanonicalPath()
-										.startsWith(
+						try {
+							if (filePath.removeLastSegments(1).toFile()
+									.getCanonicalPath()
+									.startsWith(fragment.getPath().toFile()
+											.getCanonicalPath()) == true) {
+								IPath folderPath = new Path(
+										filePath.removeLastSegments(1).toFile()
+												.getCanonicalPath());
+								folderPath = folderPath
+										.removeFirstSegments(new Path(
 												fragment.getPath().toFile()
-														.getCanonicalPath()) == true) {
-									IPath folderPath = new Path(filePath
-											.removeLastSegments(1).toFile()
-											.getCanonicalPath());
-									folderPath = folderPath
-											.removeFirstSegments(new Path(
-													fragment.getPath().toFile()
-															.getCanonicalPath())
-													.segmentCount());
-									IScriptFolder folder = fragment
-											.getScriptFolder(folderPath);
-									if ((folder != null)
-											&& (folder.exists() == true)) {
-										ISourceModule module = folder
-												.getSourceModule(filePath
-														.lastSegment());
-										if (module != null) {
-											modules[0] = module;
-										}
+														.getCanonicalPath())
+																.segmentCount());
+								IScriptFolder folder = fragment
+										.getScriptFolder(folderPath);
+								if ((folder != null)
+										&& (folder.exists() == true)) {
+									ISourceModule module = folder
+											.getSourceModule(
+													filePath.lastSegment());
+									if (module != null) {
+										modules[0] = module;
 									}
 								}
-							} catch (IOException ixcn) {
-								ixcn.printStackTrace();
 							}
-
-							shouldDescend = false;
-						} else {
-							shouldDescend = ((element instanceof IScriptProject) || (element instanceof IScriptModel));
+						} catch (IOException ixcn) {
+							ixcn.printStackTrace();
 						}
-					}
 
-					return shouldDescend;
+						shouldDescend = false;
+					} else {
+						shouldDescend = ((element instanceof IScriptProject)
+								|| (element instanceof IScriptModel));
+					}
 				}
 
+				return shouldDescend;
 			});
 		} catch (ModelException mxcn) {
 			mxcn.printStackTrace();
@@ -825,14 +823,14 @@ public class DLTKUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * The save participant registry.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private SaveParticipantRegistry fSaveParticipantRegistry;
 
 	/**
 	 * Returns the save participant registry.
-	 * 
+	 *
 	 * @return the save participant registry, not null
 	 * @since 3.0
 	 */
@@ -847,7 +845,7 @@ public class DLTKUIPlugin extends AbstractUIPlugin {
 	/**
 	 * Returns the image registry that keeps its images on the local file
 	 * system.
-	 * 
+	 *
 	 * @return the image registry
 	 * @since 4.0
 	 */

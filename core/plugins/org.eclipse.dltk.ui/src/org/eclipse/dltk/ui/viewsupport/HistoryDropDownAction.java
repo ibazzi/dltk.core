@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,6 +47,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 			setImageDescriptor(fHistory.getImageDescriptor(element));
 		}
 
+		@Override
 		public void run() {
 			fHistory.setActiveEntry(fElement);
 		}
@@ -54,10 +55,12 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 
 	private class HistoryMenuCreator implements IMenuCreator {
 
+		@Override
 		public Menu getMenu(Menu parent) {
 			return null;
 		}
 
+		@Override
 		public Menu getMenu(Control parent) {
 			if (fMenu != null) {
 				fMenu.dispose();
@@ -65,32 +68,33 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 			final MenuManager manager= new MenuManager();
 			manager.setRemoveAllWhenShown(true);
 			manager.addMenuListener(new IMenuListener() {
+				@Override
 				public void menuAboutToShow(IMenuManager manager2) {
 					List<E> entries = fHistory.getHistoryEntries();
 					boolean checkOthers= addEntryMenuItems(manager2, entries);
-					
+
 					manager2.add(new Separator());
-					
+
 					Action others= new HistoryListAction(fHistory);
 					others.setChecked(checkOthers);
 					manager2.add(others);
-					
+
 					Action clearAction= fHistory.getClearAction();
 					if (clearAction != null) {
 						manager2.add(clearAction);
 					}
-					
+
 					manager2.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-					
+
 					fHistory.addMenuEntries(manager);
 				}
-				
+
 				private boolean addEntryMenuItems(IMenuManager manager2,
 						List<E> entries) {
 					if (entries.isEmpty()) {
 						return false;
 					}
-					
+
 					boolean checkOthers= true;
 					int min= Math.min(entries.size(), RESULTS_IN_DROP_DOWN);
 					for (int i= 0; i < min; i++) {
@@ -105,20 +109,19 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 					return checkOthers;
 				}
 			});
-			
+
 			fMenu= manager.createContextMenu(parent);
-			
+
 			//workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=129973
 			final Display display= parent.getDisplay();
 			fMenu.addMenuListener(new MenuAdapter() {
+				@Override
 				public void menuHidden(final MenuEvent e) {
-					display.asyncExec(new Runnable() {
-						public void run() {
-							manager.removeAll();
-							if (fMenu != null) {
-								fMenu.dispose();
-								fMenu= null;
-							}
+					display.asyncExec(() -> {
+						manager.removeAll();
+						if (fMenu != null) {
+							fMenu.dispose();
+							fMenu= null;
 						}
 					});
 				}
@@ -126,9 +129,10 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 			return fMenu;
 		}
 
+		@Override
 		public void dispose() {
 			fHistory= null;
-		
+
 			if (fMenu != null) {
 				fMenu.dispose();
 				fMenu= null;
@@ -148,6 +152,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 		fHistory.configureHistoryDropDownAction(this);
 	}
 
+	@Override
 	public void run() {
 		new HistoryListAction(fHistory).run();
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -59,30 +59,34 @@ public class ConsoleValidatorOutput implements IValidatorOutput {
 				if (vConsole.isClosed()
 						&& consoleName.equals(vConsole.getBaseName())) {
 					if (toRemove == null) {
-						toRemove = new ArrayList<IConsole>(consoles.length);
+						toRemove = new ArrayList<>(consoles.length);
 					}
 					toRemove.add(console);
 				}
 			}
 		}
 		if (toRemove != null) {
-			consoleManager.removeConsoles(toRemove
-					.toArray(new IConsole[toRemove.size()]));
+			consoleManager.removeConsoles(
+					toRemove.toArray(new IConsole[toRemove.size()]));
 		}
 	}
 
+	@Override
 	public OutputStream getStream() {
 		return stream;
 	}
 
+	@Override
 	public boolean isEnabled() {
 		return true;
 	}
 
+	@Override
 	public boolean checkError() {
 		return error;
 	}
 
+	@Override
 	public void println(String x) {
 		if (closed) {
 			return;
@@ -97,6 +101,7 @@ public class ConsoleValidatorOutput implements IValidatorOutput {
 
 	private boolean closed = false;
 
+	@Override
 	public void close() {
 		if (closed) {
 			return;
@@ -112,10 +117,12 @@ public class ConsoleValidatorOutput implements IValidatorOutput {
 		console.close();
 	}
 
+	@Override
 	public Object getAttribute(String name) {
 		return console.getAttribute(name);
 	}
 
+	@Override
 	public void setAttribute(String name, Object value) {
 		console.setAttribute(name, value);
 	}

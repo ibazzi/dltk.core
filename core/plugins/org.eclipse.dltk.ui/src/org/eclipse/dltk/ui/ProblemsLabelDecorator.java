@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui;
 
@@ -55,8 +54,8 @@ import org.eclipse.ui.texteditor.MarkerAnnotation;
  * the <code>org.eclipse.ui.decorators</code> extension. Only use this class in
  * your own views and label providers.
  */
-public class ProblemsLabelDecorator implements ILabelDecorator,
-		ILightweightLabelDecorator {
+public class ProblemsLabelDecorator
+		implements ILabelDecorator, ILightweightLabelDecorator {
 
 	/**
 	 * This is a special <code>LabelProviderChangedEvent</code> carrying
@@ -66,8 +65,8 @@ public class ProblemsLabelDecorator implements ILabelDecorator,
 	 * ProblemsLabelDecorator</code>s.
 	 * </p>
 	 */
-	public static class ProblemsLabelChangedEvent extends
-			LabelProviderChangedEvent {
+	public static class ProblemsLabelChangedEvent
+			extends LabelProviderChangedEvent {
 
 		private static final long serialVersionUID = 1L;
 
@@ -76,7 +75,7 @@ public class ProblemsLabelDecorator implements ILabelDecorator,
 		/**
 		 * Note: This constructor is for internal use only. Clients should not
 		 * call this constructor.
-		 * 
+		 *
 		 * @param eventSource
 		 *            the base label provider
 		 * @param changedResource
@@ -95,7 +94,7 @@ public class ProblemsLabelDecorator implements ILabelDecorator,
 		 * Returns whether this event origins from marker changes. If
 		 * <code>false</code> an annotation model change is the origin. In this
 		 * case viewers not displaying working copies can ignore these events.
-		 * 
+		 *
 		 * @return if this event origins from a marker change.
 		 */
 		public boolean isMarkerChange() {
@@ -125,7 +124,7 @@ public class ProblemsLabelDecorator implements ILabelDecorator,
 	/**
 	 * Note: This constructor is for internal use only. Clients should not call
 	 * this constructor.
-	 * 
+	 *
 	 * @param registry
 	 *            The registry to use or <code>null</code> to use the Script
 	 *            plugin's image registry
@@ -143,28 +142,19 @@ public class ProblemsLabelDecorator implements ILabelDecorator,
 		return fRegistry;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see ILabelDecorator#decorateText(String, Object)
-	 */
+	@Override
 	public String decorateText(String text, Object element) {
 		return text;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see ILabelDecorator#decorateImage(Image, Object)
-	 */
+	@Override
 	public Image decorateImage(Image image, Object obj) {
 		int adornmentFlags = computeAdornmentFlags(obj);
 		if (adornmentFlags != 0) {
 			ImageDescriptor baseImage = new ImageImageDescriptor(image);
 			Rectangle bounds = image.getBounds();
-			return getRegistry().get(
-					new ScriptElementImageDescriptor(baseImage, adornmentFlags,
-							new Point(bounds.width, bounds.height)));
+			return getRegistry().get(new ScriptElementImageDescriptor(baseImage,
+					adornmentFlags, new Point(bounds.width, bounds.height)));
 		}
 		return image;
 	}
@@ -172,10 +162,10 @@ public class ProblemsLabelDecorator implements ILabelDecorator,
 	/**
 	 * Note: This method is for internal use only. Clients should not call this
 	 * method.
-	 * 
+	 *
 	 * @param obj
 	 *            the element to compute the flags for
-	 * 
+	 *
 	 * @return the adornment flags
 	 */
 	protected int computeAdornmentFlags(Object obj) {
@@ -207,7 +197,8 @@ public class ProblemsLabelDecorator implements ILabelDecorator,
 					ISourceModule cu = (ISourceModule) element
 							.getAncestor(IModelElement.SOURCE_MODULE);
 					if (cu != null) {
-						ISourceReference ref = (type == IModelElement.SOURCE_MODULE) ? null
+						ISourceReference ref = (type == IModelElement.SOURCE_MODULE)
+								? null
 								: (ISourceReference) element;
 						// The assumption is that only source elements in
 						// compilation unit can have markers
@@ -255,7 +246,8 @@ public class ProblemsLabelDecorator implements ILabelDecorator,
 
 		IMarker[] markers = res.findMarkers(IMarker.PROBLEM, true, depth);
 		if (markers != null) {
-			for (int i = 0; i < markers.length && (info != ERRORTICK_ERROR); i++) {
+			for (int i = 0; i < markers.length
+					&& (info != ERRORTICK_ERROR); i++) {
 				IMarker curr = markers[i];
 				if (sourceElement == null
 						|| isMarkerInRange(curr, sourceElement)) {
@@ -340,7 +332,7 @@ public class ProblemsLabelDecorator implements ILabelDecorator,
 
 	/**
 	 * Tests if a position is inside the source range of an element.
-	 * 
+	 *
 	 * @param pos
 	 *            Position to be tested.
 	 * @param sourceElement
@@ -358,16 +350,13 @@ public class ProblemsLabelDecorator implements ILabelDecorator,
 		ISourceRange range = fCachedRange;
 		if (range != null) {
 			int rangeOffset = range.getOffset();
-			return (rangeOffset <= pos && rangeOffset + range.getLength() > pos);
+			return (rangeOffset <= pos
+					&& rangeOffset + range.getLength() > pos);
 		}
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see IBaseLabelProvider#dispose()
-	 */
+	@Override
 	public void dispose() {
 		if (fProblemChangedListener != null) {
 			DLTKUIPlugin.getDefault().getProblemMarkerManager()
@@ -379,42 +368,27 @@ public class ProblemsLabelDecorator implements ILabelDecorator,
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see IBaseLabelProvider#isLabelProperty(Object, String)
-	 */
+	@Override
 	public boolean isLabelProperty(Object element, String property) {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see IBaseLabelProvider#addListener(ILabelProviderListener)
-	 */
+	@Override
 	public void addListener(ILabelProviderListener listener) {
 		if (fListeners == null) {
 			fListeners = new ListenerList();
 		}
 		fListeners.add(listener);
 		if (fProblemChangedListener == null) {
-			fProblemChangedListener = new IProblemChangedListener() {
-				public void problemsChanged(IResource[] changedResources,
-						boolean isMarkerChange) {
-					fireProblemsChanged(changedResources, isMarkerChange);
-				}
-			};
+			fProblemChangedListener = (changedResources,
+					isMarkerChange) -> fireProblemsChanged(changedResources,
+							isMarkerChange);
 			DLTKUIPlugin.getDefault().getProblemMarkerManager()
 					.addListener(fProblemChangedListener);
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see IBaseLabelProvider#removeListener(ILabelProviderListener)
-	 */
+	@Override
 	public void removeListener(ILabelProviderListener listener) {
 		if (fListeners != null) {
 			fListeners.remove(listener);
@@ -439,11 +413,7 @@ public class ProblemsLabelDecorator implements ILabelDecorator,
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see ILightweightLabelDecorator#decorate(Object, IDecoration)
-	 */
+	@Override
 	public void decorate(Object element, IDecoration decoration) {
 		int adornmentFlags = computeAdornmentFlags(element);
 		if (adornmentFlags == ERRORTICK_ERROR) {

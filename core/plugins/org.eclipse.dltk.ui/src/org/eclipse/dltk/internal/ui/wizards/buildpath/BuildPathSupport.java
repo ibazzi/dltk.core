@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,14 +31,14 @@ import org.eclipse.swt.widgets.Shell;
  *
  */
 public class BuildPathSupport {
-	
+
 	public static final String InterpreterEnvironment_PREF_PAGE_ID= "org.eclipse.dltk.debug.ui.preferences.InterpreterPreferencePage"; //$NON-NLS-1$
 
-	
+
 	private BuildPathSupport() {
 		super();
-	}		
-	
+	}
+
 	private static class UpdatedBuildpathContainer implements IBuildpathContainer {
 
 		private IBuildpathEntry[] fNewEntries;
@@ -50,18 +50,22 @@ public class BuildPathSupport {
 		}
 
 
+		@Override
 		public IBuildpathEntry[] getBuildpathEntries() {
 			return fNewEntries;
 		}
 
+		@Override
 		public String getDescription() {
 			return fOriginal.getDescription();
 		}
 
+		@Override
 		public int getKind() {
 			return fOriginal.getKind();
 		}
 
+		@Override
 		public IPath getPath() {
 			return fOriginal.getPath();
 		}
@@ -85,8 +89,8 @@ public class BuildPathSupport {
 			updateProjectBuildpath(shell, jproject, newEntry, changedAttributes, monitor);
 		}
 	}
-	
-	
+
+
 	/**
 	 * Apply a modified buildpath entry to the buildpath. The buildpath entry can also be from a buildpath container.
 	 * @param shell If not null and the entry could not be found on the projects buildpath, a dialog will ask to put the entry on the buildpath
@@ -176,25 +180,23 @@ public class BuildPathSupport {
 				return;
 			}
 			// add new
-			newEntries.add(newEntry);			
+			newEntries.add(newEntry);
 		}
 		IBuildpathEntry[] newBuildpath = newEntries
 				.toArray(new IBuildpathEntry[newEntries.size()]);
 		jproject.setRawBuildpath(newBuildpath, monitor);
 	}
-	
+
 	private static boolean putArchiveOnBuildpathDialog(final Shell shell) {
 		if (shell == null) {
 			return false;
 		}
-		
+
 		final boolean[] result= new boolean[1];
-		shell.getDisplay().syncExec(new Runnable() {
-			public void run() {
-				String title= NewWizardMessages.BuildPathSupport_putoncpdialog_title; 
-				String message= NewWizardMessages.BuildPathSupport_putoncpdialog_message; 
-				result[0]= MessageDialog.openQuestion(shell, title, message);
-			}
+		shell.getDisplay().syncExec(() -> {
+			String title = NewWizardMessages.BuildPathSupport_putoncpdialog_title;
+			String message = NewWizardMessages.BuildPathSupport_putoncpdialog_message;
+			result[0] = MessageDialog.openQuestion(shell, title, message);
 		});
 		return result[0];
 	}

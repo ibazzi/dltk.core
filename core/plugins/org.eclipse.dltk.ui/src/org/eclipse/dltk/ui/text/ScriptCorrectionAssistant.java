@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.dltk.ui.text;
 
 import java.util.ArrayList;
@@ -23,7 +22,6 @@ import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
@@ -36,7 +34,6 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -52,7 +49,7 @@ public class ScriptCorrectionAssistant extends QuickAssistAssistant {
 
 	/**
 	 * Constructor for JavaCorrectionAssistant.
-	 * 
+	 *
 	 * @param editor
 	 *            the editor
 	 */
@@ -83,12 +80,8 @@ public class ScriptCorrectionAssistant extends QuickAssistAssistant {
 	}
 
 	private IInformationControlCreator getInformationControlCreator() {
-		return new IInformationControlCreator() {
-			public IInformationControl createInformationControl(Shell parent) {
-				return new DefaultInformationControl(parent,
-						new HTMLTextPresenter());
-			}
-		};
+		return parent -> new DefaultInformationControl(parent,
+				new HTMLTextPresenter());
 	}
 
 	private static Color getColor(IPreferenceStore store, String key,
@@ -97,9 +90,7 @@ public class ScriptCorrectionAssistant extends QuickAssistAssistant {
 		return manager.getColor(rgb);
 	}
 
-	/*
-	 * @see IContentAssistant#install(org.eclipse.jface.text.ITextViewer)
-	 */
+	@Override
 	public void install(ISourceViewer sourceViewer) {
 		super.install(sourceViewer);
 		fViewer = sourceViewer;
@@ -109,9 +100,7 @@ public class ScriptCorrectionAssistant extends QuickAssistAssistant {
 		// fLightBulbUpdater.install();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ContentAssistant#uninstall()
-	 */
+	@Override
 	public void uninstall() {
 		// if (fLightBulbUpdater != null) {
 		// fLightBulbUpdater.uninstall();
@@ -125,9 +114,10 @@ public class ScriptCorrectionAssistant extends QuickAssistAssistant {
 	 * quick fixes look for next quick fix on same line by moving from left to
 	 * right and restarting at end of line if the beginning of the line is
 	 * reached.
-	 * 
+	 *
 	 * @see IQuickAssistAssistant#showPossibleQuickAssists()
 	 */
+	@Override
 	public String showPossibleQuickAssists() {
 		fPosition = null;
 		fCurrentAnnotations = null;
@@ -279,7 +269,7 @@ public class ScriptCorrectionAssistant extends QuickAssistAssistant {
 	 * The closest offset to the left of the initial offset is the best. If
 	 * there is no offset on the left, the closest on the right is the best.
 	 * </p>
-	 * 
+	 *
 	 * @param newOffset
 	 *            the offset to llok at
 	 * @param invocationLocation
@@ -310,6 +300,7 @@ public class ScriptCorrectionAssistant extends QuickAssistAssistant {
 	/*
 	 * @see ContentAssistant#possibleCompletionsClosed()
 	 */
+	@Override
 	protected void possibleCompletionsClosed() {
 		super.possibleCompletionsClosed();
 		restorePosition();
@@ -331,7 +322,7 @@ public class ScriptCorrectionAssistant extends QuickAssistAssistant {
 	/**
 	 * Returns true if the last invoked completion was called with an updated
 	 * offset.
-	 * 
+	 *
 	 * @return <code> true</code> if the last invoked completion was called with
 	 *         an updated offset.
 	 */
@@ -341,7 +332,7 @@ public class ScriptCorrectionAssistant extends QuickAssistAssistant {
 
 	/**
 	 * Returns the annotations at the current offset
-	 * 
+	 *
 	 * @return the annotations at the offset
 	 */
 	public Annotation[] getAnnotationsAtOffset() {

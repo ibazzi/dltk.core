@@ -34,9 +34,7 @@ public abstract class DebuggingEngineConfigOptionsBlock
 		super(context, project, allKeys, container);
 	}
 
-	/*
-	 * @see AbstractOptionsBlock#createOptionsBlock(Composite)
-	 */
+	@Override
 	protected Control createOptionsBlock(Composite parent) {
 		final Composite composite = SWTFactory.createComposite(parent,
 				parent.getFont(), 1, 1, GridData.FILL);
@@ -49,12 +47,12 @@ public abstract class DebuggingEngineConfigOptionsBlock
 
 	/**
 	 * Creates the options block for engine specific preferences/settings.
-	 * 
+	 *
 	 * <p>
 	 * Subclasses may provide an empty implementation if their debugging engine
 	 * does not have any preferences/settings
 	 * </p>
-	 * 
+	 *
 	 * @param parent
 	 *            composite
 	 */
@@ -62,13 +60,13 @@ public abstract class DebuggingEngineConfigOptionsBlock
 
 	/**
 	 * Creates the options block that controls debugging engine logging.
-	 * 
+	 *
 	 * <p>
 	 * Subclasses may override this method, providing an empty implementation if
 	 * their debugging engine does not support logging. This block will be
 	 * placed after the 'engine options' block.
 	 * </p>
-	 * 
+	 *
 	 * @param parent
 	 *            composite
 	 */
@@ -124,10 +122,10 @@ public abstract class DebuggingEngineConfigOptionsBlock
 	/**
 	 * Returns the array of {@link IEnvironment}s relevant for this
 	 * preference/property page.
-	 * 
+	 *
 	 * If it is used as preference page - all {@link IEnvironment} are returned,
 	 * otherwise only {@link IEnvironment} of the current project is returned.
-	 * 
+	 *
 	 * @return
 	 */
 	protected IEnvironment[] getRelevantEnvironments() {
@@ -140,6 +138,7 @@ public abstract class DebuggingEngineConfigOptionsBlock
 		}
 	}
 
+	@Override
 	protected boolean processChanges(IWorkbenchPreferenceContainer container) {
 		saveLoggingOptions();
 		return super.processChanges(container);
@@ -156,11 +155,11 @@ public abstract class DebuggingEngineConfigOptionsBlock
 	/**
 	 * Creates an an options block for items that fall into the 'other' category
 	 * - ie: adding a link to download an external debugging engine.
-	 * 
+	 *
 	 * <p>
 	 * This block will be placed after the 'logging options' block.
 	 * </p>
-	 * 
+	 *
 	 * @param parent
 	 */
 	protected void createOtherBlock(Composite parent) {
@@ -169,12 +168,12 @@ public abstract class DebuggingEngineConfigOptionsBlock
 
 	/**
 	 * Returns the enable logging preference key
-	 * 
+	 *
 	 * <p>
 	 * Note: this preference controls logging for the actual debugging engine,
 	 * and not the DBGP protocol output.
 	 * </p>
-	 * 
+	 *
 	 * @deprecated
 	 */
 	@Deprecated
@@ -189,7 +188,7 @@ public abstract class DebuggingEngineConfigOptionsBlock
 
 	/**
 	 * Returns the log file path preference key
-	 * 
+	 *
 	 * @deprecated
 	 */
 	@Deprecated

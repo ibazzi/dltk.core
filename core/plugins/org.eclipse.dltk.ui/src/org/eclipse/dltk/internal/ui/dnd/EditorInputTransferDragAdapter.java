@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,16 +41,12 @@ public class EditorInputTransferDragAdapter extends DragSourceAdapter implements
 		fProvider = provider;
 	}
 
-	/*
-	 * @see TransferDragSourceListener#getTransfer
-	 */
+	@Override
 	public Transfer getTransfer() {
 		return EditorInputTransfer.getInstance();
 	}
 
-	/*
-	 * @see org.eclipse.swt.dnd.DragSourceListener#dragStart
-	 */
+	@Override
 	public void dragStart(DragSourceEvent event) {
 		fEditorInputDatas = new ArrayList();
 
@@ -81,9 +77,7 @@ public class EditorInputTransferDragAdapter extends DragSourceAdapter implements
 		event.doit = fEditorInputDatas.size() > 0;
 	}
 
-	/*
-	 * @see org.eclipse.swt.dnd.DragSourceListener#dragSetData
-	 */
+	@Override
 	public void dragSetData(DragSourceEvent event) {
 		if (EditorInputTransfer.getInstance().isSupportedType(event.dataType)
 				&& fEditorInputDatas.size() > 0) {
@@ -92,9 +86,7 @@ public class EditorInputTransferDragAdapter extends DragSourceAdapter implements
 		}
 	}
 
-	/*
-	 * @see org.eclipse.swt.dnd.DragSourceListener#dragFinished
-	 */
+	@Override
 	public void dragFinished(DragSourceEvent event) {
 		fEditorInputDatas = null;
 		Assert.isTrue(event.detail != DND.DROP_MOVE);

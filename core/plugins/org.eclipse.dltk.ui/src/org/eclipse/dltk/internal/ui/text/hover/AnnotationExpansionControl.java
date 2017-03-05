@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import java.util.List;
 import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IInformationControl;
-import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IInformationControlExtension;
 import org.eclipse.jface.text.IInformationControlExtension2;
 import org.eclipse.jface.text.IRegion;
@@ -136,13 +135,6 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 			dispose();
 		}
 
-		public void showContextMenu(Menu menu) {
-			if (fInput.fAnnotationListener != null) {
-				VerticalRulerEvent event= new VerticalRulerEvent(fAnnotation);
-				fInput.fAnnotationListener.annotationContextMenuAboutToShow(event, menu);
-			}
-		}
-
 		public void deselect() {
 			// hide the popup
 //			fHoverManager.disposeInformationControl();
@@ -213,7 +205,7 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 		}
 	}
 
-	
+
 	/**
 	 * Listener on mouse events on the items.
 	 */
@@ -301,7 +293,7 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 		}
 	}
 
-	
+
 	/**
 	 *
 	 *
@@ -343,8 +335,8 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 		}
 
 	}
-	
-	
+
+
 	/**
 	 * Listener on paint events on the items. Paints the annotation image on the given <code>GC</code>.
 	 */
@@ -370,12 +362,7 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 		 *
 		 */
 		public HoverManager() {
-			super(new IInformationControlCreator() {
-				@Override
-				public IInformationControl createInformationControl(Shell parent) {
-					return new DefaultInformationControl(parent);
-				}
-			});
+			super(parent -> new DefaultInformationControl(parent));
 
 			setMargins(5, 10);
 			setAnchor(ANCHOR_BOTTOM);
@@ -439,14 +426,7 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 		fMouseListener= new MyMouseListener();
 		fMenuDetectListener= new MyMenuDetectListener();
 		fDisposeListener= new MyDisposeListener();
-		fViewportListener= new IViewportListener() {
-
-			@Override
-			public void viewportChanged(int verticalOffset) {
-				dispose();
-			}
-
-		};
+		fViewportListener= verticalOffset -> dispose();
 		fLayouter= new LinearLayouter();
 
 		if (access instanceof IAnnotationAccessExtension)

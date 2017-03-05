@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -46,8 +46,6 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -76,6 +74,7 @@ public class DebugConsolePage extends ScriptConsolePage {
 		super(console, view, cfg);
 	}
 
+	@Override
 	protected IAction createTerminateConsoleAction() {
 		return null;
 	}
@@ -89,6 +88,7 @@ public class DebugConsolePage extends ScriptConsolePage {
 	private IHandlerActivation cutHandler;
 	private IHandlerActivation selectAllHandler;
 
+	@Override
 	protected void createActions() {
 		super.createActions();
 		final IActionBars actionBars = getSite().getActionBars();
@@ -131,11 +131,13 @@ public class DebugConsolePage extends ScriptConsolePage {
 	/*
 	 * @see TextConsolePage#createControl(Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		sash = new SashForm(parent, SWT.VERTICAL | SWT.SMOOTH);
 		inputField = new StyledText(sash, SWT.V_SCROLL | SWT.H_SCROLL);
 		inputField.addFocusListener(new FocusListener() {
 
+			@Override
 			public void focusLost(FocusEvent e) {
 				if (pasteHandler != null) {
 					IHandlerService service = getSite()
@@ -151,15 +153,18 @@ public class DebugConsolePage extends ScriptConsolePage {
 				}
 			}
 
+			@Override
 			public void focusGained(FocusEvent e) {
 				IHandlerService service = getSite()
 						.getService(IHandlerService.class);
 				Expression expression = new Expression() {
+					@Override
 					public final EvaluationResult evaluate(
 							final IEvaluationContext context) {
 						return EvaluationResult.TRUE;
 					}
 
+					@Override
 					public final void collectExpressionInfo(
 							final ExpressionInfo info) {
 						info.addVariableNameAccess(ISources.ACTIVE_EDITOR_NAME);
@@ -190,18 +195,21 @@ public class DebugConsolePage extends ScriptConsolePage {
 				| DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK);
 		target.setTransfer(new Transfer[] { TextTransfer.getInstance() });
 		target.addDropListener(new StyledTextDropTargetEffect(inputField) {
+			@Override
 			public void dragEnter(DropTargetEvent e) {
 				super.dragEnter(e);
 				if (e.detail == DND.DROP_DEFAULT)
 					e.detail = DND.DROP_COPY;
 			}
 
+			@Override
 			public void dragOperationChanged(DropTargetEvent e) {
 				super.dragOperationChanged(e);
 				if (e.detail == DND.DROP_DEFAULT)
 					e.detail = DND.DROP_COPY;
 			}
 
+			@Override
 			public void drop(DropTargetEvent e) {
 				super.drop(e);
 				Point selection = inputField.getSelectionRange();
@@ -212,13 +220,7 @@ public class DebugConsolePage extends ScriptConsolePage {
 		inputField.setEditable(true);
 		super.createControl(sash);
 		inputField.setFont(getViewer().getControl().getFont());
-		inputField.addModifyListener(new ModifyListener() {
-
-			public void modifyText(ModifyEvent e) {
-				updateActions();
-			}
-
-		});
+		inputField.addModifyListener(e -> updateActions());
 		sash.setMaximizedControl(getViewer().getControl());
 		setEnabled(isDebuggerAvailable());
 		if (debugEventListener == null) {
@@ -252,9 +254,7 @@ public class DebugConsolePage extends ScriptConsolePage {
 		return false;
 	}
 
-	/**
-	 * @see org.eclipse.dltk.console.ui.internal.ScriptConsolePage#dispose()
-	 */
+	@Override
 	public void dispose() {
 		if (debugEventListener != null) {
 			DebugPlugin.getDefault()
@@ -310,27 +310,22 @@ public class DebugConsolePage extends ScriptConsolePage {
 
 	private final Job enableUpdateJob = new Job("Enable update") { //$NON-NLS-1$
 
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
-			DLTKDebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-				public void run() {
-					setEnabled(isDebuggerAvailable());
-				}
-			});
+			DLTKDebugUIPlugin.getStandardDisplay()
+					.asyncExec(() -> setEnabled(isDebuggerAvailable()));
 			return Status.OK_STATUS;
 		}
 
 	};
 
 	private final class DebugEventListener implements IDebugEventSetListener {
+		@Override
 		public void handleDebugEvents(DebugEvent[] events) {
 			enableUpdateJob.schedule(500);
 			if (resetOnLaunch && isTargetCreate(events)) {
-				DLTKDebugUIPlugin.getStandardDisplay()
-						.asyncExec(new Runnable() {
-							public void run() {
-								((DebugConsole) getConsole()).clearConsole();
-							}
-						});
+				DLTKDebugUIPlugin.getStandardDisplay().asyncExec(
+						() -> ((DebugConsole) getConsole()).clearConsole());
 			}
 		}
 	}

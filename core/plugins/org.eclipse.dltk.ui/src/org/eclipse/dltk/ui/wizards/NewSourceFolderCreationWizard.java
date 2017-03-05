@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.wizards;
 
@@ -27,6 +26,7 @@ public class NewSourceFolderCreationWizard extends NewElementWizard {
 		setWindowTitle(NewWizardMessages.NewSourceFolderCreationWizard_title);
 	}
 
+	@Override
 	public void addPages() {
 		super.addPages();
 		fPage = new NewSourceFolderWizardPage();
@@ -34,11 +34,13 @@ public class NewSourceFolderCreationWizard extends NewElementWizard {
 		fPage.init(getSelection());
 	}
 
+	@Override
 	protected void finishPage(IProgressMonitor monitor)
 			throws InterruptedException, CoreException {
 		fPage.createProjectFragment(monitor); // use the full progress monitor
 	}
 
+	@Override
 	public boolean performFinish() {
 		boolean res = super.performFinish();
 		if (res) {
@@ -47,6 +49,7 @@ public class NewSourceFolderCreationWizard extends NewElementWizard {
 		return res;
 	}
 
+	@Override
 	public IModelElement getCreatedElement() {
 		return fPage.getNewProjectFragment();
 	}

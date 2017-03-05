@@ -211,12 +211,9 @@ public class ScriptDebugConsolePageParticipant
 		for (int i = 0; i < events.length; i++) {
 			DebugEvent event = events[i];
 			if (event.getSource().equals(getProcess())) {
-				Runnable r = new Runnable() {
-					@Override
-					public void run() {
-						if (fTerminate != null) {
-							fTerminate.update();
-						}
+				Runnable r = () -> {
+					if (fTerminate != null) {
+						fTerminate.update();
 					}
 				};
 				DLTKDebugUIPlugin.getStandardDisplay().asyncExec(r);

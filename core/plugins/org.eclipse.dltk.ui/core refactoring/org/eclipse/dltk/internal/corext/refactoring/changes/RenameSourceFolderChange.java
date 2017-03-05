@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.corext.refactoring.changes;
 
@@ -64,14 +63,17 @@ public final class RenameSourceFolderChange extends AbstractModelElementRenameCh
 		super(descriptor, resourcePath, oldName, newName, comment);
 	}
 
+	@Override
 	protected IPath createNewPath() {
 		return getResourcePath().removeLastSegments(1).append(getNewName());
 	}
 
+	@Override
 	protected Change createUndoChange(long stampToRestore) {
 		return new RenameSourceFolderChange(null, createNewPath(), getNewName(), getOldName(), getComment(), stampToRestore);
 	}
 
+	@Override
 	protected void doRename(IProgressMonitor pm) throws CoreException {
 		IProjectFragment sourceFolder= getSourceFolder();
 		if (sourceFolder != null)
@@ -89,6 +91,7 @@ public final class RenameSourceFolderChange extends AbstractModelElementRenameCh
 		return IProjectFragment.DESTINATION_PROJECT_BUILDPATH | IProjectFragment.ORIGINATING_PROJECT_BUILDPATH | IProjectFragment.OTHER_REFERRING_PROJECTS_BUILDPATH | IProjectFragment.REPLACE;
 	}
 
+	@Override
 	public String getName() {
 		return Messages.format(RefactoringCoreMessages.RenameSourceFolderChange_rename, new String[] { getOldName(), getNewName()});
 	}
@@ -101,6 +104,7 @@ public final class RenameSourceFolderChange extends AbstractModelElementRenameCh
 		return (IProjectFragment) getModifiedElement();
 	}
 
+	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
 		RefactoringStatus result= new RefactoringStatus();
 		pm.beginTask("", 2); //$NON-NLS-1$

@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.refactoring.reorg;
 
@@ -25,14 +24,12 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.actions.DeleteResourceAction;
 
-
-
 public class DeleteAction extends SelectionDispatchAction {
 
 	public DeleteAction(IWorkbenchSite site) {
 		super(site);
-		setText(ReorgMessages.DeleteAction_3); 
-		setDescription(ReorgMessages.DeleteAction_4); 
+		setText(ReorgMessages.DeleteAction_3);
+		setDescription(ReorgMessages.DeleteAction_4);
 		ISharedImages workbenchImages= DLTKUIPlugin.getDefault().getWorkbench().getSharedImages();
 		setDisabledImageDescriptor(workbenchImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
 		setImageDescriptor(workbenchImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
@@ -41,13 +38,11 @@ public class DeleteAction extends SelectionDispatchAction {
 		if (DLTKCore.DEBUG) {
 			System.err.println("Add help support here..."); //$NON-NLS-1$
 		}
-		
+
 		//PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IScriptHelpContextIds.DELETE_ACTION);
 	}
 
-	/*
-	 * @see SelectionDispatchAction#selectionChanged(IStructuredSelection)
-	 */
+	@Override
 	public void selectionChanged(IStructuredSelection selection) {
 		if (ReorgUtils.containsOnlyProjects(selection.toList())) {
 			setEnabled(createWorkbenchAction(selection).isEnabled());
@@ -70,6 +65,7 @@ public class DeleteAction extends SelectionDispatchAction {
 		return action;
 	}
 
+	@Override
 	public void run(IStructuredSelection selection) {
 		if (ReorgUtils.containsOnlyProjects(selection.toList())) {
 			createWorkbenchAction(selection).run();
@@ -78,7 +74,7 @@ public class DeleteAction extends SelectionDispatchAction {
 		try {
 			RefactoringExecutionStarter.startDeleteRefactoring(selection.toArray(), getShell());
 		} catch (CoreException e) {
-			ExceptionHandler.handle(e, RefactoringMessages.OpenRefactoringWizardAction_refactoring, RefactoringMessages.OpenRefactoringWizardAction_exception); 
+			ExceptionHandler.handle(e, RefactoringMessages.OpenRefactoringWizardAction_refactoring, RefactoringMessages.OpenRefactoringWizardAction_exception);
 		}
 	}
 }

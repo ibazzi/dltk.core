@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.corext.refactoring.changes;
 import org.eclipse.core.resources.IFile;
@@ -36,13 +35,12 @@ public class DeleteFileChange extends AbstractDeleteChange {
 		return Utils.getFile(fPath);
 	}
 	
-	/* non java-doc
-	 * @see IChange#getName()
-	 */
+	@Override
 	public String getName() {
 		return Messages.format(RefactoringCoreMessages.DeleteFileChange_1, fPath.lastSegment()); 
 	}
 
+	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
 		if (fIsExecuteChange) {
 			// no need for checking since we already prompt the
@@ -53,16 +51,12 @@ public class DeleteFileChange extends AbstractDeleteChange {
 		}
 	}
 
-	/* non java-doc
-	 * @see IChange#getModifiedLanguageElement()
-	 */
+	@Override
 	public Object getModifiedElement() {
 		return getFile();
 	}
 
-	/* non java-doc
-	 * @see DeleteChange#doDelete(IProgressMonitor)
-	 */
+	@Override
 	protected Change doDelete(IProgressMonitor pm) throws CoreException {
 		IFile file= getFile();
 		Assert.isNotNull(file);

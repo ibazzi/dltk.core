@@ -35,7 +35,7 @@ public class ExternalChecker extends AbstractValidator {
 
 	private String arguments;
 	private Map<IEnvironment, String> paths;
-	private List<Rule> rules = new ArrayList<Rule>();
+	private List<Rule> rules = new ArrayList<>();
 	private String extensions;
 	private boolean passInterpreterEnvironmentVars;
 
@@ -62,7 +62,7 @@ public class ExternalChecker extends AbstractValidator {
 	}
 
 	private Map<IEnvironment, String> newEmptyPath() {
-		Map<IEnvironment, String> result = new HashMap<IEnvironment, String>();
+		Map<IEnvironment, String> result = new HashMap<>();
 		IEnvironment[] environments = EnvironmentManager.getEnvironments();
 		for (int i = 0; i < environments.length; i++) {
 			result.put(environments[i], Util.EMPTY_STRING);
@@ -70,6 +70,7 @@ public class ExternalChecker extends AbstractValidator {
 		return result;
 	}
 
+	@Override
 	protected void load(Element element) {
 		super.load(element);
 		paths = newEmptyPath();
@@ -80,11 +81,9 @@ public class ExternalChecker extends AbstractValidator {
 			if (item.getNodeType() == Node.ELEMENT_NODE) {
 				Element elementNode = (Element) item;
 				if (elementNode.getTagName().equalsIgnoreCase(PATH_TAG)) {
-					String environment = elementNode
-							.getAttribute(ENVIRONMENT_ATTR);
+					String environment = elementNode.getAttribute(ENVIRONMENT_ATTR);
 					String path = elementNode.getAttribute(PATH_ATTR);
-					IEnvironment env = EnvironmentManager
-							.getEnvironmentById(environment);
+					IEnvironment env = EnvironmentManager.getEnvironmentById(environment);
 					if (env != null) {
 						this.paths.put(env, path);
 					}
@@ -93,8 +92,7 @@ public class ExternalChecker extends AbstractValidator {
 		}
 		this.arguments = element.getAttribute(ARGUMENTS);
 		this.extensions = element.getAttribute(EXTENSIONS);
-		this.passInterpreterEnvironmentVars = Boolean.valueOf(element
-				.getAttribute(INTERPRETER_ENVIRONMENT_VARS));
+		this.passInterpreterEnvironmentVars = Boolean.valueOf(element.getAttribute(INTERPRETER_ENVIRONMENT_VARS));
 
 		NodeList nodes = element.getChildNodes();
 		rules.clear();
@@ -109,27 +107,26 @@ public class ExternalChecker extends AbstractValidator {
 		}
 	}
 
+	@Override
 	public void storeTo(Document doc, Element element) {
 		super.storeTo(doc, element);
 		element.setAttribute(ARGUMENTS, this.arguments);
 		element.setAttribute(EXTENSIONS, this.extensions);
-		element.setAttribute(INTERPRETER_ENVIRONMENT_VARS, Boolean
-				.toString(this.passInterpreterEnvironmentVars));
+		element.setAttribute(INTERPRETER_ENVIRONMENT_VARS, Boolean.toString(this.passInterpreterEnvironmentVars));
 
 		for (int i = 0; i < rules.size(); i++) {
 			Element elem = doc.createElement("rule"); //$NON-NLS-1$
-			elem.setAttribute("TEXT", ((Rule) rules.get(i)).getDescription()); //$NON-NLS-1$
-			elem.setAttribute("TYPE", ((Rule) rules.get(i)).getType()); //$NON-NLS-1$
+			elem.setAttribute("TEXT", rules.get(i).getDescription()); //$NON-NLS-1$
+			elem.setAttribute("TYPE", rules.get(i).getType()); //$NON-NLS-1$
 			element.appendChild(elem);
 		}
 
-		for (Iterator<IEnvironment> iterator = paths.keySet().iterator(); iterator
-				.hasNext();) {
-			IEnvironment env = (IEnvironment) iterator.next();
+		for (Iterator<IEnvironment> iterator = paths.keySet().iterator(); iterator.hasNext();) {
+			IEnvironment env = iterator.next();
 			if (env != null) {
 				Element elem = doc.createElement(PATH_TAG);
 				elem.setAttribute(ENVIRONMENT_ATTR, env.getId());
-				elem.setAttribute(PATH_ATTR, (String) paths.get(env));
+				elem.setAttribute(PATH_ATTR, paths.get(env));
 				element.appendChild(elem);
 			}
 		}
@@ -150,7 +147,7 @@ public class ExternalChecker extends AbstractValidator {
 
 	public Rule getRule(int index) {
 		if (index < rules.size())
-			return (Rule) rules.get(index);
+			return rules.get(index);
 		return null;
 	}
 
@@ -158,9 +155,10 @@ public class ExternalChecker extends AbstractValidator {
 		return rules.size();
 	}
 
+	@Override
 	public boolean isValidatorValid(IScriptProject project) {
 		final IEnvironment environment = getEnvrironment(project);
-		String path = (String) this.paths.get(environment);
+		String path = this.paths.get(environment);
 		if (path == null || path.trim().length() == 0) {
 			return false;
 		}
@@ -193,31 +191,31 @@ public class ExternalChecker extends AbstractValidator {
 	 * @param useInterpreterEnvironmentVars
 	 *            the useInterpreterEnvironmentVars to set
 	 */
-	public void setPassInterpreterEnvironmentVars(
-			boolean useInterpreterEnvironmentVars) {
+	public void setPassInterpreterEnvironmentVars(boolean useInterpreterEnvironmentVars) {
 		this.passInterpreterEnvironmentVars = useInterpreterEnvironmentVars;
 		fireChanged();
 	}
 
+	@Override
 	public Object getValidator(IScriptProject project, Class validatorType) {
 		if (validatorType == IResourceValidator.class) {
 			return new ExternalResourceWorker(getEnvrironment(project), this);
 		}
 
 		if (validatorType == ISourceModuleValidator.class) {
-			return new ExternalSourceModuleWorker(getEnvrironment(project),
-					this);
+			return new ExternalSourceModuleWorker(getEnvrironment(project), this);
 		}
 
 		// safety incase new validator types are introduced
 		return null;
 	}
 
+	@Override
 	protected Object clone() {
 		try {
 			final ExternalChecker clone = (ExternalChecker) super.clone();
-			clone.paths = new HashMap<IEnvironment, String>(paths);
-			clone.rules = new ArrayList<Rule>(rules);
+			clone.paths = new HashMap<>(paths);
+			clone.rules = new ArrayList<>(rules);
 			return clone;
 		} catch (CloneNotSupportedException e) {
 			// should not happen

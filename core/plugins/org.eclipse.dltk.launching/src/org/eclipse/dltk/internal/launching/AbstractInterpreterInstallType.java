@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -257,56 +257,53 @@ public abstract class AbstractInterpreterInstallType
 
 		// final Object lock = new Object();
 
-		Thread tReading = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				boolean workReceived = false;
-				try {
-					while (true) {
-						if (monitor != null && monitor.isCanceled()) {
-							monitor.worked(1);
-							process.destroy();
-							break;
-						}
-						String line = dataIn.readLine();
-						if (line != null && monitor != null && !workReceived) {
-							int work = extractWorkFromLine(line);
-							if (work != NOT_WORK_COUNT) {
-								monitor.beginTask(
-										LaunchingMessages.AbstractInterpreterInstallType_fetchingInterpreterLibraryLocations,
-										work);
-								// monitor.subTask("Featching interpeter library
-								// locations");
-								workReceived = true;
-							}
-						}
-						if (line != null && monitor != null
-								&& detectWorkInc(line)) {
-							monitor.worked(1);
-						}
-						if (line != null) {
-							result.add(line);
-						} else {
-							break;
-						}
+		Thread tReading = new Thread(() -> {
+			boolean workReceived = false;
+			try {
+				while (true) {
+					if (monitor != null && monitor.isCanceled()) {
+						monitor.worked(1);
+						process.destroy();
+						break;
 					}
-
-				} catch (IOException e) {
-					DLTKLaunchingPlugin.log(new Status(IStatus.INFO,
-							DLTKLaunchingPlugin.PLUGIN_ID, IStatus.INFO,
-							NLS.bind(
-									LaunchingMessages.AbstractInterpreterInstallType_failedToReadFromDiscoverScriptOutputStream,
-									e.getMessage()),
-							e));
-				} finally {
-					if (monitor != null) {
-						if (!workReceived) {
+					String line = dataIn.readLine();
+					if (line != null && monitor != null && !workReceived) {
+						int work = extractWorkFromLine(line);
+						if (work != NOT_WORK_COUNT) {
 							monitor.beginTask(
 									LaunchingMessages.AbstractInterpreterInstallType_fetchingInterpreterLibraryLocations,
-									1);
+									work);
+							// monitor.subTask("Featching interpeter library
+							// locations");
+							workReceived = true;
 						}
-						monitor.done();
 					}
+					if (line != null && monitor != null
+							&& detectWorkInc(line)) {
+						monitor.worked(1);
+					}
+					if (line != null) {
+						result.add(line);
+					} else {
+						break;
+					}
+				}
+
+			} catch (IOException e) {
+				DLTKLaunchingPlugin.log(new Status(IStatus.INFO,
+						DLTKLaunchingPlugin.PLUGIN_ID, IStatus.INFO,
+						NLS.bind(
+								LaunchingMessages.AbstractInterpreterInstallType_failedToReadFromDiscoverScriptOutputStream,
+								e.getMessage()),
+						e));
+			} finally {
+				if (monitor != null) {
+					if (!workReceived) {
+						monitor.beginTask(
+								LaunchingMessages.AbstractInterpreterInstallType_fetchingInterpreterLibraryLocations,
+								1);
+					}
+					monitor.done();
 				}
 			}
 		});
@@ -674,56 +671,51 @@ public abstract class AbstractInterpreterInstallType
 			final IFileHandle installLocation,
 			final List<LibraryLocation> locations,
 			final EnvironmentVariable[] variables) {
-		return new ILookupRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) {
+		return monitor -> {
+			try {
+				IEnvironment env = installLocation.getEnvironment();
+				IExecutionEnvironment exeEnv = env
+						.getAdapter(IExecutionEnvironment.class);
+				if (exeEnv == null)
+					return;
+				IDeployment deployment = exeEnv.createDeployment();
+
+				// handle case where rse is missing required plugins
+				if (deployment == null) {
+					DLTKLaunchingPlugin.logWarning(
+							LaunchingMessages.AbstractInterpreterInstallType_failedToDeployLibraryLocationsScript);
+					return;
+				}
+
 				try {
-					IEnvironment env = installLocation.getEnvironment();
-					IExecutionEnvironment exeEnv = env
-							.getAdapter(IExecutionEnvironment.class);
-					if (exeEnv == null)
-						return;
-					IDeployment deployment = exeEnv.createDeployment();
-
-					// handle case where rse is missing required plugins
-					if (deployment == null) {
-						DLTKLaunchingPlugin.logWarning(
-								LaunchingMessages.AbstractInterpreterInstallType_failedToDeployLibraryLocationsScript);
-						return;
-					}
-
-					try {
-						IPath deploymentPath = createPathFile(deployment);
-						IFileHandle locator = deployment
-								.getFile(deploymentPath);
-						String result = retrivePaths(exeEnv, installLocation,
-								locations, monitor, locator, variables);
-						String message = NLS.bind(
-								LaunchingMessages.AbstractInterpreterInstallType_failedToResolveLibraryLocationsForWith,
-								installLocation.getName(),
-								locator.toOSString());
-						if (locations.size() == 0) {
-							if (result == null) {
-								DLTKLaunchingPlugin.log(message);
-							} else {
-								DLTKLaunchingPlugin.logWarning(message,
-										new Exception(NLS.bind(
-												LaunchingMessages.AbstractInterpreterInstallType_output,
-												result)));
-							}
+					IPath deploymentPath = createPathFile(deployment);
+					IFileHandle locator = deployment.getFile(deploymentPath);
+					String result = retrivePaths(exeEnv, installLocation,
+							locations, monitor, locator, variables);
+					String message = NLS.bind(
+							LaunchingMessages.AbstractInterpreterInstallType_failedToResolveLibraryLocationsForWith,
+							installLocation.getName(), locator.toOSString());
+					if (locations.size() == 0) {
+						if (result == null) {
+							DLTKLaunchingPlugin.log(message);
+						} else {
+							DLTKLaunchingPlugin.logWarning(message,
+									new Exception(NLS.bind(
+											LaunchingMessages.AbstractInterpreterInstallType_output,
+											result)));
 						}
-					} finally {
-						// if (deployment != null) {
-						deployment.dispose();
-						// }
 					}
-				} catch (IOException e) {
-					DLTKLaunchingPlugin.log(
-							LaunchingMessages.AbstractInterpreterInstallType_problemWhileResolvingInterpreterLibraries,
-							e);
-					if (DLTKCore.DEBUG) {
-						e.printStackTrace();
-					}
+				} finally {
+					// if (deployment != null) {
+					deployment.dispose();
+					// }
+				}
+			} catch (IOException e) {
+				DLTKLaunchingPlugin.log(
+						LaunchingMessages.AbstractInterpreterInstallType_problemWhileResolvingInterpreterLibraries,
+						e);
+				if (DLTKCore.DEBUG) {
+					e.printStackTrace();
 				}
 			}
 		};

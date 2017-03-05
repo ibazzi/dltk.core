@@ -1,15 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
-/**
- * 
- */
 package org.eclipse.dltk.internal.ui.editor;
 
 import java.util.Stack;
@@ -20,7 +16,6 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension;
-import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IPositionUpdater;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
@@ -116,8 +111,10 @@ public abstract class BracketInserter implements VerifyKeyListener,
 		}
 	}
 
+	@Override
 	public abstract void verifyKey(VerifyEvent event);
 
+	@Override
 	public void left(LinkedModeModel environment, int flags) {
 
 		final BracketLevel level = fBracketLevelStack.pop();
@@ -132,37 +129,36 @@ public abstract class BracketInserter implements VerifyKeyListener,
 		if (document instanceof IDocumentExtension) {
 			IDocumentExtension extension = (IDocumentExtension) document;
 			extension.registerPostNotificationReplace(null,
-					new IDocumentExtension.IReplace() {
-
-						public void perform(IDocument d, IDocumentListener owner) {
-							if ((level.fFirstPosition.isDeleted || level.fFirstPosition.length == 0)
-									&& !level.fSecondPosition.isDeleted
-									&& level.fSecondPosition.offset == level.fFirstPosition.offset) {
-								try {
-									document.replace(
-											level.fSecondPosition.offset,
-											level.fSecondPosition.length, ""); //$NON-NLS-1$
-								} catch (BadLocationException e) {
-									DLTKUIPlugin.log(e);
-								}
+					(d, owner) -> {
+						if ((level.fFirstPosition.isDeleted
+								|| level.fFirstPosition.length == 0)
+								&& !level.fSecondPosition.isDeleted
+								&& level.fSecondPosition.offset == level.fFirstPosition.offset) {
+							try {
+								document.replace(level.fSecondPosition.offset,
+										level.fSecondPosition.length, ""); //$NON-NLS-1$
+							} catch (BadLocationException e1) {
+								DLTKUIPlugin.log(e1);
 							}
+						}
 
-							if (fBracketLevelStack.size() == 0) {
-								document.removePositionUpdater(fUpdater);
-								try {
-									document.removePositionCategory(CATEGORY);
-								} catch (BadPositionCategoryException e) {
-									DLTKUIPlugin.log(e);
-								}
+						if (fBracketLevelStack.size() == 0) {
+							document.removePositionUpdater(fUpdater);
+							try {
+								document.removePositionCategory(CATEGORY);
+							} catch (BadPositionCategoryException e2) {
+								DLTKUIPlugin.log(e2);
 							}
 						}
 					});
 		}
 	}
 
+	@Override
 	public void suspend(LinkedModeModel environment) {
 	}
 
+	@Override
 	public void resume(LinkedModeModel environment, int flags) {
 	}
 
@@ -215,7 +211,7 @@ public abstract class BracketInserter implements VerifyKeyListener,
 
 	/**
 	 * Validates the content type at the specified location
-	 * 
+	 *
 	 * @param document
 	 * @param offset
 	 * @param partitioning

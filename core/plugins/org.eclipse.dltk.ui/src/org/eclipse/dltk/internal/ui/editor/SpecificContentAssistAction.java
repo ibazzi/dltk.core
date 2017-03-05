@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,8 +29,8 @@ import org.eclipse.ui.texteditor.IUpdate;
 
 /**
  * Action to run content assist on a specific proposal category.
- * 
- * 
+ *
+ *
  */
 final class SpecificContentAssistAction extends Action implements IUpdate {
 	/**
@@ -49,7 +49,7 @@ final class SpecificContentAssistAction extends Action implements IUpdate {
 
 	/**
 	 * Creates a new action for a certain proposal category.
-	 * 
+	 *
 	 * @param category
 	 */
 	public SpecificContentAssistAction(CompletionProposalCategory category) {
@@ -59,9 +59,7 @@ final class SpecificContentAssistAction extends Action implements IUpdate {
 		setActionDefinitionId("org.eclipse.dltk.ui.specific_content_assist.command"); //$NON-NLS-1$
 	}
 
-	/*
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
+	@Override
 	public void run() {
 		ITextEditor editor = getActiveEditor();
 		if (editor == null)
@@ -76,7 +74,7 @@ final class SpecificContentAssistAction extends Action implements IUpdate {
 
 	/**
 	 * Sets the active editor part.
-	 * 
+	 *
 	 * @param part
 	 *            the editor, possibly <code>null</code>
 	 */
@@ -106,7 +104,7 @@ final class SpecificContentAssistAction extends Action implements IUpdate {
 	/**
 	 * Computes the partition type at the selection start and checks whether the
 	 * proposal category has any computers for this partition.
-	 * 
+	 *
 	 * @param selection
 	 *            the selection
 	 * @return <code>true</code> if there are any computers for the selection
@@ -151,9 +149,7 @@ final class SpecificContentAssistAction extends Action implements IUpdate {
 		return document;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IUpdate#update()
-	 */
+	@Override
 	public void update() {
 		setEnabled(computeEnablement(fEditor));
 	}

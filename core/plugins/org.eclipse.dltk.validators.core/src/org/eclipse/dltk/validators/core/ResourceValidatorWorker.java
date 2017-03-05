@@ -9,16 +9,15 @@ import org.eclipse.core.runtime.IStatus;
  * Abstract base class that may be used to validate <code>IResource</code>
  * objects contained within an <code>IScriptProject</code>.
  */
-public abstract class ResourceValidatorWorker extends AbstractValidatorWorker
-		implements IResourceValidator {
+public abstract class ResourceValidatorWorker extends AbstractValidatorWorker implements IResourceValidator {
 
 	@Override
 	public final void clean(IResource[] resources) {
 		super.clean(resources);
 	}
 
-	public final IStatus validate(IResource[] resources,
-			IValidatorOutput output, IProgressMonitor monitor) {
+	@Override
+	public final IStatus validate(IResource[] resources, IValidatorOutput output, IProgressMonitor monitor) {
 		return doValidate(resources, output, monitor);
 	}
 
@@ -31,8 +30,7 @@ public abstract class ResourceValidatorWorker extends AbstractValidatorWorker
 	/**
 	 * Executes the validator against the given resource
 	 */
-	protected abstract void runValidator(IResource resource,
-			IValidatorOutput console, IValidatorReporter reporter,
+	protected abstract void runValidator(IResource resource, IValidatorOutput console, IValidatorReporter reporter,
 			IProgressMonitor monitor) throws CoreException;
 
 	@Override
@@ -46,9 +44,8 @@ public abstract class ResourceValidatorWorker extends AbstractValidatorWorker
 	}
 
 	@Override
-	protected final void runValidator(Object object, IValidatorOutput console,
-			IValidatorReporter reporter, IProgressMonitor monitor)
-			throws CoreException {
+	protected final void runValidator(Object object, IValidatorOutput console, IValidatorReporter reporter,
+			IProgressMonitor monitor) throws CoreException {
 		runValidator((IResource) object, console, reporter, monitor);
 	}
 }

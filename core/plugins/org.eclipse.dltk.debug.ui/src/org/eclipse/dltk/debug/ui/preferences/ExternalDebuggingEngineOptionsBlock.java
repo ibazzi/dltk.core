@@ -28,8 +28,8 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
  * Options block for external debugging engine that require the user to specify
  * their location on disk.
  */
-public abstract class ExternalDebuggingEngineOptionsBlock extends
-		DebuggingEngineConfigOptionsBlock {
+public abstract class ExternalDebuggingEngineOptionsBlock
+		extends DebuggingEngineConfigOptionsBlock {
 
 	EnvironmentPathBlock enginePaths;
 
@@ -42,7 +42,7 @@ public abstract class ExternalDebuggingEngineOptionsBlock extends
 	/**
 	 * Add a link to an external site where the debugging engine can be
 	 * downloaded from
-	 * 
+	 *
 	 * @param parent
 	 *            parent composite
 	 * @param text
@@ -54,6 +54,7 @@ public abstract class ExternalDebuggingEngineOptionsBlock extends
 			final String url) {
 		Link link = new Link(parent, SWT.NONE);
 		link.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				openExternalUrl(url);
 			}
@@ -69,16 +70,17 @@ public abstract class ExternalDebuggingEngineOptionsBlock extends
 
 	/**
 	 * Creates the engine path block.
-	 * 
+	 *
 	 * <p>
 	 * Sub-classes are free to override if they wish to make additional
 	 * contributions to the parent composite to provide additional options for
 	 * their specific engine.
 	 * </p>
-	 * 
+	 *
 	 * @param parent
 	 *            parent composite
 	 */
+	@Override
 	protected void createEngineBlock(final Composite parent) {
 		final Group group = SWTFactory.createGroup(parent,
 				ScriptDebugPreferencesMessages.ExternalEngineGroup, 3, 1,

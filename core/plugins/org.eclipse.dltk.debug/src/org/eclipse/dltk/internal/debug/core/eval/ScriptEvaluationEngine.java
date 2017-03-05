@@ -59,9 +59,7 @@ public class ScriptEvaluationEngine implements IScriptEvaluationEngine {
 				IScriptValue value = ScriptValue.createValue(frame, property);
 				result = new ScriptEvaluationResult(thread, snippet, value);
 			} else {
-				result = new FailedScriptEvaluationResult(
-						thread,
-						snippet,
+				result = new FailedScriptEvaluationResult(thread, snippet,
 						new String[] {
 								Messages.ScriptEvaluationEngine_cantEvaluate });
 			}
@@ -81,10 +79,12 @@ public class ScriptEvaluationEngine implements IScriptEvaluationEngine {
 		this.cache = new WeakHashMap();
 	}
 
+	@Override
 	public IScriptDebugTarget getScriptDebugTarget() {
 		return (ScriptDebugTarget) thread.getDebugTarget();
 	}
 
+	@Override
 	public IScriptEvaluationResult syncEvaluate(String snippet,
 			IScriptStackFrame frame) {
 		snippet = snippet.trim();
@@ -107,15 +107,17 @@ public class ScriptEvaluationEngine implements IScriptEvaluationEngine {
 		}
 	}
 
+	@Override
 	public void asyncEvaluate(final String snippet,
 			final IScriptStackFrame frame,
 			final IScriptEvaluationListener listener) {
-		Job job = new Job(NLS.bind(
-				Messages.ScriptEvaluationEngine_evaluationOf, snippet)) {
+		Job job = new Job(NLS.bind(Messages.ScriptEvaluationEngine_evaluationOf,
+				snippet)) {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				if (getScriptDebugTarget().isTerminated()) {
-					listener.evaluationComplete(new NoEvaluationResult(snippet,
-							thread));
+					listener.evaluationComplete(
+							new NoEvaluationResult(snippet, thread));
 				} else {
 					listener.evaluationComplete(syncEvaluate(snippet, frame));
 				}
@@ -128,6 +130,7 @@ public class ScriptEvaluationEngine implements IScriptEvaluationEngine {
 		job.schedule();
 	}
 
+	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
 	}

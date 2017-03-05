@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.wizards;
 
@@ -14,7 +13,6 @@ import java.util.Collection;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.dltk.ui.dialogs.StatusInfo;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
-
 
 /**
  * Implementation of a <code>ISelectionValidator</code> to validate the
@@ -29,7 +27,7 @@ public class TypedElementSelectionValidator implements ISelectionStatusValidator
 	private Class<?>[] fAcceptedTypes;
 	private boolean fAllowMultipleSelection;
 	private Collection<?> fRejectedElements;
-	
+
 	/**
 	 * @param acceptedTypes The types accepted by the validator
 	 * @param allowMultipleSelection If set to <code>true</code>, the validator
@@ -39,7 +37,7 @@ public class TypedElementSelectionValidator implements ISelectionStatusValidator
 			boolean allowMultipleSelection) {
 		this(acceptedTypes, allowMultipleSelection, null);
 	}
-	
+
 	/**
 	 * @param acceptedTypes The types accepted by the validator
 	 * @param allowMultipleSelection If set to <code>true</code>, the validator
@@ -52,17 +50,15 @@ public class TypedElementSelectionValidator implements ISelectionStatusValidator
 		fAcceptedTypes= acceptedTypes;
 		fAllowMultipleSelection= allowMultipleSelection;
 		fRejectedElements= rejectedElements;
-	}	
-	
-	/*
-	 * @see org.eclipse.ui.dialogs.ISelectionValidator#isValid(java.lang.Object)
-	 */
+	}
+
+	@Override
 	public IStatus validate(Object[] elements) {
 		if (isValid(elements)) {
 			return fgOKStatus;
 		}
 		return fgErrorStatus;
-	}	
+	}
 
 	private boolean isOfAcceptedType(Object o) {
 		for (int i= 0; i < fAcceptedTypes.length; i++) {
@@ -72,26 +68,26 @@ public class TypedElementSelectionValidator implements ISelectionStatusValidator
 		}
 		return false;
 	}
-	
+
 	private boolean isRejectedElement(Object elem) {
 		return (fRejectedElements != null) && fRejectedElements.contains(elem);
 	}
-	
+
 	protected boolean isSelectedValid(Object elem) {
 		return true;
 	}
-	
+
 	private boolean isValid(Object[] selection) {
 		if (selection.length == 0) {
 			return false;
 		}
-		
+
 		if (!fAllowMultipleSelection && selection.length != 1) {
 			return false;
 		}
-		
+
 		for (int i= 0; i < selection.length; i++) {
-			Object o= selection[i];	
+			Object o= selection[i];
 			if (!isOfAcceptedType(o) || isRejectedElement(o) || !isSelectedValid(o)) {
 				return false;
 			}

@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.text;
 
@@ -86,7 +85,7 @@ public class ScriptOutlineInformationControl extends AbstractInformationControl 
 
 	/**
 	 * Category filter action group.
-	 * 
+	 *
 	 */
 	private String fPattern;
 
@@ -107,9 +106,7 @@ public class ScriptOutlineInformationControl extends AbstractInformationControl 
 					getPreferenceStore());
 		}
 
-		/*
-		 * @see ILabelProvider#getText
-		 */
+		@Override
 		public String getText(Object element) {
 			String text = super.getText(element);
 			if (fShowDefiningType) {
@@ -127,6 +124,7 @@ public class ScriptOutlineInformationControl extends AbstractInformationControl 
 			return text;
 		}
 
+		@Override
 		public Color getForeground(Object element) {
 			if (fOutlineContentProvider.isShowingInheritedMembers()) {
 				if (element instanceof IModelElement) {
@@ -143,10 +141,6 @@ public class ScriptOutlineInformationControl extends AbstractInformationControl 
 
 		public void setShowDefiningType(boolean showDefiningType) {
 			fShowDefiningType = showDefiningType;
-		}
-
-		public boolean isShowDefiningType() {
-			return fShowDefiningType;
 		}
 
 		private IType getDefiningType(Object element) throws ModelException {
@@ -183,9 +177,7 @@ public class ScriptOutlineInformationControl extends AbstractInformationControl 
 			super(tree);
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		protected Object[] getFilteredChildren(Object parent) {
 			Object[] result = getRawChildren(parent);
 			int unfilteredChildren = result.length;
@@ -198,9 +190,7 @@ public class ScriptOutlineInformationControl extends AbstractInformationControl 
 			return result;
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		protected void internalExpandToLevel(Widget node, int level) {
 			if (!fIsFiltering && node instanceof Item) {
 				Item i = (Item) node;
@@ -225,7 +215,7 @@ public class ScriptOutlineInformationControl extends AbstractInformationControl 
 
 		/**
 		 * Creates a new Outline content provider.
-		 * 
+		 *
 		 * @param showInheritedMembers
 		 *            <code>true</code> iff inherited members are shown
 		 */
@@ -254,9 +244,7 @@ public class ScriptOutlineInformationControl extends AbstractInformationControl 
 			tree.setRedraw(true);
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		public Object[] getChildren(Object element) {
 
 			if (fShowInheritedMembers && element instanceof IType) {
@@ -278,17 +266,13 @@ public class ScriptOutlineInformationControl extends AbstractInformationControl 
 			return super.getChildren(element);
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			super.inputChanged(viewer, oldInput, newInput);
 			fTypeHierarchies.clear();
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		public void dispose() {
 			super.dispose();
 			fTypeHierarchies.clear();
@@ -297,6 +281,7 @@ public class ScriptOutlineInformationControl extends AbstractInformationControl 
 
 	private class OutlineSorter extends AbstractHierarchyViewerSorter {
 
+		@Override
 		protected ITypeHierarchy getHierarchy(IType type) {
 			return getSuperTypeHierarchy(type);
 		}
@@ -340,6 +325,7 @@ public class ScriptOutlineInformationControl extends AbstractInformationControl 
 			}
 		}
 
+		@Override
 		public void run() {
 			valueChanged(isChecked(), true);
 		}
@@ -347,11 +333,7 @@ public class ScriptOutlineInformationControl extends AbstractInformationControl 
 		private void valueChanged(final boolean on, boolean store) {
 			setChecked(on);
 			BusyIndicator.showWhile(fOutlineViewer.getControl().getDisplay(),
-					new Runnable() {
-						public void run() {
-							fOutlineViewer.refresh(false);
-						}
-					});
+					() -> fOutlineViewer.refresh(false));
 
 			if (store)
 				getDialogSettings().put(STORE_LEXICAL_SORTING_CHECKED, on);
@@ -366,7 +348,7 @@ public class ScriptOutlineInformationControl extends AbstractInformationControl 
 
 		/**
 		 * Creates the action.
-		 * 
+		 *
 		 * @param outlineViewer
 		 *            the outline viewer
 		 */
@@ -393,35 +375,29 @@ public class ScriptOutlineInformationControl extends AbstractInformationControl 
 			fInnerLabelProvider.setShowDefiningType(state);
 		}
 
-		/*
-		 * @see Action#actionPerformed
-		 */
+		@Override
 		public void run() {
 			BusyIndicator.showWhile(fOutlineViewer.getControl().getDisplay(),
-					new Runnable() {
-						public void run() {
-							fInnerLabelProvider
-									.setShowDefiningType(isChecked());
-							getDialogSettings().put(
-									STORE_SORT_BY_DEFINING_TYPE_CHECKED,
-									isChecked());
+					() -> {
+						fInnerLabelProvider
+								.setShowDefiningType(isChecked());
+						getDialogSettings().put(
+								STORE_SORT_BY_DEFINING_TYPE_CHECKED,
+								isChecked());
 
-							setMatcherString(fPattern, false);
-							fOutlineViewer.refresh(true);
+						setMatcherString(fPattern, false);
+						fOutlineViewer.refresh(true);
 
-							// reveal selection
-							Object selectedElement = getSelectedElement();
-							if (selectedElement != null)
-								fOutlineViewer.reveal(selectedElement);
-						}
+						// reveal selection
+						Object selectedElement = getSelectedElement();
+						if (selectedElement != null)
+							fOutlineViewer.reveal(selectedElement);
 					});
 		}
 	}
 
 	/**
 	 * String matcher that can match two patterns.
-	 * 
-	 * 
 	 */
 	private static class OrStringMatcher extends StringMatcher {
 
@@ -435,6 +411,7 @@ public class ScriptOutlineInformationControl extends AbstractInformationControl 
 			fMatcher2 = new StringMatcher(pattern2, ignoreCase, false);
 		}
 
+		@Override
 		public boolean match(String text) {
 			return fMatcher2.match(text) || fMatcher1.match(text);
 		}
@@ -443,7 +420,7 @@ public class ScriptOutlineInformationControl extends AbstractInformationControl 
 
 	/**
 	 * Creates a new Script outline information control.
-	 * 
+	 *
 	 * @param parent
 	 * @param shellStyle
 	 * @param treeStyle
@@ -458,7 +435,7 @@ public class ScriptOutlineInformationControl extends AbstractInformationControl 
 
 	/**
 	 * Creates a new Script outline information control.
-	 * 
+	 *
 	 * @param parent
 	 * @param shellStyle
 	 * @param treeStyle
@@ -481,18 +458,14 @@ public class ScriptOutlineInformationControl extends AbstractInformationControl 
 		return false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected Text createFilterText(Composite parent) {
 		Text text = super.createFilterText(parent);
 		text.addKeyListener(getKeyAdapter());
 		return text;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected TreeViewer createTreeViewer(Composite parent, int style) {
 		Tree tree = new Tree(parent, SWT.SINGLE | (style & ~SWT.MULTI));
 		GridData gd = new GridData(GridData.FILL_BOTH);
@@ -539,9 +512,7 @@ public class ScriptOutlineInformationControl extends AbstractInformationControl 
 		return treeViewer;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected String getStatusFieldText() {
 		KeySequence[] sequences = getInvokingCommandKeySequences();
 		if (sequences == null || sequences.length == 0)
@@ -559,16 +530,12 @@ public class ScriptOutlineInformationControl extends AbstractInformationControl 
 							keySequence);
 	}
 
-	/*
-	 * @see org.eclipse.dltk.internal.ui.text.AbstractInformationControl#getId()
-	 */
+	@Override
 	protected String getId() {
 		return "org.eclipse.dltk.internal.ui.text.QuickOutline"; //$NON-NLS-1$
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void setInput(Object information) {
 		if (information == null || information instanceof String) {
 			inputChanged(null, null);
@@ -588,6 +555,7 @@ public class ScriptOutlineInformationControl extends AbstractInformationControl 
 	private KeyAdapter getKeyAdapter() {
 		if (fKeyAdapter == null) {
 			fKeyAdapter = new KeyAdapter() {
+				@Override
 				public void keyPressed(KeyEvent e) {
 					int accelerator = SWTKeySupport
 							.convertEventToUnmodifiedAccelerator(e);
@@ -610,9 +578,7 @@ public class ScriptOutlineInformationControl extends AbstractInformationControl 
 		return fKeyAdapter;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected void handleStatusFieldClicked() {
 		toggleShowInheritedMembers();
 	}
@@ -626,11 +592,7 @@ public class ScriptOutlineInformationControl extends AbstractInformationControl 
 		// fCategoryFilterActionGroup.setInput(getInputForCategories());
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.dltk.internal.ui.text.AbstractInformationControl#fillViewMenu
-	 * (org.eclipse.jface.action.IMenuManager)
-	 */
+	@Override
 	protected void fillViewMenu(IMenuManager viewMenu) {
 		super.fillViewMenu(viewMenu);
 		// viewMenu.add(fShowOnlyMainTypeAction);
@@ -644,11 +606,7 @@ public class ScriptOutlineInformationControl extends AbstractInformationControl 
 		// fCategoryFilterActionGroup.contributeToViewMenu(viewMenu);
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.dltk.internal.ui.text.AbstractInformationControl#setMatcherString
-	 * (java.lang.String, boolean)
-	 */
+	@Override
 	protected void setMatcherString(String pattern, boolean update) {
 		fPattern = pattern;
 		if (pattern.length() == 0 || !fSortByDefiningTypeAction.isChecked()) {

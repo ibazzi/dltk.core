@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,7 @@ import org.eclipse.jface.text.TextUtilities;
 /**
  * Double click strategy that selects the partition if double click occurs at
  * the partition boundaries.
- * 
+ *
  * @since 3.0
  */
 public class PartitionDoubleClickSelector extends
@@ -36,7 +36,7 @@ public class PartitionDoubleClickSelector extends
 	/**
 	 * Creates a new partition double click selector for the given document
 	 * partitioning.
-	 * 
+	 *
 	 * @param partitioning
 	 *            the document partitioning
 	 * @param leftBorder
@@ -54,7 +54,7 @@ public class PartitionDoubleClickSelector extends
 	/**
 	 * Creates a new partition double click selector for the given document
 	 * partitioning.
-	 * 
+	 *
 	 * @param partitioning
 	 *            the document partitioning
 	 * @param leftBorder
@@ -78,9 +78,10 @@ public class PartitionDoubleClickSelector extends
 
 	/*
 	 * @see DefaultTextDoubleClickStrategy#findExtendedDoubleClickSelection()
-	 * 
+	 *
 	 * @since Eclipse 3.5
 	 */
+	@Override
 	protected IRegion findExtendedDoubleClickSelection(IDocument document,
 			int offset) {
 		IRegion match = super

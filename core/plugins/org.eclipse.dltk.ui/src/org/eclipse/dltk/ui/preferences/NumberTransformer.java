@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -17,6 +17,7 @@ package org.eclipse.dltk.ui.preferences;
  */
 public abstract class NumberTransformer implements ITextConverter {
 
+	@Override
 	public String convertPreference(String value) {
 		try {
 			return String.valueOf(convertPreference(Integer.parseInt(value)));
@@ -28,12 +29,13 @@ public abstract class NumberTransformer implements ITextConverter {
 	/**
 	 * Convert value from the internal format to the format suitable to display
 	 * in the text box
-	 * 
+	 *
 	 * @param value
 	 * @return
 	 */
 	protected abstract int convertPreference(int value);
 
+	@Override
 	public String convertInput(String input) {
 		try {
 			return String.valueOf(convertInput(Integer.parseInt(input)));
@@ -44,7 +46,7 @@ public abstract class NumberTransformer implements ITextConverter {
 
 	/**
 	 * Convert value entered into the text box to the internal format.
-	 * 
+	 *
 	 * @param input
 	 * @return
 	 */

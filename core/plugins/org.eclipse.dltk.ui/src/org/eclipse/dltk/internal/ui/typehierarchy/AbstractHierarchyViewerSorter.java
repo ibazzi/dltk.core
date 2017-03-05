@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.typehierarchy;
 
@@ -19,8 +18,6 @@ import org.eclipse.dltk.ui.viewsupport.SourcePositionSorter;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 
-/**
-  */
 public abstract class AbstractHierarchyViewerSorter extends ViewerSorter {
 
 	private static final int OTHER = 10;
@@ -47,11 +44,7 @@ public abstract class AbstractHierarchyViewerSorter extends ViewerSorter {
 		return type.getFlags();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ViewerSorter#category(java.lang.Object)
-	 */
+	@Override
 	public int category(Object element) {
 		if (element instanceof IType) {
 			IType type = (IType) element;
@@ -72,11 +65,7 @@ public abstract class AbstractHierarchyViewerSorter extends ViewerSorter {
 		return OTHER;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ViewerSorter#compare(null, null, null)
-	 */
+	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
 		if (!isSortAlphabetically() && !isSortByDefiningType()) {
 			return fSourcePositonSorter.compare(viewer, e1, e2);
@@ -146,7 +135,7 @@ public abstract class AbstractHierarchyViewerSorter extends ViewerSorter {
 		// method.isConstructor()) {
 		// return null;
 		// }
-		//	
+		//
 		// IType declaringType= method.getDeclaringType();
 		// MethodOverrideTester tester= new MethodOverrideTester(declaringType,
 		// getHierarchy(declaringType));

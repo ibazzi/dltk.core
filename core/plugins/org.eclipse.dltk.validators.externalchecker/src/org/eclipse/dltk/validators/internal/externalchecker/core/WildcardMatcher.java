@@ -10,15 +10,14 @@ import org.eclipse.dltk.validators.core.ValidatorProblem;
 
 public class WildcardMatcher {
 
-	private List tokenList = new ArrayList();
-	private List wcards;
+	private List<WildcardToken> tokenList = new ArrayList<>();
+	private List<CustomWildcard> wcards;
 
-	public WildcardMatcher(List wcards) {
+	public WildcardMatcher(List<CustomWildcard> wcards) {
 		this.wcards = wcards;
 	}
 
-	public IValidatorProblem match(Rule pattern, String input)
-			throws WildcardException {
+	public IValidatorProblem match(Rule pattern, String input) throws WildcardException {
 		tokenList = parseWildcard(pattern.getDescription());
 		String bigpattern = makeBigPattern(pattern.getDescription(), wcards);
 		Pattern pat = Pattern.compile(bigpattern);
@@ -59,14 +58,13 @@ public class WildcardMatcher {
 				message = input;
 			}
 
-			return new ValidatorProblem(fileName, message, lineNumber, pattern
-					.getProblemType());
+			return new ValidatorProblem(fileName, message, lineNumber, pattern.getProblemType());
 		}
 		return null;
 	}
 
-	public ArrayList parseWildcard(String wildcard) {
-		ArrayList list = new ArrayList();
+	public ArrayList<WildcardToken> parseWildcard(String wildcard) {
+		ArrayList<WildcardToken> list = new ArrayList<>();
 
 		StringBuffer sb = new StringBuffer();
 		final int CLEAN = 0;
@@ -100,7 +98,7 @@ public class WildcardMatcher {
 
 	public String recognizeWildcard(char symbol) {
 		for (int i = 0; i < wcards.size(); i++) {
-			CustomWildcard card = (CustomWildcard) wcards.get(i);
+			CustomWildcard card = wcards.get(i);
 			if (card.getLetter().indexOf(symbol) != -1) {
 				return card.getLetter();
 			}
@@ -108,7 +106,7 @@ public class WildcardMatcher {
 		return null;
 	}
 
-	private static String makeBigPattern(String input, List wcards) {
+	private static String makeBigPattern(String input, List<CustomWildcard> wcards) {
 		int status;
 		final int UNDEFINED = 0;
 		final int IN_STRING = 1;
@@ -152,10 +150,10 @@ public class WildcardMatcher {
 		return sb.toString();
 	}
 
-	private static String getPattern(char c, List wcards) {
+	private static String getPattern(char c, List<CustomWildcard> wcards) {
 		String s = null;
 		for (int i = 0; i < wcards.size(); i++) {
-			CustomWildcard cwcard = (CustomWildcard) wcards.get(i);
+			CustomWildcard cwcard = wcards.get(i);
 			if (cwcard.getLetter().indexOf(c) != -1) {
 				s = cwcard.getSpattern();
 			}
@@ -163,14 +161,4 @@ public class WildcardMatcher {
 		return s;
 	}
 
-	private int getIndexOfLineNumber() {
-		for (int i = 0; i < tokenList.size(); i++) {
-			WildcardToken tok = (WildcardToken) tokenList.get(i);
-			String value = (String) tok.getValue();
-			if (value.equals("n")) { //$NON-NLS-1$
-				return i;
-			}
-		}
-		return -1;
-	}
 }

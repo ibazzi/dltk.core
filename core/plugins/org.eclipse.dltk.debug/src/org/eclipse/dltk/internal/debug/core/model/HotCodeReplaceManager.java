@@ -106,6 +106,7 @@ public class HotCodeReplaceManager implements IResourceChangeListener,
 		}
 	}
 
+	@Override
 	public void launchAdded(ILaunch launch) {
 		IDebugTarget[] debugTargets = launch.getDebugTargets();
 		for (int i = 0; i < debugTargets.length; i++) {
@@ -127,10 +128,12 @@ public class HotCodeReplaceManager implements IResourceChangeListener,
 				&& getHotCodeReplaceProvider(toolkit.getNatureId()) != null;
 	}
 
+	@Override
 	public void launchChanged(ILaunch launch) {
 		launchAdded(launch);
 	}
 
+	@Override
 	public void launchRemoved(ILaunch launch) {
 		IDebugTarget[] debugTargets = launch.getDebugTargets();
 		for (int i = 0; i < debugTargets.length; i++) {
@@ -142,6 +145,7 @@ public class HotCodeReplaceManager implements IResourceChangeListener,
 		}
 	}
 
+	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (int i = 0; i < events.length; i++) {
 			DebugEvent event = events[i];
@@ -195,6 +199,7 @@ public class HotCodeReplaceManager implements IResourceChangeListener,
 				.toArray(new IScriptDebugTarget[fNoHotSwapTargets.size()]);
 	}
 
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		if (fHotSwapTargets.isEmpty() && fNoHotSwapTargets.isEmpty()) {
 			// If there are no targets to notify, only update the build times.
@@ -211,19 +216,13 @@ public class HotCodeReplaceManager implements IResourceChangeListener,
 		final IScriptDebugTarget[] hotSwapTargets = getHotSwapTargets();
 		final IScriptDebugTarget[] noHotSwapTargets = getNoHotSwapTargets();
 		if (hotSwapTargets.length != 0) {
-			Runnable runnable = new Runnable() {
-				public void run() {
-					doHotCodeReplace(hotSwapTargets, resources);
-				}
-			};
+			Runnable runnable = () -> doHotCodeReplace(hotSwapTargets,
+					resources);
 			DebugPlugin.getDefault().asyncExec(runnable);
 		}
 		if (noHotSwapTargets.length != 0) {
-			Runnable runnable = new Runnable() {
-				public void run() {
-					notifyUnsupportedHCR(noHotSwapTargets, resources);
-				}
-			};
+			Runnable runnable = () -> notifyUnsupportedHCR(noHotSwapTargets,
+					resources);
 			DebugPlugin.getDefault().asyncExec(runnable);
 		}
 	}
@@ -308,6 +307,7 @@ public class HotCodeReplaceManager implements IResourceChangeListener,
 		 * If the associated resource is a file which has been changed, record
 		 * it.
 		 */
+		@Override
 		public boolean visit(IResourceDelta delta) {
 			if (delta == null
 					|| 0 == (delta.getKind() & IResourceDelta.CHANGED)) {

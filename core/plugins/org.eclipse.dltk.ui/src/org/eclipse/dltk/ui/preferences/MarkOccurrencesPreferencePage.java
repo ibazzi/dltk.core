@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,14 +28,17 @@ public abstract class MarkOccurrencesPreferencePage extends
 	// return IJavaHelpContextIds.JAVA_EDITOR_PREFERENCE_PAGE;
 	// }
 
+	@Override
 	protected void setDescription() {
 		setDescription(PreferencesMessages.MarkOccurrencesConfigurationBlock_title);
 	}
 
+	@Override
 	protected Label createDescriptionLabel(Composite parent) {
 		return null; // no description for new look.
 	}
 
+	@Override
 	protected IPreferenceConfigurationBlock createConfigurationBlock(
 			OverlayPreferenceStore overlayPreferenceStore) {
 		return new MarkOccurrencesConfigurationBlock(overlayPreferenceStore);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -25,6 +25,7 @@ import org.eclipse.dltk.validators.internal.core.ValidatorsCore;
 /**
  * @deprecated use ResourceValidatorWorker and/or SourceModuleValidatorWorker
  */
+@Deprecated
 public abstract class AbstractExternalValidator {
 
 	protected abstract String getMarkerType();
@@ -55,7 +56,7 @@ public abstract class AbstractExternalValidator {
 	}
 
 	protected IResource[] toResources(ISourceModule[] modules) {
-		final List resources = new ArrayList(modules.length);
+		final List<IResource> resources = new ArrayList<>(modules.length);
 		for (int i = 0; i < modules.length; ++i) {
 			final IResource resource = modules[i].getResource();
 			if (resource != null) {
@@ -67,9 +68,8 @@ public abstract class AbstractExternalValidator {
 		return result;
 	}
 
-	protected IMarker createMarker(IResource res, int line, int start, int end,
-			String msg, int severity, int priority, Map attributes)
-			throws CoreException {
+	protected IMarker createMarker(IResource res, int line, int start, int end, String msg, int severity, int priority,
+			Map attributes) throws CoreException {
 		final IMarker m = res.createMarker(getMarkerType());
 		m.setAttribute(IMarker.LINE_NUMBER, line);
 		m.setAttribute(IMarker.MESSAGE, msg);
@@ -86,25 +86,21 @@ public abstract class AbstractExternalValidator {
 		return m;
 	}
 
-	protected IMarker reportWarning(IResource res, int line, int start,
-			int end, String msg) throws CoreException {
+	protected IMarker reportWarning(IResource res, int line, int start, int end, String msg) throws CoreException {
 		return reportWarning(res, line, start, end, msg, null);
 	}
 
-	protected IMarker reportWarning(IResource res, int line, int start,
-			int end, String msg, Map attributes) throws CoreException {
-		return createMarker(res, line, start, end, msg,
-				IMarker.SEVERITY_WARNING, IMarker.PRIORITY_NORMAL, attributes);
+	protected IMarker reportWarning(IResource res, int line, int start, int end, String msg, Map attributes)
+			throws CoreException {
+		return createMarker(res, line, start, end, msg, IMarker.SEVERITY_WARNING, IMarker.PRIORITY_NORMAL, attributes);
 	}
 
-	protected IMarker reportError(IResource res, int line, int start, int end,
-			String msg) throws CoreException {
+	protected IMarker reportError(IResource res, int line, int start, int end, String msg) throws CoreException {
 		return reportError(res, line, start, end, msg, null);
 	}
 
-	protected IMarker reportError(IResource res, int line, int start, int end,
-			String msg, Map attributes) throws CoreException {
-		return createMarker(res, line, start, end, msg, IMarker.SEVERITY_ERROR,
-				IMarker.PRIORITY_NORMAL, attributes);
+	protected IMarker reportError(IResource res, int line, int start, int end, String msg, Map attributes)
+			throws CoreException {
+		return createMarker(res, line, start, end, msg, IMarker.SEVERITY_ERROR, IMarker.PRIORITY_NORMAL, attributes);
 	}
 }

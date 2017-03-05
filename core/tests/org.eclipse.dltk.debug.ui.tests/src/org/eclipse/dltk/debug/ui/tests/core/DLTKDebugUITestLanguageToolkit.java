@@ -7,19 +7,12 @@ import org.eclipse.jface.preference.IPreferenceStore;
 public class DLTKDebugUITestLanguageToolkit extends
 		AbstractDebugUILanguageToolkit {
 
-	/*
-	 * @see
-	 * org.eclipse.dltk.debug.ui.IDLTKDebugUILanguageToolkit#getDebugModelId()
-	 */
+	@Override
 	public String getDebugModelId() {
 		return null;
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.dltk.debug.ui.IDLTKDebugUILanguageToolkit#getPreferenceStore
-	 * ()
-	 */
+	@Override
 	public IPreferenceStore getPreferenceStore() {
 		return DLTKDebugUITestsPlugin.getDefault().getPreferenceStore();
 	}

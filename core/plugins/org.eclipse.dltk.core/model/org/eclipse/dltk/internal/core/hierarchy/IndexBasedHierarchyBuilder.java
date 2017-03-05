@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@ package org.eclipse.dltk.internal.core.hierarchy;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -204,17 +203,14 @@ public class IndexBasedHierarchyBuilder extends HierarchyBuilder {
 				}
 				indexes.put(openables[i], index);
 			}
-			Arrays.sort(openables, new Comparator() {
-				@Override
-				public int compare(Object a, Object b) {
-					int aIndex = indexes.get(a);
-					int bIndex = indexes.get(b);
-					if (aIndex != bIndex) {
-						return aIndex - bIndex;
-					}
-					return ((Openable) b).getElementName().compareTo(
-							((Openable) a).getElementName());
+			Arrays.sort(openables, (a, b) -> {
+				int aIndex = indexes.get(a);
+				int bIndex = indexes.get(b);
+				if (aIndex != bIndex) {
+					return aIndex - bIndex;
 				}
+				return b.getElementName()
+						.compareTo(a.getElementName());
 			});
 
 			IType focusType = this.getType();

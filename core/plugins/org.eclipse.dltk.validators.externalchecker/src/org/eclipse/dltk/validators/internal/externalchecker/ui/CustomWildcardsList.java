@@ -8,20 +8,20 @@ import java.util.Vector;
 import org.eclipse.dltk.validators.internal.externalchecker.core.CustomWildcard;
 
 public class CustomWildcardsList {
-	
-	private Vector wcards = new Vector();
-	private Set changeListeners = new HashSet();
-	
-	
-	public void addWcard(){
-		CustomWildcard r = new CustomWildcard("x", Messages.CustomWildcardsList_enterPattern, Messages.CustomWildcardsList_enterDescription); //$NON-NLS-1$
+
+	private Vector<CustomWildcard> wcards = new Vector<>();
+	private Set<IWildcardListViewer> changeListeners = new HashSet<>();
+
+	public void addWcard() {
+		CustomWildcard r = new CustomWildcard("x", Messages.CustomWildcardsList_enterPattern, //$NON-NLS-1$
+				Messages.CustomWildcardsList_enterDescription);
 		wcards.add(r);
-		Iterator iterator = changeListeners.iterator();
-		while(iterator.hasNext()){
-			((IWildcardListViewer)iterator.next()).addWildcard(r);
+		Iterator<IWildcardListViewer> iterator = changeListeners.iterator();
+		while (iterator.hasNext()) {
+			iterator.next().addWildcard(r);
 		}
 	}
-		
+
 	public void removeChangeListener(IWildcardListViewer viewer) {
 		changeListeners.remove(viewer);
 	}
@@ -29,45 +29,45 @@ public class CustomWildcardsList {
 	public void addChangeListener(IWildcardListViewer viewer) {
 		changeListeners.add(viewer);
 	}
-	
-	public Vector getWcards(){
+
+	public Vector<CustomWildcard> getWcards() {
 		return wcards;
 	}
-	
+
 	public void wcardChanged(CustomWildcard r) {
-		Iterator iterator = changeListeners.iterator();
+		Iterator<IWildcardListViewer> iterator = changeListeners.iterator();
 		while (iterator.hasNext())
-			((IWildcardListViewer) iterator.next()).updateWildcard(r);
+			iterator.next().updateWildcard(r);
 	}
-	
-	public  void addWcard(CustomWildcard r){
+
+	public void addWcard(CustomWildcard r) {
 		wcards.add(r);
-		Iterator iterator = changeListeners.iterator();
-		while(iterator.hasNext()){
-			((IWildcardListViewer)iterator.next()).addWildcard(r);
+		Iterator<IWildcardListViewer> iterator = changeListeners.iterator();
+		while (iterator.hasNext()) {
+			iterator.next().addWildcard(r);
 		}
 	}
-	
+
 	public void removeWcard(CustomWildcard task) {
 		wcards.remove(task);
-		Iterator iterator = changeListeners.iterator();
+		Iterator<IWildcardListViewer> iterator = changeListeners.iterator();
 		while (iterator.hasNext())
-			((IWildcardListViewer) iterator.next()).removeWildcard(task);
+			iterator.next().removeWildcard(task);
 	}
-	
-	public void  removeAll(){
-		for(int i=0; i<this.wcards.size(); i++){
-			CustomWildcard task = (CustomWildcard)wcards.get(i);
-			Iterator iterator = changeListeners.iterator();
+
+	public void removeAll() {
+		for (int i = 0; i < this.wcards.size(); i++) {
+			CustomWildcard task = wcards.get(i);
+			Iterator<IWildcardListViewer> iterator = changeListeners.iterator();
 			while (iterator.hasNext())
-				((IWildcardListViewer) iterator.next()).removeWildcard(task);
+				iterator.next().removeWildcard(task);
 		}
 		wcards.clear();
-		
+
 	}
 
 	public CustomWildcard[] getWildcards() {
-		return (CustomWildcard[]) this.wcards.toArray(new CustomWildcard[this.wcards.size()]);
+		return this.wcards.toArray(new CustomWildcard[this.wcards.size()]);
 	}
 
 }

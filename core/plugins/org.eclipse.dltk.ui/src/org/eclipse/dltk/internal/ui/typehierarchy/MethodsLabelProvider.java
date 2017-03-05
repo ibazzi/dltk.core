@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.typehierarchy;
 
@@ -24,12 +23,12 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * Label provider for the hierarchy method viewers. 
+ * Label provider for the hierarchy method viewers.
  */
 public class MethodsLabelProvider extends AppearanceAwareLabelProvider {
 
 	private Color fResolvedBackground;
-	
+
 	private boolean fShowDefiningType;
 	private TypeHierarchyLifeCycle fHierarchy;
 	private MethodsViewer fMethodsViewer;
@@ -41,20 +40,20 @@ public class MethodsLabelProvider extends AppearanceAwareLabelProvider {
 		fMethodsViewer= methodsViewer;
 		fResolvedBackground= null;
 	}
-	
-	
+
+
 	public void setShowDefiningType(boolean showDefiningType) {
 		fShowDefiningType= showDefiningType;
 	}
-	
+
 	public boolean isShowDefiningType() {
 		return fShowDefiningType;
-	}	
-			
+	}
+
 
 	private IType getDefiningType(Object element) throws ModelException {
 		int kind= ((IModelElement) element).getElementType();
-	
+
 		if (kind != IModelElement.METHOD && kind != IModelElement.FIELD) {
 			return null;
 		}
@@ -75,9 +74,7 @@ public class MethodsLabelProvider extends AppearanceAwareLabelProvider {
 		return res.getDeclaringType();
 	}
 
-	/* (non-Javadoc)
-	 * @see ILabelProvider#getText
-	 */ 	
+	@Override
 	public String getText(Object element) {
 		String text= super.getText(element);
 		if (fShowDefiningType) {
@@ -87,7 +84,7 @@ public class MethodsLabelProvider extends AppearanceAwareLabelProvider {
 					StringBuffer buf= new StringBuffer(super.getText(type));
 					buf.append(ScriptElementLabels.CONCAT_STRING);
 					buf.append(text);
-					return buf.toString();			
+					return buf.toString();
 				}
 			} catch (ModelException e) {
 			}
@@ -95,14 +92,12 @@ public class MethodsLabelProvider extends AppearanceAwareLabelProvider {
 		return text;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
-	 */
+	@Override
 	public Color getForeground(Object element) {
 		if (fMethodsViewer.isShowInheritedMethods() && element instanceof IMethod) {
 			IMethod curr= (IMethod) element;
 			IMember declaringType= curr.getDeclaringType();
-			
+
 			if (declaringType.equals(fMethodsViewer.getInput())) {
 				if (fResolvedBackground == null) {
 					Display display= Display.getCurrent();
@@ -113,5 +108,5 @@ public class MethodsLabelProvider extends AppearanceAwareLabelProvider {
 		}
 		return null;
 	}
-	
+
 }

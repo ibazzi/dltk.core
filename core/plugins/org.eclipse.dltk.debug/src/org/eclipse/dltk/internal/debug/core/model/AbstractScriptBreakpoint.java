@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,7 @@ public abstract class AbstractScriptBreakpoint extends Breakpoint
 	/**
 	 * Debugging engine breakpoint identifier (available only during debug
 	 * session)
-	 * 
+	 *
 	 * @deprecated
 	 */
 	@Deprecated
@@ -43,7 +43,7 @@ public abstract class AbstractScriptBreakpoint extends Breakpoint
 	/**
 	 * The number of breakpoint hits during debug session (available only during
 	 * debug session)
-	 * 
+	 *
 	 * @deprecated
 	 */
 	@Deprecated
@@ -100,6 +100,7 @@ public abstract class AbstractScriptBreakpoint extends Breakpoint
 
 	}
 
+	@Override
 	public String getModelIdentifier() {
 		if (debugModelId == null) {
 			try {
@@ -122,9 +123,7 @@ public abstract class AbstractScriptBreakpoint extends Breakpoint
 
 	private final Map sessions = new IdentityHashMap(1);
 
-	/*
-	 * @see IScriptBreakpoint#getId(IDbgpSession)
-	 */
+	@Override
 	public String getId(IDbgpSession session) {
 		final PerSessionInfo info;
 		synchronized (sessions) {
@@ -133,9 +132,7 @@ public abstract class AbstractScriptBreakpoint extends Breakpoint
 		return info != null ? info.identifier : null;
 	}
 
-	/*
-	 * @see IScriptBreakpoint#setId(IDbgpSession, java.lang.String)
-	 */
+	@Override
 	public void setId(IDbgpSession session, String identifier) {
 		synchronized (sessions) {
 			PerSessionInfo info = (PerSessionInfo) sessions.get(session);
@@ -147,9 +144,7 @@ public abstract class AbstractScriptBreakpoint extends Breakpoint
 		}
 	}
 
-	/*
-	 * @see IScriptBreakpoint#removeId(IDbgpSession)
-	 */
+	@Override
 	public String removeId(IDbgpSession session) {
 		final PerSessionInfo info;
 		synchronized (sessions) {
@@ -158,18 +153,14 @@ public abstract class AbstractScriptBreakpoint extends Breakpoint
 		return info != null ? info.identifier : null;
 	}
 
-	/*
-	 * @see IScriptBreakpoint#clearSessionInfo()
-	 */
+	@Override
 	public void clearSessionInfo() {
 		synchronized (sessions) {
 			sessions.clear();
 		}
 	}
 
-	/*
-	 * @see IScriptBreakpoint#getIdentifiers()
-	 */
+	@Override
 	public String[] getIdentifiers() {
 		final PerSessionInfo[] infos;
 		synchronized (sessions) {
@@ -196,9 +187,7 @@ public abstract class AbstractScriptBreakpoint extends Breakpoint
 		}
 	}
 
-	/*
-	 * @see IScriptBreakpoint#setHitCount(IDbgpSession, int)
-	 */
+	@Override
 	public void setHitCount(IDbgpSession session, int value)
 			throws CoreException {
 		synchronized (sessions) {
@@ -211,9 +200,7 @@ public abstract class AbstractScriptBreakpoint extends Breakpoint
 		}
 	}
 
-	/*
-	 * @see IScriptBreakpoint#getHitCount(IDbgpSession)
-	 */
+	@Override
 	public int getHitCount(IDbgpSession session) throws CoreException {
 		final PerSessionInfo info;
 		synchronized (sessions) {
@@ -223,24 +210,29 @@ public abstract class AbstractScriptBreakpoint extends Breakpoint
 	}
 
 	// Identifier
+	@Override
 	public String getIdentifier() throws CoreException {
 		return null;
 	}
 
+	@Override
 	public void setIdentifier(String id) throws CoreException {
 		//
 	}
 
 	// Message
+	@Override
 	public String getMessage() throws CoreException {
 		return ensureMarker().getAttribute(IMarker.MESSAGE, null);
 	}
 
+	@Override
 	public void setMessage(String message) throws CoreException {
 		setAttribute(IMarker.MESSAGE, message);
 	}
 
 	// Hit count
+	@Override
 	public int getHitCount() throws CoreException {
 		synchronized (sessions) {
 			if (sessions.isEmpty()) {
@@ -257,15 +249,18 @@ public abstract class AbstractScriptBreakpoint extends Breakpoint
 		}
 	}
 
+	@Override
 	public void setHitCount(int value) throws CoreException {
 		//
 	}
 
 	// Hit value
+	@Override
 	public int getHitValue() throws CoreException {
 		return ensureMarker().getAttribute(HIT_VALUE, -1);
 	}
 
+	@Override
 	public void setHitValue(int hitValue) throws CoreException {
 		if (getHitValue() != hitValue) {
 			setAttribute(HIT_VALUE, hitValue);
@@ -273,10 +268,12 @@ public abstract class AbstractScriptBreakpoint extends Breakpoint
 	}
 
 	// Hit condition
+	@Override
 	public int getHitCondition() throws CoreException {
 		return ensureMarker().getAttribute(HIT_CONDITION, -1);
 	}
 
+	@Override
 	public void setHitCondition(int condition) throws CoreException {
 		if (getHitCondition() != condition) {
 			setAttribute(HIT_CONDITION, condition);
@@ -284,25 +281,30 @@ public abstract class AbstractScriptBreakpoint extends Breakpoint
 	}
 
 	// Resource name
+	@Override
 	public String getResourceName() throws CoreException {
 		return ensureMarker().getResource().getName();
 	}
 
 	// Expression
+	@Override
 	public String getExpression() throws CoreException {
 		return ensureMarker().getAttribute(EXPRESSION, null);
 	}
 
+	@Override
 	public void setExpression(String expression) throws CoreException {
 		if (!StrUtils.equals(getExpression(), expression)) {
 			setAttribute(EXPRESSION, expression);
 		}
 	}
 
+	@Override
 	public boolean getExpressionState() throws CoreException {
 		return ensureMarker().getAttribute(EXPRESSION_STATE, false);
 	}
 
+	@Override
 	public void setExpressionState(boolean state) throws CoreException {
 		if (getExpressionState() != state) {
 			setAttribute(EXPRESSION_STATE, state);

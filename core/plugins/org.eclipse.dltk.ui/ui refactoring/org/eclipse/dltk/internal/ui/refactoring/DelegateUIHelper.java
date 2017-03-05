@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.refactoring;
 
@@ -21,7 +20,7 @@ import org.eclipse.swt.widgets.Composite;
 /**
  * This is a helper class to keep a consistent design between refactorings
  * capable of creating delegates.
- * 
+ *
  */
 public class DelegateUIHelper {
 
@@ -37,6 +36,7 @@ public class DelegateUIHelper {
 		updating.setDeprecateDelegates(button.getSelection());
 		button.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updating.setDeprecateDelegates(button.getSelection());
 			}
@@ -56,6 +56,7 @@ public class DelegateUIHelper {
 		updating.setDelegateUpdating(button.getSelection());
 		button.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updating.setDelegateUpdating(button.getSelection());
 			}

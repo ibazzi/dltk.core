@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,56 +48,38 @@ public class BuildpathVariablesPreferencePage extends PreferencePage implements
 		noDefaultAndApplyButton();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets
-	 * .Composite)
-	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		// PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
 		// IJavaHelpContextIds.CP_VARIABLES_PREFERENCE_PAGE);
 	}
 
-	/*
-	 * @see PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		Control result = fVariableBlock.createContents(parent);
 		Dialog.applyDialogFont(result);
 		return result;
 	}
 
-	/*
-	 * @see IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 
-	/*
-	 * @see PreferencePage#performDefaults()
-	 */
+	@Override
 	protected void performDefaults() {
 		// not used (constructor calls noDefaultAndApplyButton())
 		// fVariableBlock.performDefaults();
 		super.performDefaults();
 	}
 
-	/*
-	 * @see PreferencePage#performOk()
-	 */
+	@Override
 	public boolean performOk() {
 		DLTKUIPlugin.getDefault().savePluginPreferences();
 		return fVariableBlock.performOk();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.IDialogPage#setVisible(boolean)
-	 */
+	@Override
 	public void setVisible(boolean visible) {
 		// check if the stored settings have changed
 		if (visible) {
@@ -134,12 +116,7 @@ public class BuildpathVariablesPreferencePage extends PreferencePage implements
 		return buf.toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.preference.PreferencePage#applyData(java.lang.Object)
-	 */
+	@Override
 	public void applyData(Object data) {
 		if (data instanceof Map) {
 			Object id = ((Map) data).get(DATA_SELECT_VARIABLE);

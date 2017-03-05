@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.dbgp;
 
@@ -76,6 +75,7 @@ public class DbgpRequest implements IDbgpRawPacket {
 		return this.data;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer(command);
 
@@ -98,6 +98,7 @@ public class DbgpRequest implements IDbgpRawPacket {
 		return sb.toString();
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		if (o instanceof DbgpRequest) {
 			DbgpRequest request = (DbgpRequest) o;
@@ -122,6 +123,7 @@ public class DbgpRequest implements IDbgpRawPacket {
 		output.write(toString().getBytes("ASCII")); //$NON-NLS-1$
 	}
 
+	@Override
 	public String getPacketAsString() {
 		return toString();
 	}

@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.eclipse.dltk.ui.PreferenceConstants;
 import org.eclipse.dltk.ui.preferences.OverlayPreferenceStore;
-import org.eclipse.dltk.ui.preferences.PreferencesMessages;
 import org.eclipse.dltk.ui.preferences.OverlayPreferenceStore.OverlayKey;
+import org.eclipse.dltk.ui.preferences.PreferencesMessages;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
@@ -20,7 +20,7 @@ public class DocumentationFoldingPreferenceBlock extends
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * <p>
 	 * Sub-classes overriding this method to add additional overlay keys must
 	 * also invoke this method.
@@ -47,12 +47,13 @@ public class DocumentationFoldingPreferenceBlock extends
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * <p>
 	 * Sub-classes overriding this method to add additional 'initially fold'
 	 * options must also invoke this method.
 	 * </p>
 	 */
+	@Override
 	protected void addInitiallyFoldOptions(Group group) {
 		createCheckBox(
 				group,
@@ -71,12 +72,13 @@ public class DocumentationFoldingPreferenceBlock extends
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * <p>
 	 * Sub-classes overriding this method to add additional documentation
 	 * folding options must also invoke this method.
 	 * </p>
 	 */
+	@Override
 	protected void createOptionsControl(Composite composite) {
 		createCheckBox(composite,
 				PreferencesMessages.FoldingConfigurationBlock_joinComments,

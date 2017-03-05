@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- *          (report 36180: Callers/Callees view)
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.callhierarchy;
 
@@ -43,38 +42,38 @@ import org.eclipse.ui.IWorkbenchSite;
  * <code>IMethod</code>.
  */
 public class OpenCallHierarchyAction extends SelectionDispatchAction {
-    
+
     private ScriptEditor fEditor;
-    
+
     /**
      * Creates a new <code>OpenCallHierarchyAction</code>. The action requires
      * that the selection provided by the site's selection provider is of type <code>
      * org.eclipse.jface.viewers.IStructuredSelection</code>.
-     * 
+     *
      * @param site the site providing context information for this action
      */
     public OpenCallHierarchyAction(IWorkbenchSite site) {
         super(site);
-        setText(CallHierarchyMessages.OpenCallHierarchyAction_label); 
-        setToolTipText(CallHierarchyMessages.OpenCallHierarchyAction_tooltip); 
-        setDescription(CallHierarchyMessages.OpenCallHierarchyAction_description); 
+        setText(CallHierarchyMessages.OpenCallHierarchyAction_label);
+        setToolTipText(CallHierarchyMessages.OpenCallHierarchyAction_tooltip);
+        setDescription(CallHierarchyMessages.OpenCallHierarchyAction_description);
 //        PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IJavaHelpContextIds.CALL_HIERARCHY_OPEN_ACTION);
         if (DLTKCore.DEBUG) {
 			System.err.println("Add help support here..."); //$NON-NLS-1$
-		}		
+		}
 
     }
-    
+
     /**
      * Creates a new <code>OpenCallHierarchyAction</code>. The action requires
      * that the selection provided by the given selection provider is of type <code>
      * org.eclipse.jface.viewers.IStructuredSelection</code>.
-     * 
+     *
      * @param site the site providing context information for this action
-	 * @param provider a special selection provider which is used instead 
+	 * @param provider a special selection provider which is used instead
 	 *  of the site's selection provider or <code>null</code> to use the site's
 	 *  selection provider
-     * 
+     *
 	 *
 	 * @deprecated Use {@link #setSpecialSelectionProvider(ISelectionProvider)} instead. This API will be
 	 * removed after 3.2 M5.
@@ -84,7 +83,7 @@ public class OpenCallHierarchyAction extends SelectionDispatchAction {
         this(site);
         setSpecialSelectionProvider(provider);
     }
-    
+
     /**
      * Note: This constructor is for internal use only. Clients should not call this constructor.
      */
@@ -93,21 +92,17 @@ public class OpenCallHierarchyAction extends SelectionDispatchAction {
         fEditor= editor;
         setEnabled(SelectionConverter.canOperateOn(fEditor));
     }
-    
-    /* (non-Javadoc)
-     * Method declared on SelectionDispatchAction.
-     */
+
+	@Override
 	public void selectionChanged(ITextSelection selection) {
         // Do nothing
     }
 
-    /* (non-Javadoc)
-     * Method declared on SelectionDispatchAction.
-     */
+	@Override
 	public void selectionChanged(IStructuredSelection selection) {
         setEnabled(isEnabled(selection));
     }
-    
+
     private boolean isEnabled(IStructuredSelection selection) {
         if (selection.size() != 1)
             return false;
@@ -123,10 +118,10 @@ public class OpenCallHierarchyAction extends SelectionDispatchAction {
                 return false;
         }
     }
-    
+
 	/**
 	 * This allows alternative editor implementations to override resolution
-	 * 
+	 *
 	 * @return
 	 * @throws InvocationTargetException
 	 * @throws InterruptedException
@@ -136,14 +131,12 @@ public class OpenCallHierarchyAction extends SelectionDispatchAction {
 		return SelectionConverter.codeResolveOrInputForked(fEditor);
 	}
 
-    /* (non-Javadoc)
-     * Method declared on SelectionDispatchAction.
-     */
+	@Override
 	public void run(ITextSelection selection) {
         IModelElement input= SelectionConverter.getInput(fEditor);
         if (!ActionUtil.isProcessable(getShell(), input))
-            return;     
-        
+            return;
+
         try {
 			IModelElement[] elements = resolveModelElements();
 			if (elements == null)
@@ -152,7 +145,7 @@ public class OpenCallHierarchyAction extends SelectionDispatchAction {
 					elements.length);
 			for (int i= 0; i < elements.length; i++) {
 			    IModelElement[] resolvedElements= CallHierarchyUI.getCandidates(elements[i]);
-			    if (resolvedElements != null)   
+			    if (resolvedElements != null)
 			        candidates.addAll(Arrays.asList(resolvedElements));
 			}
 			if (candidates.isEmpty()) {
@@ -168,7 +161,7 @@ public class OpenCallHierarchyAction extends SelectionDispatchAction {
 			// cancelled
 		}
     }
-    
+
     private IModelElement getEnclosingMethod(IModelElement input, ITextSelection selection) {
         IModelElement enclosingElement= null;
         try {
@@ -196,9 +189,7 @@ public class OpenCallHierarchyAction extends SelectionDispatchAction {
         return null;
     }
 
-    /* (non-Javadoc)
-     * Method declared on SelectionDispatchAction.
-     */
+	@Override
 	public void run(IStructuredSelection selection) {
         if (selection.size() != 1)
             return;
@@ -206,7 +197,7 @@ public class OpenCallHierarchyAction extends SelectionDispatchAction {
         if (!(input instanceof IModelElement))
 			input = ((IAdaptable) input).getAdapter(IModelElement.class);
         if (!(input instanceof IModelElement)) {
-            IStatus status= createStatus(CallHierarchyMessages.OpenCallHierarchyAction_messages_no_java_element); 
+            IStatus status= createStatus(CallHierarchyMessages.OpenCallHierarchyAction_messages_no_java_element);
             openErrorDialog(status);
             return;
         }
@@ -222,17 +213,17 @@ public class OpenCallHierarchyAction extends SelectionDispatchAction {
             openErrorDialog(status);
         }
     }
-    
+
     private int openErrorDialog(IStatus status) {
-        String message= CallHierarchyMessages.OpenCallHierarchyAction_messages_title; 
+        String message= CallHierarchyMessages.OpenCallHierarchyAction_messages_title;
         String dialogTitle= getErrorDialogTitle();
         return ErrorDialog.openError(getShell(), dialogTitle, message, status);
 	}
 
     private static String getErrorDialogTitle() {
-        return CallHierarchyMessages.OpenCallHierarchyAction_dialog_title; 
+        return CallHierarchyMessages.OpenCallHierarchyAction_dialog_title;
     }
-    
+
 	public void run(IModelElement[] elements) {
         if (elements.length == 0) {
             getShell().getDisplay().beep();
@@ -240,20 +231,20 @@ public class OpenCallHierarchyAction extends SelectionDispatchAction {
         }
         CallHierarchyUI.open(elements, getSite().getWorkbenchWindow(), getCallHierarchyID());
     }
-    
+
     private static IStatus compileCandidates(List result, IModelElement elem) {
-        IStatus ok= new Status(IStatus.OK, DLTKUIPlugin.getPluginId(), 0, "", null); //$NON-NLS-1$        
+        IStatus ok= new Status(IStatus.OK, DLTKUIPlugin.getPluginId(), 0, "", null); //$NON-NLS-1$
         switch (elem.getElementType()) {
             case IModelElement.METHOD:
                 result.add(elem);
                 return ok;
         }
-        return createStatus(CallHierarchyMessages.OpenCallHierarchyAction_messages_no_valid_java_element); 
+        return createStatus(CallHierarchyMessages.OpenCallHierarchyAction_messages_no_valid_java_element);
     }
-    
+
     private static IStatus createStatus(String message) {
         return new Status(IStatus.INFO, DLTKUIPlugin.getPluginId(), IDLTKStatusConstants.INTERNAL_ERROR, message, null);
-    }         
+    }
     public String getCallHierarchyID() {
     	return "org.eclipse.dltk.callhierarchy.view"; //$NON-NLS-1$
     }

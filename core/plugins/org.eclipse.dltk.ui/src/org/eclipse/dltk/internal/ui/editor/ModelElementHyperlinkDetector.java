@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     xored software, Inc. - Initial implementation
- *     xored software, Inc. - implement IHyperlink.getHyperlinkText() & getTypeLabel (Alex Panchenko)  
+ *     xored software, Inc. - implement IHyperlink.getHyperlinkText() & getTypeLabel (Alex Panchenko)
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.editor;
 
@@ -46,7 +46,7 @@ public class ModelElementHyperlinkDetector implements IHyperlinkDetector,
 
 	/**
 	 * Creates a new Script element hyperlink detector.
-	 * 
+	 *
 	 * @param editor
 	 *            the editor in which to detect the hyperlink
 	 */
@@ -55,12 +55,7 @@ public class ModelElementHyperlinkDetector implements IHyperlinkDetector,
 		fTextEditor = editor;
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.jface.text.hyperlink.IHyperlinkDetector#detectHyperlinks(
-	 * org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion,
-	 * boolean)
-	 */
+	@Override
 	public IHyperlink[] detectHyperlinks(ITextViewer textViewer,
 			IRegion region, boolean canShowMultipleHyperlinks) {
 		if (region == null || !(fTextEditor instanceof ScriptEditor))
@@ -130,6 +125,7 @@ public class ModelElementHyperlinkDetector implements IHyperlinkDetector,
 		return null;
 	}
 
+	@Override
 	public void dispose() {
 		this.fTextEditor = null;
 	}

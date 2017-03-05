@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,9 +61,7 @@ public class ExcludeFromBuildpathAction extends Action implements ISelectionChan
 		fSelectedElements = new ArrayList();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void run() {
 		final IScriptProject project;
 		Object object = fSelectedElements.get(0);
@@ -73,14 +71,12 @@ public class ExcludeFromBuildpathAction extends Action implements ISelectionChan
 			project = ((IScriptFolder) object).getScriptProject();
 		}
 		try {
-			final IRunnableWithProgress runnable = new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					try {
-						List result = exclude(fSelectedElements, project, monitor);
-						selectAndReveal(new StructuredSelection(result));
-					} catch (CoreException e) {
-						throw new InvocationTargetException(e);
-					}
+			final IRunnableWithProgress runnable = monitor -> {
+				try {
+					List result = exclude(fSelectedElements, project, monitor);
+					selectAndReveal(new StructuredSelection(result));
+				} catch (CoreException e) {
+					throw new InvocationTargetException(e);
 				}
 			};
 			PlatformUI.getWorkbench().getProgressService().run(true, false, runnable);
@@ -117,9 +113,7 @@ public class ExcludeFromBuildpathAction extends Action implements ISelectionChan
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void selectionChanged(final SelectionChangedEvent event) {
 		final ISelection selection = event.getSelection();
 		if (selection instanceof IStructuredSelection) {
@@ -202,11 +196,8 @@ public class ExcludeFromBuildpathAction extends Action implements ISelectionChan
 			if (target != null) {
 				// select and reveal resource
 				final ISetSelectionTarget finalTarget = target;
-				page.getWorkbenchWindow().getShell().getDisplay().asyncExec(new Runnable() {
-					public void run() {
-						finalTarget.selectReveal(selection);
-					}
-				});
+				page.getWorkbenchWindow().getShell().getDisplay()
+						.asyncExec(() -> finalTarget.selectReveal(selection));
 			}
 		}
 	}

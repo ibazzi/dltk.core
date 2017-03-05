@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.text;
 
@@ -72,6 +71,7 @@ public class ScriptBreakIterator extends BreakIterator {
 	}
 
 	static final class Whitespace extends Run {
+		@Override
 		protected boolean isValid(char ch) {
 			return Character.isWhitespace(ch) && ch != '\n' && ch != '\r';
 		}
@@ -83,11 +83,13 @@ public class ScriptBreakIterator extends BreakIterator {
 		private static final char INIT= '\0';
 		private static final char EXIT= '\1';
 
+		@Override
 		protected void init() {
 			super.init();
 			fState= INIT;
 		}
 
+		@Override
 		protected boolean consume(char ch) {
 			if (!isValid(ch) || fState == EXIT)
 				return false;
@@ -105,12 +107,14 @@ public class ScriptBreakIterator extends BreakIterator {
 			}
 		}
 
+		@Override
 		protected boolean isValid(char ch) {
 			return ch == '\n' || ch == '\r';
 		}
 	}
 
 	static final class Identifier extends Run {
+		@Override
 		protected boolean isValid(char ch) {
 			return Character.isJavaIdentifierPart(ch);
 		}
@@ -141,11 +145,13 @@ public class ScriptBreakIterator extends BreakIterator {
 				{  S_EXIT,    S_EXIT_MINUS_ONE,  S_ALL_CAPS, S_LOWER }, // S_ALL_CAPS
 		};
 
+		@Override
 		protected void init() {
 			super.init();
 			fState= S_INIT;
 		}
 
+		@Override
 		protected boolean consume(char ch) {
 			int kind= getKind(ch);
 			fState= MATRIX[fState][kind];
@@ -181,6 +187,7 @@ public class ScriptBreakIterator extends BreakIterator {
 			return K_INVALID;
 		}
 
+		@Override
 		protected boolean isValid(char ch) {
 			return Character.isJavaIdentifierPart(ch);
 		}
@@ -188,6 +195,7 @@ public class ScriptBreakIterator extends BreakIterator {
 
 	static final class Other extends Run {
 
+		@Override
 		protected boolean isValid(char ch) {
 			return !Character.isWhitespace(ch) && !Character.isJavaIdentifierPart(ch);
 		}
@@ -214,24 +222,18 @@ public class ScriptBreakIterator extends BreakIterator {
 		fIndex= fIterator.current();
 	}
 
-	/*
-	 * @see java.text.BreakIterator#current()
-	 */
+	@Override
 	public int current() {
 		return fIndex;
 	}
 
-	/*
-	 * @see java.text.BreakIterator#first()
-	 */
+	@Override
 	public int first() {
 		fIndex= fIterator.first();
 		return fIndex;
 	}
 
-	/*
-	 * @see java.text.BreakIterator#following(int)
-	 */
+	@Override
 	public int following(int offset) {
 		// work around too eager IAEs in standard implementation
 		if (offset == getText().getEndIndex())
@@ -294,16 +296,12 @@ public class ScriptBreakIterator extends BreakIterator {
 		return run;
 	}
 
-	/*
-	 * @see java.text.BreakIterator#getText()
-	 */
+	@Override
 	public CharacterIterator getText() {
 		return fIterator.getText();
 	}
 
-	/*
-	 * @see java.text.BreakIterator#isBoundary(int)
-	 */
+	@Override
 	public boolean isBoundary(int offset) {
         if (offset == getText().getBeginIndex())
             return true;
@@ -311,32 +309,24 @@ public class ScriptBreakIterator extends BreakIterator {
             return following(offset - 1) == offset;
 	}
 
-	/*
-	 * @see java.text.BreakIterator#last()
-	 */
+	@Override
 	public int last() {
 		fIndex= fIterator.last();
 		return fIndex;
 	}
 
-	/*
-	 * @see java.text.BreakIterator#next()
-	 */
+	@Override
 	public int next() {
 		fIndex= following(fIndex);
 		return fIndex;
 	}
 
-	/*
-	 * @see java.text.BreakIterator#next(int)
-	 */
+	@Override
 	public int next(int n) {
 		return fIterator.next(n);
 	}
 
-	/*
-	 * @see java.text.BreakIterator#preceding(int)
-	 */
+	@Override
 	public int preceding(int offset) {
 		if (offset == getText().getBeginIndex())
 			return DONE;
@@ -358,17 +348,13 @@ public class ScriptBreakIterator extends BreakIterator {
 		return last;
 	}
 
-	/*
-	 * @see java.text.BreakIterator#previous()
-	 */
+	@Override
 	public int previous() {
 		fIndex= preceding(fIndex);
 		return fIndex;
 	}
 
-	/*
-	 * @see java.text.BreakIterator#setText(java.lang.String)
-	 */
+	@Override
 	public void setText(String newText) {
 		setText((CharSequence) newText);
 	}
@@ -383,9 +369,7 @@ public class ScriptBreakIterator extends BreakIterator {
 		first();
 	}
 
-	/*
-	 * @see java.text.BreakIterator#setText(java.text.CharacterIterator)
-	 */
+	@Override
 	public void setText(CharacterIterator newText) {
 		if (newText instanceof CharSequence) {
 			fText= (CharSequence) newText;

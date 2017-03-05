@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.dbgp.internal;
 
@@ -24,12 +23,11 @@ import org.eclipse.dltk.dbgp.internal.packets.DbgpPacketReceiver;
 import org.eclipse.dltk.dbgp.internal.packets.DbgpPacketSender;
 import org.eclipse.dltk.dbgp.internal.packets.DbgpResponsePacket;
 import org.eclipse.dltk.dbgp.internal.packets.DbgpStreamPacket;
-import org.eclipse.dltk.dbgp.internal.packets.IDbgpRawLogger;
 import org.eclipse.dltk.debug.core.ExtendedDebugEventDetails;
 import org.eclipse.dltk.internal.debug.core.model.DebugEventHelper;
 
-public class DbgpDebugingEngine extends DbgpTermination implements
-		IDbgpDebugingEngine, IDbgpTerminationListener {
+public class DbgpDebugingEngine extends DbgpTermination
+		implements IDbgpDebugingEngine, IDbgpTerminationListener {
 	private final Socket socket;
 
 	private final DbgpPacketReceiver receiver;
@@ -50,27 +48,19 @@ public class DbgpDebugingEngine extends DbgpTermination implements
 			id = ++lastId;
 		}
 
-		receiver = new DbgpPacketReceiver(new BufferedInputStream(socket
-				.getInputStream()));
+		receiver = new DbgpPacketReceiver(
+				new BufferedInputStream(socket.getInputStream()));
 
-		receiver.setLogger(new IDbgpRawLogger() {
-			public void log(IDbgpRawPacket output) {
-				firePacketReceived(output);
-			}
-		});
+		receiver.setLogger(output -> firePacketReceived(output));
 
 		receiver.addTerminationListener(this);
 
 		receiver.start();
 
-		sender = new DbgpPacketSender(new BufferedOutputStream(socket
-				.getOutputStream()));
+		sender = new DbgpPacketSender(
+				new BufferedOutputStream(socket.getOutputStream()));
 
-		sender.setLogger(new IDbgpRawLogger() {
-			public void log(IDbgpRawPacket output) {
-				firePacketSent(output);
-			}
-		});
+		sender.setLogger(output -> firePacketSent(output));
 		/*
 		 * FIXME this event is delivered on the separate thread, so sometimes
 		 * logging misses a few initial packets.
@@ -79,26 +69,31 @@ public class DbgpDebugingEngine extends DbgpTermination implements
 				ExtendedDebugEventDetails.DGBP_NEW_CONNECTION);
 	}
 
-	public DbgpStreamPacket getStreamPacket() throws IOException,
-			InterruptedException {
+	@Override
+	public DbgpStreamPacket getStreamPacket()
+			throws IOException, InterruptedException {
 		return receiver.getStreamPacket();
 	}
 
-	public DbgpNotifyPacket getNotifyPacket() throws IOException,
-			InterruptedException {
+	@Override
+	public DbgpNotifyPacket getNotifyPacket()
+			throws IOException, InterruptedException {
 		return receiver.getNotifyPacket();
 	}
 
+	@Override
 	public DbgpResponsePacket getResponsePacket(int transactionId, int timeout)
 			throws IOException, InterruptedException {
 		return receiver.getResponsePacket(transactionId, timeout);
 	}
 
+	@Override
 	public void sendCommand(DbgpRequest command) throws IOException {
 		sender.sendCommand(command);
 	}
 
 	// IDbgpTerminataion
+	@Override
 	public void requestTermination() {
 		// always just close the socket
 		try {
@@ -110,6 +105,7 @@ public class DbgpDebugingEngine extends DbgpTermination implements
 		}
 	}
 
+	@Override
 	public void waitTerminated() throws InterruptedException {
 		synchronized (terminatedLock) {
 			if (terminated) {
@@ -120,6 +116,7 @@ public class DbgpDebugingEngine extends DbgpTermination implements
 		}
 	}
 
+	@Override
 	public void objectTerminated(Object object, Exception e) {
 		synchronized (terminatedLock) {
 			if (terminated)
@@ -156,10 +153,12 @@ public class DbgpDebugingEngine extends DbgpTermination implements
 		}
 	}
 
+	@Override
 	public void addRawListener(IDbgpRawListener listener) {
 		listeners.add(listener);
 	}
 
+	@Override
 	public void removeRawListenr(IDbgpRawListener listener) {
 		listeners.remove(listener);
 	}

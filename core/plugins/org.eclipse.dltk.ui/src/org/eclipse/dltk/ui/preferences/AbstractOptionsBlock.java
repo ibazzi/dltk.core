@@ -36,6 +36,7 @@ public abstract class AbstractOptionsBlock extends OptionsConfigurationBlock
 				context);
 	}
 
+	@Override
 	public Control createContents(Composite parent) {
 		setShell(parent.getShell());
 		Control control = createOptionsBlock(parent);
@@ -157,10 +158,7 @@ public abstract class AbstractOptionsBlock extends OptionsConfigurationBlock
 		return fProject != null;
 	}
 
-	/*
-	 * @seeorg.eclipse.dltk.internal.ui.preferences.OptionsConfigurationBlock#
-	 * performDefaults()
-	 */
+	@Override
 	public void performDefaults() {
 		super.performDefaults();
 		bindManager.initialize();
@@ -175,6 +173,7 @@ public abstract class AbstractOptionsBlock extends OptionsConfigurationBlock
 	 * 
 	 * @see OptionsConfigurationBlock#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		return saveValues() && super.performOk();
 	}
@@ -184,42 +183,27 @@ public abstract class AbstractOptionsBlock extends OptionsConfigurationBlock
 	 * 
 	 * @see OptionsConfigurationBlock#performApply()
 	 */
+	@Override
 	public boolean performApply() {
 		return saveValues() && super.performApply();
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.dltk.ui.preferences.IPreferenceDelegate#getBoolean(java.lang
-	 * .Object)
-	 */
+	@Override
 	public final boolean getBoolean(PreferenceKey key) {
 		return getBooleanValue(key);
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.dltk.ui.preferences.IPreferenceDelegate#getString(java.lang
-	 * .Object)
-	 */
+	@Override
 	public final String getString(PreferenceKey key) {
 		return getValue(key);
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.dltk.ui.preferences.IPreferenceDelegate#setBoolean(java.lang
-	 * .Object, boolean)
-	 */
+	@Override
 	public final void setBoolean(PreferenceKey key, boolean value) {
 		super.setValue(key, value);
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.dltk.ui.preferences.IPreferenceDelegate#setString(java.lang
-	 * .Object, java.lang.String)
-	 */
+	@Override
 	public final void setString(PreferenceKey key, String value) {
 		setValue(key, value);
 	}
@@ -255,6 +239,7 @@ public abstract class AbstractOptionsBlock extends OptionsConfigurationBlock
 	 * 
 	 * @see OptionsConfigurationBlock#getShell()
 	 */
+	@Override
 	protected Shell getShell() {
 		return super.getShell();
 	}
@@ -264,6 +249,7 @@ public abstract class AbstractOptionsBlock extends OptionsConfigurationBlock
 	 * 
 	 * @see OptionsConfigurationBlock#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 	}
@@ -273,6 +259,7 @@ public abstract class AbstractOptionsBlock extends OptionsConfigurationBlock
 	 * 
 	 * @see OptionsConfigurationBlock#statusChanged(IStatus)
 	 */
+	@Override
 	protected void statusChanged(IStatus status) {
 		super.statusChanged(status);
 	}
@@ -283,6 +270,7 @@ public abstract class AbstractOptionsBlock extends OptionsConfigurationBlock
 	 * @see OptionsConfigurationBlock#getPreferenceChangeRebuildPrompt(boolean,
 	 * java.util.Collection)
 	 */
+	@Override
 	protected IPreferenceChangeRebuildPrompt getPreferenceChangeRebuildPrompt(
 			boolean workspaceSettings, Collection<PreferenceKey> changedOptions) {
 		return super.getPreferenceChangeRebuildPrompt(workspaceSettings,

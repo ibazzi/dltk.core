@@ -79,6 +79,7 @@ public class DbgpServer extends DbgpWorkingThread {
 		}
 	}
 
+	@Override
 	protected void workingCycle() throws Exception, IOException {
 		try {
 			server = new ServerSocket(port);
@@ -113,10 +114,12 @@ public class DbgpServer extends DbgpWorkingThread {
 			setSystem(true);
 		}
 
+		@Override
 		public boolean shouldSchedule() {
 			return listener != null;
 		}
 
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			DbgpDebugingEngine engine = null;
 			try {
@@ -150,10 +153,12 @@ public class DbgpServer extends DbgpWorkingThread {
 	 * @param clientTimeout
 	 * @deprecated use {@link #DbgpServer(int, int)}
 	 */
+	@Deprecated
 	public DbgpServer(int port, int serverTimeout, int clientTimeout) {
 		this(port, clientTimeout);
 	}
 
+	@Override
 	public void requestTermination() {
 		try {
 			if (server != null) {

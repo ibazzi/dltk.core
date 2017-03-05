@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.typehierarchy;
 
@@ -23,29 +22,25 @@ import org.eclipse.ui.IWorkbenchPart;
  * on construction (shared type hierarchy)
  */
 public class SubTypeHierarchyViewer extends TypeHierarchyViewer {
-	
+
 	public SubTypeHierarchyViewer(Composite parent, TypeHierarchyLifeCycle lifeCycle, IWorkbenchPart part, IPreferenceStore store) {
 		super(parent, new SubTypeHierarchyContentProvider(lifeCycle), lifeCycle, part, store);
 	}
 
-	/*
-	 * @see TypeHierarchyViewer#getTitle
-	 */	
+	@Override
 	public String getTitle() {
 		if (isMethodFiltering()) {
-			return TypeHierarchyMessages.SubTypeHierarchyViewer_filtered_title; 
+			return TypeHierarchyMessages.SubTypeHierarchyViewer_filtered_title;
 		} else {
-			return TypeHierarchyMessages.SubTypeHierarchyViewer_title; 
+			return TypeHierarchyMessages.SubTypeHierarchyViewer_title;
 		}
 	}
-	
-	/*
-	 * @see TypeHierarchyViewer#updateContent
-	 */
+
+	@Override
 	public void updateContent(boolean expand) {
 		getTree().setRedraw(false);
 		refresh();
-		
+
 		if (expand) {
 			int expandLevel= 2;
 			if (isMethodFiltering()) {
@@ -55,7 +50,7 @@ public class SubTypeHierarchyViewer extends TypeHierarchyViewer {
 		}
 		getTree().setRedraw(true);
 	}
-	
+
 	/**
 	 * Content provider for the subtype hierarchy
 	 */
@@ -63,7 +58,8 @@ public class SubTypeHierarchyViewer extends TypeHierarchyViewer {
 		public SubTypeHierarchyContentProvider(TypeHierarchyLifeCycle lifeCycle) {
 			super(lifeCycle);
 		}
-		
+
+		@Override
 		protected final void getTypesInHierarchy(IType type, List res) {
 			ITypeHierarchy hierarchy= getHierarchy();
 			if (hierarchy != null) {
@@ -81,9 +77,10 @@ public class SubTypeHierarchyViewer extends TypeHierarchyViewer {
 					}
 				}
 			}
-			
+
 		}
-		
+
+		@Override
 		protected IType[] getParentType(IType type) {
 			ITypeHierarchy hierarchy= getHierarchy();
 			if (hierarchy != null) {
@@ -94,7 +91,7 @@ public class SubTypeHierarchyViewer extends TypeHierarchyViewer {
 		}
 
 }
-	
-	
-	
+
+
+
 }

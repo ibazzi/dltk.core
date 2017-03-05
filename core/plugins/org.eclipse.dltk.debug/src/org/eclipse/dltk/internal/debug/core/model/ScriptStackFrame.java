@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -99,7 +99,7 @@ public class ScriptStackFrame extends ScriptDebugElement
 	/**
 	 * Return null in case suspend more is no more active during calculation of
 	 * variables.
-	 * 
+	 *
 	 * @return
 	 * @throws DbgpException
 	 */
@@ -266,6 +266,7 @@ public class ScriptStackFrame extends ScriptDebugElement
 		this.variables = null;
 	}
 
+	@Override
 	public IScriptStack getStack() {
 		return stack;
 	}
@@ -281,6 +282,7 @@ public class ScriptStackFrame extends ScriptDebugElement
 
 	private static final int MULTI_LINE_COUNT = 2;
 
+	@Override
 	public int getCharStart() throws DebugException {
 		final int beginLine = level.getBeginLine();
 		if (beginLine > 0) {
@@ -297,6 +299,7 @@ public class ScriptStackFrame extends ScriptDebugElement
 		return -1;
 	}
 
+	@Override
 	public int getCharEnd() throws DebugException {
 		final int endLine = level.getEndLine();
 		if (endLine > 0) {
@@ -324,38 +327,47 @@ public class ScriptStackFrame extends ScriptDebugElement
 		return -1;
 	}
 
+	@Override
 	public int getLineNumber() {
 		return level.getLineNumber();
 	}
 
+	@Override
 	public int getMethodOffset() {
 		return level.getMethodOffset();
 	}
 
+	@Override
 	public String getMethodName() {
 		return level.getMethodName();
 	}
 
+	@Override
 	public int getBeginLine() {
 		return level.getBeginLine();
 	}
 
+	@Override
 	public int getBeginColumn() {
 		return level.getBeginColumn();
 	}
 
+	@Override
 	public int getEndLine() {
 		return level.getEndLine();
 	}
 
+	@Override
 	public int getEndColumn() {
 		return level.getEndColumn();
 	}
 
+	@Override
 	public String getWhere() {
 		return level.getWhere().trim();
 	}
 
+	@Override
 	public String getName() throws DebugException {
 		String name = level.getWhere().trim();
 
@@ -368,18 +380,22 @@ public class ScriptStackFrame extends ScriptDebugElement
 		return name;
 	}
 
+	@Override
 	public boolean hasRegisterGroups() throws DebugException {
 		return false;
 	}
 
+	@Override
 	public IRegisterGroup[] getRegisterGroups() throws DebugException {
 		return new IRegisterGroup[0];
 	}
 
+	@Override
 	public IThread getThread() {
 		return thread;
 	}
 
+	@Override
 	public synchronized boolean hasVariables() throws DebugException {
 		checkVariablesAvailable();
 		if (variables == null) {
@@ -467,6 +483,7 @@ public class ScriptStackFrame extends ScriptDebugElement
 		return newVars;
 	}
 
+	@Override
 	public synchronized IVariable[] getVariables() throws DebugException {
 		checkVariablesAvailable();
 		if (variables != null) {
@@ -476,73 +493,90 @@ public class ScriptStackFrame extends ScriptDebugElement
 	}
 
 	// IStep
+	@Override
 	public boolean canStepInto() {
 		return thread.canStepInto();
 	}
 
+	@Override
 	public boolean canStepOver() {
 		return thread.canStepOver();
 	}
 
+	@Override
 	public boolean canStepReturn() {
 		return thread.canStepReturn();
 	}
 
+	@Override
 	public boolean isStepping() {
 		return thread.isStepping();
 	}
 
+	@Override
 	public void stepInto() throws DebugException {
 		thread.stepInto();
 	}
 
+	@Override
 	public void stepOver() throws DebugException {
 		thread.stepOver();
 	}
 
+	@Override
 	public void stepReturn() throws DebugException {
 		thread.stepReturn();
 	}
 
 	// ISuspenResume
+	@Override
 	public boolean canResume() {
 		return thread.canResume();
 	}
 
+	@Override
 	public boolean canSuspend() {
 		return thread.canSuspend();
 	}
 
+	@Override
 	public boolean isSuspended() {
 		return thread.isSuspended();
 	}
 
+	@Override
 	public void resume() throws DebugException {
 		thread.resume();
 	}
 
+	@Override
 	public void suspend() throws DebugException {
 		thread.suspend();
 	}
 
 	// ITerminate
+	@Override
 	public boolean canTerminate() {
 		return thread.canTerminate();
 	}
 
+	@Override
 	public boolean isTerminated() {
 		return thread.isTerminated();
 	}
 
+	@Override
 	public void terminate() throws DebugException {
 		thread.terminate();
 	}
 
 	// IDebugElement
+	@Override
 	public IDebugTarget getDebugTarget() {
 		return thread.getDebugTarget();
 	}
 
+	@Override
 	public synchronized IScriptVariable findVariable(String varName)
 			throws DebugException {
 		checkVariablesAvailable();
@@ -552,23 +586,28 @@ public class ScriptStackFrame extends ScriptDebugElement
 		return null;
 	}
 
+	@Override
 	public int getLevel() {
 		return level.getLevel();
 	}
 
+	@Override
 	public String toString() {
 		return NLS.bind(Messages.ScriptStackFrame_stackFrame,
 				Integer.valueOf(level.getLevel()));
 	}
 
+	@Override
 	public String getSourceLine() {
 		return level.getWhere();
 	}
 
+	@Override
 	public URI getSourceURI() {
 		return level.getFileURI();
 	}
 
+	@Override
 	public IScriptThread getScriptThread() {
 		return (IScriptThread) getThread();
 	}

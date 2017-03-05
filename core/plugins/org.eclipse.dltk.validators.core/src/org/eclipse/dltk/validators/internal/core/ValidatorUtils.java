@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.validators.internal.core;
 
@@ -34,7 +33,6 @@ import org.eclipse.dltk.core.search.SearchEngine;
 import org.eclipse.dltk.internal.core.BuiltinProjectFragment;
 import org.eclipse.dltk.internal.core.BuiltinSourceModule;
 import org.eclipse.dltk.internal.core.ExternalProjectFragment;
-import org.eclipse.dltk.internal.core.ExternalSourceModule;
 import org.eclipse.dltk.internal.core.util.HandleFactory;
 
 public class ValidatorUtils {
@@ -45,9 +43,9 @@ public class ValidatorUtils {
 			this.resources = resources;
 		}
 
+		@Override
 		public boolean visit(IResource resource) {
-			if (!this.resources.contains(resource)
-					&& resource.getType() == IResource.FILE) {
+			if (!this.resources.contains(resource) && resource.getType() == IResource.FILE) {
 				resources.add(resource);
 				return false;
 			}
@@ -56,19 +54,19 @@ public class ValidatorUtils {
 	}
 
 	private static class SourceModuleVisitor implements IModelElementVisitor {
-		private Set elements;
+		private Set<IModelElement> elements;
 
-		public SourceModuleVisitor(Set elements) {
+		public SourceModuleVisitor(Set<IModelElement> elements) {
 			this.elements = elements;
 		}
 
 		/**
 		 * Visit only external source modules, witch we aren't builded yet.
 		 */
+		@Override
 		public boolean visit(IModelElement element) {
 			if (element.getElementType() == IModelElement.PROJECT_FRAGMENT) {
-				if ((element instanceof ExternalProjectFragment)
-						|| (element instanceof BuiltinProjectFragment)) {
+				if ((element instanceof ExternalProjectFragment) || (element instanceof BuiltinProjectFragment)) {
 					return false;
 				}
 			}
@@ -84,8 +82,7 @@ public class ValidatorUtils {
 		}
 	}
 
-	public static void processResourcesToElements(Object o, final Set elements,
-			final Set resources) {
+	public static void processResourcesToElements(Object o, final Set elements, final Set resources) {
 		if (o instanceof IResource) {
 			Set els = new HashSet();
 			ResourceVisitor visitor = new ResourceVisitor(els);
@@ -119,8 +116,7 @@ public class ValidatorUtils {
 					}
 				}
 			} else if (!(o instanceof ISourceModule)) {
-				ISourceModule module = (ISourceModule) ((IModelElement) o)
-						.getAncestor(IModelElement.SOURCE_MODULE);
+				ISourceModule module = (ISourceModule) ((IModelElement) o).getAncestor(IModelElement.SOURCE_MODULE);
 				if (module != null) {
 					elements.add(module);
 				}
@@ -147,11 +143,8 @@ public class ValidatorUtils {
 		IScriptProject scriptProject = DLTKCore.create(project);
 		IDLTKSearchScope scope = SearchEngine.createSearchScope(scriptProject);
 
-		IModelElement element = factory.createOpenable(res.getFullPath()
-				.toString(), scope);
-		if (element != null
-				&& element.getElementType() == IModelElement.SOURCE_MODULE
-				&& element.exists()) {
+		IModelElement element = factory.createOpenable(res.getFullPath().toString(), scope);
+		if (element != null && element.getElementType() == IModelElement.SOURCE_MODULE && element.exists()) {
 			// elements.add(element);
 			return element;
 		} else {
@@ -159,8 +152,7 @@ public class ValidatorUtils {
 		}
 	}
 
-	public static IProgressMonitor subMonitorFor(IProgressMonitor monitor,
-			int ticks) {
+	public static IProgressMonitor subMonitorFor(IProgressMonitor monitor, int ticks) {
 		if (monitor == null)
 			return new NullProgressMonitor();
 		if (monitor instanceof NullProgressMonitor)

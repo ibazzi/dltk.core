@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,12 +27,10 @@ import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetUpdater;
 
-
-
 public class ScriptWorkingSetUpdater implements IWorkingSetUpdater, IElementChangedListener {
 
 	private List<IWorkingSet> fWorkingSets;
-	
+
 	private static class WorkingSetDelta {
 		private IWorkingSet fWorkingSet;
 		private List<IAdaptable> fElements;
@@ -62,15 +60,13 @@ public class ScriptWorkingSetUpdater implements IWorkingSetUpdater, IElementChan
 			}
 		}
 	}
-	
+
 	public ScriptWorkingSetUpdater() {
 		fWorkingSets = new ArrayList<IWorkingSet>();
 		DLTKCore.addElementChangedListener(this);
 	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
+
+	@Override
 	public void add(IWorkingSet workingSet) {
 		checkElementExistence(workingSet);
 		synchronized (fWorkingSets) {
@@ -78,9 +74,7 @@ public class ScriptWorkingSetUpdater implements IWorkingSetUpdater, IElementChan
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean remove(IWorkingSet workingSet) {
 		boolean result;
 		synchronized(fWorkingSets) {
@@ -88,19 +82,15 @@ public class ScriptWorkingSetUpdater implements IWorkingSetUpdater, IElementChan
 		}
 		return result;
 	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
+
+	@Override
 	public boolean contains(IWorkingSet workingSet) {
 		synchronized(fWorkingSets) {
 			return fWorkingSets.contains(workingSet);
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void dispose() {
 		synchronized(fWorkingSets) {
 			fWorkingSets.clear();
@@ -108,9 +98,7 @@ public class ScriptWorkingSetUpdater implements IWorkingSetUpdater, IElementChan
 		DLTKCore.removeElementChangedListener(this);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void elementChanged(ElementChangedEvent event) {
 		IWorkingSet[] workingSets;
 		synchronized(fWorkingSets) {
@@ -165,7 +153,7 @@ public class ScriptWorkingSetUpdater implements IWorkingSetUpdater, IElementChan
 			processScriptDelta(result, children[i]);
 		}
 	}
-	
+
 	private void processResourceDelta(WorkingSetDelta result, IResourceDelta delta) {
 		IResource resource= delta.getResource();
 		int type= resource.getType();
@@ -179,17 +167,17 @@ public class ScriptWorkingSetUpdater implements IWorkingSetUpdater, IElementChan
 		}
 		if (index != -1 && kind == IResourceDelta.REMOVED) {
 			if ((flags & IResourceDelta.MOVED_TO) != 0) {
-				result.set(index, 
+				result.set(index,
 					ResourcesPlugin.getWorkspace().getRoot().findMember(delta.getMovedToPath()));
 			} else {
 				result.remove(index);
 			}
 		}
-		
+
 		// Don't dive into closed or opened projects
 		if (projectGotClosedOrOpened(resource, kind, flags))
 			return;
-		
+
 		IResourceDelta[] children= delta.getAffectedChildren();
 		for (int i= 0; i < children.length; i++) {
 			processResourceDelta(result, children[i]);
@@ -197,11 +185,11 @@ public class ScriptWorkingSetUpdater implements IWorkingSetUpdater, IElementChan
 	}
 
 	private boolean projectGotClosedOrOpened(IResource resource, int kind, int flags) {
-		return resource.getType() == IResource.PROJECT 
-			&& kind == IResourceDelta.CHANGED 
+		return resource.getType() == IResource.PROJECT
+			&& kind == IResourceDelta.CHANGED
 			&& (flags & IResourceDelta.OPEN) != 0;
 	}
-	
+
 	private void checkElementExistence(IWorkingSet workingSet) {
 		List<IAdaptable> elements = new ArrayList<IAdaptable>(
 				Arrays.asList(workingSet.getElements()));

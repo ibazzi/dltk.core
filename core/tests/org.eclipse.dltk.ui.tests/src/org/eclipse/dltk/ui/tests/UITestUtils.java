@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 NumberFour AG
+ * Copyright (c) 2012, 2017 NumberFour AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -56,8 +56,8 @@ public class UITestUtils {
 
 	public static void processEvents() {
 		final Display display = Display.getCurrent();
-		while (!display.isDisposed() && display.readAndDispatch())
-			;
+		while (!display.isDisposed() && display.readAndDispatch()) {
+		}
 	}
 
 }

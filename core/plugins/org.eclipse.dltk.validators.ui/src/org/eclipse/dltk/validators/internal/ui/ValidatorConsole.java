@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -38,9 +38,9 @@ public class ValidatorConsole extends IOConsole {
 	}
 
 	private static String formatConsoleName(String name) {
-		final String timestamp = DateFormat.getDateTimeInstance(
-				DateFormat.MEDIUM, DateFormat.MEDIUM).format(
-				new Date(System.currentTimeMillis()));
+		final String timestamp = DateFormat
+				.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM)
+				.format(new Date(System.currentTimeMillis()));
 		final String message = Messages.AbstractValidateSelectionWithConsole_dltkValidatorOutput;
 		return NLS.bind(message, name, timestamp);
 	}
@@ -50,11 +50,8 @@ public class ValidatorConsole extends IOConsole {
 			return;
 		}
 		closed = true;
-		Runnable r = new Runnable() {
-			public void run() {
-				setName(Messages.ValidatorConsole_terminated + initialName);
-			}
-		};
+		Runnable r = () -> setName(
+				Messages.ValidatorConsole_terminated + initialName);
 		DLTKUIPlugin.getStandardDisplay().asyncExec(r);
 	}
 

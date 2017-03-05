@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,6 +66,7 @@ class ScriptBrowsingContentProvider extends StandardModelElementContentProvider
 		return this.fToolkit;
 	}
 
+	@Override
 	public boolean hasChildren(Object element) {
 		startReadInDisplayThread();
 		try {
@@ -75,6 +76,7 @@ class ScriptBrowsingContentProvider extends StandardModelElementContentProvider
 		}
 	}
 
+	@Override
 	public Object[] getChildren(Object element) {
 		if (!exists(element))
 			return NO_CHILDREN;
@@ -183,6 +185,7 @@ class ScriptBrowsingContentProvider extends StandardModelElementContentProvider
 		return tempResult.toArray();
 	}
 
+	@Override
 	protected Object[] getProjectFragments(IScriptProject project)
 			throws ModelException {
 		if (!project.getProject().isOpen())
@@ -210,6 +213,7 @@ class ScriptBrowsingContentProvider extends StandardModelElementContentProvider
 	/*
 	 * (non-Javadoc) Method declared on IContentProvider.
 	 */
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		super.inputChanged(viewer, oldInput, newInput);
 
@@ -227,6 +231,7 @@ class ScriptBrowsingContentProvider extends StandardModelElementContentProvider
 	/*
 	 * (non-Javadoc) Method declared on IContentProvider.
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		DLTKCore.removeElementChangedListener(this);
@@ -235,6 +240,7 @@ class ScriptBrowsingContentProvider extends StandardModelElementContentProvider
 	/*
 	 * (non-Javadoc) Method declared on IElementChangedListener.
 	 */
+	@Override
 	public void elementChanged(final ElementChangedEvent event) {
 		try {
 			processDelta(event.getDelta());
@@ -425,23 +431,19 @@ class ScriptBrowsingContentProvider extends StandardModelElementContentProvider
 	 * Updates the package icon
 	 */
 	private void postUpdateIcon(final IModelElement element) {
-		postRunnable(new Runnable() {
-			public void run() {
-				Control ctrl = fViewer.getControl();
-				if (ctrl != null && !ctrl.isDisposed())
-					fViewer.update(element,
-							new String[] { IBasicPropertyConstants.P_IMAGE });
-			}
+		postRunnable(() -> {
+			Control ctrl = fViewer.getControl();
+			if (ctrl != null && !ctrl.isDisposed())
+				fViewer.update(element,
+						new String[] { IBasicPropertyConstants.P_IMAGE });
 		});
 	}
 
 	private void postRefresh(final Object root, final boolean updateLabels) {
-		postRunnable(new Runnable() {
-			public void run() {
-				Control ctrl = fViewer.getControl();
-				if (ctrl != null && !ctrl.isDisposed())
-					fViewer.refresh(root, updateLabels);
-			}
+		postRunnable(() -> {
+			Control ctrl = fViewer.getControl();
+			if (ctrl != null && !ctrl.isDisposed())
+				fViewer.refresh(root, updateLabels);
 		});
 	}
 
@@ -457,28 +459,24 @@ class ScriptBrowsingContentProvider extends StandardModelElementContentProvider
 		if (elements == null || elements.length <= 0)
 			return;
 
-		postRunnable(new Runnable() {
-			public void run() {
-				Control ctrl = fViewer.getControl();
-				if (ctrl != null && !ctrl.isDisposed()) {
-					Object[] newElements = getNewElements(elements);
-					if (fViewer instanceof AbstractTreeViewer) {
-						if (fViewer.testFindItem(parent) == null) {
-							Object root = ((AbstractTreeViewer) fViewer)
-									.getInput();
-							if (root != null)
-								((AbstractTreeViewer) fViewer).add(root,
-										newElements);
-						} else
-							((AbstractTreeViewer) fViewer).add(parent,
+		postRunnable(() -> {
+			Control ctrl = fViewer.getControl();
+			if (ctrl != null && !ctrl.isDisposed()) {
+				Object[] newElements = getNewElements(elements);
+				if (fViewer instanceof AbstractTreeViewer) {
+					if (fViewer.testFindItem(parent) == null) {
+						Object root = ((AbstractTreeViewer) fViewer).getInput();
+						if (root != null)
+							((AbstractTreeViewer) fViewer).add(root,
 									newElements);
-					} else if (fViewer instanceof ListViewer)
-						((ListViewer) fViewer).add(newElements);
-					else if (fViewer instanceof TableViewer)
-						((TableViewer) fViewer).add(newElements);
-					if (fViewer.testFindItem(elements[0]) != null)
-						fBrowsingPart.adjustInputAndSetSelection(elements[0]);
-				}
+					} else
+						((AbstractTreeViewer) fViewer).add(parent, newElements);
+				} else if (fViewer instanceof ListViewer)
+					((ListViewer) fViewer).add(newElements);
+				else if (fViewer instanceof TableViewer)
+					((TableViewer) fViewer).add(newElements);
+				if (fViewer.testFindItem(elements[0]) != null)
+					fBrowsingPart.adjustInputAndSetSelection(elements[0]);
 			}
 		});
 	}
@@ -502,30 +500,26 @@ class ScriptBrowsingContentProvider extends StandardModelElementContentProvider
 		if (elements.length <= 0)
 			return;
 
-		postRunnable(new Runnable() {
-			public void run() {
-				Control ctrl = fViewer.getControl();
-				if (ctrl != null && !ctrl.isDisposed()) {
-					if (fViewer instanceof AbstractTreeViewer)
-						((AbstractTreeViewer) fViewer).remove(elements);
-					else if (fViewer instanceof ListViewer)
-						((ListViewer) fViewer).remove(elements);
-					else if (fViewer instanceof TableViewer)
-						((TableViewer) fViewer).remove(elements);
-				}
+		postRunnable(() -> {
+			Control ctrl = fViewer.getControl();
+			if (ctrl != null && !ctrl.isDisposed()) {
+				if (fViewer instanceof AbstractTreeViewer)
+					((AbstractTreeViewer) fViewer).remove(elements);
+				else if (fViewer instanceof ListViewer)
+					((ListViewer) fViewer).remove(elements);
+				else if (fViewer instanceof TableViewer)
+					((TableViewer) fViewer).remove(elements);
 			}
 		});
 	}
 
 	private void postAdjustInputAndSetSelection(final Object element) {
-		postRunnable(new Runnable() {
-			public void run() {
-				Control ctrl = fViewer.getControl();
-				if (ctrl != null && !ctrl.isDisposed()) {
-					ctrl.setRedraw(false);
-					fBrowsingPart.adjustInputAndSetSelection(element);
-					ctrl.setRedraw(true);
-				}
+		postRunnable(() -> {
+			Control ctrl = fViewer.getControl();
+			if (ctrl != null && !ctrl.isDisposed()) {
+				ctrl.setRedraw(false);
+				fBrowsingPart.adjustInputAndSetSelection(element);
+				ctrl.setRedraw(true);
 			}
 		});
 	}
@@ -573,6 +567,7 @@ class ScriptBrowsingContentProvider extends StandardModelElementContentProvider
 	 * instead.
 	 * </p>
 	 */
+	@Override
 	protected Object internalGetParent(Object element) {
 		if (element instanceof IScriptProject) {
 			return ((IScriptProject) element).getModel();

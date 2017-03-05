@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -11,18 +11,15 @@
  *******************************************************************************/
 package org.eclipse.dltk.ui.tests.templates;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.dltk.ui.templates.IScriptTemplateIndenter;
 import org.eclipse.dltk.ui.templates.NopScriptTemplateIndenter;
 import org.eclipse.dltk.ui.templates.TabExpandScriptTemplateIndenter;
+import org.junit.Test;
 
-public class ScriptTemplateContextTest extends TestCase {
-
-	public ScriptTemplateContextTest(String name) {
-		super(name);
-	}
-
+public class ScriptTemplateContextTest {
+	@Test
 	public void testCalulateIndent() {
 		assertEquals("", TestTemplateContext.calculateIndent(""));
 		assertEquals("", TestTemplateContext.calculateIndent("if"));
@@ -39,7 +36,7 @@ public class ScriptTemplateContextTest extends TestCase {
 		indenter.indentLine(sb, "", line);
 		return sb.toString();
 	}
-
+	@Test
 	public void testTabExpandIndenter() {
 		assertEquals("if", tabExpandIndent("if"));
 		assertEquals("    if", tabExpandIndent("\t" + "if"));
@@ -52,7 +49,7 @@ public class ScriptTemplateContextTest extends TestCase {
 		indenter.indentLine(sb, "", line);
 		return sb.toString();
 	}
-
+	@Test
 	public void testNopIndenter() {
 		assertEquals("if", nopIndent("if"));
 		assertEquals("\t" + "if", nopIndent("\t" + "if"));

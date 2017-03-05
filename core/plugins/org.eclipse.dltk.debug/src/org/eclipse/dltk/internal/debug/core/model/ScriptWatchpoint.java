@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.dltk.debug.core.DLTKDebugPlugin;
 import org.eclipse.dltk.debug.core.model.IScriptWatchpoint;
 
@@ -38,24 +37,22 @@ public class ScriptWatchpoint extends ScriptLineBreakpoint
 	public ScriptWatchpoint(final String debugModelId, final IResource resource,
 			final IPath path, final int lineNumber, final int start,
 			final int end, final String fieldName) throws CoreException {
-		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				// create the marker
-				setMarker(resource.createMarker(getMarkerId()));
+		IWorkspaceRunnable wr = monitor -> {
+			// create the marker
+			setMarker(resource.createMarker(getMarkerId()));
 
-				final Map attributes = new HashMap();
-				// add attributes
-				addScriptBreakpointAttributes(attributes, debugModelId, true);
-				addLineBreakpointAttributes(attributes, path, lineNumber, start,
-						end);
-				attributes.put(FIELD_NAME, fieldName);
+			final Map attributes = new HashMap();
+			// add attributes
+			addScriptBreakpointAttributes(attributes, debugModelId, true);
+			addLineBreakpointAttributes(attributes, path, lineNumber, start,
+					end);
+			attributes.put(FIELD_NAME, fieldName);
 
-				// set attributes
-				ensureMarker().setAttributes(attributes);
+			// set attributes
+			ensureMarker().setAttributes(attributes);
 
-				// add to breakpoint manager if requested
-				register(true);
-			}
+			// add to breakpoint manager if requested
+			register(true);
 		};
 		run(getMarkerRule(resource), wr);
 	}
@@ -63,6 +60,7 @@ public class ScriptWatchpoint extends ScriptLineBreakpoint
 	public ScriptWatchpoint() {
 	}
 
+	@Override
 	public String getFieldName() throws CoreException {
 		return this.getMarker().getAttribute(FIELD_NAME, ""); //$NON-NLS-1$
 	}
@@ -71,33 +69,40 @@ public class ScriptWatchpoint extends ScriptLineBreakpoint
 		this.getMarker().setAttribute(FIELD_NAME, name);
 	}
 
+	@Override
 	protected String getMarkerId() {
 		return ScriptMarkerFactory.WATCHPOINT_MARKER_ID;
 	}
 
+	@Override
 	public boolean isAccess() throws CoreException {
 		return Boolean
 				.parseBoolean(this.getMarker().getAttribute(ACCESS, "true")); //$NON-NLS-1$
 	}
 
+	@Override
 	public boolean isModification() throws CoreException {
 		return Boolean.parseBoolean(
 				this.getMarker().getAttribute(MODIFICATION, "true")); //$NON-NLS-1$
 	}
 
+	@Override
 	public void setAccess(boolean access) throws CoreException {
 		this.getMarker().setAttribute(ACCESS, Boolean.toString(access));
 	}
 
+	@Override
 	public void setModification(boolean modification) throws CoreException {
 		this.getMarker().setAttribute(MODIFICATION,
 				Boolean.toString(modification));
 	}
 
+	@Override
 	public boolean supportsAccess() {
 		return true;
 	}
 
+	@Override
 	public boolean supportsModification() {
 		return true;
 	}
@@ -105,6 +110,7 @@ public class ScriptWatchpoint extends ScriptLineBreakpoint
 	private static final String[] UPDATABLE_ATTRS = new String[] { FIELD_NAME,
 			ACCESS, MODIFICATION };
 
+	@Override
 	public String[] getUpdatableAttributes() {
 		List all = new ArrayList();
 		all.addAll(Arrays.asList(super.getUpdatableAttributes()));

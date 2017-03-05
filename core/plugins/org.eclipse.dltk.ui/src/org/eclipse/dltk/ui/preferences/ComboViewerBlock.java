@@ -1,10 +1,8 @@
 package org.eclipse.dltk.ui.preferences;
 
 import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -18,21 +16,18 @@ public abstract class ComboViewerBlock {
 		viewer.getCombo().setLayoutData(layout);
 
 		viewer.setLabelProvider(new LabelProvider() {
+			@Override
 			public String getText(Object element) {
 				return getObjectName(element);
 			}
 		});
 
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				selectedObjectChanged(getSelectedObject());
-			}
-		});
+		viewer.addSelectionChangedListener(event -> selectedObjectChanged(getSelectedObject()));
 	}
 
 	/**
 	 * Initializes the ComboViewer
-	 * 
+	 *
 	 * @param elements
 	 *            viewer elements
 	 */
@@ -64,11 +59,11 @@ public abstract class ComboViewerBlock {
 
 	/**
 	 * Handle an object selection change.
-	 * 
+	 *
 	 * <p>
 	 * Subclasses should use this method to store the changed preference value.
 	 * </p>
-	 * 
+	 *
 	 * @param element
 	 *            newly selected element
 	 */
@@ -82,7 +77,7 @@ public abstract class ComboViewerBlock {
 	/**
 	 * Returns the default object that will be automatically selected when no
 	 * saved value in the preference store exists.
-	 * 
+	 *
 	 * <p>
 	 * Subclasses may return <code>null</code> if they do not wish to have an
 	 * object initially selected.

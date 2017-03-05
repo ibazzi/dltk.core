@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.dltk.compiler.CharOperation;
 import org.eclipse.dltk.core.IBuildpathEntry;
@@ -110,15 +109,12 @@ public class ProjectReferenceChange {
 			ISchedulingRule rule = workspace.getRuleFactory().modifyRule(
 					projectResource); // scheduling rule for modifying the
 										// project
-			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) throws CoreException {
-					IProjectDescription description = projectResource
-							.getDescription();
-					description.setDynamicReferences(requiredProjectArray);
-					projectResource.setDescription(description,
-							IResource.AVOID_NATURE_CONFIG, null);
-				}
+			IWorkspaceRunnable runnable = monitor -> {
+				IProjectDescription description1 = projectResource
+						.getDescription();
+				description1.setDynamicReferences(requiredProjectArray);
+				projectResource.setDescription(description1,
+						IResource.AVOID_NATURE_CONFIG, null);
 			};
 			workspace.run(runnable, rule, IWorkspace.AVOID_UPDATE, null);
 		} catch (CoreException e) {

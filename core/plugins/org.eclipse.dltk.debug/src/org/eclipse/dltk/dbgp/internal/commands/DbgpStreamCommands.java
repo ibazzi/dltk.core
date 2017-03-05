@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.dbgp.internal.commands;
 
@@ -16,8 +15,8 @@ import org.eclipse.dltk.dbgp.commands.IDbgpStreamCommands;
 import org.eclipse.dltk.dbgp.exceptions.DbgpException;
 import org.eclipse.dltk.dbgp.internal.utils.DbgpXmlParser;
 
-public class DbgpStreamCommands extends DbgpBaseCommands implements
-		IDbgpStreamCommands {
+public class DbgpStreamCommands extends DbgpBaseCommands
+		implements IDbgpStreamCommands {
 	private static final String STDERR_COMMAND = "stderr"; //$NON-NLS-1$
 
 	private static final String STDOUT_COMMAND = "stdout"; //$NON-NLS-1$
@@ -33,10 +32,12 @@ public class DbgpStreamCommands extends DbgpBaseCommands implements
 		super(communicator);
 	}
 
+	@Override
 	public boolean configureStdout(int value) throws DbgpException {
 		return execCommand(STDOUT_COMMAND, value);
 	}
 
+	@Override
 	public boolean configureStderr(int value) throws DbgpException {
 		return execCommand(STDERR_COMMAND, value);
 	}

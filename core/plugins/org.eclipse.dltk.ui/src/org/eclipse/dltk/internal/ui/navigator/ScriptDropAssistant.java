@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.navigator;
 
@@ -18,11 +17,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.ModelException;
+import org.eclipse.dltk.internal.corext.refactoring.reorg.IReorgPolicy.ICopyPolicy;
+import org.eclipse.dltk.internal.corext.refactoring.reorg.IReorgPolicy.IMovePolicy;
 import org.eclipse.dltk.internal.corext.refactoring.reorg.ReorgMoveStarter;
 import org.eclipse.dltk.internal.corext.refactoring.reorg.ReorgPolicyFactory;
 import org.eclipse.dltk.internal.corext.refactoring.reorg.ReorgUtils;
-import org.eclipse.dltk.internal.corext.refactoring.reorg.IReorgPolicy.ICopyPolicy;
-import org.eclipse.dltk.internal.corext.refactoring.reorg.IReorgPolicy.IMovePolicy;
 import org.eclipse.dltk.internal.ui.refactoring.reorg.ReorgCopyStarter;
 import org.eclipse.dltk.internal.ui.refactoring.reorg.ScriptCopyProcessor;
 import org.eclipse.dltk.internal.ui.refactoring.reorg.ScriptMoveProcessor;
@@ -42,9 +41,10 @@ public class ScriptDropAssistant  extends CommonDropAdapterAssistant {
 	private ScriptMoveProcessor fMoveProcessor;
 	private int fCanMoveElements;
 	private ScriptCopyProcessor fCopyProcessor;
-	private int fCanCopyElements; 
+	private int fCanCopyElements;
 
-	public IStatus handleDrop(CommonDropAdapter dropAdapter, DropTargetEvent dropTargetEvent, Object target) { 
+	@Override
+	public IStatus handleDrop(CommonDropAdapter dropAdapter, DropTargetEvent dropTargetEvent, Object target) {
 		if (LocalSelectionTransfer.getTransfer().isSupportedType(
 				dropAdapter.getCurrentTransfer())) {
 			try {
@@ -58,11 +58,11 @@ public class ScriptDropAssistant  extends CommonDropAdapterAssistant {
 						break;
 				}
 			} catch (ModelException e) {
-				//TODO: uncomment 
-				//ExceptionHandler.handle(e, PackagesMessages.SelectionTransferDropAdapter_error_title, PackagesMessages.SelectionTransferDropAdapter_error_message); 
+				//TODO: uncomment
+				//ExceptionHandler.handle(e, PackagesMessages.SelectionTransferDropAdapter_error_title, PackagesMessages.SelectionTransferDropAdapter_error_message);
 			} catch (InvocationTargetException e) {
 				//TODO: uncomment
-				//ExceptionHandler.handle(e, RefactoringMessages.OpenRefactoringWizardAction_refactoring, RefactoringMessages.OpenRefactoringWizardAction_exception); 
+				//ExceptionHandler.handle(e, RefactoringMessages.OpenRefactoringWizardAction_refactoring, RefactoringMessages.OpenRefactoringWizardAction_exception);
 			} catch (InterruptedException e) {
 				//ok
 			} finally {
@@ -90,8 +90,8 @@ public class ScriptDropAssistant  extends CommonDropAdapterAssistant {
 				new CopyFilesAndFoldersOperation(getShell()).copyFiles((String[]) data, targetContainer);
 			} catch (ModelException e) {
 				//TODO: uncomment
-				//String title = PackagesMessages.DropAdapter_errorTitle; 
-				//String message = PackagesMessages.DropAdapter_errorMessage; 
+				//String title = PackagesMessages.DropAdapter_errorTitle;
+				//String message = PackagesMessages.DropAdapter_errorMessage;
 				//ExceptionHandler.handle(e, getShell(), title, message);
 			}
 			return Status.OK_STATUS;
@@ -99,7 +99,8 @@ public class ScriptDropAssistant  extends CommonDropAdapterAssistant {
 		return Status.CANCEL_STATUS;
 	}
 
-	public IStatus validateDrop(Object target, int operation, TransferData transferType) { 
+	@Override
+	public IStatus validateDrop(Object target, int operation, TransferData transferType) {
 		IStatus result = Status.OK_STATUS;
 		if (LocalSelectionTransfer.getTransfer().isSupportedType(transferType)) {
 			initializeSelection();
@@ -124,23 +125,24 @@ public class ScriptDropAssistant  extends CommonDropAdapterAssistant {
 							result = Status.OK_STATUS;
 						} else {
 							result = Status.CANCEL_STATUS;
-						} 
+						}
 						break;
 				}
 			} catch (ModelException e) {
 				//TODO: uncomment
-				//ExceptionHandler.handle(e, PackagesMessages.SelectionTransferDropAdapter_error_title, PackagesMessages.SelectionTransferDropAdapter_error_message); 
+				//ExceptionHandler.handle(e, PackagesMessages.SelectionTransferDropAdapter_error_title, PackagesMessages.SelectionTransferDropAdapter_error_message);
 				//event.detail= DND.DROP_NONE;
 				result = Status.CANCEL_STATUS;
 			}
 		}
 		return result;
-	} 
-	
+	}
+
+	@Override
 	public boolean isSupportedType(TransferData transferType) {
 		return super.isSupportedType(transferType) || FileTransfer.getInstance().isSupportedType(transferType);
 	}
-	
+
 	private IContainer getActualTarget(Object dropTarget) throws ModelException {
 		if (dropTarget instanceof IContainer)
 			return (IContainer) dropTarget;
@@ -169,7 +171,7 @@ public class ScriptDropAssistant  extends CommonDropAdapterAssistant {
 		if (starter != null)
 			starter.run(getShell());
 	}
- 
+
 	private void handleDropCopy(final Object target) throws ModelException, InvocationTargetException, InterruptedException {
 		IModelElement[] javaElements = ReorgUtils.getModelElements(fElements);
 		IResource[] resources = ReorgUtils.getResources(fElements);
@@ -181,23 +183,23 @@ public class ScriptDropAssistant  extends CommonDropAdapterAssistant {
 		if (starter != null)
 			starter.run(getShell());
 	}
- 
+
 	private int handleValidateCopy(Object target) throws ModelException {
 
 		final ICopyPolicy policy= ReorgPolicyFactory.createCopyPolicy(ReorgUtils.getResources(fElements), ReorgUtils.getModelElements(fElements));
 		fCopyProcessor= policy.canEnable() ? new  ScriptCopyProcessor(policy) : null;
-		
+
 		if (!canCopyElements())
-			return DND.DROP_NONE;	
+			return DND.DROP_NONE;
 
 		if (target instanceof IResource && fCopyProcessor != null && fCopyProcessor.setDestination((IResource)target).isOK())
 			return DND.DROP_COPY;
 		else if (target instanceof IModelElement && fCopyProcessor != null && fCopyProcessor.setDestination((IModelElement)target).isOK())
 			return DND.DROP_COPY;
 		else
-			return DND.DROP_NONE;					
+			return DND.DROP_NONE;
 	}
- 
+
 	private int handleValidateDefault(Object target) throws ModelException {
 		if (target == null)
 			return DND.DROP_NONE;
@@ -208,19 +210,19 @@ public class ScriptDropAssistant  extends CommonDropAdapterAssistant {
 	private int handleValidateMove(Object target) throws ModelException {
 		if (target == null)
 			return DND.DROP_NONE;
-		
+
 		IMovePolicy policy= ReorgPolicyFactory.createMovePolicy(ReorgUtils.getResources(fElements), ReorgUtils.getModelElements(fElements));
 		fMoveProcessor= (policy.canEnable()) ? new ScriptMoveProcessor(policy) : null;
 
 		if (!canMoveElements())
-			return DND.DROP_NONE;	
+			return DND.DROP_NONE;
 
 		if (target instanceof IResource && fMoveProcessor != null && fMoveProcessor.setDestination((IResource)target).isOK())
 			return DND.DROP_MOVE;
 		else if (target instanceof IModelElement && fMoveProcessor != null && fMoveProcessor.setDestination((IModelElement)target).isOK())
 			return DND.DROP_MOVE;
 		else
-			return DND.DROP_NONE;	
+			return DND.DROP_NONE;
 	}
 
 

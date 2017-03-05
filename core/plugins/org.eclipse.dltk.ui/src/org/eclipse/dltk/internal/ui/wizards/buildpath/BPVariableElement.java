@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,7 @@ public class BPVariableElement {
 
 	/**
 	 * Gets the path
-	 * 
+	 *
 	 * @return Returns a IPath
 	 */
 	public IPath getPath() {
@@ -43,7 +43,7 @@ public class BPVariableElement {
 
 	/**
 	 * Sets the path
-	 * 
+	 *
 	 * @param path
 	 *            The path to set
 	 */
@@ -54,7 +54,7 @@ public class BPVariableElement {
 
 	/**
 	 * Gets the name
-	 * 
+	 *
 	 * @return Returns a String
 	 */
 	public String getName() {
@@ -63,7 +63,7 @@ public class BPVariableElement {
 
 	/**
 	 * Sets the name
-	 * 
+	 *
 	 * @param name
 	 *            The name to set
 	 */
@@ -72,9 +72,7 @@ public class BPVariableElement {
 		fName = name;
 	}
 
-	/*
-	 * @see Object#equals()
-	 */
+	@Override
 	public boolean equals(Object other) {
 		if (other != null && other.getClass().equals(getClass())) {
 			BPVariableElement elem = (BPVariableElement) other;
@@ -83,9 +81,7 @@ public class BPVariableElement {
 		return false;
 	}
 
-	/*
-	 * @see Object#hashCode()
-	 */
+	@Override
 	public int hashCode() {
 		return fName.hashCode();
 	}

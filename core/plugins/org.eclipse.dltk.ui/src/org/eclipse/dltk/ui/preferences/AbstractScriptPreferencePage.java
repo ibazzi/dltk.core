@@ -37,12 +37,7 @@ public abstract class AbstractScriptPreferencePage extends
 
 	private IDLTKLanguageToolkit fToolkit;
 
-	/*
-	 * @see
-	 * org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org
-	 * .eclipse.core.runtime.IConfigurationElement, java.lang.String,
-	 * java.lang.Object)
-	 */
+	@Override
 	public final void setInitializationData(IConfigurationElement config,
 			String propertyName, Object data) {
 		fToolkit = DLTKExecuteExtensionHelper.getLanguageToolkit(config,
@@ -51,20 +46,12 @@ public abstract class AbstractScriptPreferencePage extends
 		Assert.isNotNull(fToolkit);
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.dltk.ui.preferences.AbstractConfigurationBlockPreferencePage
-	 * #getHelpId()
-	 */
+	@Override
 	protected String getHelpId() {
 		return null;
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.dltk.ui.preferences.AbstractConfigurationBlockPreferencePage
-	 * #setPreferenceStore()
-	 */
+	@Override
 	protected final void setPreferenceStore() {
 		IDLTKUILanguageToolkit uiToolkit = DLTKUILanguageManager
 				.getLanguageToolkit(fToolkit.getNatureId());

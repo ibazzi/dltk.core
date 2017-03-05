@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -32,18 +32,21 @@ public class RemoveAllMarkersAction extends Action {
 	public RemoveAllMarkersAction(IStructuredSelection selection) {
 		this.selection = selection;
 		setText(Messages.DLTKValidatorsEditorContextMenu_cleanupAll);
-		setImageDescriptor(ValidatorsUI.getDefault().getImageDescriptor(
-				RemoveMarkersAction.CLEANUP_IMAGE));
+		setImageDescriptor(ValidatorsUI.getDefault()
+				.getImageDescriptor(RemoveMarkersAction.CLEANUP_IMAGE));
 	}
 
+	@Override
 	public void run() {
 		final AbstractConsoleValidateJob delegate = new AbstractConsoleValidateJob(
 				Messages.RemoveValidatorAllMarkersAction_validatorCleanup) {
 
+			@Override
 			protected boolean isConsoleRequired() {
 				return false;
 			}
 
+			@Override
 			protected void invokeValidationFor(IValidatorOutput out,
 					IScriptProject project, ISourceModule[] modules,
 					IResource[] resources, IProgressMonitor monitor) {

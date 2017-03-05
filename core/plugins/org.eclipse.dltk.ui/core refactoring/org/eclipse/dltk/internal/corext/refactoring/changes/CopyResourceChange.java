@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.corext.refactoring.changes;
 
@@ -22,26 +21,29 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 
 public class CopyResourceChange extends ResourceReorgChange {
-	
+
 	public CopyResourceChange(IResource res, IContainer dest, INewNameQuery newNameQuery){
 		super(res, dest, newNameQuery);
 	}
-	
+
+	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
 		// Copy resource change isn't undoable and isn't used
-		// as a redo/undo change right now. Furthermore the current 
-		// implementation allows copying dirty files. In this case only 
+		// as a redo/undo change right now. Furthermore the current
+		// implementation allows copying dirty files. In this case only
 		// the content on disk is copied.
 		return super.isValid(pm, NONE);
 	}
-	
+
+	@Override
 	protected Change doPerformReorg(IPath path, IProgressMonitor pm) throws CoreException{
 		getResource().copy(path, getReorgFlags(), pm);
 		return null;
 	}
-	
+
+	@Override
 	public String getName() {
-		return Messages.format(RefactoringCoreMessages.CopyResourceString_copy, 
+		return Messages.format(RefactoringCoreMessages.CopyResourceString_copy,
 			new String[]{getResource().getFullPath().toString(), getDestination().getName()});
 	}
 }

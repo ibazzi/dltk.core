@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
-
 package org.eclipse.dltk.internal.debug.ui.actions;
 
 import org.eclipse.debug.core.model.IExpression;
@@ -27,17 +25,16 @@ public class PopupScriptInspectAction extends ScriptInspectAction {
 		displayPopup.open();
 	}
 
+	@Override
 	protected void displayResult(final IScriptEvaluationResult result) {
 		IWorkbenchPart part = getPart();
 		final StyledText styledText = getStyledText(part);
 
 		if (styledText != null) {
-			final IExpression expression = new EvaluatedScriptExpression(result);
-			DLTKDebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-				public void run() {
-					showPopup(styledText, expression);
-				}
-			});
+			final IExpression expression = new EvaluatedScriptExpression(
+					result);
+			DLTKDebugUIPlugin.getStandardDisplay()
+					.asyncExec(() -> showPopup(styledText, expression));
 		}
 
 		evaluationCleanup();

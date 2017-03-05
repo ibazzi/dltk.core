@@ -1,11 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
+
  *******************************************************************************/
 
 package org.eclipse.dltk.internal.ui.editor;
@@ -69,6 +69,7 @@ public final class ToggleCommentAction extends TextEditorAction {
 	 * Implementation of the <code>IAction</code> prototype. Checks if the selected
 	 * lines are all commented or not and uncomments/comments them respectively.
 	 */
+	@Override
 	public void run() {
 		if (fOperationTarget == null || fDocumentPartitioning == null || fPrefixesMap == null)
 			return;
@@ -103,11 +104,8 @@ public final class ToggleCommentAction extends TextEditorAction {
 		if (shell != null && !shell.isDisposed())
 			display= shell.getDisplay();
 
-		BusyIndicator.showWhile(display, new Runnable() {
-			public void run() {
-				fOperationTarget.doOperation(operationCode);
-			}
-		});
+		BusyIndicator.showWhile(display,
+				() -> fOperationTarget.doOperation(operationCode));
 	}
 
 	/**
@@ -266,6 +264,7 @@ public final class ToggleCommentAction extends TextEditorAction {
 	 * <code>ITextOperationTarget</code> adapter, and sets the enabled state
 	 * accordingly.
 	 */
+	@Override
 	public void update() {
 		super.update();
 
@@ -285,6 +284,7 @@ public final class ToggleCommentAction extends TextEditorAction {
 	/*
 	 * @see TextEditorAction#setEditor(ITextEditor)
 	 */
+	@Override
 	public void setEditor(ITextEditor editor) {
 		super.setEditor(editor);
 		fOperationTarget= null;

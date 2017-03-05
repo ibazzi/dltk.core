@@ -1,11 +1,18 @@
+/*******************************************************************************
+ * Copyright (c) 2008, 2017 Jae Gangemi and others.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eclipse.dltk.ui.tests.core;
-
-import junit.framework.Assert;
 
 import org.eclipse.dltk.core.tests.model.AbstractModelTests;
 import org.eclipse.dltk.core.tests.model.TestConstants;
 import org.eclipse.dltk.ui.DLTKUILanguageManager;
 import org.eclipse.dltk.ui.IDLTKUILanguageToolkit;
+import org.junit.Assert;
 
 public class DLTKUILanguageManagerTests extends AbstractModelTests {
 

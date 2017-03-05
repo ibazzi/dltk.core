@@ -38,9 +38,9 @@ public class ScriptOverrideCompletionProposal extends ScriptTypeCompletionPropos
 		fMethodName= methodName;
 
 		StringBuffer buffer= new StringBuffer();
-		buffer.append(completionProposal);		
-		
-		setReplacementString(buffer.toString());		
+		buffer.append(completionProposal);
+
+		setReplacementString(buffer.toString());
 	}
 
 	@Override
@@ -58,13 +58,14 @@ public class ScriptOverrideCompletionProposal extends ScriptTypeCompletionPropos
 		buffer.replace(index + 1, length, " "); //$NON-NLS-1$
 		return true;
 	}
-	
+
+	@Override
 	public boolean isAutoInsertable() {
 		return false;
 	}
-	
+
 	@Override
-	public IContextInformation getContextInformation() {		
+	public IContextInformation getContextInformation() {
 		return new ContextInformation(getDisplayString(), getDisplayString());
 	}
 }

@@ -20,10 +20,12 @@ public class ScriptCorrectionProcessor implements IQuickAssistProcessor {
 		this.fAssistant = tclCorrectionAssistant;
 	}
 
+	@Override
 	public boolean canAssist(IQuickAssistInvocationContext invocationContext) {
 		return true;
 	}
 
+	@Override
 	public boolean canFix(Annotation annotation) {
 		return ScriptCorrectionProcessorManager.canFix(getNatureId(),
 				annotation);
@@ -34,6 +36,7 @@ public class ScriptCorrectionProcessor implements IQuickAssistProcessor {
 		return editor.getLanguageToolkit().getNatureId();
 	}
 
+	@Override
 	public ICompletionProposal[] computeQuickAssistProposals(
 			IQuickAssistInvocationContext invocationContext) {
 		final ScriptEditor editor = (ScriptEditor) this.fAssistant.getEditor();
@@ -73,6 +76,7 @@ public class ScriptCorrectionProcessor implements IQuickAssistProcessor {
 		return context.getProposals();
 	}
 
+	@Override
 	public String getErrorMessage() {
 		return null;
 	}

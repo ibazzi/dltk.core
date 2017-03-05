@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.wizards;
 
@@ -62,7 +61,7 @@ public class ProjectWizardSecondPage extends CapabilityConfigurationPage
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.IDialogPage#setVisible(boolean)
 	 */
 	@Override
@@ -104,6 +103,7 @@ public class ProjectWizardSecondPage extends CapabilityConfigurationPage
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public void initProjectWizardPage() {
 		final ProjectCreator creator = getCreator();
 		creator.addStep(IProjectCreateStep.KIND_INIT_UI,
@@ -115,6 +115,7 @@ public class ProjectWizardSecondPage extends CapabilityConfigurationPage
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public void updateProjectWizardPage() {
 		// empty
 	}
@@ -122,6 +123,7 @@ public class ProjectWizardSecondPage extends CapabilityConfigurationPage
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public void resetProjectWizardPage() {
 		final IProjectWizard wizard = getProjectWizard();
 		init(DLTKCore.create(wizard.getProject()), null, false);
@@ -129,6 +131,7 @@ public class ProjectWizardSecondPage extends CapabilityConfigurationPage
 
 	private final IProjectCreateStep initStep = new ProjectCreateStep() {
 
+		@Override
 		public void execute(IProject project, IProgressMonitor monitor)
 				throws CoreException {
 			final IBuildpathEntry[] entries = getCreator().initBuildpath(
@@ -143,6 +146,7 @@ public class ProjectWizardSecondPage extends CapabilityConfigurationPage
 
 	private final IProjectCreateStep configureStep = new ProjectCreateStep() {
 
+		@Override
 		public void execute(IProject project, IProgressMonitor monitor)
 				throws CoreException, InterruptedException {
 			configureScriptProject(monitor);
@@ -155,6 +159,7 @@ public class ProjectWizardSecondPage extends CapabilityConfigurationPage
 
 	};
 
+	@Override
 	protected void configureNatures(IProject project, IProgressMonitor monitor)
 			throws CoreException {
 		((ProjectWizard) getWizard()).configureNatures(project, monitor);

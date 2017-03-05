@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ public final class ScriptModelProvider extends ModelProvider {
 
 	/**
 	 * Returns the resource associated with the corresponding model element.
-	 * 
+	 *
 	 * @param element
 	 *            the model element
 	 * @return the associated resource, or <code>null</code>
@@ -62,9 +62,7 @@ public final class ScriptModelProvider extends ModelProvider {
 		// Used by the runtime
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public ResourceMapping[] getMappings(final IResource resource, final ResourceMappingContext context, final IProgressMonitor monitor) throws CoreException {
 		final IModelElement element= DLTKCore.create(resource);
 		if (element != null)

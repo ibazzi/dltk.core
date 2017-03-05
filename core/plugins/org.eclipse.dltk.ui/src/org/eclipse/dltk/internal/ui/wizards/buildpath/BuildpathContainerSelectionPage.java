@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.wizards.buildpath;
 
@@ -19,13 +18,9 @@ import org.eclipse.dltk.ui.DLTKUIPlugin;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -41,6 +36,7 @@ public class BuildpathContainerSelectionPage extends WizardPage {
 
 
 	private static class BuildpathContainerLabelProvider extends LabelProvider {
+		@Override
 		public String getText(Object element) {
 			return ((BuildpathContainerDescriptor) element).getName();
 		}
@@ -59,8 +55,8 @@ public class BuildpathContainerSelectionPage extends WizardPage {
 	 */
 	protected BuildpathContainerSelectionPage(BuildpathContainerDescriptor[] containerPages) {
 		super("BuildpathContainerWizardPage"); //$NON-NLS-1$
-		setTitle(NewWizardMessages.BuildpathContainerSelectionPage_title); 
-		setDescription(NewWizardMessages.BuildpathContainerSelectionPage_description); 
+		setTitle(NewWizardMessages.BuildpathContainerSelectionPage_title);
+		setDescription(NewWizardMessages.BuildpathContainerSelectionPage_description);
 		setImageDescriptor(DLTKPluginImages.DESC_WIZBAN_ADD_LIBRARY);
 
 		fContainers= containerPages;
@@ -74,26 +70,16 @@ public class BuildpathContainerSelectionPage extends WizardPage {
 		validatePage();
 	}
 
-	/* (non-Javadoc)
-	 * @see IDialogPage#createControl(Composite)
-	 */
+	@Override
 	public void createControl(Composite parent) {
 		fListViewer= new ListViewer(parent, SWT.SINGLE | SWT.BORDER);
 		fListViewer.setLabelProvider(new BuildpathContainerLabelProvider());
 		fListViewer.setContentProvider(new ArrayContentProvider());
 		fListViewer.setSorter(new BuildpathContainerSorter());
 		fListViewer.setInput(Arrays.asList(fContainers));
-		fListViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				validatePage();
-			}
-		});
-		fListViewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-				doDoubleClick();
-			}
-		});		
-		
+		fListViewer.addSelectionChangedListener(event -> validatePage());
+		fListViewer.addDoubleClickListener(event -> doDoubleClick());
+
 		int selectionIndex= fDialogSettings.getInt(DIALOGSTORE_CONTAINER_IDX);
 		if (selectionIndex >= fContainers.length) {
 			selectionIndex= 0;
@@ -102,7 +88,7 @@ public class BuildpathContainerSelectionPage extends WizardPage {
 		validatePage();
 		setControl(fListViewer.getList());
 		Dialog.applyDialogFont(fListViewer.getList());
-		
+
 		if(DLTKCore.DEBUG) {
 			System.err.println("BuildpathContainerSelectionPage: add help support here"); //$NON-NLS-1$
 		}
@@ -124,27 +110,23 @@ public class BuildpathContainerSelectionPage extends WizardPage {
 		}
 		return null;
 	}
-	
+
 	public BuildpathContainerDescriptor[] getContainers() {
 		return fContainers;
 	}
-	
+
 	protected void doDoubleClick() {
 		if (canFlipToNextPage()) {
 			getContainer().showPage(getNextPage());
 		}
-	}	
+	}
 
-	/* (non-Javadoc)
-	 * @see IWizardPage#canFlipToNextPage()
-	 */
+	@Override
 	public boolean canFlipToNextPage() {
 		return isPageComplete(); // avoid the getNextPage call to prevent potential plugin load
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#setVisible(boolean)
-	 */
+	@Override
 	public void setVisible(boolean visible) {
 		if (!visible && fListViewer != null) {
 			fDialogSettings.put(DIALOGSTORE_CONTAINER_IDX, fListViewer.getList().getSelectionIndex());

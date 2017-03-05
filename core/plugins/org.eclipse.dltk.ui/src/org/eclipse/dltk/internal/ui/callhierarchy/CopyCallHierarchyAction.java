@@ -1,11 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
+
  *          (report 36180: Callers/Callees view)
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.callhierarchy;
@@ -31,19 +31,19 @@ import org.eclipse.swt.widgets.TreeItem;
 
 
 class CopyCallHierarchyAction extends Action {
-    private static final char INDENTATION= '\t';  
-    
+    private static final char INDENTATION= '\t';
+
     private CallHierarchyViewPart fView;
     private CallHierarchyViewer fViewer;
-	
+
 	private final Clipboard fClipboard;
 
 	public CopyCallHierarchyAction(CallHierarchyViewPart view, Clipboard clipboard, CallHierarchyViewer viewer) {
-		super(CallHierarchyMessages.CopyCallHierarchyAction_label);  
+		super(CallHierarchyMessages.CopyCallHierarchyAction_label);
 //		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IJavaHelpContextIds.CALL_HIERARCHY_COPY_ACTION);
 		if (DLTKCore.DEBUG) {
 			System.err.println("Add help support here..."); //$NON-NLS-1$
-		}		
+		}
 		fView= view;
 		fClipboard= clipboard;
         fViewer= viewer;
@@ -53,7 +53,7 @@ class CopyCallHierarchyAction extends Action {
         Object element = SelectionUtil.getSingleElement(getSelection());
         return element != null;
     }
-    
+
     private ISelection getSelection() {
         ISelectionProvider provider = fView.getSite().getSelectionProvider();
 
@@ -63,10 +63,8 @@ class CopyCallHierarchyAction extends Action {
 
         return null;
     }
-    
-	/*
-	 * @see IAction#run()
-	 */
+
+	@Override
 	public void run() {
         StringBuffer buf= new StringBuffer();
         addCalls(fViewer.getTree().getSelection()[0], 0, buf);
@@ -74,19 +72,19 @@ class CopyCallHierarchyAction extends Action {
 		TextTransfer plainTextTransfer = TextTransfer.getInstance();
 		try{
 			fClipboard.setContents(
-				new String[]{ convertLineTerminators(buf.toString()) }, 
+				new String[]{ convertLineTerminators(buf.toString()) },
 				new Transfer[]{ plainTextTransfer });
 		}  catch (SWTError e){
-			if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD) 
+			if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
 				throw e;
-			if (MessageDialog.openQuestion(fView.getViewSite().getShell(), CallHierarchyMessages.CopyCallHierarchyAction_problem, CallHierarchyMessages.CopyCallHierarchyAction_clipboard_busy))  
+			if (MessageDialog.openQuestion(fView.getViewSite().getShell(), CallHierarchyMessages.CopyCallHierarchyAction_problem, CallHierarchyMessages.CopyCallHierarchyAction_clipboard_busy))
 				run();
 		}
 	}
-	
+
 	/**
      * Adds the specified TreeItem's text to the StringBuffer
-     * 
+     *
      * @param item
      * @param buf
      */
@@ -97,20 +95,20 @@ class CopyCallHierarchyAction extends Action {
 
         buf.append(item.getText());
         buf.append('\n');
-        
+
         if (item.getExpanded()) {
             TreeItem[] items= item.getItems();
             for (int i= 0; i < items.length; i++) {
                 addCalls(items[i], indent + 1, buf);
             }
-        }        
+        }
     }
 
     private String convertLineTerminators(String in) {
 		StringWriter stringWriter= new StringWriter();
 		PrintWriter printWriter= new PrintWriter(stringWriter);
 		StringReader stringReader= new StringReader(in);
-		BufferedReader bufferedReader= new BufferedReader(stringReader);		
+		BufferedReader bufferedReader= new BufferedReader(stringReader);
 		String line;
 		try {
 			while ((line= bufferedReader.readLine()) != null) {

@@ -1,12 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
- * 			(report 36180: Callers/Callees view)
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.callhierarchy;
 
@@ -39,13 +37,13 @@ class HistoryAction extends Action {
         setText(elementName);
         setImageDescriptor(getImageDescriptor(element));
 
-        setDescription(Messages.format(CallHierarchyMessages.HistoryAction_description, elementName)); 
-        setToolTipText(Messages.format(CallHierarchyMessages.HistoryAction_tooltip, elementName)); 
-        
+        setDescription(Messages.format(CallHierarchyMessages.HistoryAction_description, elementName));
+        setToolTipText(Messages.format(CallHierarchyMessages.HistoryAction_tooltip, elementName));
+
 //        PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IJavaHelpContextIds.CALL_HIERARCHY_HISTORY_ACTION);
         if (DLTKCore.DEBUG) {
 			System.err.println("Add help support here..."); //$NON-NLS-1$
-		}		
+		}
     }
 
     private ImageDescriptor getImageDescriptor(IModelElement elem) {
@@ -56,10 +54,8 @@ class HistoryAction extends Action {
         return desc;
     }
 
-    /*
-     * @see Action#run()
-     */
-    public void run() {
+    @Override
+	public void run() {
         fView.gotoHistoryEntry(fMethod);
     }
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,9 +25,7 @@ import org.eclipse.dltk.ui.DLTKUIPlugin;
 import org.eclipse.dltk.ui.PreferenceConstants;
 import org.eclipse.dltk.ui.viewsupport.FilterUpdater;
 import org.eclipse.dltk.ui.viewsupport.ProblemTreeViewer;
-import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -41,11 +39,6 @@ public class ProjectsView extends ScriptBrowsingPart {
 
 	private FilterUpdater fFilterUpdater;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jdt.internal.ui.browsing.JavaBrowsingPart#createViewer(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
 		ProblemTreeViewer result = new ProblemTreeViewer(parent, SWT.MULTI);
@@ -56,16 +49,11 @@ public class ProjectsView extends ScriptBrowsingPart {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jdt.internal.ui.browsing.JavaBrowsingPart#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (fFilterUpdater != null)
-			ResourcesPlugin.getWorkspace().removeResourceChangeListener(
-					fFilterUpdater);
+			ResourcesPlugin.getWorkspace()
+					.removeResourceChangeListener(fFilterUpdater);
 		super.dispose();
 	}
 
@@ -82,11 +70,6 @@ public class ProjectsView extends ScriptBrowsingPart {
 		return super.getAdapter(key);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jdt.internal.ui.browsing.JavaBrowsingPart#createContentProvider()
-	 */
 	@Override
 	protected IContentProvider createContentProvider() {
 		return new ProjectAndSourceFolderContentProvider(this, getToolkit());
@@ -94,7 +77,7 @@ public class ProjectsView extends ScriptBrowsingPart {
 
 	/**
 	 * Returns the context ID for the Help system.
-	 * 
+	 *
 	 * @return the string used as ID for the Help context
 	 */
 	@Override
@@ -114,31 +97,27 @@ public class ProjectsView extends ScriptBrowsingPart {
 	@Override
 	protected void hookViewerListeners() {
 		super.hookViewerListeners();
-		getViewer().addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				TreeViewer viewer = (TreeViewer) getViewer();
-				Object element = ((IStructuredSelection) event.getSelection())
-						.getFirstElement();
-				if (viewer.isExpandable(element))
-					viewer.setExpandedState(element, !viewer
-							.getExpandedState(element));
-			}
+		getViewer().addDoubleClickListener(event -> {
+			TreeViewer viewer = (TreeViewer) getViewer();
+			Object element = ((IStructuredSelection) event.getSelection())
+					.getFirstElement();
+			if (viewer.isExpandable(element))
+				viewer.setExpandedState(element,
+						!viewer.getExpandedState(element));
 		});
 	}
 
 	@Override
 	protected void setInitialInput() {
-		IModelElement root = DLTKCore.create(DLTKUIPlugin.getWorkspace()
-				.getRoot());
+		IModelElement root = DLTKCore
+				.create(DLTKUIPlugin.getWorkspace().getRoot());
 		getViewer().setInput(root);
 		updateTitle();
 	}
 
 	/**
-	 * Answers if the given <code>element</code> is a valid input for this
-	 * part.
-	 * 
+	 * Answers if the given <code>element</code> is a valid input for this part.
+	 *
 	 * @param element
 	 *            the object to test
 	 * @return <true> if the given element is a valid input
@@ -151,29 +130,30 @@ public class ProjectsView extends ScriptBrowsingPart {
 	/**
 	 * Answers if the given <code>element</code> is a valid element for this
 	 * part.
-	 * 
+	 *
 	 * @param element
 	 *            the object to test
 	 * @return <true> if the given element is a valid element
 	 */
 	@Override
 	protected boolean isValidElement(Object element) {
-		if (!(element instanceof IScriptProject || element instanceof IProjectFragment)) {
+		if (!(element instanceof IScriptProject
+				|| element instanceof IProjectFragment)) {
 			return false;
 		}
 		IDLTKLanguageToolkit languageToolkit;
 		languageToolkit = DLTKLanguageManager
 				.getLanguageToolkit((IModelElement) element);
 		if (languageToolkit != null) {
-			return languageToolkit.getNatureId().equals(
-					getToolkit().getNatureId());
+			return languageToolkit.getNatureId()
+					.equals(getToolkit().getNatureId());
 		}
 		return false;
 	}
 
 	/**
 	 * Finds the element which has to be selected in this part.
-	 * 
+	 *
 	 * @param je
 	 *            the Java element which has the focus
 	 * @return the element to select
@@ -189,8 +169,8 @@ public class ProjectsView extends ScriptBrowsingPart {
 		case IModelElement.SCRIPT_PROJECT:
 			return je;
 		case IModelElement.PROJECT_FRAGMENT:
-			if (je.getElementName().equals(
-					IProjectFragment.DEFAULT_PACKAGE_ROOT))
+			if (je.getElementName()
+					.equals(IProjectFragment.DEFAULT_PACKAGE_ROOT))
 				return je.getParent();
 			else
 				return je;
@@ -199,9 +179,6 @@ public class ProjectsView extends ScriptBrowsingPart {
 		}
 	}
 
-	/*
-	 * @see JavaBrowsingPart#setInput(Object)
-	 */
 	@Override
 	protected void setInput(Object input) {
 		// Don't allow to clear input for this view
@@ -219,7 +196,7 @@ public class ProjectsView extends ScriptBrowsingPart {
 
 	/**
 	 * Handles selection of LogicalPackage in Packages view.
-	 * 
+	 *
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart,
 	 *      org.eclipse.jface.viewers.ISelection)
 	 * @since 2.1

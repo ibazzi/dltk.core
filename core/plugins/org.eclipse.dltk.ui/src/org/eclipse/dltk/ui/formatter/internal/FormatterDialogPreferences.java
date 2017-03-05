@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -22,19 +22,23 @@ public class FormatterDialogPreferences implements IPreferenceDelegate<String> {
 
 	private final Map<String, String> preferences = new HashMap<String, String>();
 
+	@Override
 	public String getString(String key) {
 		final String value = preferences.get(key);
 		return value != null ? value : Util.EMPTY_STRING;
 	}
 
+	@Override
 	public boolean getBoolean(String key) {
 		return Boolean.valueOf(getString(key)).booleanValue();
 	}
 
+	@Override
 	public void setString(String key, String value) {
 		preferences.put(key, value);
 	}
 
+	@Override
 	public void setBoolean(String key, boolean value) {
 		setString(key, String.valueOf(value));
 	}

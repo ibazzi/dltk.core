@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.actions;
 
@@ -30,11 +29,10 @@ import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
-
 /**
  * Action group that adds the search for declarations actions to a context menu
  * and the global menu bar.
- * 
+ *
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
@@ -68,7 +66,7 @@ public class DeclarationsSearchGroup extends ActionGroup {
 	 * that the selection provided by the site's selection provider is of type
 	 * <code>
 	 * IStructuredSelection</code>.
-	 * 
+	 *
 	 * @param site
 	 *            the workbench site that owns this action group
 	 */
@@ -102,9 +100,9 @@ public class DeclarationsSearchGroup extends ActionGroup {
 	/**
 	 * Note: This constructor is for internal use only. Clients should not call
 	 * this constructor.
-	 * 
+	 *
 	 * DLTK < 5.3 binary compatibility
-	 * 
+	 *
 	 * @param editor
 	 *            the Script editor
 	 */
@@ -116,7 +114,7 @@ public class DeclarationsSearchGroup extends ActionGroup {
 	/**
 	 * Note: This constructor is for internal use only. Clients should not call
 	 * this constructor.
-	 * 
+	 *
 	 * @param editor
 	 *            the Script editor
 	 * @since 5.3
@@ -153,9 +151,7 @@ public class DeclarationsSearchGroup extends ActionGroup {
 		provider.addSelectionChangedListener(action);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on ActionGroup.
-	 */
+	@Override
 	public void fillActionBars(IActionBars actionBars) {
 		super.fillActionBars(actionBars);
 		fActionBars = actionBars;
@@ -182,9 +178,7 @@ public class DeclarationsSearchGroup extends ActionGroup {
 		addAction(action, manager);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on ActionGroup.
-	 */
+	@Override
 	public void fillContextMenu(IMenuManager manager) {
 		IMenuManager javaSearchMM = new MenuManager(MENU_TEXT, IContextMenuConstants.GROUP_SEARCH);
 		addAction(fFindDeclarationsAction, javaSearchMM);
@@ -203,9 +197,7 @@ public class DeclarationsSearchGroup extends ActionGroup {
 			manager.appendToGroup(fGroupId, javaSearchMM);
 	}
 
-	/*
-	 * Method declared on ActionGroup.
-	 */
+	@Override
 	public void dispose() {
 		unregisterActions();
 
@@ -231,7 +223,7 @@ public class DeclarationsSearchGroup extends ActionGroup {
 		if (action != null)
 			provider.removeSelectionChangedListener(action);
 	}
-	
+
 	private void registerActions() {
 		if (fEditor != null) {
 			return;
@@ -256,7 +248,7 @@ public class DeclarationsSearchGroup extends ActionGroup {
 
 	/**
 	 * Proxy to {@link SelectionDispatchAction#setSpecialSelectionProvider(ISelectionProvider)}
-	 * 
+	 *
 	 * @since 5.3
 	 * @param provider
 	 */

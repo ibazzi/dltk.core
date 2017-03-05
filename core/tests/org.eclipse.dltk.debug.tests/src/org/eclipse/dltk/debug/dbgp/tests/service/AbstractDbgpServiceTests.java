@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.dltk.debug.dbgp.tests.service;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -18,14 +20,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eclipse.dltk.dbgp.DbgpServer;
 import org.eclipse.dltk.dbgp.IDbgpSession;
 import org.eclipse.dltk.debug.core.DLTKDebugPreferenceConstants;
 import org.eclipse.dltk.internal.debug.core.model.DbgpService;
+import org.junit.After;
+import org.junit.Before;
 
-public class AbstractDbgpServiceTests extends TestCase {
+public class AbstractDbgpServiceTests {
 
 	protected static final int ANY_PORT = DLTKDebugPreferenceConstants.DBGP_AVAILABLE_PORT;
 
@@ -41,7 +43,7 @@ public class AbstractDbgpServiceTests extends TestCase {
 	 * Creates socket and connects it to the specified port. If connection could
 	 * not be performed the error is thrown. Successfully connected socket is
 	 * added to the {@link #sockets} and closed in {@link #tearDown()}
-	 * 
+	 *
 	 * @param port
 	 * @return con
 	 * @throws IOException
@@ -60,14 +62,13 @@ public class AbstractDbgpServiceTests extends TestCase {
 
 	/**
 	 * {@link #connect(int)}s socket and performs operation on it.
-	 * 
+	 *
 	 * @param port
 	 * @param operation
 	 * @return
 	 * @throws IOException
 	 */
-	protected Socket performOperation(final int port, ISocketOperation operation)
-			throws IOException {
+	protected Socket performOperation(final int port, ISocketOperation operation) throws IOException {
 		final Socket socket = connect(port);
 		operation.execute(socket);
 		return socket;
@@ -76,7 +77,7 @@ public class AbstractDbgpServiceTests extends TestCase {
 	/**
 	 * Find some available port in the specified range. The returned values is
 	 * checked, so users should not perform addtitional checks.
-	 * 
+	 *
 	 * @param minPort
 	 * @param maxPort
 	 * @return
@@ -92,30 +93,29 @@ public class AbstractDbgpServiceTests extends TestCase {
 	 * to close sockets as the corresponding {@link IDbgpSession} could be
 	 * terminated before we processed the connection.
 	 */
-	private final List sockets = new ArrayList();
+	private final List<Socket> sockets = new ArrayList<>();
 
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		sockets.clear();
 	}
 
 	/**
 	 * Closes all sockets opened by {@link #connect(int)}
-	 * 
-	 * @see junit.framework.TestCase#tearDown()
+	 *
 	 */
-	protected void tearDown() throws Exception {
-		for (Iterator i = sockets.iterator(); i.hasNext();) {
-			closeQuietly((Socket) i.next());
+	@After
+	public void tearDown() {
+		for (Iterator<Socket> i = sockets.iterator(); i.hasNext();) {
+			closeQuietly(i.next());
 		}
 		sockets.clear();
-		super.tearDown();
 	}
 
 	/**
 	 * Closes the specified socket and catch possible errors. So it could be
 	 * safely used in finally statements and keep original exception if any.
-	 * 
+	 *
 	 * @param socket
 	 */
 	protected void closeQuietly(final Socket socket) {

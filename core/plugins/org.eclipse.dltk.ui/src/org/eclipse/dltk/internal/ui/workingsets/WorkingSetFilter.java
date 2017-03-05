@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.IWorkingSet;
 
-
 /**
  * Working set filter for Script viewers.
  */
@@ -33,25 +32,23 @@ public class WorkingSetFilter extends ViewerFilter {
 
 	/**
 	 * Returns the working set which is used by this filter.
-	 * 
+	 *
 	 * @return the working set
 	 */
 	public IWorkingSet getWorkingSet() {
 		return fWorkingSet;
 	}
-		
+
 	/**
 	 * Sets this filter's working set.
-	 * 
+	 *
 	 * @param workingSet the working set
 	 */
 	public void setWorkingSet(IWorkingSet workingSet) {
 		fWorkingSet= workingSet;
 	}
-	
-	/*
-	 * Overrides method from ViewerFilter.
-	 */
+
+	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		if (fWorkingSet == null || (fWorkingSet.isAggregateWorkingSet() && fWorkingSet.getElements().length == 0))
 			return true;
@@ -61,11 +58,11 @@ public class WorkingSetFilter extends ViewerFilter {
 
 		if (element instanceof IResource)
 			return isEnclosing(((IResource)element).getFullPath());
-		
+
 		if (element instanceof BuildPathContainer) {
 			return isEnclosing((BuildPathContainer)element);
 		}
-			
+
 		if (element instanceof IAdaptable) {
 			IAdaptable adaptable= (IAdaptable)element;
 			IModelElement je = adaptable.getAdapter(IModelElement.class);
@@ -88,12 +85,10 @@ public class WorkingSetFilter extends ViewerFilter {
 		return false;
 	}
 
-	/*
- 	 * Overrides method from ViewerFilter
- 	 */
+	@Override
 	public Object[] filter(Viewer viewer, Object parent, Object[] elements) {
 		Object[] result= null;
-		if (fWorkingSet != null) 
+		if (fWorkingSet != null)
 			fCachedWorkingSet= fWorkingSet.getElements();
 		try {
 			result= super.filter(viewer, parent, elements);
@@ -106,7 +101,7 @@ public class WorkingSetFilter extends ViewerFilter {
 	private boolean isEnclosing(IPath elementPath) {
 		if (elementPath == null)
 			return false;
-			
+
 		IAdaptable[] cachedWorkingSet= fCachedWorkingSet;
 		if (cachedWorkingSet == null)
 			cachedWorkingSet= fWorkingSet.getElements();
@@ -118,17 +113,17 @@ public class WorkingSetFilter extends ViewerFilter {
 		}
 		return false;
 	}
-	
+
 	public boolean isEnclosing(IModelElement element) {
 		Assert.isNotNull(element);
-		
+
 		IAdaptable[] cachedWorkingSet= fCachedWorkingSet;
 		if (cachedWorkingSet == null)
 			cachedWorkingSet= fWorkingSet.getElements();
-		
+
 		boolean isElementPathComputed= false;
 		IPath elementPath= null; // will be lazy computed if needed
-		
+
 		int length= cachedWorkingSet.length;
 		for (int i= 0; i < length; i++) {
 			IModelElement scopeElement = cachedWorkingSet[i]
@@ -174,13 +169,13 @@ public class WorkingSetFilter extends ViewerFilter {
 		}
 		return false;
 	}
-	
+
 	private boolean isEnclosing(IAdaptable element, IPath path) {
 		if (path == null)
 			return false;
-		
+
 		IPath elementPath= null;
-		
+
 		IResource elementResource = element.getAdapter(IResource.class);
 		if (elementResource != null)
 			elementPath= elementResource.getFullPath();
@@ -194,8 +189,8 @@ public class WorkingSetFilter extends ViewerFilter {
 
 		if (elementPath == null && element instanceof IStorage)
 			elementPath= ((IStorage)element).getFullPath();
-		
-		if (elementPath == null)			
+
+		if (elementPath == null)
 			return false;
 
 		if (elementPath.isPrefixOf(path))
@@ -203,8 +198,8 @@ public class WorkingSetFilter extends ViewerFilter {
 
 		if (path.isPrefixOf(elementPath))
 			return true;
-		
+
 		return false;
 	}
-	
+
 }

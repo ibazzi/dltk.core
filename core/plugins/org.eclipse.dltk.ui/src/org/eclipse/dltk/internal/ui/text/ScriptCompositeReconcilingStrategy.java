@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.text;
 
@@ -33,7 +32,7 @@ public class ScriptCompositeReconcilingStrategy extends
 
 	/**
 	 * Creates a new script reconciling strategy.
-	 * 
+	 *
 	 * @param editor
 	 *            the editor of the strategy's reconciler
 	 * @param documentPartitioning
@@ -78,6 +77,7 @@ public class ScriptCompositeReconcilingStrategy extends
 		return null;
 	}
 
+	@Override
 	public void reconcile(DirtyRegion dirtyRegion, IRegion subRegion) {
 		IProblemRequestorExtension e = getProblemRequestorExtension();
 		if (e != null) {
@@ -92,6 +92,7 @@ public class ScriptCompositeReconcilingStrategy extends
 		}
 	}
 
+	@Override
 	public void reconcile(IRegion partition) {
 		IProblemRequestorExtension e = getProblemRequestorExtension();
 		if (e != null) {
@@ -106,6 +107,7 @@ public class ScriptCompositeReconcilingStrategy extends
 		}
 	}
 
+	@Override
 	public void initialReconcile() {
 		IProblemRequestorExtension e = getProblemRequestorExtension();
 		if (e != null) {
@@ -122,7 +124,7 @@ public class ScriptCompositeReconcilingStrategy extends
 
 	/**
 	 * Tells this strategy whether to inform its listeners.
-	 * 
+	 *
 	 * @param notify
 	 *            <code>true</code> if listeners should be notified
 	 */
@@ -132,8 +134,8 @@ public class ScriptCompositeReconcilingStrategy extends
 
 	/**
 	 * Called before reconciling is started.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	public void aboutToBeReconciled() {
 		fScriptStrategy.aboutToBeReconciled();

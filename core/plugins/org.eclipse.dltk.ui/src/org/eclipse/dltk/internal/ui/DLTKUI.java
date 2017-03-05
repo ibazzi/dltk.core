@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 xored software, Inc.
+ * Copyright (c) 2009, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -17,9 +17,7 @@ public class DLTKUI implements IStartup {
 
 	private static volatile boolean started = false;
 
-	/*
-	 * @see org.eclipse.ui.IStartup#earlyStartup()
-	 */
+	@Override
 	public void earlyStartup() {
 		started = true;
 	}

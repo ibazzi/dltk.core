@@ -1,17 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.debug.core.model.operations;
 
 import org.eclipse.dltk.dbgp.IDbgpFeature;
 import org.eclipse.dltk.dbgp.IDbgpSession;
-import org.eclipse.dltk.dbgp.IDbgpStatus;
 import org.eclipse.dltk.dbgp.commands.IDbgpCoreCommands;
 import org.eclipse.dltk.dbgp.commands.IDbgpExtendedCommands;
 import org.eclipse.dltk.dbgp.commands.IDbgpFeatureCommands;
@@ -42,59 +40,31 @@ public class DbgpDebugger {
 		this.session = thread.getDbgpSession();
 
 		initialStepIntoOperation = new DbgpStepIntoOperation(thread,
-				new DbgpOperation.IResultHandler() {
-					public void finish(IDbgpStatus status, DbgpException e) {
-						end.endInitialStepInto(e, status);
-					}
-				});
+				(status, e) -> end.endInitialStepInto(e, status));
 
 		/*
 		 * FIXME should use single command queue here to guarantee we handle
 		 * responses in the same sequences as we send requests
 		 */
 		stepIntoOperation = new DbgpStepIntoOperation(thread,
-				new DbgpOperation.IResultHandler() {
-					public void finish(IDbgpStatus status, DbgpException e) {
-						end.endStepInto(e, status);
-					}
-				});
+				(status, e) -> end.endStepInto(e, status));
 
 		stepOverOperation = new DbgpStepOverOperation(thread,
-				new DbgpOperation.IResultHandler() {
-					public void finish(IDbgpStatus status, DbgpException e) {
-						end.endStepOver(e, status);
-					}
-				});
+				(status, e) -> end.endStepOver(e, status));
 
 		stepReturnOperation = new DbgpStepReturnOperation(thread,
-				new DbgpOperation.IResultHandler() {
-					public void finish(IDbgpStatus status, DbgpException e) {
-						end.endStepReturn(e, status);
-					}
-				});
+				(status, e) -> end.endStepReturn(e, status));
 
 		suspendOperation = new DbgpSuspendOperation(thread,
-				new DbgpOperation.IResultHandler() {
-					public void finish(IDbgpStatus status, DbgpException e) {
-						end.endSuspend(e, status);
-					}
-				});
+				(status, e) -> end.endSuspend(e, status));
 
 		resumeOperation = new DbgpResumeOperation(thread,
-				new DbgpOperation.IResultHandler() {
-					public void finish(IDbgpStatus status, DbgpException e) {
-						end.endResume(e, status);
-					}
-				});
+				(status, e) -> end.endResume(e, status));
 
 		terminateOperation = new DbgpTerminateOperation(thread,
-				new DbgpOperation.IResultHandler() {
-					public void finish(IDbgpStatus status, DbgpException e) {
-						end.endTerminate(e, status);
-					}
-				});
+				(status, e) -> end.endTerminate(e, status));
 	}
-	
+
 	public void initialStepInto() {
 		initialStepIntoOperation.schedule();
 	}
@@ -144,8 +114,8 @@ public class DbgpDebugger {
 
 	public void setFeatureBoolean(String name, boolean value)
 			throws DbgpException {
-		setFeature(name, value ? IDbgpFeature.ONE_VALUE
-				: IDbgpFeature.ZERO_VALUE);
+		setFeature(name,
+				value ? IDbgpFeature.ONE_VALUE : IDbgpFeature.ZERO_VALUE);
 	}
 
 	public int getFeatureInteger(String name) throws DbgpException {
@@ -325,8 +295,8 @@ public class DbgpDebugger {
 
 	public static void printEngineInfo(DbgpDebugger d) throws DbgpException {
 		// TODO: to debug log
-		System.out.println(IDbgpFeatureCommands.LANGUAGE_SUPPORTS_THREADS
-				+ ": " + d.isSupportsThreads()); //$NON-NLS-1$
+		System.out.println(IDbgpFeatureCommands.LANGUAGE_SUPPORTS_THREADS + ": " //$NON-NLS-1$
+				+ d.isSupportsThreads());
 		System.out.println(IDbgpFeatureCommands.LANGUAGE_NAME + ": " //$NON-NLS-1$
 				+ d.getLanguageName());
 		System.out.println(IDbgpFeatureCommands.LANGUAGE_VERSION + ": " //$NON-NLS-1$

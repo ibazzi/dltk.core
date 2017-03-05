@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -82,7 +82,7 @@ public class EditorUtility {
 	/**
 	 * Returns the DLTK project for a given editor input or <code>null</code> if
 	 * no corresponding DLTK project exists.
-	 * 
+	 *
 	 * @param input
 	 *            the editor input
 	 * @return the corresponding DLTK project
@@ -112,7 +112,7 @@ public class EditorUtility {
 
 	/**
 	 * Returns the given editor's input as model element.
-	 * 
+	 *
 	 * @param editor
 	 *            the editor
 	 * @param primaryOnly
@@ -137,7 +137,7 @@ public class EditorUtility {
 	 * Opens a Script editor for an element such as <code>IModelElement</code>,
 	 * <code>IFile</code>, or <code>IStorage</code>. The editor is activated by
 	 * default.
-	 * 
+	 *
 	 * @return the IEditorPart or null if wrong element type or opening failed
 	 */
 	public static IEditorPart openInEditor(Object inputElement)
@@ -147,7 +147,7 @@ public class EditorUtility {
 
 	/**
 	 * Opens a Script editor for an element (IModelElement, IFile, IStorage...)
-	 * 
+	 *
 	 * @return the IEditorPart or null if wrong element type or opening failed
 	 */
 	public static IEditorPart openInEditor(Object inputElement, boolean activate)
@@ -297,7 +297,7 @@ public class EditorUtility {
 
 	/**
 	 * Selects and reveals the given line in the given editor part.
-	 * 
+	 *
 	 * @param editorPart
 	 * @param lineNumber
 	 * @throws CoreException
@@ -343,6 +343,7 @@ public class EditorUtility {
 			if (input instanceof IFileEditorInput) {
 				final IGotoMarker gotoMarkerTarget = (IGotoMarker) editor;
 				WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
+					@Override
 					protected void execute(IProgressMonitor monitor)
 							throws CoreException {
 						IMarker marker = null;
@@ -455,7 +456,7 @@ public class EditorUtility {
 
 	/**
 	 * Tests if a CU is currently shown in an editor
-	 * 
+	 *
 	 * @return the IEditorPart if shown, null if element is not open in an
 	 *         editor
 	 */
@@ -515,13 +516,13 @@ public class EditorUtility {
 	/**
 	 * Appends to modifier string of the given SWT modifier bit to the given
 	 * modifierString.
-	 * 
+	 *
 	 * @param modifierString
 	 *            the modifier string
 	 * @param modifier
 	 *            an int with SWT modifier bit
 	 * @return the concatenated modifier string
-	 * 
+	 *
 	 */
 	private static String appendModifierString(String modifierString,
 			int modifier) {
@@ -537,11 +538,11 @@ public class EditorUtility {
 
 	/**
 	 * Returns the modifier string for the given SWT modifier modifier bits.
-	 * 
+	 *
 	 * @param stateMask
 	 *            the SWT modifier bits
 	 * @return the modifier string
-	 * 
+	 *
 	 */
 	public static String getModifierString(int stateMask) {
 		String modifierString = ""; //$NON-NLS-1$
@@ -560,11 +561,11 @@ public class EditorUtility {
 	/**
 	 * Maps the localized modifier name to a code in the same manner as
 	 * #findModifier.
-	 * 
+	 *
 	 * @param modifierName
 	 *            the modifier name
 	 * @return the SWT modifier bit, or <code>0</code> if no match was found
-	 * 
+	 *
 	 */
 	public static int findLocalizedModifier(String modifierName) {
 		if (modifierName == null)
@@ -589,7 +590,7 @@ public class EditorUtility {
 	 * size of at least one line. If successive lines have changed a region
 	 * spans over the size of all successive lines. The regions include line
 	 * delimiters.
-	 * 
+	 *
 	 * @param buffer
 	 *            the buffer to compare contents from
 	 * @param monitor
@@ -608,11 +609,7 @@ public class EditorUtility {
 		try {
 			SafeRunner.run(new ISafeRunnable() {
 
-				/*
-				 * @see
-				 * org.eclipse.core.runtime.ISafeRunnable#handleException(java
-				 * .lang.Throwable)
-				 */
+				@Override
 				public void handleException(Throwable exception) {
 					DLTKUIPlugin
 							.log(new Status(
@@ -629,9 +626,7 @@ public class EditorUtility {
 					result[0] = null;
 				}
 
-				/*
-				 * @see org.eclipse.core.runtime.ISafeRunnable#run()
-				 */
+				@Override
 				public void run() throws Exception {
 					monitor.beginTask(
 							DLTKEditorMessages.CompilationUnitDocumentProvider_calculatingChangedRegions_message,
@@ -662,7 +657,7 @@ public class EditorUtility {
 				 * <code>oldDocument</code>s content with
 				 * <code>currentDocument</code>s content. Successive lines are
 				 * merged into one region.
-				 * 
+				 *
 				 * @param oldDocument
 				 *            a document containing the old content
 				 * @param currentDocument
@@ -733,7 +728,7 @@ public class EditorUtility {
 	/**
 	 * Creates and returns a new sub-progress monitor for the given parent
 	 * monitor.
-	 * 
+	 *
 	 * @param monitor
 	 *            the parent progress monitor
 	 * @param ticks

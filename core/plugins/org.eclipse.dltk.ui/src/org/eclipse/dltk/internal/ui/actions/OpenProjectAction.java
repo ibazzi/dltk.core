@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.actions;
 
@@ -20,7 +19,6 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -42,26 +40,26 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
  * Action to open a closed project. Action either opens the closed projects
  * provided by the structured selection or presents a dialog from which the
  * user can select the projects to be opened.
- * 
+ *
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * 
+ *
 	 *
  */
 public class OpenProjectAction extends SelectionDispatchAction implements IResourceChangeListener {
-	
+
 	private static final int EMPTY_SELECTION= 1;
 	private static final int ELEMENT_SELECTION= 2;
-	
+
 	private int fMode;
 	private OpenResourceAction fWorkbenchAction;
-	
+
 	/**
 	 * Creates a new <code>OpenProjectAction</code>. The action requires
 	 * that the selection provided by the site's selection provider is of type <code>
 	 * org.eclipse.jface.viewers.IStructuredSelection</code>.
-	 * 
+	 *
 	 * @param site the site providing context information for this action
 	 */
 	public OpenProjectAction(IWorkbenchSite site) {
@@ -72,13 +70,14 @@ public class OpenProjectAction extends SelectionDispatchAction implements IResou
 		if (DLTKCore.DEBUG) {
 			System.err.println("Add help support here..."); //$NON-NLS-1$
 		}
-		
+
 		//PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IScriptHelpContextIds.OPEN_PROJECT_ACTION);
 	}
-	
+
 	/*
 	 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
 	 */
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		fWorkbenchAction.resourceChanged(event);
 		switch (fMode) {
@@ -90,7 +89,7 @@ public class OpenProjectAction extends SelectionDispatchAction implements IResou
 				break;
 		}
 	}
-	
+
 	private void internalResourceChanged(IResourceChangeEvent event) {
 		IResourceDelta delta = event.getDelta();
 		if (delta != null) {
@@ -104,20 +103,23 @@ public class OpenProjectAction extends SelectionDispatchAction implements IResou
 			}
 		}
 	}
-	
+
 	//---- normal selection -------------------------------------
-		
+
+	@Override
 	public void selectionChanged(ISelection selection) {
 		setEnabled(hasCloseProjects());
 		fMode= EMPTY_SELECTION;
 	}
-		
+
+	@Override
 	public void run(ISelection selection) {
 		internalRun();
 	}
-	
+
 	//---- structured selection ---------------------------------------
-		
+
+	@Override
 	public void selectionChanged(IStructuredSelection selection) {
 		if (selection.isEmpty()) {
 			setEnabled(hasCloseProjects());
@@ -133,6 +135,7 @@ public class OpenProjectAction extends SelectionDispatchAction implements IResou
 		fMode= ELEMENT_SELECTION;
 	}
 
+	@Override
 	public void run(IStructuredSelection selection) {
 		if (selection.isEmpty()) {
 			internalRun();
@@ -140,11 +143,11 @@ public class OpenProjectAction extends SelectionDispatchAction implements IResou
 		}
 		fWorkbenchAction.run();
 	}
-	
+
 	private void internalRun() {
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), new ModelElementLabelProvider());
-		dialog.setTitle(ActionMessages.OpenProjectAction_dialog_title); 
-		dialog.setMessage(ActionMessages.OpenProjectAction_dialog_message); 
+		dialog.setTitle(ActionMessages.OpenProjectAction_dialog_title);
+		dialog.setMessage(ActionMessages.OpenProjectAction_dialog_message);
 		dialog.setElements(getClosedProjects());
 		dialog.setMultipleSelection(true);
 		int result= dialog.open();
@@ -155,35 +158,36 @@ public class OpenProjectAction extends SelectionDispatchAction implements IResou
 		try {
 			PlatformUI.getWorkbench().getProgressService().run(true, true, new WorkbenchRunnableAdapter(runnable));
 		} catch (InvocationTargetException e) {
-			ExceptionHandler.handle(e, getShell(), 
-				ActionMessages.OpenProjectAction_dialog_title, 
-				ActionMessages.OpenProjectAction_error_message); 
+			ExceptionHandler.handle(e, getShell(),
+				ActionMessages.OpenProjectAction_dialog_title,
+				ActionMessages.OpenProjectAction_error_message);
 		} catch (InterruptedException e) {
 		}
 	}
-	
+
 	private IWorkspaceRunnable createRunnable(final Object[] projects) {
-		return new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				monitor.beginTask("", projects.length); //$NON-NLS-1$
-				MultiStatus errorStatus= null;
-				for (int i = 0; i < projects.length; i++) {
-					IProject project= (IProject)projects[i];
-					try {
-						project.open(new SubProgressMonitor(monitor, 1));
-					} catch (CoreException e) {
-						if (errorStatus == null)
-							errorStatus = new MultiStatus(DLTKUIPlugin.PLUGIN_ID, IStatus.ERROR, ActionMessages.OpenProjectAction_error_message, e); 
-						errorStatus.merge(e.getStatus());
-					}
+		return monitor -> {
+			monitor.beginTask("", projects.length); //$NON-NLS-1$
+			MultiStatus errorStatus = null;
+			for (int i = 0; i < projects.length; i++) {
+				IProject project = (IProject) projects[i];
+				try {
+					project.open(new SubProgressMonitor(monitor, 1));
+				} catch (CoreException e) {
+					if (errorStatus == null)
+						errorStatus = new MultiStatus(DLTKUIPlugin.PLUGIN_ID,
+								IStatus.ERROR,
+								ActionMessages.OpenProjectAction_error_message,
+								e);
+					errorStatus.merge(e.getStatus());
 				}
-				monitor.done();
-				if (errorStatus != null)
-					throw new CoreException(errorStatus);
 			}
+			monitor.done();
+			if (errorStatus != null)
+				throw new CoreException(errorStatus);
 		};
 	}
-	
+
 	private Object[] getClosedProjects() {
 		IProject[] projects= ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		List result= new ArrayList(5);
@@ -194,7 +198,7 @@ public class OpenProjectAction extends SelectionDispatchAction implements IResou
 		}
 		return result.toArray();
 	}
-	
+
 	private boolean hasCloseProjects() {
 		IProject[] projects= ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projects.length; i++) {

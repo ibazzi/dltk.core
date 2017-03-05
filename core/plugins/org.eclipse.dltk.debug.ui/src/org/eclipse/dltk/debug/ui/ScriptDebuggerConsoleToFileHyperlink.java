@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.debug.ui;
 
@@ -23,8 +22,8 @@ import org.eclipse.ui.console.TextConsole;
 /**
  * A hyperlink from a stack trace line of the form "(file "*.*")"
  */
-public class ScriptDebuggerConsoleToFileHyperlink extends
-		ScriptDebugConsoleGenericHyperlink {
+public class ScriptDebuggerConsoleToFileHyperlink
+		extends ScriptDebugConsoleGenericHyperlink {
 	private final Pattern pattern;
 
 	public ScriptDebuggerConsoleToFileHyperlink(TextConsole console,
@@ -33,6 +32,7 @@ public class ScriptDebuggerConsoleToFileHyperlink extends
 		this.pattern = pattern;
 	}
 
+	@Override
 	protected String getFileName(String linkText) throws CoreException {
 
 		Matcher m = pattern.matcher(linkText);
@@ -45,6 +45,7 @@ public class ScriptDebuggerConsoleToFileHyperlink extends
 		throw new CoreException(status);
 	}
 
+	@Override
 	protected int getLineNumber(String linkText) throws CoreException {
 
 		Matcher m = pattern.matcher(linkText);

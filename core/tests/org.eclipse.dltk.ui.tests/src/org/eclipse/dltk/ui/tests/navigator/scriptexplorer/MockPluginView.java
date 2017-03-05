@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
-
 package org.eclipse.dltk.ui.tests.navigator.scriptexplorer;
 
 import java.util.ArrayList;
@@ -28,7 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 /**
  * Helper to test the PackageExplorerContentProvider.
  * 
-	 *
+ *
  */
 public class MockPluginView extends ScriptExplorerPart {
 
@@ -57,6 +55,7 @@ public class MockPluginView extends ScriptExplorerPart {
 	 * 
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 	
 		//create viewer
@@ -71,10 +70,12 @@ public class MockPluginView extends ScriptExplorerPart {
 		
 	}
 	
+	@Override
 	protected ProblemTreeViewer createViewer(Composite parent) {
 		return new TestProblemTreeViewer(parent, SWT.MULTI);
 	}
 
+	@Override
 	public void dispose() {
 		if (fViewer != null) {
 			IContentProvider p = fViewer.getContentProvider();
@@ -85,12 +86,11 @@ public class MockPluginView extends ScriptExplorerPart {
 		super.dispose();
 	}
 
-	/*
-	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
-	 */
+	@Override
 	public void setFocus() {
 	}
 	
+	@Override
 	public TreeViewer getTreeViewer(){
 		return fViewer;
 	}
@@ -114,21 +114,25 @@ public class MockPluginView extends ScriptExplorerPart {
 			super(parent,flag);
 		}
 		
+		@Override
 		public void refresh(Object object){
 			fRefreshHappened= true;
 			fRefreshedObjects.add(object);
 		}
 		
+		@Override
 		public void refresh(final Object element, final boolean updateLabels) {
 			fRefreshHappened= true;
 			fRefreshedObjects.add(element);
 		}
 		
+		@Override
 		public void remove(Object object) {
 			fRemoveHappened= true;
 			fRemovedObject.add(object);
 		}
 		
+		@Override
 		public void add(Object parentObject, Object object){
 			fAddHappened= true;
 			fAddedObject= object;

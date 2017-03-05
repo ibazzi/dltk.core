@@ -1,12 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
- *          (report 36180: Callers/Callees view)
  *******************************************************************************/
 package org.eclipse.dltk.internal.corext.callhierarchy;
 
@@ -28,12 +26,13 @@ class MethodReferencesSearchRequestor extends SearchRequestor {
     public Map getCallers() {
         return fSearchResults.getCallers();
     }
-    
-    public void acceptSearchMatch(SearchMatch match) {
+
+	@Override
+	public void acceptSearchMatch(SearchMatch match) {
         if (fRequireExactMatch && (match.getAccuracy() != SearchMatch.A_ACCURATE)) {
             return;
         }
-        
+
         if (match.isInsideDocComment()) {
             return;
         }

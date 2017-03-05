@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,8 +17,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -62,11 +60,13 @@ public class AlreadyExistsDialog extends StatusDialog {
 		setHelpAvailable(false);
 	}
 
+	@Override
 	public void create() {
 		super.create();
 		setTitle(FormatterMessages.AlreadyExistsDialog_loadProfile);
 	}
 
+	@Override
 	public Control createDialogArea(Composite parent) {
 
 		initializeComposite(parent);
@@ -86,13 +86,10 @@ public class AlreadyExistsDialog extends StatusDialog {
 		fNameText.setSelection(0, fProfile.getName().length());
 		fNameText.setFocus();
 
-		fNameText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				doValidation();
-			}
-		});
+		fNameText.addModifyListener(e -> doValidation());
 
 		fRenameRadio.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fNameText.setEnabled(true);
 				fNameText.setFocus();
@@ -100,16 +97,19 @@ public class AlreadyExistsDialog extends StatusDialog {
 				doValidation();
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
 
 		fOverwriteRadio.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fNameText.setEnabled(false);
 				doValidation();
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
@@ -188,6 +188,7 @@ public class AlreadyExistsDialog extends StatusDialog {
 		updateStatus(fOk);
 	}
 
+	@Override
 	protected void okPressed() {
 		if (!getStatus().isOK())
 			return;

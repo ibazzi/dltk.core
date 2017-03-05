@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.actions;
 
@@ -25,15 +24,14 @@ import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
-
 /**
  * Action group that adds the Script search actions to a context menu and
  * the global menu bar.
- * 
+ *
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * 
+ *
  */
 public class SearchActionGroup extends ActionGroup {
 
@@ -45,25 +43,25 @@ public class SearchActionGroup extends ActionGroup {
 	private DeclarationsSearchGroup fDeclarationsGroup;
 	//private ImplementorsSearchGroup fImplementorsGroup;
 	//private OccurrencesSearchGroup fOccurrencesGroup;
-	
-	
+
+
 	/**
-	 * Creates a new <code>JavaSearchActionGroup</code>. The group 
-	 * requires that the selection provided by the part's selection provider 
+	 * Creates a new <code>JavaSearchActionGroup</code>. The group
+	 * requires that the selection provided by the part's selection provider
 	 * is of type <code>org.eclipse.jface.viewers.IStructuredSelection</code>.
-	 * 
+	 *
 	 * @param part the view part that owns this action group
-	 * @param toolkit 
+	 * @param toolkit
 	 */
 	public SearchActionGroup(IViewPart part, IDLTKLanguageToolkit toolkit) {
 		this(part.getViewSite(), toolkit);
 	}
-	
+
 	/**
-	 * Creates a new <code>JavaSearchActionGroup</code>. The group 
-	 * requires that the selection provided by the page's selection provider 
+	 * Creates a new <code>JavaSearchActionGroup</code>. The group
+	 * requires that the selection provided by the page's selection provider
 	 * is of type <code>org.eclipse.jface.viewers.IStructuredSelection</code>.
-	 * 
+	 *
 	 * @param page the page that owns this action group
 	 */
 	public SearchActionGroup(Page page, IDLTKLanguageToolkit toolkit) {
@@ -76,7 +74,7 @@ public class SearchActionGroup extends ActionGroup {
 	 */
 	public SearchActionGroup(ScriptEditor editor) {
 		fEditor= editor;
-		
+
 		fReferencesGroup= new ReferencesSearchGroup(fEditor, fEditor.getLanguageToolkit());
 		//fReadAccessGroup= new ReadReferencesSearchGroup(fEditor);
 		//fWriteAccessGroup= new WriteReferencesSearchGroup(fEditor);
@@ -94,9 +92,7 @@ public class SearchActionGroup extends ActionGroup {
 		//fOccurrencesGroup= new OccurrencesSearchGroup(site);
 	}
 
-	/* 
-	 * Method declared on ActionGroup.
-	 */
+	@Override
 	public void setContext(ActionContext context) {
 		fReferencesGroup.setContext(context);
 		fDeclarationsGroup.setContext(context);
@@ -106,9 +102,7 @@ public class SearchActionGroup extends ActionGroup {
 		//fOccurrencesGroup.setContext(context);
 	}
 
-	/* 
-	 * Method declared on ActionGroup.
-	 */
+	@Override
 	public void fillActionBars(IActionBars actionBar) {
 		super.fillActionBars(actionBar);
 		fReferencesGroup.fillActionBars(actionBar);
@@ -118,13 +112,11 @@ public class SearchActionGroup extends ActionGroup {
 		//fWriteAccessGroup.fillActionBars(actionBar);
 		//fOccurrencesGroup.fillActionBars(actionBar);
 	}
-	
-	/* 
-	 * Method declared on ActionGroup.
-	 */
+
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		super.fillContextMenu(menu);
-		
+
 		if(DLTKUIPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.SEARCH_USE_REDUCED_MENU)) {
 			fReferencesGroup.fillContextMenu(menu);
 			fDeclarationsGroup.fillContextMenu(menu);
@@ -138,33 +130,31 @@ public class SearchActionGroup extends ActionGroup {
 			IMenuManager target= menu;
 			IMenuManager searchSubMenu= null;
 			if (fEditor != null) {
-				String groupName= SearchMessages.group_search; 
+				String groupName= SearchMessages.group_search;
 				searchSubMenu= new MenuManager(groupName, ITextEditorActionConstants.GROUP_FIND);
 				searchSubMenu.add(new GroupMarker(ITextEditorActionConstants.GROUP_FIND));
 				target= searchSubMenu;
 			}
-			
+
 			fReferencesGroup.fillContextMenu(target);
 			fDeclarationsGroup.fillContextMenu(target);
 			//fImplementorsGroup.fillContextMenu(target);
 			//fReadAccessGroup.fillContextMenu(target);
 			//fWriteAccessGroup.fillContextMenu(target);
-			
+
 //			if (searchSubMenu != null) {
 //				fOccurrencesGroup.fillContextMenu(target);
 //				searchSubMenu.add(new Separator());
 //			}
-			
+
 			// no other way to find out if we have added items.
-			if (searchSubMenu != null && searchSubMenu.getItems().length > 2) {		
+			if (searchSubMenu != null && searchSubMenu.getItems().length > 2) {
 				menu.appendToGroup(ITextEditorActionConstants.GROUP_FIND, searchSubMenu);
 			}
 		}
-	}	
+	}
 
-	/* 
-	 * Method declared on ActionGroup.
-	 */
+	@Override
 	public void dispose() {
 		fReferencesGroup.dispose();
 		fDeclarationsGroup.dispose();

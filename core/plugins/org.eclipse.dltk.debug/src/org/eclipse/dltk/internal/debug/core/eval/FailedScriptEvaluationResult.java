@@ -33,10 +33,12 @@ public class FailedScriptEvaluationResult implements IScriptEvaluationResult {
 		this.messages = messages;
 	}
 
+	@Override
 	public boolean hasErrors() {
 		return true;
 	}
 
+	@Override
 	public String[] getErrorMessages() {
 		if (messages != null) {
 			return messages;
@@ -47,18 +49,22 @@ public class FailedScriptEvaluationResult implements IScriptEvaluationResult {
 		return new String[0];
 	}
 
+	@Override
 	public DebugException getException() {
 		return exception;
 	}
 
+	@Override
 	public String getSnippet() {
 		return snippet;
 	}
 
+	@Override
 	public IScriptThread getThread() {
 		return thread;
 	}
 
+	@Override
 	public IScriptValue getValue() {
 		return null;
 	}

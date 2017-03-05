@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.wizards.buildpath;
 
@@ -35,45 +34,44 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-
 public class NewSourceFolderDialog extends StatusDialog {
-	
+
 	private SelectionButtonDialogField fUseProjectButton;
 	private SelectionButtonDialogField fUseFolderButton;
-	
+
 	private StringDialogField fContainerDialogField;
 	private StatusInfo fContainerFieldStatus;
-	
+
 	private IContainer fFolder;
 	private List fExistingFolders;
 	private IProject fCurrProject;
-		
+
 	public NewSourceFolderDialog(Shell parent, String title, IProject project, List existingFolders, BPListElement entryToEdit) {
 		super(parent);
 		setTitle(title);
-		
+
 		fContainerFieldStatus= new StatusInfo();
-	
+
 		SourceContainerAdapter adapter= new SourceContainerAdapter();
-		
+
 		fUseProjectButton= new SelectionButtonDialogField(SWT.RADIO);
-		fUseProjectButton.setLabelText(NewWizardMessages.NewSourceFolderDialog_useproject_button); 
+		fUseProjectButton.setLabelText(NewWizardMessages.NewSourceFolderDialog_useproject_button);
 		fUseProjectButton.setDialogFieldListener(adapter);
 
 		fUseFolderButton= new SelectionButtonDialogField(SWT.RADIO);
-		fUseFolderButton.setLabelText(NewWizardMessages.NewSourceFolderDialog_usefolder_button); 
-		fUseFolderButton.setDialogFieldListener(adapter);		
-		
+		fUseFolderButton.setLabelText(NewWizardMessages.NewSourceFolderDialog_usefolder_button);
+		fUseFolderButton.setDialogFieldListener(adapter);
+
 		fContainerDialogField= new StringDialogField();
 		fContainerDialogField.setDialogFieldListener(adapter);
-		fContainerDialogField.setLabelText(NewWizardMessages.NewSourceFolderDialog_sourcefolder_label); 
-		
+		fContainerDialogField.setLabelText(NewWizardMessages.NewSourceFolderDialog_sourcefolder_label);
+
 		fUseFolderButton.attachDialogField(fContainerDialogField);
-		
+
 		fFolder= null;
 		fExistingFolders= existingFolders;
 		fCurrProject= project;
-		
+
 		boolean useFolders= true;
 		if (entryToEdit == null) {
 			fContainerDialogField.setText(""); //$NON-NLS-1$
@@ -85,11 +83,12 @@ public class NewSourceFolderDialog extends StatusDialog {
 		fUseFolderButton.setSelection(useFolders);
 		fUseProjectButton.setSelection(!useFolders);
 	}
-	
+
 	public void setMessage(String message) {
 		fContainerDialogField.setLabelText(message);
 	}
-	
+
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite= (Composite)super.createDialogArea(parent);
 
@@ -99,13 +98,13 @@ public class NewSourceFolderDialog extends StatusDialog {
 		layout.marginWidth= 0;
 		layout.numColumns= 1;
 		inner.setLayout(layout);
-		
+
 		int widthHint= convertWidthInCharsToPixels(50);
-		
-		
+
+
 		GridData data= new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint= widthHint;
-		
+
 		if (fExistingFolders.contains(fCurrProject)) {
 			fContainerDialogField.doFillIntoGrid(inner, 2);
 		} else {
@@ -119,71 +118,70 @@ public class NewSourceFolderDialog extends StatusDialog {
 		Text text= fContainerDialogField.getTextControl(null);
 		text.setLayoutData(data);
 		TextFieldNavigationHandler.install(text);
-				
+
 		fContainerDialogField.postSetFocusOnDialogField(parent.getDisplay());
-		applyDialogFont(composite);		
+		applyDialogFont(composite);
 		return composite;
 	}
 
-		
+
 	// -------- SourceContainerAdapter --------
 
 	private class SourceContainerAdapter implements IDialogFieldListener {
-		
+
 		// -------- IDialogFieldListener
-		
+
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 			doStatusLineUpdate();
 		}
 	}
-	
+
 	protected void doStatusLineUpdate() {
 		checkIfPathValid();
 		updateStatus(fContainerFieldStatus);
-	}		
-	
+	}
+
 	protected void checkIfPathValid() {
 		fFolder= null;
 		IContainer folder= null;
 		if (fUseFolderButton.isSelected()) {
 			String pathStr= fContainerDialogField.getText();
 			if (pathStr.length() == 0) {
-				fContainerFieldStatus.setError(NewWizardMessages.NewSourceFolderDialog_error_enterpath); 
+				fContainerFieldStatus.setError(NewWizardMessages.NewSourceFolderDialog_error_enterpath);
 				return;
 			}
 			IPath path= fCurrProject.getFullPath().append(pathStr);
 			IWorkspace workspace= fCurrProject.getWorkspace();
-			
+
 			IStatus pathValidation= workspace.validatePath(path.toString(), IResource.FOLDER);
 			if (!pathValidation.isOK()) {
-				fContainerFieldStatus.setError(Messages.format(NewWizardMessages.NewSourceFolderDialog_error_invalidpath, pathValidation.getMessage())); 
+				fContainerFieldStatus.setError(Messages.format(NewWizardMessages.NewSourceFolderDialog_error_invalidpath, pathValidation.getMessage()));
 				return;
 			}
 			folder= fCurrProject.getFolder(pathStr);
 		} else {
-			folder= fCurrProject; 
+			folder= fCurrProject;
 		}
 		if (isExisting(folder)) {
-			fContainerFieldStatus.setError(NewWizardMessages.NewSourceFolderDialog_error_pathexists); 
+			fContainerFieldStatus.setError(NewWizardMessages.NewSourceFolderDialog_error_pathexists);
 			return;
 		}
 		fContainerFieldStatus.setOK();
 		fFolder= folder;
 	}
-	
+
 	private boolean isExisting(IContainer folder) {
 		return fExistingFolders.contains(folder);
 	}
-		
-	
-		
+
+
+
 	public IContainer getSourceFolder() {
 		return fFolder;
 	}
-		
-	/*
-	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
-	 */
+
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		if (DLTKCore.DEBUG) {

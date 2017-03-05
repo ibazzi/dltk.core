@@ -3,13 +3,14 @@ package org.eclipse.dltk.debug.core;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 
-public class DLTKDebugPluginPreferenceInitializer extends
-		AbstractPreferenceInitializer {
+public class DLTKDebugPluginPreferenceInitializer
+		extends AbstractPreferenceInitializer {
 
 	public DLTKDebugPluginPreferenceInitializer() {
 		super();
 	}
 
+	@Override
 	public void initializeDefaultPreferences() {
 		Preferences prefs = DLTKDebugPlugin.getDefault().getPluginPreferences();
 		prefs.setDefault(
@@ -36,10 +37,9 @@ public class DLTKDebugPluginPreferenceInitializer extends
 		prefs.setDefault(
 				DLTKDebugPreferenceConstants.PREF_DBGP_SHOW_SCOPE_LOCAL, true);
 
-		prefs
-				.setDefault(
-						DLTKDebugPreferenceConstants.PREF_DBGP_SHOW_SCOPE_GLOBAL,
-						false);
+		prefs.setDefault(
+				DLTKDebugPreferenceConstants.PREF_DBGP_SHOW_SCOPE_GLOBAL,
+				false);
 
 		prefs.setDefault(
 				DLTKDebugPreferenceConstants.PREF_DBGP_SHOW_SCOPE_CLASS, false);

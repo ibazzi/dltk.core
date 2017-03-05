@@ -28,6 +28,7 @@ public class BreakpointTests extends AbstractDebugTests {
 
 	private IScriptLineBreakpoint breakpoint;
 
+	@Override
 	public void setUpSuite() throws Exception {
 		super.setUpSuite();
 
@@ -38,11 +39,13 @@ public class BreakpointTests extends AbstractDebugTests {
 				resource.getLocation(), 1, -1, -1, true);
 	}
 
+	@Override
 	public void tearDownSuite() throws Exception {
 		super.tearDownSuite();
 	}
 
 	// Helper methods
+	@Override
 	protected String getProjectName() {
 		return "debug";
 	}
@@ -50,6 +53,7 @@ public class BreakpointTests extends AbstractDebugTests {
 	private static IDbgpSession createDbgpSessionMock() {
 		final InvocationHandler handler = new InvocationHandler() {
 
+			@Override
 			public Object invoke(Object proxy, Method method, Object[] args)
 					throws Throwable {
 				throw new UnsupportedOperationException("Mock called "

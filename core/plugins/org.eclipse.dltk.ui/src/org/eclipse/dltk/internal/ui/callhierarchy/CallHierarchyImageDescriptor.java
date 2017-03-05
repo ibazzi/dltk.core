@@ -1,12 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
- *          (report 36180: Callers/Callees view)
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.callhierarchy;
 
@@ -18,10 +16,10 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 
 public class CallHierarchyImageDescriptor extends CompositeImageDescriptor {
-    
+
     /** Flag to render the recursive adornment */
     public final static int RECURSIVE=       0x001;
-    
+
     /** Flag to render the callee adornment */
     public final static int MAX_LEVEL=       0x002;
 
@@ -31,7 +29,7 @@ public class CallHierarchyImageDescriptor extends CompositeImageDescriptor {
 
     /**
      * Creates a new CallHierarchyImageDescriptor.
-     * 
+     *
      * @param baseImage an image descriptor used as the base image
      * @param flags flags indicating which adornments are to be rendered. See <code>setAdornments</code>
      *  for valid values.
@@ -43,11 +41,11 @@ public class CallHierarchyImageDescriptor extends CompositeImageDescriptor {
         fFlags= flags;
         fSize= size;
     }
-    
+
     /**
      * Sets the descriptors adornments. Valid values are: <code>RECURSIVE</code>, <code>CALLER</code>,
      * <code>CALLEE</code>, <code>MAX_LEVEL</code>, or any combination of those.
-     * 
+     *
      * @param adornments the image descritpors adornments
      */
     public void setAdornments(int adornments) {
@@ -56,7 +54,7 @@ public class CallHierarchyImageDescriptor extends CompositeImageDescriptor {
 
     /**
      * Returns the current adornments.
-     * 
+     *
      * @return the current adornments
      */
     public int getAdronments() {
@@ -65,59 +63,51 @@ public class CallHierarchyImageDescriptor extends CompositeImageDescriptor {
 
     /**
      * Sets the size of the image created by calling <code>createImage()</code>.
-     * 
+     *
      * @param size the size of the image returned from calling <code>createImage()</code>
      * @see ImageDescriptor#createImage()
      */
-    public void setImageSize(Point size) {        
+    public void setImageSize(Point size) {
         fSize= size;
     }
-    
+
     /**
      * Returns the size of the image created by calling <code>createImage()</code>.
-     * 
+     *
      * @return the size of the image created by calling <code>createImage()</code>
      * @see ImageDescriptor#createImage()
      */
     public Point getImageSize() {
         return new Point(fSize.x, fSize.y);
     }
-    
-    /* (non-Javadoc)
-     * Method declared in CompositeImageDescriptor
-     */
-    protected Point getSize() {
+
+    @Override
+	protected Point getSize() {
         return fSize;
     }
-    
-    /* (non-Javadoc)
-     * Method declared on Object.
-     */
-    public boolean equals(Object object) {
+
+    @Override
+	public boolean equals(Object object) {
         if (object == null || !CallHierarchyImageDescriptor.class.equals(object.getClass()))
             return false;
-            
+
         CallHierarchyImageDescriptor other= (CallHierarchyImageDescriptor)object;
         return (fBaseImage.equals(other.fBaseImage) && fFlags == other.fFlags && fSize.equals(other.fSize));
     }
-    
-    /* (non-Javadoc)
-     * Method declared on Object.
-     */
-    public int hashCode() {
+
+    @Override
+	public int hashCode() {
         return fBaseImage.hashCode() | fFlags | fSize.hashCode();
     }
-    
-    /* (non-Javadoc)
-     * Method declared in CompositeImageDescriptor
-     */
-    protected void drawCompositeImage(int width, int height) {
+
+    @Override
+	protected void drawCompositeImage(int width, int height) {
         ImageData bg= getImageData(fBaseImage);
-            
+
         drawImage(bg, 0, 0);
         drawBottomLeft();
-    }  
-    
+    }
+
 	private ImageData getImageData(ImageDescriptor descriptor) {
 		ImageData data= descriptor.getImageData(); // see bug 51965: getImageData can return null
 		if (data == null) {
@@ -126,7 +116,7 @@ public class CallHierarchyImageDescriptor extends CompositeImageDescriptor {
 		}
 		return data;
 	}
-    
+
     private void drawBottomLeft() {
         Point size= getSize();
         int x= 0;
@@ -141,5 +131,5 @@ public class CallHierarchyImageDescriptor extends CompositeImageDescriptor {
             drawImage(data, x, size.y - data.height);
             x+= data.width;
         }
-    }       
+    }
 }

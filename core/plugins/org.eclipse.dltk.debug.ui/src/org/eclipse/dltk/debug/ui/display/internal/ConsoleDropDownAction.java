@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -34,17 +34,13 @@ import org.eclipse.ui.texteditor.IUpdate;
 /**
  * Drop down action in the console to select the console to display.
  */
-public class ConsoleDropDownAction extends Action implements IMenuCreator,
-		IEvaluateConsoleListener, IUpdate {
+public class ConsoleDropDownAction extends Action
+		implements IMenuCreator, IEvaluateConsoleListener, IUpdate {
 
 	private ScriptDisplayView fView;
 	private Menu fMenu;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.texteditor.IUpdate#update()
-	 */
+	@Override
 	public void update() {
 		setEnabled(fView.getConsoles().length > 1);
 	}
@@ -62,11 +58,7 @@ public class ConsoleDropDownAction extends Action implements IMenuCreator,
 		update();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.action.IMenuCreator#dispose()
-	 */
+	@Override
 	public void dispose() {
 		if (fMenu != null) {
 			fMenu.dispose();
@@ -77,24 +69,12 @@ public class ConsoleDropDownAction extends Action implements IMenuCreator,
 		// .removeConsoleListener(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets
-	 * .Menu)
-	 */
+	@Override
 	public Menu getMenu(Menu parent) {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets
-	 * .Control)
-	 */
+	@Override
 	public Menu getMenu(Control parent) {
 		if (fMenu != null) {
 			fMenu.dispose();
@@ -126,11 +106,7 @@ public class ConsoleDropDownAction extends Action implements IMenuCreator,
 		item.fill(parent, -1);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
+	@Override
 	public void run() {
 		boolean pinned = fView.isPinned();
 		if (pinned) {
@@ -146,15 +122,10 @@ public class ConsoleDropDownAction extends Action implements IMenuCreator,
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.console.IConsoleListener#consolesAdded(org.eclipse.ui.
-	 * console.IConsole[])
-	 */
+	@Override
 	public void consoleAdded(IEvaluateConsole console) {
 		UIJob job = new UIJob("") { //$NON-NLS-1$
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				update();
 				return Status.OK_STATUS;
@@ -167,16 +138,17 @@ public class ConsoleDropDownAction extends Action implements IMenuCreator,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * Dispose the menu when a launch is removed, such that the actions in this
 	 * menu do not hang on to associated resources.
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.console.IConsoleListener#consolesRemoved(org.eclipse.ui
 	 * .console.IConsole[])
 	 */
 	public void consolesRemoved(IConsole[] consoles) {
 		UIJob job = new UIJob("") { //$NON-NLS-1$
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				if (fMenu != null) {
 					fMenu.dispose();

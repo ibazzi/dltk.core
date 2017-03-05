@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
-
 package org.eclipse.dltk.ui.preferences;
 
 import org.eclipse.dltk.ui.DLTKUIPlugin;
@@ -22,7 +20,7 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Generic base class for preference pages.
- * 
+ *
  * <p>
  * A number of {@link IPreferenceConfigurationBlock} implementations already
  * exist that can be used to provide standard preference options for editor
@@ -39,10 +37,7 @@ public abstract class AbstractConfigurationBlockPreferencePage extends
 		// empty constructor
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
+	@Override
 	public void init(IWorkbench workbench) {
 		/*
 		 * delay setup until here so sub-classes implementing the
@@ -56,22 +51,14 @@ public abstract class AbstractConfigurationBlockPreferencePage extends
 		fConfigurationBlock = createConfigurationBlock(fOverlayStore);
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse
-	 * .swt.widgets.Composite)
-	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
 				getHelpId());
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse
-	 * .swt.widgets.Composite)
-	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		fOverlayStore.load();
 		fOverlayStore.start();
@@ -88,9 +75,7 @@ public abstract class AbstractConfigurationBlockPreferencePage extends
 		fConfigurationBlock.initialize();
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
-	 */
+	@Override
 	public boolean performOk() {
 		fConfigurationBlock.performOk();
 		fOverlayStore.propagate();
@@ -100,9 +85,7 @@ public abstract class AbstractConfigurationBlockPreferencePage extends
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
-	 */
+	@Override
 	public void performDefaults() {
 		fOverlayStore.loadDefaults();
 		fConfigurationBlock.performDefaults();
@@ -110,9 +93,7 @@ public abstract class AbstractConfigurationBlockPreferencePage extends
 		super.performDefaults();
 	}
 
-	/*
-	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
-	 */
+	@Override
 	public void dispose() {
 		fConfigurationBlock.dispose();
 
@@ -133,7 +114,7 @@ public abstract class AbstractConfigurationBlockPreferencePage extends
 
 	/**
 	 * Set the preference page description.
-	 * 
+	 *
 	 * <p>
 	 * Sub-classes should make a call to {@link #setDescription(String)} to set
 	 * description.
@@ -144,7 +125,7 @@ public abstract class AbstractConfigurationBlockPreferencePage extends
 
 	/**
 	 * Set the preference store that will hold the preference settings.
-	 * 
+	 *
 	 * <p>
 	 * Sub-classes should make a call to
 	 * {@link #setPreferenceStore(IPreferenceStore)} to set the preference

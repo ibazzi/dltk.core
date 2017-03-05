@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.debug.core.model;
 
@@ -21,7 +20,6 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -32,8 +30,8 @@ import org.eclipse.dltk.core.environment.IFileHandle;
 import org.eclipse.dltk.debug.core.DLTKDebugPlugin;
 import org.eclipse.dltk.debug.core.model.IScriptLineBreakpoint;
 
-public class ScriptLineBreakpoint extends AbstractScriptBreakpoint implements
-		IScriptLineBreakpoint {
+public class ScriptLineBreakpoint extends AbstractScriptBreakpoint
+		implements IScriptLineBreakpoint {
 
 	protected String getMarkerId() {
 		return ScriptMarkerFactory.LINE_BREAKPOINT_MARKER_ID;
@@ -58,49 +56,51 @@ public class ScriptLineBreakpoint extends AbstractScriptBreakpoint implements
 			final int charStart, final int charEnd, final boolean add)
 			throws DebugException {
 
-		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				// create the marker
-				setMarker(resource.createMarker(getMarkerId()));
+		IWorkspaceRunnable wr = monitor -> {
+			// create the marker
+			setMarker(resource.createMarker(getMarkerId()));
 
-				// add attributes
-				final Map attributes = new HashMap();
-				addScriptBreakpointAttributes(attributes, debugModelId, true);
-				addLineBreakpointAttributes(attributes, path, lineNumber,
-						charStart, charEnd);
+			// add attributes
+			final Map attributes = new HashMap();
+			addScriptBreakpointAttributes(attributes, debugModelId, true);
+			addLineBreakpointAttributes(attributes, path, lineNumber, charStart,
+					charEnd);
 
-				// set attributes
-				ensureMarker().setAttributes(attributes);
+			// set attributes
+			ensureMarker().setAttributes(attributes);
 
-				// add to breakpoint manager if requested
-				register(add);
-			}
+			// add to breakpoint manager if requested
+			register(add);
 		};
 		run(getMarkerRule(resource), wr);
 	}
 
 	// ILineBreakpoint
+	@Override
 	public int getLineNumber() throws CoreException {
 		return ensureMarker().getAttribute(IMarker.LINE_NUMBER, -1);
 	}
 
+	@Override
 	public int getCharStart() throws CoreException {
 		return ensureMarker().getAttribute(IMarker.CHAR_START, -1);
 	}
 
+	@Override
 	public int getCharEnd() throws CoreException {
 		return ensureMarker().getAttribute(IMarker.CHAR_END, -1);
 
 	}
 
+	@Override
 	public String getResourceName() throws CoreException {
 		IResource resource = ensureMarker().getResource();
 		if (!resource.equals(getWorkspaceRoot()))
 			return resource.getName();
 
 		// else
-		String portablePath = (String) ensureMarker().getAttribute(
-				IMarker.LOCATION);
+		String portablePath = (String) ensureMarker()
+				.getAttribute(IMarker.LOCATION);
 		if (portablePath != null) {
 			IPath path = Path.fromPortableString(portablePath);
 			return path.lastSegment();
@@ -110,6 +110,7 @@ public class ScriptLineBreakpoint extends AbstractScriptBreakpoint implements
 	}
 
 	// IScriptLineBreakpoint
+	@Override
 	public IResource getResource() {
 		try {
 			final IResource resource = ensureMarker().getResource();
@@ -126,13 +127,14 @@ public class ScriptLineBreakpoint extends AbstractScriptBreakpoint implements
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 
+	@Override
 	public IPath getResourcePath() {
 		try {
 			final IResource resource = ensureMarker().getResource();
 			if (!resource.equals(getWorkspaceRoot()))
 				return ensureMarker().getResource().getFullPath();
-			final String path = (String) ensureMarker().getAttribute(
-					IMarker.LOCATION);
+			final String path = (String) ensureMarker()
+					.getAttribute(IMarker.LOCATION);
 			if (path != null) {
 				return Path.fromPortableString(path);
 			}
@@ -142,6 +144,7 @@ public class ScriptLineBreakpoint extends AbstractScriptBreakpoint implements
 		return null;
 	}
 
+	@Override
 	public URI getResourceURI() {
 		try {
 			IResource resource = ensureMarker().getResource();
@@ -149,8 +152,8 @@ public class ScriptLineBreakpoint extends AbstractScriptBreakpoint implements
 				final IEnvironment environment = EnvironmentManager
 						.getEnvironment(resource.getProject());
 				if (environment != null) {
-					final IFileHandle handle = environment.getFile(resource
-							.getLocationURI());
+					final IFileHandle handle = environment
+							.getFile(resource.getLocationURI());
 					if (handle != null) {
 						try {
 							String path = handle.getPath().toString();
@@ -170,8 +173,8 @@ public class ScriptLineBreakpoint extends AbstractScriptBreakpoint implements
 			}
 
 			// else
-			String portablePath = (String) ensureMarker().getAttribute(
-					IMarker.LOCATION);
+			String portablePath = (String) ensureMarker()
+					.getAttribute(IMarker.LOCATION);
 			if (portablePath != null) {
 				IPath path = Path.fromPortableString(portablePath);
 				return makeUri(path);
@@ -189,6 +192,7 @@ public class ScriptLineBreakpoint extends AbstractScriptBreakpoint implements
 			AbstractScriptBreakpoint.EXPRESSION,
 			AbstractScriptBreakpoint.EXPRESSION_STATE };
 
+	@Override
 	public String[] getUpdatableAttributes() {
 		return UPDATABLE_ATTRS;
 	}

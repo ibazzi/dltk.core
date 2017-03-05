@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.corext.util;
 
@@ -64,7 +63,7 @@ public class MethodFilter implements IPropertyChangeListener {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public MethodFilter() {
 		fStringMatchers = null;
@@ -108,9 +107,7 @@ public class MethodFilter implements IPropertyChangeListener {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-	 */
+	@Override
 	public synchronized void propertyChange(PropertyChangeEvent event) {
 		if (PreferenceConstants.METHODFILTER_ENABLED.equals(event.getProperty())) {
 			fStringMatchers = null;

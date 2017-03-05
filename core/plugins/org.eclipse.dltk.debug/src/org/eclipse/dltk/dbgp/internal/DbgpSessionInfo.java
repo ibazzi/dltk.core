@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.dbgp.internal;
 
@@ -32,7 +31,8 @@ public class DbgpSessionInfo implements IDbgpSessionInfo {
 	private DbgpException error;
 
 	public DbgpSessionInfo(String appId, String ideKey, String session,
-			String threadId, String parentId, String language, URI fileUri, DbgpException error) {
+			String threadId, String parentId, String language, URI fileUri,
+			DbgpException error) {
 		super();
 		this.appId = appId;
 		this.ideKey = ideKey;
@@ -44,34 +44,42 @@ public class DbgpSessionInfo implements IDbgpSessionInfo {
 		this.error = error;
 	}
 
+	@Override
 	public String getApplicationId() {
 		return appId;
 	}
 
+	@Override
 	public URI getFileUri() {
 		return fileUri;
 	}
 
+	@Override
 	public String getIdeKey() {
 		return ideKey;
 	}
 
+	@Override
 	public String getLanguage() {
 		return language;
 	}
 
+	@Override
 	public String getParentAppId() {
 		return parentId;
 	}
 
+	@Override
 	public String getSession() {
 		return session;
 	}
 
+	@Override
 	public String getThreadId() {
 		return threadId;
 	}
 
+	@Override
 	public DbgpException getError() {
 		return error;
 	}

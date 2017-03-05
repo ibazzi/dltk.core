@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,9 +46,7 @@ public abstract class StructureSelectionAction extends Action {
 		super(""); //$NON-NLS-1$
 	}
 
-	/*
-	 * Method declared in IAction.
-	 */
+	@Override
 	public final  void run() {
 		IModelElement inputElement= EditorUtility.getEditorInputModelElement(fEditor, false);
 		if (!(inputElement instanceof ISourceReference && inputElement.exists()))
@@ -84,7 +82,7 @@ public abstract class StructureSelectionAction extends Action {
 		if (DLTKCore.DEBUG) {
 			System.out.println("TODO: Add correction here..."); //$NON-NLS-1$
 		}
-		return new SourceRange(oldSourceRange.getOffset(), oldSourceRange.getLength());	 	
+		return new SourceRange(oldSourceRange.getOffset(), oldSourceRange.getLength());
 	}
 
 	/**

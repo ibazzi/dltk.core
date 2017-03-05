@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     xored software, Inc. - initial API and Implementation
- *     xored software, Inc. - indenting tab policy fixes (Alex Panchenko) 
+ *     xored software, Inc. - indenting tab policy fixes (Alex Panchenko)
  *******************************************************************************/
 package org.eclipse.dltk.ui.templates;
 
@@ -54,6 +54,7 @@ public class ScriptTemplateContext extends DocumentTemplateContext implements
 		fIsManaged = true;
 	}
 
+	@Override
 	public final ISourceModule getSourceModule() {
 		return sourceModule;
 	}
@@ -64,7 +65,7 @@ public class ScriptTemplateContext extends DocumentTemplateContext implements
 
 	/**
 	 * Tests if specified char is tab or space
-	 * 
+	 *
 	 * @param ch
 	 * @return
 	 */
@@ -93,6 +94,7 @@ public class ScriptTemplateContext extends DocumentTemplateContext implements
 		return ""; //$NON-NLS-1$
 	}
 
+	@Override
 	public TemplateBuffer evaluate(Template template)
 			throws BadLocationException, TemplateException {
 		if (!canEvaluate(template)) {
@@ -127,6 +129,7 @@ public class ScriptTemplateContext extends DocumentTemplateContext implements
 		return new NopScriptTemplateIndenter();
 	}
 
+	@Override
 	public int getStart() {
 
 		if (fIsManaged && getCompletionLength() > 0)
@@ -157,10 +160,7 @@ public class ScriptTemplateContext extends DocumentTemplateContext implements
 		}
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.jdt.internal.corext.template.DocumentTemplateContext#getEnd()
-	 */
+	@Override
 	public int getEnd() {
 
 		if (fIsManaged || getCompletionLength() == 0)
@@ -183,10 +183,7 @@ public class ScriptTemplateContext extends DocumentTemplateContext implements
 		}
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.jdt.internal.corext.template.DocumentTemplateContext#getKey()
-	 */
+	@Override
 	public String getKey() {
 
 		if (getCompletionLength() == 0)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.dltk.internal.testing.ui;
 
 import java.util.AbstractList;
@@ -35,7 +34,6 @@ import org.eclipse.dltk.testing.ITestRunnerUIExtension;
 import org.eclipse.dltk.testing.model.ITestElement;
 import org.eclipse.dltk.ui.viewsupport.SelectionProviderMediator;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
@@ -53,8 +51,6 @@ import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -66,8 +62,8 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.PageBook;
 
 public class TestViewer {
-	private final class TestSelectionListener implements
-			ISelectionChangedListener {
+	private final class TestSelectionListener
+			implements ISelectionChangedListener {
 		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			handleSelected();
@@ -155,7 +151,7 @@ public class TestViewer {
 	private TestCaseElement fAutoScrollTarget;
 
 	private LinkedList<TestSuiteElement> fAutoClose;
-	private HashSet/* <TestSuite> */fAutoExpand;
+	private HashSet/* <TestSuite> */ fAutoExpand;
 
 	public TestViewer(Composite parent, Clipboard clipboard,
 			TestRunnerViewPart runner) {
@@ -163,12 +159,7 @@ public class TestViewer {
 		fClipboard = clipboard;
 
 		fHierarchyIcon = TestRunnerViewPart.createImage("obj16/testhier.gif"); //$NON-NLS-1$
-		parent.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				disposeIcons();
-			}
-		});
+		parent.addDisposeListener(e -> disposeIcons());
 
 		fLayoutMode = TestRunnerViewPart.LAYOUT_HIERARCHICAL;
 
@@ -189,18 +180,20 @@ public class TestViewer {
 		fTreeViewer.setContentProvider(fTreeContentProvider);
 		fTreeLabelProvider = new TestSessionLabelProvider(fTestRunnerPart,
 				TestRunnerViewPart.LAYOUT_HIERARCHICAL);
-		fTreeViewer.setLabelProvider(new DecoratingStyledCellLabelProvider(fTreeLabelProvider,null,null));
+		fTreeViewer.setLabelProvider(new DecoratingStyledCellLabelProvider(
+				fTreeLabelProvider, null, null));
 		fTreeViewer.setComparator(new TestTreeComparator());
 
-		fTableViewer = new TableViewer(fViewerbook, SWT.V_SCROLL | SWT.H_SCROLL
-				| SWT.SINGLE);
+		fTableViewer = new TableViewer(fViewerbook,
+				SWT.V_SCROLL | SWT.H_SCROLL | SWT.SINGLE);
 		// ColoredViewersManager.install(fTableViewer);
 		fTableViewer.setUseHashlookup(true);
 		fTableContentProvider = new TestSessionTableContentProvider();
 		fTableViewer.setContentProvider(fTableContentProvider);
 		fTableLabelProvider = new TestSessionLabelProvider(fTestRunnerPart,
 				TestRunnerViewPart.LAYOUT_FLAT);
-		fTableViewer.setLabelProvider(new DecoratingStyledCellLabelProvider(fTableLabelProvider,null,null));
+		fTableViewer.setLabelProvider(new DecoratingStyledCellLabelProvider(
+				fTableLabelProvider, null, null));
 
 		fSelectionProvider = new SelectionProviderMediator(
 				new StructuredViewer[] { fTreeViewer, fTableViewer },
@@ -217,12 +210,7 @@ public class TestViewer {
 	private void initContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				handleMenuAboutToShow(manager);
-			}
-		});
+		menuMgr.addMenuListener(manager -> handleMenuAboutToShow(manager));
 		fTestRunnerPart.getSite().registerContextMenu(menuMgr,
 				fSelectionProvider);
 		Menu menu = menuMgr.createContextMenu(fViewerbook);
@@ -259,19 +247,19 @@ public class TestViewer {
 				manager.add(new ExpandAllAction());
 			}
 		}
-		if (fTestRunSession != null
-				&& fTestRunSession.getFailureCount()
-						+ fTestRunSession.getErrorCount() > 0) {
+		if (fTestRunSession != null && fTestRunSession.getFailureCount()
+				+ fTestRunSession.getErrorCount() > 0) {
 			if (fLayoutMode != TestRunnerViewPart.LAYOUT_HIERARCHICAL)
 				manager.add(new Separator());
 			manager.add(new CopyFailureListAction(fTestRunnerPart, fClipboard));
 		}
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS
-				+ "-end")); //$NON-NLS-1$
+		manager.add(
+				new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "-end")); //$NON-NLS-1$
 	}
 
-	private void addRerunActions(IMenuManager manager, TestElement testElement) {
+	private void addRerunActions(IMenuManager manager,
+			TestElement testElement) {
 		final boolean run, debug;
 		final ITestRunnerUI runnerUI = fTestRunSession.getTestRunnerUI();
 		if (runnerUI instanceof ITestRunnerUIExtension) {
@@ -298,7 +286,8 @@ public class TestViewer {
 		return fViewerbook;
 	}
 
-	public synchronized void registerActiveSession(TestRunSession testRunSession) {
+	public synchronized void registerActiveSession(
+			TestRunSession testRunSession) {
 		fTestRunSession = testRunSession;
 		registerAutoScrollTarget(null);
 		registerViewersRefresh();
@@ -348,9 +337,9 @@ public class TestViewer {
 			fTableLabelProvider.setShowTime(showTime);
 		} finally {
 			fViewerbook.setRedraw(true);
-		}			
+		}
 	}
-	
+
 	public synchronized void setShowFailuresOnly(boolean failuresOnly,
 			int layoutMode) {
 		/*
@@ -580,7 +569,8 @@ public class TestViewer {
 		}
 
 		synchronized (this) {
-			for (Iterator<TestSuiteElement> iter = fAutoExpand.iterator(); iter.hasNext();) {
+			for (Iterator<TestSuiteElement> iter = fAutoExpand.iterator(); iter
+					.hasNext();) {
 				TestSuiteElement suite = iter.next();
 				fTreeViewer.setExpandedState(suite, true);
 			}
@@ -594,8 +584,8 @@ public class TestViewer {
 				: (TestSuiteElement) fTreeContentProvider.getParent(current);
 		if (fAutoClose.isEmpty() || !fAutoClose.getLast().equals(parent)) {
 			// we're in a new branch, so let's close old OK branches:
-			for (ListIterator<TestSuiteElement> iter = fAutoClose.listIterator(fAutoClose.size()); iter
-					.hasPrevious();) {
+			for (ListIterator<TestSuiteElement> iter = fAutoClose
+					.listIterator(fAutoClose.size()); iter.hasPrevious();) {
 				TestSuiteElement previousAutoOpened = iter.previous();
 				if (previousAutoOpened.equals(parent))
 					break;
@@ -623,11 +613,11 @@ public class TestViewer {
 	}
 
 	public void selectFirstFailure() {
-		TestCaseElement firstFailure = getNextChildFailure(fTestRunSession
-				.getTestRoot(), true);
+		TestCaseElement firstFailure = getNextChildFailure(
+				fTestRunSession.getTestRoot(), true);
 		if (firstFailure != null)
-			getActiveViewer().setSelection(
-					new StructuredSelection(firstFailure), true);
+			getActiveViewer()
+					.setSelection(new StructuredSelection(firstFailure), true);
 	}
 
 	public void selectFailure(boolean showNext) {
@@ -664,7 +654,7 @@ public class TestViewer {
 
 		List<ITestElement> siblings = Arrays.asList(parent.getChildren());
 		if (!showNext)
-			siblings = new ReverseList<ITestElement>(siblings);
+			siblings = new ReverseList<>(siblings);
 
 		int nextIndex = siblings.indexOf(current) + 1;
 		for (int i = nextIndex; i < siblings.size(); i++) {
@@ -685,7 +675,7 @@ public class TestViewer {
 			boolean showNext) {
 		List<ITestElement> children = Arrays.asList(root.getChildren());
 		if (!showNext)
-			children = new ReverseList<ITestElement>(children);
+			children = new ReverseList<>(children);
 		for (int i = 0; i < children.size(); i++) {
 			TestElement child = (TestElement) children.get(i);
 			if (child.getStatus().isErrorOrFailure()) {
@@ -707,8 +697,8 @@ public class TestViewer {
 	}
 
 	private void clearUpdateAndExpansion() {
-		fNeedUpdate = new LinkedHashSet<TestElement>();
-		fAutoClose = new LinkedList<TestSuiteElement>();
+		fNeedUpdate = new LinkedHashSet<>();
+		fAutoClose = new LinkedList<>();
 		fAutoExpand = new HashSet();
 	}
 
@@ -718,7 +708,8 @@ public class TestViewer {
 		fTableNeedsRefresh = true;
 	}
 
-	public synchronized void registerViewerUpdate(final TestElement testElement) {
+	public synchronized void registerViewerUpdate(
+			final TestElement testElement) {
 		fNeedUpdate.add(testElement);
 	}
 
@@ -730,7 +721,8 @@ public class TestViewer {
 		fAutoScrollTarget = testCaseElement;
 	}
 
-	public synchronized void registerFailedForAutoScroll(TestElement testElement) {
+	public synchronized void registerFailedForAutoScroll(
+			TestElement testElement) {
 		Object parent = fTreeContentProvider.getParent(testElement);
 		if (parent != null)
 			fAutoExpand.add(parent);
@@ -739,9 +731,10 @@ public class TestViewer {
 	public void expandFirstLevel() {
 		fTreeViewer.expandToLevel(2);
 	}
-	public void setSortDirection(int sortDirection){
+
+	public void setSortDirection(int sortDirection) {
 		ViewerComparator comparator = fTreeViewer.getComparator();
-		if(comparator instanceof TestTreeComparator){
+		if (comparator instanceof TestTreeComparator) {
 			((TestTreeComparator) comparator).setSortDirection(sortDirection);
 		}
 	}

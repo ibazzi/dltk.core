@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,11 +62,10 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
 /**
  * Abstract class for views which show information for a given element.
- * 
- * 
+ *
  */
-public abstract class AbstractInfoView extends ViewPart implements
-		ISelectionListener, IMenuListener, IPropertyChangeListener {
+public abstract class AbstractInfoView extends ViewPart
+		implements ISelectionListener, IMenuListener, IPropertyChangeListener {
 
 	/**
 	 * @since 2.0
@@ -172,15 +171,15 @@ public abstract class AbstractInfoView extends ViewPart implements
 	private IContextActivation fContextActivation;
 	/**
 	 * Background color.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	private Color fBackgroundColor;
 	private RGB fBackgroundColorRGB;
 
 	/**
 	 * Set the input of this view.
-	 * 
+	 *
 	 * @param input
 	 *            the input object
 	 */
@@ -188,7 +187,7 @@ public abstract class AbstractInfoView extends ViewPart implements
 
 	/**
 	 * Computes the input for this view based on the given element.
-	 * 
+	 *
 	 * @param element
 	 *            the element from which to compute the input
 	 * @return the input or <code>null</code> if the input was not computed
@@ -198,7 +197,7 @@ public abstract class AbstractInfoView extends ViewPart implements
 
 	/**
 	 * Create the part control.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent control
 	 * @see IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
@@ -207,7 +206,7 @@ public abstract class AbstractInfoView extends ViewPart implements
 
 	/**
 	 * Set the view's foreground color.
-	 * 
+	 *
 	 * @param color
 	 *            the SWT color
 	 */
@@ -215,7 +214,7 @@ public abstract class AbstractInfoView extends ViewPart implements
 
 	/**
 	 * Set the view's background color.
-	 * 
+	 *
 	 * @param color
 	 *            the SWT color
 	 */
@@ -223,16 +222,16 @@ public abstract class AbstractInfoView extends ViewPart implements
 
 	/**
 	 * Returns the view's primary control.
-	 * 
+	 *
 	 * @return the primary control
 	 */
 	protected abstract Control getControl();
 
 	/**
 	 * Returns the context ID for the Help system
-	 * 
+	 *
 	 * @return the string used as ID for the Help context
-	 * 
+	 *
 	 */
 	abstract protected String getHelpContextId();
 
@@ -248,14 +247,14 @@ public abstract class AbstractInfoView extends ViewPart implements
 		createActions();
 		createContextMenu();
 		fillActionBars(getViewSite().getActionBars());
-		IContextService ctxService = getSite().getService(
-				IContextService.class);
+		IContextService ctxService = getSite()
+				.getService(IContextService.class);
 		if (ctxService != null) {
 			fContextActivation = ctxService
 					.activateContext(DLTKUIPlugin.CONTEXT_VIEWS);
 		}
-		PlatformUI.getWorkbench().getHelpSystem()
-				.setHelp(getControl(), getHelpContextId());
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
+				getHelpContextId());
 	}
 
 	/**
@@ -307,7 +306,7 @@ public abstract class AbstractInfoView extends ViewPart implements
 
 	/**
 	 * Returns the input of this view.
-	 * 
+	 *
 	 * @return input the input object or <code>null</code> if not input is set
 	 */
 	protected Object getInput() {
@@ -323,7 +322,7 @@ public abstract class AbstractInfoView extends ViewPart implements
 	 * Fills the actions bars.
 	 * <p>
 	 * Subclasses may extend.
-	 * 
+	 *
 	 * @param actionBars
 	 *            the action bars
 	 */
@@ -346,7 +345,7 @@ public abstract class AbstractInfoView extends ViewPart implements
 	 * <p>
 	 * Default is to do nothing.
 	 * </p>
-	 * 
+	 *
 	 * @param tbm
 	 *            the tool bar manager
 	 */
@@ -377,9 +376,9 @@ public abstract class AbstractInfoView extends ViewPart implements
 
 	/**
 	 * The preference key for the background color.
-	 * 
+	 *
 	 * @return the background color key
-	 * 
+	 *
 	 */
 	abstract protected String getBackgroundColorKey();
 
@@ -413,7 +412,7 @@ public abstract class AbstractInfoView extends ViewPart implements
 	/**
 	 * Tells whether the new input should be ignored if the current input is the
 	 * same.
-	 * 
+	 *
 	 * @param je
 	 *            the new input
 	 * @param selection
@@ -428,7 +427,7 @@ public abstract class AbstractInfoView extends ViewPart implements
 
 	/**
 	 * Finds and returns the Script element selected in the given part.
-	 * 
+	 *
 	 * @param part
 	 *            the workbench part for which to find the selected Script
 	 *            element
@@ -442,8 +441,8 @@ public abstract class AbstractInfoView extends ViewPart implements
 			if (isValidWorkbenchPart(part)
 					&& selection instanceof ITextSelection) {
 				final IEditorPart editor = (IEditorPart) part;
-				IModelElement[] elements = TextSelectionConverter.codeResolve(
-						editor, (ITextSelection) selection);
+				IModelElement[] elements = TextSelectionConverter
+						.codeResolve(editor, (ITextSelection) selection);
 				if (elements != null && elements.length > 0) {
 					return elements.length == 1 ? elements[0]
 							: (Object) new ModelElementArray(elements);
@@ -461,7 +460,7 @@ public abstract class AbstractInfoView extends ViewPart implements
 	/**
 	 * Checks that specified {@link IWorkbenchPart} is an {@link ITextEditor}
 	 * and is suitable to retrieve selected {@link IModelElement}s
-	 * 
+	 *
 	 * @param part
 	 * @return
 	 */
@@ -471,7 +470,7 @@ public abstract class AbstractInfoView extends ViewPart implements
 
 	/**
 	 * Tries to get a Script element out of the given element.
-	 * 
+	 *
 	 * @param element
 	 *            an object
 	 * @return the Script element represented by the given element or
@@ -479,8 +478,7 @@ public abstract class AbstractInfoView extends ViewPart implements
 	 */
 	private IModelElement findModelElement(Object element) {
 		if (element != null && element instanceof IAdaptable) {
-			return ((IAdaptable) element)
-					.getAdapter(IModelElement.class);
+			return ((IAdaptable) element).getAdapter(IModelElement.class);
 		}
 		return null;
 	}
@@ -521,7 +519,7 @@ public abstract class AbstractInfoView extends ViewPart implements
 	/**
 	 * Determines all necessary details and delegates the computation into a
 	 * background thread.
-	 * 
+	 *
 	 * @param part
 	 *            the workbench part
 	 */
@@ -552,8 +550,9 @@ public abstract class AbstractInfoView extends ViewPart implements
 								((ITextSelection) selection).getOffset());
 						if (reg != null) {
 							try {
-								tmp = new KeywordInput(document.get(
-										reg.getOffset(), reg.getLength()),
+								tmp = new KeywordInput(
+										document.get(reg.getOffset(),
+												reg.getLength()),
 										EditorUtility
 												.getEditorInputModelElement(
 														edit, false));
@@ -579,15 +578,12 @@ public abstract class AbstractInfoView extends ViewPart implements
 				Display display = shell.getDisplay();
 				if (display.isDisposed())
 					return;
-				display.asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						if (fComputeCount != currentCount
-								|| getViewSite().getShell().isDisposed())
-							return;
-						fCurrentViewInput = src;
-						doSetInput(input);
-					}
+				display.asyncExec(() -> {
+					if (fComputeCount != currentCount
+							|| getViewSite().getShell().isDisposed())
+						return;
+					fCurrentViewInput = src;
+					doSetInput(input);
 				});
 
 			}
@@ -605,8 +601,8 @@ public abstract class AbstractInfoView extends ViewPart implements
 			IModelElement me = (IModelElement) in;
 			setContentDescription(ScriptElementLabels.getDefault()
 					.getElementLabel(me, TITLE_FLAGS));
-			setTitleToolTip(ScriptElementLabels.getDefault().getElementLabel(
-					me, TOOLTIP_LABEL_FLAGS));
+			setTitleToolTip(ScriptElementLabels.getDefault().getElementLabel(me,
+					TOOLTIP_LABEL_FLAGS));
 		} else if (in instanceof ModelElementArray) {
 			final ModelElementArray array = (ModelElementArray) in;
 			setContentDescription(array.getContentDescription());

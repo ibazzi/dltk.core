@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.corext.refactoring.changes;
 
@@ -50,12 +49,12 @@ import org.eclipse.ui.ide.undo.ResourceDescription;
 
 
 public class DeleteProjectFragmentChange extends AbstractDeleteChange {
-	
+
 	private final String fHandle;
 	private final boolean fIsExecuteChange;
 	private final IProjectFragmentManipulationQuery fUpdateClasspathQuery;
 
-	public DeleteProjectFragmentChange(IProjectFragment root, boolean isExecuteChange, 
+	public DeleteProjectFragmentChange(IProjectFragment root, boolean isExecuteChange,
 			IProjectFragmentManipulationQuery updateClasspathQuery) {
 		Assert.isNotNull(root);
 		Assert.isTrue(! root.isExternal());
@@ -64,31 +63,35 @@ public class DeleteProjectFragmentChange extends AbstractDeleteChange {
 		fUpdateClasspathQuery= updateClasspathQuery;
 	}
 
+	@Override
 	public String getName() {
 		String[] keys= {getRoot().getElementName()};
-		return Messages.format(RefactoringCoreMessages.DeleteProjectFragmentChange_delete, keys); 
+		return Messages.format(RefactoringCoreMessages.DeleteProjectFragmentChange_delete, keys);
 	}
 
+	@Override
 	public Object getModifiedElement() {
 		return getRoot();
 	}
-	
+
 	private IProjectFragment getRoot(){
 		return (IProjectFragment)DLTKCore.create(fHandle);
 	}
-	
+
+	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
 		if (fIsExecuteChange) {
 			// don't check for read-only resources since we already
 			// prompt the user via a dialog to confirm deletion of
 			// read only resource. The change is currently not used
-			// as 
+			// as
 			return super.isValid(pm, DIRTY);
 		} else {
 			return super.isValid(pm, READ_ONLY | DIRTY);
 		}
 	}
 
+	@Override
 	protected Change doDelete(IProgressMonitor pm) throws CoreException {
 		if (! confirmDeleteIfReferenced())
 			return new NullChange();
@@ -142,7 +145,7 @@ public class DeleteProjectFragmentChange extends AbstractDeleteChange {
 		return result;
 	}
 
-	private boolean confirmDeleteIfReferenced() throws ModelException {		
+	private boolean confirmDeleteIfReferenced() throws ModelException {
 		if (! getRoot().isArchive()) //for source folders, you don't ask, just do it
 			return true;
 		if (fUpdateClasspathQuery == null)

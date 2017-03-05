@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Julien Ruaux: jruaux@octo.com 
- * 	   Vincent Massol: vmassol@octo.com 
+ *     Julien Ruaux: jruaux@octo.com
+ * 	   Vincent Massol: vmassol@octo.com
  *******************************************************************************/
 package org.eclipse.dltk.internal.testing.model;
 
@@ -17,10 +17,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.nio.charset.StandardCharsets;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
@@ -262,20 +262,12 @@ public class SocketTestRunnerClient implements ITestRunnerClient {
 					System.out.println("Creating server socket " + fServerPort); //$NON-NLS-1$
 				fServerSocket = new ServerSocket(fServerPort);
 				fSocket = fServerSocket.accept();
-				try {
-					fBufferedReader = new BufferedReader(new InputStreamReader(
-							fSocket.getInputStream(), "UTF-8")); //$NON-NLS-1$
-				} catch (UnsupportedEncodingException e) {
-					fBufferedReader = new BufferedReader(new InputStreamReader(
-							fSocket.getInputStream()));
-				}
-				try {
-					fWriter = new PrintWriter(new OutputStreamWriter(fSocket
-							.getOutputStream(), "UTF-8"), true); //$NON-NLS-1$
-				} catch (UnsupportedEncodingException e1) {
-					fWriter = new PrintWriter(new OutputStreamWriter(fSocket
-							.getOutputStream()), true);
-				}
+				fBufferedReader = new BufferedReader(new InputStreamReader(
+						fSocket.getInputStream(), StandardCharsets.UTF_8));
+				fWriter = new PrintWriter(
+						new OutputStreamWriter(fSocket.getOutputStream(),
+								StandardCharsets.UTF_8),
+						true);
 				String message;
 				while (fBufferedReader != null
 						&& (message = readMessage(fBufferedReader)) != null)
@@ -292,7 +284,7 @@ public class SocketTestRunnerClient implements ITestRunnerClient {
 
 	/**
 	 * Constructs the instance
-	 * 
+	 *
 	 * @param port
 	 */
 	public SocketTestRunnerClient(int port) {
@@ -302,7 +294,7 @@ public class SocketTestRunnerClient implements ITestRunnerClient {
 	/**
 	 * Start listening to a test run. Start a server connection that the
 	 * RemoteTestRunner can connect to.
-	 * 
+	 *
 	 * @param listeners
 	 */
 	@Override
@@ -466,8 +458,8 @@ public class SocketTestRunnerClient implements ITestRunnerClient {
 				@Override
 				public void run() {
 					listener.testReran(testId, className, testName, statusCode,
-							trace, fExpectedResult.toString(), fActualResult
-									.toString());
+							trace, fExpectedResult.toString(),
+							fActualResult.toString());
 				}
 			});
 		}
@@ -572,8 +564,8 @@ public class SocketTestRunnerClient implements ITestRunnerClient {
 				public void run() {
 					listener.testFailed(fFailureKind, fFailedTestId,
 							fFailedTest, fFailedTrace.toString(),
-							fExpectedResult.toString(), fActualResult
-									.toString(), ITestingClient.ERRORED);
+							fExpectedResult.toString(),
+							fActualResult.toString(), ITestingClient.ERRORED);
 				}
 			});
 		}
@@ -600,8 +592,8 @@ public class SocketTestRunnerClient implements ITestRunnerClient {
 		if (isRunning()) {
 			fActualResult.setLength(0);
 			fExpectedResult.setLength(0);
-			fWriter.println(MessageIds.TEST_RERUN + testId
-					+ " " + className + " " + testName); //$NON-NLS-1$ //$NON-NLS-2$
+			fWriter.println(MessageIds.TEST_RERUN + testId + " " + className //$NON-NLS-1$
+					+ " " + testName); //$NON-NLS-1$
 			fWriter.flush();
 		}
 	}

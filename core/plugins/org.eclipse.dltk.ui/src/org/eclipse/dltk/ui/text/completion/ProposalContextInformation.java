@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.text.completion;
 
@@ -60,9 +59,6 @@ public class ProposalContextInformation implements IContextInformation,
 		return bf.toString();
 	}
 
-	/*
-	 * @see IContextInformation#equals
-	 */
 	@Override
 	public boolean equals(Object object) {
 		if (object instanceof IContextInformation) {
@@ -78,37 +74,29 @@ public class ProposalContextInformation implements IContextInformation,
 		return false;
 	}
 
-	/*
-	 * @see IContextInformation#getInformationDisplayString()
-	 */
+	@Override
 	public String getInformationDisplayString() {
 		return fInformationDisplayString;
 	}
 
-	/*
-	 * @see IContextInformation#getImage()
-	 */
+	@Override
 	public Image getImage() {
 		return fImage;
 	}
 
-	/*
-	 * @see IContextInformation#getContextDisplayString()
-	 */
+	@Override
 	public String getContextDisplayString() {
 		return fContextDisplayString;
 	}
 
-	/*
-	 * @see IContextInformationExtension#getContextInformationPosition()
-	 */
+	@Override
 	public int getContextInformationPosition() {
 		return fPosition;
 	}
 
 	/**
 	 * Sets the context information position.
-	 * 
+	 *
 	 * @param position
 	 *            the new position, or -1 for unknown.
 	 */

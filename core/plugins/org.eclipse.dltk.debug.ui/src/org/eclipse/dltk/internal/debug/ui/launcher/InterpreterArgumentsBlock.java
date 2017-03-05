@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.debug.ui.launcher;
 
@@ -20,8 +19,6 @@ import org.eclipse.dltk.debug.ui.messages.ScriptLaunchMessages;
 import org.eclipse.dltk.launching.ScriptLaunchConfigurationConstants;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
@@ -41,9 +38,7 @@ public class InterpreterArgumentsBlock extends CommonScriptLaunchTab {
 	protected Text fInterpreterArgumentsText;
 	private Button fPgrmArgVariableButton;
 
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(Composite)
-	 */
+	@Override
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
 
@@ -54,30 +49,28 @@ public class InterpreterArgumentsBlock extends CommonScriptLaunchTab {
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		group.setLayoutData(gd);
 		group.setFont(font);
-		group
-				.setText(ScriptLaunchMessages.InterpreterArgumentsTab_Interpreter_ar_guments);
+		group.setText(
+				ScriptLaunchMessages.InterpreterArgumentsTab_Interpreter_ar_guments);
 
-		fInterpreterArgumentsText = new Text(group, SWT.MULTI | SWT.WRAP
-				| SWT.BORDER | SWT.V_SCROLL);
+		fInterpreterArgumentsText = new Text(group,
+				SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 40;
 		gd.widthHint = 100;
 		fInterpreterArgumentsText.setLayoutData(gd);
 		fInterpreterArgumentsText.setFont(font);
-		fInterpreterArgumentsText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent evt) {
-				updateLaunchConfigurationDialog();
-			}
-		});
-		ControlAccessibleListener.addListener(fInterpreterArgumentsText, group
-				.getText());
+		fInterpreterArgumentsText
+				.addModifyListener(evt -> updateLaunchConfigurationDialog());
+		ControlAccessibleListener.addListener(fInterpreterArgumentsText,
+				group.getText());
 
 		fPgrmArgVariableButton = createPushButton(group,
 				ScriptLaunchMessages.InterpreterArgumentsBlock, null);
 		fPgrmArgVariableButton.setFont(font);
-		fPgrmArgVariableButton.setLayoutData(new GridData(
-				GridData.HORIZONTAL_ALIGN_END));
+		fPgrmArgVariableButton
+				.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		fPgrmArgVariableButton.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(
 						getShell());
@@ -88,59 +81,49 @@ public class InterpreterArgumentsBlock extends CommonScriptLaunchTab {
 				}
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 
 		});
 	}
 
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
-	 */
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(
 				ScriptLaunchConfigurationConstants.ATTR_INTERPRETER_ARGUMENTS,
 				(String) null);
 	}
 
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
-	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
-			fInterpreterArgumentsText
-					.setText(configuration
-							.getAttribute(
-									ScriptLaunchConfigurationConstants.ATTR_INTERPRETER_ARGUMENTS,
-									"")); //$NON-NLS-1$
+			fInterpreterArgumentsText.setText(configuration.getAttribute(
+					ScriptLaunchConfigurationConstants.ATTR_INTERPRETER_ARGUMENTS,
+					"")); //$NON-NLS-1$
 		} catch (CoreException e) {
-			setErrorMessage(NLS
-					.bind(
-							ScriptLaunchMessages.InterpreterArgumentsTab_Exception_occurred_reading_configuration,
-							e.getStatus().getMessage()));
+			setErrorMessage(NLS.bind(
+					ScriptLaunchMessages.InterpreterArgumentsTab_Exception_occurred_reading_configuration,
+					e.getStatus().getMessage()));
 			DLTKDebugUIPlugin.log(e);
 		}
 	}
 
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
-	 */
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(
 				ScriptLaunchConfigurationConstants.ATTR_INTERPRETER_ARGUMENTS,
 				getAttributeValueFrom(fInterpreterArgumentsText));
 	}
 
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
-	 */
+	@Override
 	public String getName() {
 		return ScriptLaunchMessages.InterpreterArgumentsBlock_Interpreter_Arguments;
 	}
 
 	/**
 	 * Retuns the string in the text widget, or <code>null</code> if empty.
-	 * 
+	 *
 	 * @return text or <code>null</code>
 	 */
 	protected String getAttributeValueFrom(Text text) {

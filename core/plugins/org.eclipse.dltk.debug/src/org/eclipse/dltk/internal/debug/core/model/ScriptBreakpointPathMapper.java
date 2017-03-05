@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -21,7 +21,8 @@ import org.eclipse.dltk.core.IProjectFragment;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.debug.core.DLTKDebugPlugin;
 
-public class ScriptBreakpointPathMapper implements IScriptBreakpointPathMapperExtension {
+public class ScriptBreakpointPathMapper
+		implements IScriptBreakpointPathMapperExtension {
 	private HashMap cache;
 	private String mapTo;
 	private IScriptProject scriptProject;
@@ -36,10 +37,12 @@ public class ScriptBreakpointPathMapper implements IScriptBreakpointPathMapperEx
 		this.cache = new HashMap();
 	}
 
+	@Override
 	public void clearCache() {
 		cache.clear();
 	}
 
+	@Override
 	public URI map(URI uri) {
 		// no mapTo, return original uri
 		if (mapTo == null || "".equals(mapTo)) { //$NON-NLS-1$

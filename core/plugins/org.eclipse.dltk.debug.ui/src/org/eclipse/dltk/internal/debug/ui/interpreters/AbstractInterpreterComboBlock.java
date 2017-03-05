@@ -1,17 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.debug.ui.interpreters;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
@@ -46,9 +44,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
@@ -73,7 +69,7 @@ public class AbstractInterpreterComboBlock {
 	/**
 	 * Interpreters being displayed
 	 */
-	private List<IInterpreterInstall> fInterpreters = new ArrayList<IInterpreterInstall>();
+	private List<IInterpreterInstall> fInterpreters = new ArrayList<>();
 
 	/**
 	 * The main control
@@ -123,7 +119,8 @@ public class AbstractInterpreterComboBlock {
 	/**
 	 * @since 2.0
 	 */
-	public AbstractInterpreterComboBlock(IInterpreterComboBlockContext context) {
+	public AbstractInterpreterComboBlock(
+			IInterpreterComboBlockContext context) {
 		this.fContext = context;
 	}
 
@@ -154,7 +151,7 @@ public class AbstractInterpreterComboBlock {
 
 	/**
 	 * Creates this block's control in the given control.
-	 * 
+	 *
 	 * @param anscestor
 	 *            containing control
 	 */
@@ -190,8 +187,7 @@ public class AbstractInterpreterComboBlock {
 					if (fDefaultButton.getSelection()) {
 						setUseDefaultInterpreter();
 						if (fInterpreters.isEmpty()) {
-							setStatus(new Status(
-									IStatus.ERROR,
+							setStatus(new Status(IStatus.ERROR,
 									DLTKLaunchingPlugin.getUniqueIdentifier(),
 									ScriptLaunchConfigurationConstants.ERR_NO_DEFAULT_INTERPRETER_INSTALL,
 									InterpretersMessages.InterpretersComboBlock_0,
@@ -226,8 +222,7 @@ public class AbstractInterpreterComboBlock {
 						fCombo.select(0);
 					}
 					if (fInterpreters.isEmpty()) {
-						setStatus(new Status(
-								IStatus.ERROR,
+						setStatus(new Status(IStatus.ERROR,
 								DLTKLaunchingPlugin.getUniqueIdentifier(),
 								ScriptLaunchConfigurationConstants.ERR_NO_DEFAULT_INTERPRETER_INSTALL,
 								InterpretersMessages.InterpretersComboBlock_0,
@@ -250,8 +245,8 @@ public class AbstractInterpreterComboBlock {
 		// data.widthHint = 100;
 		data.horizontalSpan = 1;
 		fCombo.setLayoutData(data);
-		ControlAccessibleListener
-				.addListener(fCombo, fSpecificButton.getText());
+		ControlAccessibleListener.addListener(fCombo,
+				fSpecificButton.getText());
 
 		fCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -262,16 +257,12 @@ public class AbstractInterpreterComboBlock {
 
 		fManageButton = createPushButton(group,
 				InterpretersMessages.InterpretersComboBlock_2);
-		fManageButton.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				showInterpreterPreferencePage();
-			}
-		});
+		fManageButton.addListener(SWT.Selection,
+				event -> showInterpreterPreferencePage());
 
 		fillWithWorkspaceInterpreters();
 		if (fInterpreters.isEmpty()) {
-			setStatus(new Status(
-					IStatus.ERROR,
+			setStatus(new Status(IStatus.ERROR,
 					DLTKLaunchingPlugin.getUniqueIdentifier(),
 					ScriptLaunchConfigurationConstants.ERR_NO_DEFAULT_INTERPRETER_INSTALL,
 					InterpretersMessages.InterpretersComboBlock_0, null));
@@ -283,7 +274,7 @@ public class AbstractInterpreterComboBlock {
 
 	/**
 	 * Opens the given preference page, and updates when closed.
-	 * 
+	 *
 	 * @param id
 	 *            pref page id
 	 * @param page
@@ -314,7 +305,7 @@ public class AbstractInterpreterComboBlock {
 
 	/**
 	 * Returns this block's control
-	 * 
+	 *
 	 * @return control
 	 */
 	public Control getControl() {
@@ -323,7 +314,7 @@ public class AbstractInterpreterComboBlock {
 
 	/**
 	 * Sets the InterpreterEnvironments to be displayed in this block
-	 * 
+	 *
 	 * @param Interpreters
 	 *            InterpreterEnvironments to be displayed
 	 */
@@ -331,11 +322,8 @@ public class AbstractInterpreterComboBlock {
 		fInterpreters.clear();
 		fInterpreters.addAll(interpreters);
 		// sort by name
-		Collections.sort(fInterpreters, new Comparator<IInterpreterInstall>() {
-			public int compare(IInterpreterInstall o1, IInterpreterInstall o2) {
-				return o1.getName().compareToIgnoreCase(o2.getName());
-			}
-		});
+		Collections.sort(fInterpreters,
+				(o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
 		// now make an array of names
 		String[] names = new String[fInterpreters.size()];
 		for (int i = 0, size = fInterpreters.size(); i < size; ++i) {
@@ -355,7 +343,7 @@ public class AbstractInterpreterComboBlock {
 
 	/**
 	 * Selects a specific InterpreterEnvironment based on type/name.
-	 * 
+	 *
 	 * @param Interpreter
 	 *            InterpreterEnvironment
 	 */
@@ -372,7 +360,7 @@ public class AbstractInterpreterComboBlock {
 
 	/**
 	 * Returns the selected InterpreterEnvironment or <code>null</code> if none.
-	 * 
+	 *
 	 * @return the selected InterpreterEnvironment or <code>null</code> if none
 	 */
 	public IInterpreterInstall getInterpreter() {
@@ -388,11 +376,12 @@ public class AbstractInterpreterComboBlock {
 
 	/**
 	 * Sets the Default InterpreterEnvironment Descriptor for this block.
-	 * 
+	 *
 	 * @param descriptor
 	 *            default InterpreterEnvironment descriptor
 	 */
-	public void setDefaultInterpreterDescriptor(InterpreterDescriptor descriptor) {
+	public void setDefaultInterpreterDescriptor(
+			InterpreterDescriptor descriptor) {
 		fDefaultDescriptor = descriptor;
 		setButtonTextFromDescriptor(fDefaultButton, descriptor);
 	}
@@ -413,7 +402,7 @@ public class AbstractInterpreterComboBlock {
 
 	/**
 	 * Sets the specific InterpreterEnvironment Descriptor for this block.
-	 * 
+	 *
 	 * @param descriptor
 	 *            specific InterpreterEnvironment descriptor
 	 */
@@ -426,7 +415,7 @@ public class AbstractInterpreterComboBlock {
 	/**
 	 * Returns whether the 'use default InterpreterEnvironment' button is
 	 * checked.
-	 * 
+	 *
 	 * @return whether the 'use default InterpreterEnvironment' button is
 	 *         checked
 	 */
@@ -451,7 +440,7 @@ public class AbstractInterpreterComboBlock {
 
 	/**
 	 * Sets the title used for this InterpreterEnvironment block
-	 * 
+	 *
 	 * @param title
 	 *            title for this InterpreterEnvironment block
 	 */
@@ -470,8 +459,7 @@ public class AbstractInterpreterComboBlock {
 		IInterpreterInstall prevInterpreter = getInterpreter();
 		fillWithWorkspaceInterpreters();
 		if (fInterpreters.isEmpty()) {
-			setStatus(new Status(
-					IStatus.ERROR,
+			setStatus(new Status(IStatus.ERROR,
 					DLTKLaunchingPlugin.getUniqueIdentifier(),
 					ScriptLaunchConfigurationConstants.ERR_NO_DEFAULT_INTERPRETER_INSTALL,
 					InterpretersMessages.InterpretersComboBlock_0, null));
@@ -493,7 +481,7 @@ public class AbstractInterpreterComboBlock {
 	/**
 	 * Returns a buildpath container path identifying the selected
 	 * InterpreterEnvironment.
-	 * 
+	 *
 	 * @return buildpath container path or <code>null</code>
 	 */
 	public IPath getInterpreterPath() {
@@ -515,28 +503,28 @@ public class AbstractInterpreterComboBlock {
 	/**
 	 * Sets the selection based on the given container path and returns a status
 	 * indicating if the selection was successful.
-	 * 
+	 *
 	 * @param containerPath
 	 * @return status
 	 */
 	public void setPath(IPath containerPath) {
 		if (fInterpreters.isEmpty()) {
-			setStatus(new Status(
-					IStatus.ERROR,
+			setStatus(new Status(IStatus.ERROR,
 					DLTKLaunchingPlugin.getUniqueIdentifier(),
 					ScriptLaunchConfigurationConstants.ERR_NO_DEFAULT_INTERPRETER_INSTALL,
 					InterpretersMessages.InterpretersComboBlock_0, null));
 		} else {
 			setStatus(OK_STATUS);
 		}
-		if (ScriptRuntime.newDefaultInterpreterContainerPath().equals(
-				containerPath)) {
+		if (ScriptRuntime.newDefaultInterpreterContainerPath()
+				.equals(containerPath)) {
 			setUseDefaultInterpreter();
 		} else {
 			final IEnvironment environment = fContext.getEnvironment();
-			final IInterpreterInstall install = environment != null ? ScriptRuntime
-					.getInterpreterInstall(fContext.getNatureId(), environment
-							.getId(), containerPath)
+			final IInterpreterInstall install = environment != null
+					? ScriptRuntime.getInterpreterInstall(
+							fContext.getNatureId(), environment.getId(),
+							containerPath)
 					: null;
 			if (install == null) {
 				setError(InterpretersMessages.InterpretersComboBlock_8);
@@ -553,14 +541,14 @@ public class AbstractInterpreterComboBlock {
 	}
 
 	private void setError(String message) {
-		setStatus(new Status(IStatus.ERROR, DLTKDebugUIPlugin
-				.getUniqueIdentifier(), IDLTKDebugUIConstants.INTERNAL_ERROR,
-				message, null));
+		setStatus(new Status(IStatus.ERROR,
+				DLTKDebugUIPlugin.getUniqueIdentifier(),
+				IDLTKDebugUIConstants.INTERNAL_ERROR, message, null));
 	}
 
 	/**
 	 * Returns the status of the interpreter selection.
-	 * 
+	 *
 	 * @return status
 	 */
 	public IStatus getStatus() {
@@ -587,7 +575,7 @@ public class AbstractInterpreterComboBlock {
 
 	protected void fillWithWorkspaceInterpreters() {
 		// fill with interpreters
-		final List<IInterpreterInstall> standins = new ArrayList<IInterpreterInstall>();
+		final List<IInterpreterInstall> standins = new ArrayList<>();
 		final IInterpreterInstallType[] types = ScriptRuntime
 				.getInterpreterInstallTypes(getCurrentLanguageNature());
 		final IEnvironment environment = fContext.getEnvironment();
@@ -597,9 +585,8 @@ public class AbstractInterpreterComboBlock {
 			IInterpreterInstall[] installs = type.getInterpreterInstalls();
 			for (int j = 0; j < installs.length; j++) {
 				final IInterpreterInstall install = installs[j];
-				if (environment != null
-						&& environment.getId().equals(
-								install.getEnvironmentId())) {
+				if (environment != null && environment.getId()
+						.equals(install.getEnvironmentId())) {
 					standins.add(new InterpreterStandin(install));
 				}
 			}

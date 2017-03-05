@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
-
 package org.eclipse.dltk.ui.preferences;
 
 import static org.eclipse.dltk.ui.PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED_SUFFIX;
@@ -51,11 +49,9 @@ import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -118,7 +114,7 @@ public abstract class AbstractScriptEditorColoringConfigurationBlock extends
 
 		/**
 		 * Initialize the item with the given values.
-		 * 
+		 *
 		 * @param displayName
 		 *            the display name
 		 * @param colorKey
@@ -168,7 +164,7 @@ public abstract class AbstractScriptEditorColoringConfigurationBlock extends
 
 		/**
 		 * @return the strikethrough preference key
-		 * 
+		 *
 		 */
 		public String getStrikethroughKey() {
 			return fStrikethroughKey;
@@ -176,7 +172,7 @@ public abstract class AbstractScriptEditorColoringConfigurationBlock extends
 
 		/**
 		 * @return the underline preference key
-		 * 
+		 *
 		 */
 		public String getUnderlineKey() {
 			return fUnderlineKey;
@@ -212,7 +208,7 @@ public abstract class AbstractScriptEditorColoringConfigurationBlock extends
 
 		/**
 		 * Initialize the item with the given values.
-		 * 
+		 *
 		 * @param displayName
 		 *            the display name
 		 * @param colorKey
@@ -278,6 +274,7 @@ public abstract class AbstractScriptEditorColoringConfigurationBlock extends
 
 	protected class ColorListContentProvider implements ITreeContentProvider {
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			List<String> categorys = new ArrayList<String>();
 			for (String cat : getCategories()) {
@@ -293,15 +290,15 @@ public abstract class AbstractScriptEditorColoringConfigurationBlock extends
 			return categorys.toArray();
 		}
 
-		/*
-		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-		 */
+		@Override
 		public void dispose() {
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof String) {
 				String entry = (String) parentElement;
@@ -310,6 +307,7 @@ public abstract class AbstractScriptEditorColoringConfigurationBlock extends
 			return new Object[0];
 		}
 
+		@Override
 		public Object getParent(Object element) {
 			if (element instanceof HighlightingColorListItem) {
 				return ((HighlightingColorListItem) element).getCategory();
@@ -318,6 +316,7 @@ public abstract class AbstractScriptEditorColoringConfigurationBlock extends
 			}
 		}
 
+		@Override
 		public boolean hasChildren(Object element) {
 			return element instanceof String;
 		}
@@ -515,11 +514,12 @@ public abstract class AbstractScriptEditorColoringConfigurationBlock extends
 
 	/**
 	 * Creates page for hover preferences.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 * @return the control for the preference page
 	 */
+	@Override
 	public Control createControl(Composite parent) {
 		initializeDialogUnits(parent);
 		return createSyntaxPage(parent);
@@ -647,6 +647,7 @@ public abstract class AbstractScriptEditorColoringConfigurationBlock extends
 		fListViewer.setLabelProvider(new ColorListLabelProvider());
 		fListViewer.setContentProvider(getColorListContentProvider());
 		fListViewer.setSorter(new ViewerSorter() {
+			@Override
 			public int category(Object element) {
 				// don't sort the top level categories
 				if (sCoreCategory.equals(element))
@@ -755,17 +756,15 @@ public abstract class AbstractScriptEditorColoringConfigurationBlock extends
 		}
 
 		fListViewer
-				.addSelectionChangedListener(new ISelectionChangedListener() {
-					public void selectionChanged(SelectionChangedEvent event) {
-						handleSyntaxColorListSelection();
-					}
-				});
+				.addSelectionChangedListener(event -> handleSyntaxColorListSelection());
 
 		foregroundColorButton.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				HighlightingColorListItem item = getHighlightingColorListItem();
 				PreferenceConverter.setValue(getPreferenceStore(),
@@ -775,10 +774,12 @@ public abstract class AbstractScriptEditorColoringConfigurationBlock extends
 		});
 
 		fBoldCheckBox.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				HighlightingColorListItem item = getHighlightingColorListItem();
 				getPreferenceStore().setValue(item.getBoldKey(),
@@ -787,10 +788,12 @@ public abstract class AbstractScriptEditorColoringConfigurationBlock extends
 		});
 
 		fItalicCheckBox.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				HighlightingColorListItem item = getHighlightingColorListItem();
 				getPreferenceStore().setValue(item.getItalicKey(),
@@ -798,10 +801,12 @@ public abstract class AbstractScriptEditorColoringConfigurationBlock extends
 			}
 		});
 		fStrikethroughCheckBox.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				HighlightingColorListItem item = getHighlightingColorListItem();
 				getPreferenceStore().setValue(item.getStrikethroughKey(),
@@ -810,10 +815,12 @@ public abstract class AbstractScriptEditorColoringConfigurationBlock extends
 		});
 
 		fUnderlineCheckBox.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				HighlightingColorListItem item = getHighlightingColorListItem();
 				getPreferenceStore().setValue(item.getUnderlineKey(),
@@ -822,10 +829,12 @@ public abstract class AbstractScriptEditorColoringConfigurationBlock extends
 		});
 
 		fEnableCheckbox.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				HighlightingColorListItem item = getHighlightingColorListItem();
 				if (item instanceof SemanticHighlightingColorListItem) {
@@ -918,11 +927,11 @@ public abstract class AbstractScriptEditorColoringConfigurationBlock extends
 	 * Returns the array of the {@link SemanticHighlighting}s that should be
 	 * listed in the color preferences dialog. If there is no semantic
 	 * highlighting - the empty array should be returned.
-	 * 
+	 *
 	 * If the color key is already listed in the array returned by the
 	 * {@link #getSyntaxColorListModel()} it will not be added again - only new
 	 * items are added to the list.
-	 * 
+	 *
 	 * @return
 	 */
 	protected SemanticHighlighting[] getSemanticHighlightings() {
@@ -961,9 +970,9 @@ public abstract class AbstractScriptEditorColoringConfigurationBlock extends
 
 	/**
 	 * Returns the current highlighting color list item.
-	 * 
+	 *
 	 * @return the current highlighting color list item
-	 * 
+	 *
 	 */
 	private HighlightingColorListItem getHighlightingColorListItem() {
 		IStructuredSelection selection = (IStructuredSelection) fListViewer

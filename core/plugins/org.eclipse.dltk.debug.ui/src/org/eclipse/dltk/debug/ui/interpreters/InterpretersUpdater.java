@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.debug.ui.interpreters;
 
@@ -17,7 +16,6 @@ import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.dltk.core.environment.EnvironmentManager;
 import org.eclipse.dltk.core.environment.IEnvironment;
 import org.eclipse.dltk.debug.ui.DLTKDebugUIPlugin;
@@ -57,10 +55,9 @@ public class InterpretersUpdater {
 					.getDefaultInterpreterInstall(entry);
 
 			if (def != null) {
-				fOriginalInterpreters
-						.setDefaultInterpreterInstallCompositeID(entry,
-								ScriptRuntime
-										.getCompositeIdFromInterpreter(def));
+				fOriginalInterpreters.setDefaultInterpreterInstallCompositeID(
+						entry,
+						ScriptRuntime.getCompositeIdFromInterpreter(def));
 			}
 		}
 
@@ -79,7 +76,7 @@ public class InterpretersUpdater {
 	/**
 	 * Updates Interpreter settings and returns whether the update was
 	 * successful.
-	 * 
+	 *
 	 * @param interpreters
 	 *            new installed InterpreterEnvironments
 	 * @param defaultInterpreters
@@ -93,7 +90,7 @@ public class InterpretersUpdater {
 		InterpreterDefinitionsContainer container = new InterpreterDefinitionsContainer();
 
 		// Default interpreter id for natureId
-		final Set<String> envIds = new HashSet<String>();
+		final Set<String> envIds = new HashSet<>();
 		if (defaultInterpreters != null) {
 			for (int i = 0; i < defaultInterpreters.length; i++) {
 				final String defaultId = ScriptRuntime
@@ -136,8 +133,8 @@ public class InterpretersUpdater {
 		// Save interpreters from other languages to the container
 		for (final IInterpreterInstall install : fOriginalInterpreters
 				.getInterpreterList()) {
-			if (!langNatureId.equals(install.getInterpreterInstallType()
-					.getNatureId())) {
+			if (!langNatureId.equals(
+					install.getInterpreterInstallType().getNatureId())) {
 				container.addInterpreter(install);
 			}
 		}
@@ -153,30 +150,27 @@ public class InterpretersUpdater {
 
 	private void saveInterpreterDefinitions(
 			final InterpreterDefinitionsContainer container) {
-		IRunnableWithProgress runnable = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor)
-					throws InvocationTargetException, InterruptedException {
-				try {
-					monitor.beginTask(
-							InterpretersMessages.InterpretersUpdater_0, 100);
-					final String xml = container.getAsXML();
-					monitor.worked(40);
-					ScriptRuntime.getPreferences().put(
-							ScriptRuntime.PREF_INTERPRETER_XML, xml);
-					monitor.worked(30);
-					ScriptRuntime.savePreferences();
-					monitor.worked(30);
-				} catch (IOException ioe) {
-					DLTKDebugUIPlugin.log(ioe);
-				} catch (ParserConfigurationException e) {
-					DLTKDebugUIPlugin.log(e);
-				} catch (TransformerException e) {
-					DLTKDebugUIPlugin.log(e);
-				} finally {
-					monitor.done();
-				}
-
+		IRunnableWithProgress runnable = monitor -> {
+			try {
+				monitor.beginTask(InterpretersMessages.InterpretersUpdater_0,
+						100);
+				final String xml = container.getAsXML();
+				monitor.worked(40);
+				ScriptRuntime.getPreferences()
+						.put(ScriptRuntime.PREF_INTERPRETER_XML, xml);
+				monitor.worked(30);
+				ScriptRuntime.savePreferences();
+				monitor.worked(30);
+			} catch (IOException ioe) {
+				DLTKDebugUIPlugin.log(ioe);
+			} catch (ParserConfigurationException e1) {
+				DLTKDebugUIPlugin.log(e1);
+			} catch (TransformerException e2) {
+				DLTKDebugUIPlugin.log(e2);
+			} finally {
+				monitor.done();
 			}
+
 		};
 		try {
 			DLTKDebugUIPlugin.getDefault().getWorkbench().getProgressService()

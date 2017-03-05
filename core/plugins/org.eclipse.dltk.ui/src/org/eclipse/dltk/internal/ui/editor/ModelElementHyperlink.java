@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     xored software, Inc. - Initial implementation
- *     xored software, Inc. - implement getHyperlinkText() & getTypeLabel (Alex Panchenko)  
+ *     xored software, Inc. - implement getHyperlinkText() & getTypeLabel (Alex Panchenko)
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.editor;
 
@@ -43,10 +43,12 @@ public class ModelElementHyperlink implements IHyperlink {
 		this.selection = selection;
 	}
 
+	@Override
 	public IRegion getHyperlinkRegion() {
 		return fRegion;
 	}
 
+	@Override
 	public void open() {
 		if (selection instanceof ModelElementArray) {
 			fOpenAction.selectAndOpen(((ModelElementArray) selection)
@@ -56,6 +58,7 @@ public class ModelElementHyperlink implements IHyperlink {
 		}
 	}
 
+	@Override
 	public String getTypeLabel() {
 		return DLTKEditorMessages.ModelElementHyperlink_typeLabel;
 	}
@@ -70,6 +73,7 @@ public class ModelElementHyperlink implements IHyperlink {
 			| ScriptElementLabels.T_TYPE_PARAMETERS
 			| ScriptElementLabels.USE_RESOLVED;
 
+	@Override
 	public String getHyperlinkText() {
 		final String text;
 		if (selection instanceof IModelElement) {

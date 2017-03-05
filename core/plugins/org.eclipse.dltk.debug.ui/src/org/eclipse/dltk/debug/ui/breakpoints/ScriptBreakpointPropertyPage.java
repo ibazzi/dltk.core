@@ -1,20 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.debug.ui.breakpoints;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.core.IDLTKLanguageToolkit;
@@ -90,8 +87,9 @@ public class ScriptBreakpointPropertyPage extends PropertyPage {
 
 	protected int getHitCondition() {
 		if (!hasOnlyGreaterOrEqualsHitCount()) {
-			return getEnabledHitChecking() ? hitConditionCombo
-					.getSelectionIndex() : -1;
+			return getEnabledHitChecking()
+					? hitConditionCombo.getSelectionIndex()
+					: -1;
 		}
 		return IScriptBreakpoint.HIT_CONDITION_GREATER_OR_EQUAL;
 	}
@@ -101,8 +99,9 @@ public class ScriptBreakpointPropertyPage extends PropertyPage {
 	}
 
 	protected int getHitValue() {
-		return getEnabledHitChecking() ? Integer.parseInt(hitValueText
-				.getText()) : -1;
+		return getEnabledHitChecking()
+				? Integer.parseInt(hitValueText.getText())
+				: -1;
 	}
 
 	// Expression
@@ -130,8 +129,8 @@ public class ScriptBreakpointPropertyPage extends PropertyPage {
 				parent.getFont(), 2, 1, GridData.FILL_HORIZONTAL);
 
 		// Script language
-		SWTFactory.createLabel(labelComposite,
-				BreakpointMessages.LanguageLabel, 1);
+		SWTFactory.createLabel(labelComposite, BreakpointMessages.LanguageLabel,
+				1);
 		SWTFactory.createLabel(labelComposite, BreakpointUtils
 				.getLanguageToolkit(breakpoint).getLanguageName(), 1);
 
@@ -175,7 +174,7 @@ public class ScriptBreakpointPropertyPage extends PropertyPage {
 
 	/**
 	 * Returns the label text for the location field
-	 * 
+	 *
 	 * @return
 	 */
 	protected String getBreakpointLocationLabel() {
@@ -184,7 +183,7 @@ public class ScriptBreakpointPropertyPage extends PropertyPage {
 
 	/**
 	 * Returns the value for the location field
-	 * 
+	 *
 	 * @return
 	 * @throws CoreException
 	 */
@@ -202,9 +201,8 @@ public class ScriptBreakpointPropertyPage extends PropertyPage {
 		Composite buttonsComposite = SWTFactory.createComposite(parent,
 				parent.getFont(), 1, 1, GridData.FILL_HORIZONTAL);
 
-		enabledBreakpointButton = SWTFactory.createCheckButton(
-				buttonsComposite, BreakpointMessages.EnabledLabel, null, false,
-				1);
+		enabledBreakpointButton = SWTFactory.createCheckButton(buttonsComposite,
+				BreakpointMessages.EnabledLabel, null, false, 1);
 
 		createTypeSpecificButtons(buttonsComposite);
 	}
@@ -218,11 +216,11 @@ public class ScriptBreakpointPropertyPage extends PropertyPage {
 				parent.getFont(), 4, 1, GridData.FILL_HORIZONTAL);
 
 		// Hit count checking
-		hitCountCheckingButton = SWTFactory.createCheckButton(
-				hitCountComposite, BreakpointMessages.BreakWhenHitCountLabel,
-				null, false, 1);
+		hitCountCheckingButton = SWTFactory.createCheckButton(hitCountComposite,
+				BreakpointMessages.BreakWhenHitCountLabel, null, false, 1);
 
 		hitCountCheckingButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateControlsState(UPDATE_OTHER);
 			}
@@ -232,8 +230,7 @@ public class ScriptBreakpointPropertyPage extends PropertyPage {
 			hitConditionCombo = new Combo(hitCountComposite, SWT.READ_ONLY);
 
 			// Hit condition
-			hitConditionCombo.add(
-					BreakpointMessages.HitConditionGreaterOrEqual,
+			hitConditionCombo.add(BreakpointMessages.HitConditionGreaterOrEqual,
 					IScriptBreakpoint.HIT_CONDITION_GREATER_OR_EQUAL);
 
 			hitConditionCombo.add(BreakpointMessages.HitConditionEqual,
@@ -246,6 +243,7 @@ public class ScriptBreakpointPropertyPage extends PropertyPage {
 					.select(IScriptBreakpoint.HIT_CONDITION_GREATER_OR_EQUAL);
 
 			hitConditionCombo.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					updateControlsState(UPDATE_OTHER);
 				}
@@ -256,10 +254,11 @@ public class ScriptBreakpointPropertyPage extends PropertyPage {
 
 		// Hit value
 		hitValueText = new Text(hitCountComposite, SWT.BORDER);
-		hitValueText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false));
+		hitValueText
+				.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
 		hitValueText.addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyReleased(KeyEvent e) {
 				updateControlsState(UPDATE_OTHER);
 			}
@@ -277,6 +276,7 @@ public class ScriptBreakpointPropertyPage extends PropertyPage {
 		enableExpressionButton = new Button(group, SWT.CHECK);
 		enableExpressionButton.setText(BreakpointMessages.UseConditionLabel);
 		enableExpressionButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateControlsState(UPDATE_EXPRESSION_ENABLE);
 			}
@@ -300,8 +300,8 @@ public class ScriptBreakpointPropertyPage extends PropertyPage {
 		expressionViewer.configure(config);
 		expressionViewer.setDocument(document);
 
-		expressionViewer.getControl().setLayoutData(
-				new GridData(SWT.FILL, SWT.FILL, true, true));
+		expressionViewer.getControl()
+				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 	}
 
@@ -309,6 +309,7 @@ public class ScriptBreakpointPropertyPage extends PropertyPage {
 		return (IScriptBreakpoint) getElement();
 	}
 
+	@Override
 	protected Control createContents(Composite parent) {
 		noDefaultAndApplyButton();
 		Composite composite = SWTFactory.createComposite(parent,
@@ -488,14 +489,13 @@ public class ScriptBreakpointPropertyPage extends PropertyPage {
 		setErrorMessage(errorMessage);
 	}
 
+	@Override
 	public boolean performOk() {
 		try {
-			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) throws CoreException {
-					saveValues();
-					DebugPlugin.getDefault().getBreakpointManager()
-							.fireBreakpointChanged(getBreakpoint());
-				}
+			ResourcesPlugin.getWorkspace().run(monitor -> {
+				saveValues();
+				DebugPlugin.getDefault().getBreakpointManager()
+						.fireBreakpointChanged(getBreakpoint());
 			}, null, 0, null);
 		} catch (CoreException e) {
 			DebugPlugin.log(e);

@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2009 xored software, Inc.  
+ * Copyright (c) 2009, 2017 xored software, Inc.  and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html  
+ * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
  *     xored software, Inc. - initial API and Implementation (Alex Panchenko)
@@ -14,8 +14,6 @@ package org.eclipse.dltk.ui.formatter;
 import org.eclipse.dltk.ui.CodeFormatterConstants;
 import org.eclipse.dltk.ui.preferences.FormatterMessages;
 import org.eclipse.dltk.ui.util.SWTFactory;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -56,6 +54,7 @@ public class FormatterIndentationGroup {
 			}
 		}
 
+		@Override
 		public void initialize() {
 			final boolean tabMode = CodeFormatterConstants.TAB.equals(manager
 					.getString(CodeFormatterConstants.FORMATTER_TAB_CHAR));
@@ -94,15 +93,13 @@ public class FormatterIndentationGroup {
 						tabPolicyGroup,
 						CodeFormatterConstants.FORMATTER_TAB_SIZE,
 						FormatterMessages.IndentationTabPage_general_group_option_tab_size);
-		tabSize.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				int index = tabPolicy.getSelectionIndex();
-				if (index >= 0) {
-					final boolean tabMode = CodeFormatterConstants.TAB
-							.equals(tabPolicyItems[index]);
-					if (tabMode) {
-						indentSize.setText(tabSize.getText());
-					}
+		tabSize.addModifyListener(e -> {
+			int index = tabPolicy.getSelectionIndex();
+			if (index >= 0) {
+				final boolean tabMode = CodeFormatterConstants.TAB
+						.equals(tabPolicyItems[index]);
+				if (tabMode) {
+					indentSize.setText(tabSize.getText());
 				}
 			}
 		});

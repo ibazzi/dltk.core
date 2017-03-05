@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.preferences;
 
@@ -14,11 +13,8 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.core.DLTKLanguageManager;
 import org.eclipse.dltk.core.IBuildpathEntry;
@@ -65,9 +61,7 @@ public abstract class BuildPathsPropertyPage extends PropertyPage implements
 	private BuildpathsBlock fBuildPathsBlock;
 	private boolean fBlockOnApply = false;
 
-	/*
-	 * @see PreferencePage#createControl(Composite)
-	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		// ensure the page has no special buttons
 		noDefaultAndApplyButton();
@@ -85,11 +79,7 @@ public abstract class BuildPathsPropertyPage extends PropertyPage implements
 		return result;
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets
-	 * .Composite)
-	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		// PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
@@ -107,11 +97,7 @@ public abstract class BuildPathsPropertyPage extends PropertyPage implements
 		return pageSettings;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.IDialogPage#setVisible(boolean)
-	 */
+	@Override
 	public void setVisible(boolean visible) {
 		if (fBuildPathsBlock != null) {
 			if (!visible) {
@@ -210,19 +196,12 @@ public abstract class BuildPathsPropertyPage extends PropertyPage implements
 		return DLTKLanguageManager.hasScriptNature(proj);
 	}
 
-	/*
-	 * @see IPreferencePage#performOk
-	 */
+	@Override
 	public boolean performOk() {
 		if (fBuildPathsBlock != null) {
 			getSettings().put(INDEX, fBuildPathsBlock.getPageIndex());
 			if (fBuildPathsBlock.hasChangesInDialog()) {
-				IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-					public void run(IProgressMonitor monitor)
-							throws CoreException, OperationCanceledException {
-						fBuildPathsBlock.configureScriptProject(monitor);
-					}
-				};
+				IWorkspaceRunnable runnable = monitor -> fBuildPathsBlock.configureScriptProject(monitor);
 				WorkbenchRunnableAdapter op = new WorkbenchRunnableAdapter(
 						runnable);
 				if (fBlockOnApply) {
@@ -251,22 +230,13 @@ public abstract class BuildPathsPropertyPage extends PropertyPage implements
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see IStatusChangeListener#statusChanged
-	 */
+	@Override
 	public void statusChanged(IStatus status) {
 		setValid(!status.matches(IStatus.ERROR));
 		StatusUtil.applyToStatusLine(this, status);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.preference.PreferencePage#applyData(java.lang.Object)
-	 */
+	@Override
 	public void applyData(Object data) {
 		if (data instanceof Map) {
 			Map map = (Map) data;

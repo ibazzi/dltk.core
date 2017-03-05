@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.validators.internal.core;
 
@@ -28,9 +27,9 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.dltk.validators.core.IValidator;
 import org.eclipse.dltk.validators.core.ValidatorRuntime;
 import org.osgi.framework.BundleContext;
@@ -55,12 +54,7 @@ public class ValidatorsCore extends Plugin implements IPropertyChangeListener {
 	public ValidatorsCore() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
-	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
@@ -68,12 +62,7 @@ public class ValidatorsCore extends Plugin implements IPropertyChangeListener {
 		getPluginPreferences().addPropertyChangeListener(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
-	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		getPluginPreferences().removePropertyChangeListener(this);
 		plugin = null;
@@ -82,7 +71,7 @@ public class ValidatorsCore extends Plugin implements IPropertyChangeListener {
 
 	/**
 	 * Returns the shared instance
-	 * 
+	 *
 	 * @return the shared instance
 	 */
 	public static ValidatorsCore getDefault() {
@@ -91,7 +80,7 @@ public class ValidatorsCore extends Plugin implements IPropertyChangeListener {
 
 	/**
 	 * Returns a Document that can be used to build a DOM tree
-	 * 
+	 *
 	 * @return the Document
 	 * @throws ParserConfigurationException
 	 *             if an exception occurs creating the document builder
@@ -103,8 +92,7 @@ public class ValidatorsCore extends Plugin implements IPropertyChangeListener {
 		return doc;
 	}
 
-	public static String serializeDocument(Document doc) throws IOException,
-			TransformerException {
+	public static String serializeDocument(Document doc) throws IOException, TransformerException {
 		StringWriter s = new StringWriter();
 
 		TransformerFactory factory = TransformerFactory.newInstance();
@@ -127,12 +115,12 @@ public class ValidatorsCore extends Plugin implements IPropertyChangeListener {
 		return fIgnoreValidatorDefPropertyChangeEvents;
 	}
 
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		String property = event.getProperty();
 		if (property.equals(ValidatorRuntime.PREF_VALIDATOR_XML)) {
 			if (!isIgnoreValidatorDefPropertyChangeEvents()) {
-				processValidatorPrefsChanged((String) event.getOldValue(),
-						(String) event.getNewValue());
+				processValidatorPrefsChanged((String) event.getOldValue(), (String) event.getNewValue());
 			}
 		}
 	}
@@ -140,12 +128,9 @@ public class ValidatorsCore extends Plugin implements IPropertyChangeListener {
 	private ValidatorDefinitionsContainer getValidatorDefinitions(String xml) {
 		if (xml != null && xml.length() > 0) {
 			try {
-				return ValidatorDefinitionsContainer
-						.createFromXML(new StringReader(xml));
+				return ValidatorDefinitionsContainer.createFromXML(new StringReader(xml));
 			} catch (IOException e) {
-				getLog().log(
-						new Status(IStatus.ERROR, PLUGIN_ID, 0,
-								ValidatorMessages.ValidatorsCore_exception, e));
+				getLog().log(new Status(IStatus.ERROR, PLUGIN_ID, 0, ValidatorMessages.ValidatorsCore_exception, e));
 			}
 		}
 		return new ValidatorDefinitionsContainer();
@@ -166,12 +151,12 @@ public class ValidatorsCore extends Plugin implements IPropertyChangeListener {
 		ValidatorDefinitionsContainer newResults = getValidatorDefinitions(newValue);
 
 		// Determine the deleted validators
-		List deleted = new ArrayList(oldResults.getValidatorList());
+		List<IValidator> deleted = new ArrayList<>(oldResults.getValidatorList());
 		deleted.removeAll(newResults.getValidatorList());
 
 		// Dispose ALL but built-in validators
-		for (Iterator i = deleted.iterator(); i.hasNext();) {
-			IValidator validator = (IValidator) i.next();
+		for (Iterator<IValidator> i = deleted.iterator(); i.hasNext();) {
+			IValidator validator = i.next();
 			validator.getValidatorType().disposeValidator(validator.getID());
 		}
 

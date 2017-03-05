@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,6 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -87,6 +86,7 @@ public class OpenModelElementWithMenu extends ContributionItem {
 	static final Comparator<IEditorDescriptor> comparer = new Comparator<IEditorDescriptor>() {
 		private Collator collator = Collator.getInstance();
 
+		@Override
 		public int compare(IEditorDescriptor arg0, IEditorDescriptor arg1) {
 			String s1 = arg0.getLabel();
 			String s2 = arg1.getLabel();
@@ -102,7 +102,7 @@ public class OpenModelElementWithMenu extends ContributionItem {
 	 * item in the menu. At that point the menu will attempt to open an editor
 	 * with the file as its input.
 	 * </p>
-	 * 
+	 *
 	 * @param page
 	 *            the page where the editor is opened if an item within the menu
 	 *            is selected
@@ -113,7 +113,7 @@ public class OpenModelElementWithMenu extends ContributionItem {
 
 	/**
 	 * Constructs a new instance of <code>OpenWithMenu</code>.
-	 * 
+	 *
 	 * @param page
 	 *            the page where the editor is opened if an item within the menu
 	 *            is selected
@@ -128,7 +128,7 @@ public class OpenModelElementWithMenu extends ContributionItem {
 
 	/**
 	 * Returns an image to show for the corresponding editor descriptor.
-	 * 
+	 *
 	 * @param editorDesc
 	 *            the editor descriptor, or null for the system editor
 	 * @return the image or null
@@ -173,7 +173,7 @@ public class OpenModelElementWithMenu extends ContributionItem {
 
 	/**
 	 * Creates the menu item for the editor descriptor.
-	 * 
+	 *
 	 * @param menu
 	 *            the menu to add the item to
 	 * @param descriptor
@@ -193,15 +193,13 @@ public class OpenModelElementWithMenu extends ContributionItem {
 		if (image != null) {
 			menuItem.setImage(image);
 		}
-		Listener listener = new Listener() {
-			public void handleEvent(Event event) {
-				switch (event.type) {
-				case SWT.Selection:
-					if (menuItem.getSelection()) {
-						openEditor(descriptor, false);
-					}
-					break;
+		Listener listener = event -> {
+			switch (event.type) {
+			case SWT.Selection:
+				if (menuItem.getSelection()) {
+					openEditor(descriptor, false);
 				}
+				break;
 			}
 		};
 		menuItem.addListener(SWT.Selection, listener);
@@ -234,6 +232,7 @@ public class OpenModelElementWithMenu extends ContributionItem {
 	/*
 	 * (non-Javadoc) Fills the menu with perspective items.
 	 */
+	@Override
 	public void fill(Menu menu, int index) {
 		IFile file = getFileResource();
 		if (file == null) {
@@ -303,7 +302,7 @@ public class OpenModelElementWithMenu extends ContributionItem {
 
 	/**
 	 * Creates the Other... menu item
-	 * 
+	 *
 	 * @param menu
 	 *            the menu to add the item to
 	 */
@@ -315,25 +314,21 @@ public class OpenModelElementWithMenu extends ContributionItem {
 		new MenuItem(menu, SWT.SEPARATOR);
 		final MenuItem menuItem = new MenuItem(menu, SWT.PUSH);
 		menuItem.setText(IDEWorkbenchMessages.OpenWithMenu_Other);
-		Listener listener = new Listener() {
-			public void handleEvent(Event event) {
-				switch (event.type) {
-				case SWT.Selection:
-					EditorSelectionDialog dialog = new EditorSelectionDialog(
-							menu.getShell());
-					dialog
-							.setMessage(NLS
-									.bind(
-											IDEWorkbenchMessages.OpenWithMenu_OtherDialogDescription,
-											fileResource.getName()));
-					if (dialog.open() == Window.OK) {
-						IEditorDescriptor editor = dialog.getSelectedEditor();
-						if (editor != null) {
-							openEditor(editor, editor.isOpenExternal());
-						}
+		Listener listener = event -> {
+			switch (event.type) {
+			case SWT.Selection:
+				EditorSelectionDialog dialog = new EditorSelectionDialog(
+						menu.getShell());
+				dialog.setMessage(NLS.bind(
+						IDEWorkbenchMessages.OpenWithMenu_OtherDialogDescription,
+						fileResource.getName()));
+				if (dialog.open() == Window.OK) {
+					IEditorDescriptor editor = dialog.getSelectedEditor();
+					if (editor != null) {
+						openEditor(editor, editor.isOpenExternal());
 					}
-					break;
 				}
+				break;
 			}
 		};
 		menuItem.addListener(SWT.Selection, listener);
@@ -363,13 +358,14 @@ public class OpenModelElementWithMenu extends ContributionItem {
 	/*
 	 * (non-Javadoc) Returns whether this menu is dynamic.
 	 */
+	@Override
 	public boolean isDynamic() {
 		return true;
 	}
 
 	/**
 	 * Opens the given editor on the selected file.
-	 * 
+	 *
 	 * @param editorDescriptor
 	 *            the editor descriptor, or null for the system editor
 	 */
@@ -405,7 +401,7 @@ public class OpenModelElementWithMenu extends ContributionItem {
 
 	/**
 	 * Creates the menu item for clearing the current selection.
-	 * 
+	 *
 	 * @param menu
 	 *            the menu to add the item to
 	 * @param file
@@ -420,29 +416,26 @@ public class OpenModelElementWithMenu extends ContributionItem {
 		menuItem.setSelection(desc == null);
 		menuItem.setText(ActionMessages.DefaultEditorDescription_name);
 
-		Listener listener = new Listener() {
-			public void handleEvent(Event event) {
-				switch (event.type) {
-				case SWT.Selection:
-					if (menuItem.getSelection()) {
-						IDE.setDefaultEditor(file, null);
-						try {
-							IEditorDescriptor desc = IDE
-									.getEditorDescriptor(file);
-							page.openEditor(new FileEditorInput(file), desc
-									.getId(), true, MATCH_BOTH);
-						} catch (PartInitException e) {
-							if (DLTKCore.DEBUG) {
-								e.printStackTrace();
-							}
-							// DialogUtil.openError(page.getWorkbenchWindow()
-							// .getShell(), IDEWorkbenchMessages.
-							// OpenWithMenu_dialogTitle,
-							// e.getMessage(), e);
+		Listener listener = event -> {
+			switch (event.type) {
+			case SWT.Selection:
+				if (menuItem.getSelection()) {
+					IDE.setDefaultEditor(file, null);
+					try {
+						IEditorDescriptor desc1 = IDE.getEditorDescriptor(file);
+						page.openEditor(new FileEditorInput(file),
+								desc1.getId(), true, MATCH_BOTH);
+					} catch (PartInitException e) {
+						if (DLTKCore.DEBUG) {
+							e.printStackTrace();
 						}
+						// DialogUtil.openError(page.getWorkbenchWindow()
+						// .getShell(), IDEWorkbenchMessages.
+						// OpenWithMenu_dialogTitle,
+						// e.getMessage(), e);
 					}
-					break;
 				}
+				break;
 			}
 		};
 

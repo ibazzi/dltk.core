@@ -5,10 +5,12 @@ public class StringScriptType extends AtomicScriptType {
 		super(name);
 	}
 
+	@Override
 	public boolean isString() {
 		return true;
 	}
 
+	@Override
 	public String formatValue(IScriptValue value) {
 		String string = value.getRawValue();
 
@@ -53,8 +55,8 @@ public class StringScriptType extends AtomicScriptType {
 		if (string.length() >= 2) {
 			final char firstChar = string.charAt(0);
 			final char lastChar = string.charAt(string.length() - 1);
-			if (firstChar == '\'' && lastChar == '\'' || firstChar == '"'
-					&& lastChar == '"') {
+			if (firstChar == '\'' && lastChar == '\''
+					|| firstChar == '"' && lastChar == '"') {
 				return true;
 			}
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,9 +55,7 @@ public class BPVariableElementLabelProvider extends LabelProvider implements
 		fResolvedBackground = null;
 	}
 
-	/*
-	 * @see LabelProvider#getImage(java.lang.Object)
-	 */
+	@Override
 	public Image getImage(Object element) {
 		if (element instanceof BPVariableElement) {
 			BPVariableElement curr = (BPVariableElement) element;
@@ -70,9 +68,7 @@ public class BPVariableElementLabelProvider extends LabelProvider implements
 		return super.getImage(element);
 	}
 
-	/*
-	 * @see LabelProvider#getText(java.lang.Object)
-	 */
+	@Override
 	public String getText(Object element) {
 		if (element instanceof BPVariableElement) {
 			BPVariableElement curr = (BPVariableElement) element;
@@ -126,22 +122,12 @@ public class BPVariableElementLabelProvider extends LabelProvider implements
 		return super.getText(element);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
-	 */
+	@Override
 	public Color getForeground(Object element) {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
-	 */
+	@Override
 	public Color getBackground(Object element) {
 		if (element instanceof BPVariableElement) {
 			BPVariableElement curr = (BPVariableElement) element;
@@ -157,11 +143,7 @@ public class BPVariableElementLabelProvider extends LabelProvider implements
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
-	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		// fDeprecatedFolderImage.dispose();

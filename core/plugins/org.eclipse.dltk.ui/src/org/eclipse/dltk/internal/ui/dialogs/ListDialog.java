@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.dialogs;
 
@@ -30,7 +29,7 @@ public class ListDialog extends SelectionDialog {
 	private TableViewer fTableViewer;
 	private boolean fAddCancelButton;
 	private final int fShellStyle;
-	
+
 	public ListDialog(Shell parent, int shellStyle) {
 		super(parent);
 		fAddCancelButton= false;
@@ -40,11 +39,11 @@ public class ListDialog extends SelectionDialog {
 	public void setInput(Object input) {
 		fInput= input;
 	}
-	
+
 	public void setContentProvider(IStructuredContentProvider sp){
 		fContentProvider= sp;
 	}
-	
+
 	public void setLabelProvider(ILabelProvider lp){
 		fLabelProvider= lp;
 	}
@@ -52,30 +51,33 @@ public class ListDialog extends SelectionDialog {
 	public void setAddCancelButton(boolean addCancelButton) {
 		fAddCancelButton= addCancelButton;
 	}
-	
+
 	public TableViewer getTableViewer(){
 		return fTableViewer;
 	}
-			
+
 	public boolean hasFilters(){
 		return fTableViewer.getFilters() != null && fTableViewer.getFilters().length != 0;
 	}
-	
+
+	@Override
 	public void create() {
 		setShellStyle(fShellStyle);
 		super.create();
 	}
-	
+
+	@Override
 	protected Label createMessageArea(Composite composite) {
 		Label label = new Label(composite,SWT.WRAP);
-		label.setText(getMessage()); 
+		label.setText(getMessage());
 		GridData gd= new GridData(GridData.FILL_BOTH);
 		gd.widthHint= convertWidthInCharsToPixels(55);
 		label.setLayoutData(gd);
 		applyDialogFont(label);
 		return label;
 	}
-	
+
+	@Override
 	protected Control createDialogArea(Composite container) {
 		Composite parent= (Composite) super.createDialogArea(container);
 		createMessageArea(parent);
@@ -88,19 +90,20 @@ public class ListDialog extends SelectionDialog {
 		gd.widthHint= convertWidthInCharsToPixels(55);
 		gd.heightHint= convertHeightInCharsToPixels(15);
 		table.setLayoutData(gd);
-		applyDialogFont(parent);		
+		applyDialogFont(parent);
 		return parent;
 	}
-	
+
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		if (! fAddCancelButton)
 			createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		else
-			super.createButtonsForButtonBar(parent);	
-	}	
-	
+			super.createButtonsForButtonBar(parent);
+	}
+
 	protected int getTableStyle() {
 		return SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER;
 	}
-}	
+}
 

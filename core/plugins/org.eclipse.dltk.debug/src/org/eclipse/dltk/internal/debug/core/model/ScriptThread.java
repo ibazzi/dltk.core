@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.debug.core.model;
 
@@ -38,8 +37,8 @@ import org.eclipse.dltk.debug.core.model.IScriptThread;
 import org.eclipse.dltk.internal.debug.core.eval.ScriptEvaluationEngine;
 import org.eclipse.dltk.internal.debug.core.model.operations.DbgpDebugger;
 
-public class ScriptThread extends ScriptDebugElement implements IScriptThread,
-		IThreadManagement, IDbgpTerminationListener,
+public class ScriptThread extends ScriptDebugElement
+		implements IScriptThread, IThreadManagement, IDbgpTerminationListener,
 		ScriptThreadStateManager.IStateChangeHandler, IHotCodeReplaceListener {
 
 	private ScriptThreadStateManager stateManager;
@@ -63,6 +62,7 @@ public class ScriptThread extends ScriptDebugElement implements IScriptThread,
 	private int propertyPageSize = 32;
 
 	// ScriptThreadStateManager.IStateChangeHandler
+	@Override
 	public void handleSuspend(int detail) {
 		DebugEventHelper.fireExtendedEvent(this,
 				ExtendedDebugEventDetails.BEFORE_SUSPEND);
@@ -106,6 +106,7 @@ public class ScriptThread extends ScriptDebugElement implements IScriptThread,
 		return false;
 	}
 
+	@Override
 	public void handleResume(int detail) {
 		DebugEventHelper.fireExtendedEvent(this,
 				ExtendedDebugEventDetails.BEFORE_RESUME);
@@ -114,6 +115,7 @@ public class ScriptThread extends ScriptDebugElement implements IScriptThread,
 		DebugEventHelper.fireChangeEvent(this);
 	}
 
+	@Override
 	public void handleTermination(DbgpException e) {
 		if (e != null) {
 			DLTKDebugPlugin.log(e);
@@ -184,9 +186,8 @@ public class ScriptThread extends ScriptDebugElement implements IScriptThread,
 			final boolean isDebugConsole = DLTKDebugLaunchConstants
 					.isDebugConsole(target.getLaunch());
 
-			if (isDebugConsole
-					&& engine
-							.isFeatureSupported(IDbgpExtendedCommands.STDIN_COMMAND)) {
+			if (isDebugConsole && engine
+					.isFeatureSupported(IDbgpExtendedCommands.STDIN_COMMAND)) {
 				engine.redirectStdin();
 			}
 			engine.setNotifyOk(true);
@@ -220,6 +221,7 @@ public class ScriptThread extends ScriptDebugElement implements IScriptThread,
 		// });
 	}
 
+	@Override
 	public boolean hasStackFrames() {
 		return isSuspended() && !isTerminated() && stack.hasFrames();
 	}
@@ -229,6 +231,7 @@ public class ScriptThread extends ScriptDebugElement implements IScriptThread,
 	}
 
 	// IThread
+	@Override
 	public IStackFrame[] getStackFrames() throws DebugException {
 		if (!isSuspended()) {
 			try {
@@ -243,47 +246,57 @@ public class ScriptThread extends ScriptDebugElement implements IScriptThread,
 		return session.getDebugOptions().filterStackLevels(stack.getFrames());
 	}
 
+	@Override
 	public int getPriority() throws DebugException {
 		return 0;
 	}
 
+	@Override
 	public IStackFrame getTopStackFrame() {
 		return stack.getTopFrame();
 	}
 
+	@Override
 	public String getName() {
 		return session.getInfo().getThreadId();
 	}
 
+	@Override
 	public IBreakpoint[] getBreakpoints() {
-		return DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(
-				getModelIdentifier());
+		return DebugPlugin.getDefault().getBreakpointManager()
+				.getBreakpoints(getModelIdentifier());
 	}
 
 	// ISuspendResume
 
 	// Suspend
+	@Override
 	public int getModificationsCount() {
 		return stateManager.getModificationsCount();
 	}
 
+	@Override
 	public boolean isSuspended() {
 		return stateManager.isSuspended();
 	}
 
+	@Override
 	public boolean canSuspend() {
 		return stateManager.canSuspend();
 	}
 
+	@Override
 	public void suspend() throws DebugException {
 		stateManager.suspend();
 	}
 
 	// Resume
+	@Override
 	public boolean canResume() {
 		return stateManager.canResume();
 	}
 
+	@Override
 	public void resume() throws DebugException {
 		stateManager.resume();
 	}
@@ -294,6 +307,7 @@ public class ScriptThread extends ScriptDebugElement implements IScriptThread,
 	}
 
 	// IStep
+	@Override
 	public boolean isStepping() {
 		return stateManager.isStepping();
 	}
@@ -303,54 +317,66 @@ public class ScriptThread extends ScriptDebugElement implements IScriptThread,
 	}
 
 	// Step into
+	@Override
 	public boolean canStepInto() {
 		return stateManager.canStepInto();
 	}
 
+	@Override
 	public void stepInto() throws DebugException {
 		currentStackLevel = this.stack.getFrames().length;
 		stateManager.stepInto();
 	}
 
 	// Step over
+	@Override
 	public boolean canStepOver() {
 		return stateManager.canStepOver();
 	}
 
+	@Override
 	public void stepOver() throws DebugException {
 		stateManager.stepOver();
 	}
 
 	// Step return
+	@Override
 	public boolean canStepReturn() {
 		return stateManager.canStepReturn();
 	}
 
+	@Override
 	public void stepReturn() throws DebugException {
 		stateManager.stepReturn();
 	}
 
 	// ITerminate
+	@Override
 	public boolean isTerminated() {
 		return terminated || stateManager.isTerminated();
 	}
 
+	@Override
 	public boolean canTerminate() {
 		return !isTerminated();
 	}
 
+	@Override
 	public void terminate() throws DebugException {
 		target.terminate();
 	}
 
+	@Override
 	public void sendTerminationRequest() throws DebugException {
 		stateManager.terminate();
 	}
 
+	@Override
 	public IDbgpSession getDbgpSession() {
 		return session;
 	}
 
+	@Override
 	public IDbgpBreakpoint getDbgpBreakpoint(String id) {
 		try {
 			return session.getCoreCommands().getBreakpoint(id);
@@ -363,14 +389,17 @@ public class ScriptThread extends ScriptDebugElement implements IScriptThread,
 		return null;
 	}
 
+	@Override
 	public IScriptStreamProxy getStreamProxy() {
 		return target.getStreamProxy();
 	}
 
+	@Override
 	public IDebugTarget getDebugTarget() {
 		return target.getDebugTarget();
 	}
 
+	@Override
 	public IScriptEvaluationEngine getEvaluationEngine() {
 		if (evalEngine == null) {
 			evalEngine = new ScriptEvaluationEngine(this);
@@ -380,6 +409,7 @@ public class ScriptThread extends ScriptDebugElement implements IScriptThread,
 	}
 
 	// IDbgpTerminationListener
+	@Override
 	public void objectTerminated(Object object, Exception e) {
 		terminated = true;
 		Assert.isTrue(object == session);
@@ -388,6 +418,7 @@ public class ScriptThread extends ScriptDebugElement implements IScriptThread,
 	}
 
 	// Object
+	@Override
 	public String toString() {
 		return "Thread (" + session.getInfo().getThreadId() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -396,6 +427,7 @@ public class ScriptThread extends ScriptDebugElement implements IScriptThread,
 		stateManager.notifyModified();
 	}
 
+	@Override
 	public void hotCodeReplaceFailed(IScriptDebugTarget target,
 			DebugException exception) {
 		if (isSuspended()) {
@@ -404,6 +436,7 @@ public class ScriptThread extends ScriptDebugElement implements IScriptThread,
 		}
 	}
 
+	@Override
 	public void hotCodeReplaceSucceeded(IScriptDebugTarget target) {
 		if (isSuspended()) {
 			stack.updateFrames();
@@ -411,22 +444,27 @@ public class ScriptThread extends ScriptDebugElement implements IScriptThread,
 		}
 	}
 
+	@Override
 	public int getPropertyPageSize() {
 		return propertyPageSize;
 	}
 
+	@Override
 	public boolean retrieveGlobalVariables() {
 		return target.retrieveGlobalVariables();
 	}
 
+	@Override
 	public boolean retrieveClassVariables() {
 		return target.retrieveClassVariables();
 	}
 
+	@Override
 	public boolean retrieveLocalVariables() {
 		return target.retrieveLocalVariables();
 	}
 
+	@Override
 	public void updateStackFrames() {
 		stack.updateFrames();
 		DebugEventHelper.fireChangeEvent(ScriptThread.this.getDebugTarget());

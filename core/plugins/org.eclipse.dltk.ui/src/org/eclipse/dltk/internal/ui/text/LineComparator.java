@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,7 @@ import org.eclipse.jface.text.IRegion;
 /**
  * This implementation of <code>IRangeComparator</code> compares lines of a
  * document. The lines are compared using a DJB hash function.
- * 
+ *
  * @since 3.0
  */
 public class LineComparator implements IRangeComparator {
@@ -32,7 +32,7 @@ public class LineComparator implements IRangeComparator {
 
 	/**
 	 * Create a line comparator for the given document.
-	 * 
+	 *
 	 * @param document
 	 */
 	public LineComparator(IDocument document) {
@@ -42,19 +42,12 @@ public class LineComparator implements IRangeComparator {
 		fHashes = new ArrayList<Integer>(Arrays.asList(nulls));
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.compare.rangedifferencer.IRangeComparator#getRangeCount()
-	 */
+	@Override
 	public int getRangeCount() {
 		return fDocument.getNumberOfLines();
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.compare.rangedifferencer.IRangeComparator#rangesEqual(int,
-	 * org.eclipse.compare.rangedifferencer.IRangeComparator, int)
-	 */
+	@Override
 	public boolean rangesEqual(int thisIndex, IRangeComparator other,
 			int otherIndex) {
 		try {
@@ -66,11 +59,7 @@ public class LineComparator implements IRangeComparator {
 		}
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.compare.rangedifferencer.IRangeComparator#skipRangeComparison
-	 * (int, int, org.eclipse.compare.rangedifferencer.IRangeComparator)
-	 */
+	@Override
 	public boolean skipRangeComparison(int length, int maxLength,
 			IRangeComparator other) {
 		return false;
@@ -98,7 +87,7 @@ public class LineComparator implements IRangeComparator {
 
 	/**
 	 * Compute a hash using the DJB hash algorithm
-	 * 
+	 *
 	 * @param string
 	 *            the string for which to compute a hash
 	 * @return the DJB hash value of the string

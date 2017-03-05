@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.editor;
 
@@ -107,9 +106,7 @@ public class BasicScriptEditorActionContributor extends
 		fPartListeners.add(action);
 	}
 
-	/*
-	 * @see IEditorActionBarContributor#init(IActionBars, IWorkbenchPage)
-	 */
+	@Override
 	public void init(IActionBars bars, IWorkbenchPage page) {
 		Iterator e = fPartListeners.iterator();
 		while (e.hasNext())
@@ -164,9 +161,7 @@ public class BasicScriptEditorActionContributor extends
 		}
 	}
 
-	/*
-	 * @see EditorActionBarContributor#setActiveEditor(IEditorPart)
-	 */
+	@Override
 	public void setActiveEditor(IEditorPart part) {
 
 		super.setActiveEditor(part);
@@ -218,9 +213,7 @@ public class BasicScriptEditorActionContributor extends
 				action);
 	}
 
-	/*
-	 * @see IEditorActionBarContributor#dispose()
-	 */
+	@Override
 	public void dispose() {
 
 		Iterator e = fPartListeners.iterator();

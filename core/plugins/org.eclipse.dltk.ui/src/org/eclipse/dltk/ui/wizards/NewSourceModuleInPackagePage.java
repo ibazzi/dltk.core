@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 NumberFour AG
+ * Copyright (c) 2012, 2017 NumberFour AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -94,10 +94,12 @@ public abstract class NewSourceModuleInPackagePage extends NewSourceModulePage {
 	private class PackageFieldAdapter implements IStringButtonAdapter,
 			IDialogFieldListener {
 
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 			packageDialogFieldChanged();
 		}
 
+		@Override
 		public void changeControlPressed(DialogField field) {
 			packageChangeControlPressed();
 		}
@@ -200,7 +202,7 @@ public abstract class NewSourceModuleInPackagePage extends NewSourceModulePage {
 
 	/**
 	 * Returns the content of the package input field.
-	 * 
+	 *
 	 * @return the content of the package input field
 	 */
 	public String getPackageText() {
@@ -209,7 +211,7 @@ public abstract class NewSourceModuleInPackagePage extends NewSourceModulePage {
 
 	/**
 	 * Sets the content of the package input field to the given value.
-	 * 
+	 *
 	 * @param str
 	 *            the new package input field text
 	 * @param canBeModified
@@ -234,7 +236,7 @@ public abstract class NewSourceModuleInPackagePage extends NewSourceModulePage {
 
 	/**
 	 * Opens a selection dialog that allows to select a source container.
-	 * 
+	 *
 	 * @return returns the selected package fragment root or <code>null</code>
 	 *         if the dialog has been canceled. The caller typically sets the
 	 *         result to the container input field.
@@ -242,8 +244,8 @@ public abstract class NewSourceModuleInPackagePage extends NewSourceModulePage {
 	 *         Clients can override this method if they want to offer a
 	 *         different dialog.
 	 *         </p>
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	@Override
 	protected IScriptFolder chooseContainer() {
@@ -308,7 +310,7 @@ public abstract class NewSourceModuleInPackagePage extends NewSourceModulePage {
 
 	/**
 	 * Opens a selection dialog that allows to select a package.
-	 * 
+	 *
 	 * @return returns the selected package or <code>null</code> if the dialog
 	 *         has been canceled. The caller typically sets the result to the
 	 *         package input field.
@@ -316,8 +318,8 @@ public abstract class NewSourceModuleInPackagePage extends NewSourceModulePage {
 	 *         Clients can override this method if they want to offer a
 	 *         different dialog.
 	 *         </p>
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	protected IScriptFolder choosePackage() {
 		IScriptFolder[] packages = getAllPackages();
@@ -433,7 +435,7 @@ public abstract class NewSourceModuleInPackagePage extends NewSourceModulePage {
 	 * verification when a own field has a dependency to an other field. For
 	 * example the class name input must be verified again when the package
 	 * field changes (check for duplicated class names).
-	 * 
+	 *
 	 * @param fieldName
 	 *            The name of the field that has changed (field id). For the
 	 *            source folder the field id is
@@ -478,7 +480,7 @@ public abstract class NewSourceModuleInPackagePage extends NewSourceModulePage {
 	 * edit the source folder location and the package folder. The method
 	 * expects that the parent composite uses a <code>GridLayout</code> as its
 	 * layout manager and that the grid layout has at least 3 columns.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 * @param nColumns
@@ -495,7 +497,7 @@ public abstract class NewSourceModuleInPackagePage extends NewSourceModulePage {
 	 * Creates the controls for the package name field. Expects a
 	 * <code>GridLayout</code> with at least 3 columns. This method must only be
 	 * called if packages are supported.
-	 * 
+	 *
 	 * @param composite
 	 *            the parent composite
 	 * @param nColumns

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.dltk.debug.ui.actions;
-
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -43,30 +42,30 @@ import org.eclipse.ui.PlatformUI;
 /**
  * The workbench menu action for adding an exception breakpoint
  */
-public abstract class AddExceptionAction implements IViewActionDelegate, IWorkbenchWindowActionDelegate {
-	
+public abstract class AddExceptionAction
+		implements IViewActionDelegate, IWorkbenchWindowActionDelegate {
+
 	public static final String CAUGHT_CHECKED = "caughtChecked"; //$NON-NLS-1$
 	public static final String UNCAUGHT_CHECKED = "uncaughtChecked"; //$NON-NLS-1$
-	public static final String DIALOG_SETTINGS = "AddExceptionDialog"; //$NON-NLS-1$	
+	public static final String DIALOG_SETTINGS = "AddExceptionDialog"; //$NON-NLS-1$
 	private IDLTKUILanguageToolkit fToolkit;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
+	@Override
 	public void run(IAction action) {
-		String natureId = ScriptDebugManager.getInstance().getNatureByDebugModel(getDebugModelId());
+		String natureId = ScriptDebugManager.getInstance()
+				.getNatureByDebugModel(getDebugModelId());
 		fToolkit = DLTKUILanguageManager.getLanguageToolkit(natureId);
 		IDialogSettings settings = getDialogSettings();
-		AddExceptionTypeDialogExtension ext = new AddExceptionTypeDialogExtension(null,
-				settings.getBoolean(CAUGHT_CHECKED), settings
-						.getBoolean(UNCAUGHT_CHECKED));
-		
+		AddExceptionTypeDialogExtension ext = new AddExceptionTypeDialogExtension(
+				null, settings.getBoolean(CAUGHT_CHECKED),
+				settings.getBoolean(UNCAUGHT_CHECKED));
+
 		TypeSelectionDialog2 dialog = new TypeSelectionDialog2(
-				DLTKUIPlugin.getActiveWorkbenchShell(), false, 
-				PlatformUI.getWorkbench().getProgressService(), 
+				DLTKUIPlugin.getActiveWorkbenchShell(), false,
+				PlatformUI.getWorkbench().getProgressService(),
 				SearchEngine.createWorkspaceScope(fToolkit.getCoreToolkit()),
 				IDLTKSearchConstants.TYPE, ext, fToolkit);
-		
+
 		dialog.setMessage(Messages.AddExceptionAction_search);
 		dialog.setTitle(Messages.AddExceptionAction_addExceptionBreakpoint);
 		if (dialog.open() == IDialogConstants.OK_ID) {
@@ -74,57 +73,66 @@ public abstract class AddExceptionAction implements IViewActionDelegate, IWorkbe
 			if (types != null && types.length > 0) {
 				boolean caught = ext.shouldHandleCaughtExceptions();
 				boolean uncaught = ext.shouldHandleUncaughtExceptions();
-				Object[] results = dialog.getResult(); 
-				if(results != null && results.length > 0) {
+				Object[] results = dialog.getResult();
+				if (results != null && results.length > 0) {
 					try {
-						createBreakpoint(caught, uncaught, (IType)results[0]);
+						createBreakpoint(caught, uncaught, (IType) results[0]);
 						settings.put(CAUGHT_CHECKED, caught);
 						settings.put(UNCAUGHT_CHECKED, uncaught);
-					}
-					catch (CoreException e) {
-						DLTKDebugUIPlugin.errorDialog(Messages.AddExceptionAction_unableToCreateBreakpoint, e.getStatus());
+					} catch (CoreException e) {
+						DLTKDebugUIPlugin.errorDialog(
+								Messages.AddExceptionAction_unableToCreateBreakpoint,
+								e.getStatus());
 					}
 				}
 
 			}
 		}
 	}
-	
+
 	/**
-	 * Returns the existing dialog settings for the persisted state of the caught and uncaught check boxes.
-	 * If no section exists then a new one is created
-	 * 
+	 * Returns the existing dialog settings for the persisted state of the
+	 * caught and uncaught check boxes. If no section exists then a new one is
+	 * created
+	 *
 	 * @return the dialog settings section for the type dialog extension
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	private IDialogSettings getDialogSettings() {
-        IDialogSettings allSetttings = DLTKDebugUIPlugin.getDefault().getDialogSettings();
-        IDialogSettings section = allSetttings.getSection(DIALOG_SETTINGS);
-        if (section == null) {
-            section = allSetttings.addNewSection(DIALOG_SETTINGS);
-            section.put(CAUGHT_CHECKED, true);
-            section.put(UNCAUGHT_CHECKED, true);
-        }
-        return section;
-    }
-	
+		IDialogSettings allSetttings = DLTKDebugUIPlugin.getDefault()
+				.getDialogSettings();
+		IDialogSettings section = allSetttings.getSection(DIALOG_SETTINGS);
+		if (section == null) {
+			section = allSetttings.addNewSection(DIALOG_SETTINGS);
+			section.put(CAUGHT_CHECKED, true);
+			section.put(UNCAUGHT_CHECKED, true);
+		}
+		return section;
+	}
+
 	/**
 	 * creates a single breakpoint of the specified type
-	 * @param caught if the exception is caught
-	 * @param uncaught if the exception is uncaught
-	 * @param type the type of the exception
+	 * 
+	 * @param caught
+	 *            if the exception is caught
+	 * @param uncaught
+	 *            if the exception is uncaught
+	 * @param type
+	 *            the type of the exception
 	 * @since 3.2
 	 */
-	private void createBreakpoint(final boolean caught, final boolean uncaught, final IType type) throws CoreException {
-		IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(
-						getDebugModelId());
+	private void createBreakpoint(final boolean caught, final boolean uncaught,
+			final IType type) throws CoreException {
+		IBreakpoint[] breakpoints = DebugPlugin.getDefault()
+				.getBreakpointManager().getBreakpoints(getDebugModelId());
 		boolean exists = false;
 		for (int j = 0; j < breakpoints.length; j++) {
 			IScriptBreakpoint breakpoint = (IScriptBreakpoint) breakpoints[j];
 			if (breakpoint instanceof IScriptExceptionBreakpoint) {
 				IScriptExceptionBreakpoint exceptBreak = (IScriptExceptionBreakpoint) breakpoint;
-				if (exceptBreak.getTypeName().equals(type.getFullyQualifiedName())) {
+				if (exceptBreak.getTypeName()
+						.equals(type.getFullyQualifiedName())) {
 					exists = true;
 					break;
 				}
@@ -132,9 +140,11 @@ public abstract class AddExceptionAction implements IViewActionDelegate, IWorkbe
 		}
 		if (!exists) {
 			new Job(Messages.AddExceptionAction_scriptToggleExceptionBreakpoint) {
+				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
-						BreakpointUtils.addExceptionBreakpoint(getDebugModelId(), caught, uncaught, type);
+						BreakpointUtils.addExceptionBreakpoint(
+								getDebugModelId(), caught, uncaught, type);
 						return Status.OK_STATUS;
 					} catch (CoreException e) {
 						return e.getStatus();
@@ -144,28 +154,22 @@ public abstract class AddExceptionAction implements IViewActionDelegate, IWorkbe
 			}.schedule();
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
-	 */
-	public void init(IViewPart view) {}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
-	public void selectionChanged(IAction action, ISelection selection) {}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
-	 */
+	@Override
+	public void init(IViewPart view) {
+	}
+
+	@Override
+	public void selectionChanged(IAction action, ISelection selection) {
+	}
+
+	@Override
 	public void dispose() {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
-	 */
+	@Override
 	public void init(IWorkbenchWindow window) {
 	}
-	
+
 	protected abstract String getDebugModelId();
 }

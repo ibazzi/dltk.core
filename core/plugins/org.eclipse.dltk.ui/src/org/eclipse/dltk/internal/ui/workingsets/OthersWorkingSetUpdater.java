@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,13 +37,13 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.IWorkingSetUpdater;
 import org.eclipse.ui.PlatformUI;
 
-
 public class OthersWorkingSetUpdater implements IWorkingSetUpdater {
-	
+
 	private IWorkingSet fWorkingSet;
 	private WorkingSetModel fWorkingSetModel;
-	
+
 	private class ResourceChangeListener implements IResourceChangeListener {
+		@Override
 		public void resourceChanged(IResourceChangeEvent event) {
 			if (fWorkingSet == null)
 				return;		// not yet initialized
@@ -65,8 +65,9 @@ public class OthersWorkingSetUpdater implements IWorkingSetUpdater {
 		}
 	}
 	private IResourceChangeListener fResourceChangeListener;
-	
+
 	private class WorkingSetListener implements IPropertyChangeListener {
+		@Override
 		public void propertyChange(PropertyChangeEvent event) {
 			if (IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE.equals(event.getProperty())) {
 				IWorkingSet changedWorkingSet= (IWorkingSet) event.getNewValue();
@@ -77,12 +78,13 @@ public class OthersWorkingSetUpdater implements IWorkingSetUpdater {
 		}
 	}
 	private IPropertyChangeListener fWorkingSetListener;
-	
+
 	private class ScriptElementChangeListener implements IElementChangedListener {
+		@Override
 		public void elementChanged(ElementChangedEvent event) {
 			if (fWorkingSet == null)
 				return; // not yet initialized
-			
+
 			processScriptDelta(new ArrayList(Arrays.asList(fWorkingSet.getElements())), event.getDelta());
 		}
 
@@ -118,31 +120,25 @@ public class OthersWorkingSetUpdater implements IWorkingSetUpdater {
 		}
 	}
 	private IElementChangedListener fScriptElementChangeListener;
-	
-	/**
-	 * {@inheritDoc}
-	 */
+
+	@Override
 	public void add(IWorkingSet workingSet) {
 		Assert.isTrue(fWorkingSet == null && fWorkingSetModel != null);
 		fWorkingSet= workingSet;
 	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
+
+	@Override
 	public boolean remove(IWorkingSet workingSet) {
 		Assert.isTrue(fWorkingSet == workingSet);
 		fWorkingSet= null;
 		return true;
 	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
+
+	@Override
 	public boolean contains(IWorkingSet workingSet) {
 		return fWorkingSet == workingSet;
 	}
-	
+
 	public void init(WorkingSetModel model) {
 		fWorkingSetModel= model;
 		fResourceChangeListener= new ResourceChangeListener();
@@ -152,7 +148,8 @@ public class OthersWorkingSetUpdater implements IWorkingSetUpdater {
 		fScriptElementChangeListener= new ScriptElementChangeListener();
 		DLTKCore.addElementChangedListener(fScriptElementChangeListener, ElementChangedEvent.POST_CHANGE);
 	}
-	
+
+	@Override
 	public void dispose() {
 		if (fResourceChangeListener != null) {
 			ResourcesPlugin.getWorkspace().removeResourceChangeListener(fResourceChangeListener);
@@ -166,10 +163,10 @@ public class OthersWorkingSetUpdater implements IWorkingSetUpdater {
 			DLTKCore.removeElementChangedListener(fScriptElementChangeListener);
 		}
 	}
-	
+
 	public void updateElements() {
 		Assert.isTrue(fWorkingSet != null && fWorkingSetModel != null); // init and addWorkingSet have happend
-		
+
 		IWorkingSet[] activeWorkingSets= fWorkingSetModel.getActiveWorkingSets();
 
 		List result = new ArrayList();

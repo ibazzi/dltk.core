@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,11 +16,23 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.*;
-import org.eclipse.dltk.core.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.dltk.core.DLTKCore;
+import org.eclipse.dltk.core.IBuildpathEntry;
+import org.eclipse.dltk.core.IScriptModel;
+import org.eclipse.dltk.core.IScriptProject;
+import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.internal.ui.util.CoreUtility;
 import org.eclipse.dltk.internal.ui.wizards.NewWizardMessages;
-import org.eclipse.dltk.internal.ui.wizards.dialogfields.*;
+import org.eclipse.dltk.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.dltk.internal.ui.wizards.dialogfields.IDialogFieldListener;
+import org.eclipse.dltk.internal.ui.wizards.dialogfields.IListAdapter;
+import org.eclipse.dltk.internal.ui.wizards.dialogfields.LayoutUtil;
+import org.eclipse.dltk.internal.ui.wizards.dialogfields.ListDialogField;
 import org.eclipse.dltk.ui.DLTKUIPlugin;
 import org.eclipse.dltk.ui.util.ExceptionHandler;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -135,6 +147,7 @@ public class VariableBlock {
 
 		// -------- IListAdapter --------
 
+		@Override
 		public void customButtonPressed(ListDialogField field, int index) {
 			switch (index) {
 			case 0: /* add */
@@ -147,10 +160,12 @@ public class VariableBlock {
 			}
 		}
 
+		@Override
 		public void selectionChanged(ListDialogField field) {
 			doSelectionChanged(field);
 		}
 
+		@Override
 		public void doubleClicked(ListDialogField field) {
 			if (fEditOnDoubleclick) {
 				List selected = field.getSelectedElements();
@@ -162,6 +177,7 @@ public class VariableBlock {
 
 		// ---------- IDialogFieldListener --------
 
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 		}
 
@@ -329,9 +345,7 @@ public class VariableBlock {
 			fToChange = toChange;
 		}
 
-		/*
-		 * @see IRunnableWithProgress#run(IProgressMonitor)
-		 */
+		@Override
 		public void run(IProgressMonitor monitor)
 				throws InvocationTargetException, InterruptedException {
 			monitor
@@ -375,7 +389,7 @@ public class VariableBlock {
 
 	/**
 	 * If set to true, a dialog will ask the user to build on variable changed
-	 * 
+	 *
 	 * @param askToBuild
 	 *            The askToBuild to set
 	 */

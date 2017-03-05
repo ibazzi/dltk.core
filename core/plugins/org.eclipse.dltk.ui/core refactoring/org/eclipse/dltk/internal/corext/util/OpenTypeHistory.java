@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.corext.util;
 
@@ -71,6 +70,7 @@ public class OpenTypeHistory extends History implements IShutdownListener {
 	}
 
 	private class TypeHistoryDeltaListener implements IElementChangedListener {
+		@Override
 		public void elementChanged(ElementChangedEvent event) {
 			if (processDelta(event.getDelta())) {
 				markAsInconsistent();
@@ -79,10 +79,10 @@ public class OpenTypeHistory extends History implements IShutdownListener {
 
 		/**
 		 * Computes whether the history needs a consistency check or not.
-		 * 
+		 *
 		 * @param delta
 		 *            the Java element delta
-		 * 
+		 *
 		 * @return <code>true</code> if consistency must be checked
 		 *         <code>false</code> otherwise.
 		 */
@@ -166,12 +166,14 @@ public class OpenTypeHistory extends History implements IShutdownListener {
 			super(CorextMessages.TypeInfoHistory_consistency_check);
 		}
 
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			internalCheckConsistency(monitor);
 			return new Status(IStatus.OK, DLTKUIPlugin.getPluginId(),
 					IStatus.OK, "", null); //$NON-NLS-1$
 		}
 
+		@Override
 		public boolean belongsTo(Object family) {
 			return FAMILY.equals(family);
 		}
@@ -298,6 +300,7 @@ public class OpenTypeHistory extends History implements IShutdownListener {
 		return result.toArray(new TypeNameMatch[result.size()]);
 	}
 
+	@Override
 	protected Object getKey(Object object) {
 		return object;
 	}
@@ -398,11 +401,13 @@ public class OpenTypeHistory extends History implements IShutdownListener {
 		return false;
 	}
 
+	@Override
 	public void shutdown() {
 		DLTKCore.removeElementChangedListener(fDeltaListener);
 		save();
 	}
 
+	@Override
 	protected Object createFromElement(Element type) {
 		String handle = type.getAttribute(NODE_HANDLE);
 		if (handle == null)
@@ -435,6 +440,7 @@ public class OpenTypeHistory extends History implements IShutdownListener {
 		return info;
 	}
 
+	@Override
 	protected void setAttributes(Object object, Element typeElement) {
 		TypeNameMatch type = (TypeNameMatch) object;
 		String handleId = type.getType().getHandleIdentifier();

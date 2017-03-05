@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.typehierarchy;
 
@@ -18,29 +17,24 @@ import org.eclipse.swt.custom.BusyIndicator;
  */
 public class ShowQualifiedTypeNamesAction extends Action {
 
-	private TypeHierarchyViewPart fView;	
-	
+	private TypeHierarchyViewPart fView;
+
 	public ShowQualifiedTypeNamesAction(TypeHierarchyViewPart v, boolean initValue) {
-		super(TypeHierarchyMessages.ShowQualifiedTypeNamesAction_label); 
-		setDescription(TypeHierarchyMessages.ShowQualifiedTypeNamesAction_description); 
-		setToolTipText(TypeHierarchyMessages.ShowQualifiedTypeNamesAction_tooltip); 
-		
+		super(TypeHierarchyMessages.ShowQualifiedTypeNamesAction_label);
+		setDescription(TypeHierarchyMessages.ShowQualifiedTypeNamesAction_description);
+		setToolTipText(TypeHierarchyMessages.ShowQualifiedTypeNamesAction_tooltip);
+
 		DLTKPluginImages.setLocalImageDescriptors(this, "th_showqualified.png"); //$NON-NLS-1$
-		
+
 		fView= v;
 		setChecked(initValue);
-		
+
 		//PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IJavaHelpContextIds.SHOW_QUALIFIED_NAMES_ACTION);
 	}
 
-	/*
-	 * @see Action#actionPerformed
-	 */		
+	@Override
 	public void run() {
-		BusyIndicator.showWhile(fView.getSite().getShell().getDisplay(), new Runnable() {
-			public void run() {
-				fView.showQualifiedTypeNames(isChecked());
-			}
-		});
+		BusyIndicator.showWhile(fView.getSite().getShell().getDisplay(),
+				() -> fView.showQualifiedTypeNames(isChecked()));
 	}
 }

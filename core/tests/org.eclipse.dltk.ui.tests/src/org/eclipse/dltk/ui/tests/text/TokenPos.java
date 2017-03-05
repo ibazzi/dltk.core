@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -20,6 +20,7 @@ class TokenPos {
 		length = len;
 	}
 
+	@Override
 	public boolean equals(Object arg0) {
 		if (arg0 instanceof TokenPos) {
 			TokenPos other = (TokenPos) arg0;
@@ -28,6 +29,7 @@ class TokenPos {
 		return false;
 	}
 
+	@Override
 	public String toString() {
 		return "TokenPos[" + begin + "+" + length + "]";
 	}

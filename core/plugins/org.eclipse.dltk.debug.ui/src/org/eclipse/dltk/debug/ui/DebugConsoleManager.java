@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.debug.ui;
 
@@ -191,6 +190,7 @@ public class DebugConsoleManager implements ILaunchesListener2 {
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public void launchesAdded(ILaunch[] launches) {
 		launchesChanged(launches);
 	}
@@ -198,6 +198,7 @@ public class DebugConsoleManager implements ILaunchesListener2 {
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public void launchesChanged(ILaunch[] launches) {
 		for (ILaunch launch : launches) {
 			if (acceptLaunch(launch)) {
@@ -225,6 +226,7 @@ public class DebugConsoleManager implements ILaunchesListener2 {
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public void launchesRemoved(ILaunch[] launches) {
 		for (ILaunch launch : launches) {
 			final ScriptDebugConsole console = launchToConsoleMap.get(launch);
@@ -238,17 +240,14 @@ public class DebugConsoleManager implements ILaunchesListener2 {
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public void launchesTerminated(ILaunch[] launches) {
 		for (ILaunch launch : launches) {
 			final ScriptDebugConsole console = launchToConsoleMap.get(launch);
 			if (console != null) {
 				final String newName = computeName(launch);
 				if (!newName.equals(console.getName())) {
-					final Runnable r = new Runnable() {
-						public void run() {
-							console.setName(newName);
-						}
-					};
+					final Runnable r = () -> console.setName(newName);
 					DLTKDebugUIPlugin.getStandardDisplay().asyncExec(r);
 				}
 			}
@@ -269,14 +268,14 @@ public class DebugConsoleManager implements ILaunchesListener2 {
 	/**
 	 * Returns a new console document color provider extension for the given
 	 * process type, or <code>null</code> if none.
-	 * 
+	 *
 	 * @param type
 	 *            corresponds to <code>IProcess.ATTR_PROCESS_TYPE</code>
 	 * @return IConsoleColorProvider
 	 */
 	private IConsoleColorProvider getColorProvider(String type) {
 		if (fColorProviders == null) {
-			fColorProviders = new HashMap<String, IConfigurationElement>();
+			fColorProviders = new HashMap<>();
 			IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
 					.getExtensionPoint(IDebugUIConstants.PLUGIN_ID,
 							IDebugUIConstants.EXTENSION_POINT_CONSOLE_COLOR_PROVIDERS);

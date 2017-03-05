@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,16 +23,14 @@ import org.eclipse.ui.texteditor.IUpdate;
 /**
  * ConsoleRemoveAllTerminatedAction
  */
-public class ConsoleRemoveAllTerminatedAction extends Action implements
-		IUpdate, ILaunchesListener2 {
+public class ConsoleRemoveAllTerminatedAction extends Action
+		implements IUpdate, ILaunchesListener2 {
 
 	public void dispose() {
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IUpdate#update()
-	 */
+	@Override
 	public void update() {
 		ILaunch[] launches = DebugPlugin.getDefault().getLaunchManager()
 				.getLaunches();
@@ -47,9 +45,6 @@ public class ConsoleRemoveAllTerminatedAction extends Action implements
 
 	}
 
-	/*
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
 	@Override
 	public void run() {
 		ILaunch[] launches = DebugPlugin.getDefault().getLaunchManager()
@@ -64,38 +59,30 @@ public class ConsoleRemoveAllTerminatedAction extends Action implements
 		setToolTipText(ConsoleMessages.ConsoleRemoveAllTerminatedAction_1);
 		setImageDescriptor(DebugPluginImages
 				.getImageDescriptor(IDebugUIConstants.IMG_LCL_REMOVE_ALL));
-		setDisabledImageDescriptor(DebugPluginImages
-				.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_REMOVE_ALL));
+		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(
+				IInternalDebugUIConstants.IMG_DLCL_REMOVE_ALL));
 		setHoverImageDescriptor(DebugPluginImages
 				.getImageDescriptor(IDebugUIConstants.IMG_LCL_REMOVE_ALL));
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 		update();
 	}
 
-	/*
-	 * @see ILaunchesListener#launchesRemoved(ILaunch[])
-	 */
+	@Override
 	public void launchesRemoved(ILaunch[] launches) {
 		if (isEnabled()) {
 			update();
 		}
 	}
 
-	/*
-	 * @see ILaunchesListener#launchesAdded(ILaunch[])
-	 */
+	@Override
 	public void launchesAdded(ILaunch[] launches) {
 	}
 
-	/*
-	 * @see ILaunchesListener#launchesChanged(ILaunch[])
-	 */
+	@Override
 	public void launchesChanged(ILaunch[] launches) {
 	}
 
-	/*
-	 * @see ILaunchesListener2#launchesTerminated(ILaunch[])
-	 */
+	@Override
 	public void launchesTerminated(ILaunch[] launches) {
 		update();
 	}

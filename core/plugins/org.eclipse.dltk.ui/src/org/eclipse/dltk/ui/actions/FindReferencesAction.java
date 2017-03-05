@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.actions;
 
@@ -35,7 +34,7 @@ import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 /**
  * Finds references of the selected element in the workspace. The action is
  * applicable to selections representing a Script element.
- * 
+ *
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
@@ -46,7 +45,7 @@ public class FindReferencesAction extends FindAction {
 	 * Creates a new <code>FindReferencesAction</code>. The action requires
 	 * that the selection provided by the site's selection provider is of type
 	 * <code>org.eclipse.jface.viewers.IStructuredSelection</code>.
-	 * 
+	 *
 	 * @param site the site providing context information for this action
 	 */
 	public FindReferencesAction(IDLTKLanguageToolkit toolkit,
@@ -57,7 +56,7 @@ public class FindReferencesAction extends FindAction {
 	/**
 	 * Note: This constructor is for internal use only. Clients should not call
 	 * this constructor.
-	 * 
+	 *
 	 * @param editor the Script editor
 	 */
 	public FindReferencesAction(IDLTKLanguageToolkit toolkit,
@@ -68,7 +67,7 @@ public class FindReferencesAction extends FindAction {
 	/**
 	 * Note: This constructor is for internal use only. Clients should not call
 	 * this constructor.
-	 * 
+	 *
 	 * @param editor the Script editor
 	 * @since 5.3
 	 */
@@ -77,6 +76,7 @@ public class FindReferencesAction extends FindAction {
 		super(toolkit, editor);
 	}
 
+	@Override
 	@SuppressWarnings("rawtypes")
 	Class[] getValidTypes() {
 		return new Class[] { ISourceModule.class, IType.class, IMethod.class,
@@ -84,6 +84,7 @@ public class FindReferencesAction extends FindAction {
 				ILocalVariable.class };
 	}
 
+	@Override
 	void init() {
 		setText(SearchMessages.Search_FindReferencesAction_label);
 		setToolTipText(SearchMessages.Search_FindReferencesAction_tooltip);
@@ -94,10 +95,12 @@ public class FindReferencesAction extends FindAction {
 		}
 	}
 
+	@Override
 	int getLimitTo() {
 		return IDLTKSearchConstants.REFERENCES;
 	}
 
+	@Override
 	QuerySpecification createQuery(IModelElement element) throws ModelException {
 		DLTKSearchScopeFactory factory = DLTKSearchScopeFactory.getInstance();
 		boolean isInsideInterpreterEnvironment = factory.isInsideInterpreter(element);
@@ -107,6 +110,7 @@ public class FindReferencesAction extends FindAction {
 		return new ElementQuerySpecification(element, getLimitTo(), scope, description);
 	}
 
+	@Override
 	public void run(IModelElement element) {
 //		SearchUtil.warnIfBinaryConstant(element, getShell());
 		super.run(element);

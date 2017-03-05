@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
-
 package org.eclipse.dltk.internal.ui.wizards.buildpath.newsourcepage;
 
 import java.util.Collections;
@@ -17,14 +15,11 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.core.IBuildpathEntry;
-import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.IProjectFragment;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.IScriptProjectFilenames;
@@ -36,7 +31,6 @@ import org.eclipse.dltk.internal.ui.filters.LibraryFilter;
 import org.eclipse.dltk.internal.ui.wizards.NewWizardMessages;
 import org.eclipse.dltk.internal.ui.wizards.buildpath.BPListElementAttribute;
 import org.eclipse.dltk.internal.ui.wizards.buildpath.newsourcepage.DialogPackageExplorerActionGroup.DialogExplorerActionContext;
-import org.eclipse.dltk.ui.DLTKPluginImages;
 import org.eclipse.dltk.ui.DLTKUIPlugin;
 import org.eclipse.dltk.ui.ModelElementSorter;
 import org.eclipse.dltk.ui.ScriptElementImageProvider;
@@ -47,9 +41,6 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -57,8 +48,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -85,7 +74,7 @@ public abstract class DialogPackageExplorer implements IMenuListener,
 
 		/**
 		 * Get the elements of the current project
-		 * 
+		 *
 		 * @param element
 		 *            the element to get the children from, will not be used,
 		 *            instead the project childrens are returned directly
@@ -213,14 +202,6 @@ public abstract class DialogPackageExplorer implements IMenuListener,
 			super.dispose();
 		}
 
-		protected ImageDescriptor getSourceModuleIcon(IModelElement element,
-				int renderFlags) {
-			if (DLTKCore.DEBUG) {
-				System.err
-						.println("Dialog package explorer label provider returns ghost for source modules..."); //$NON-NLS-1$
-			}
-			return DLTKPluginImages.DESC_OBJS_GHOST;
-		}
 	}
 
 	/**
@@ -293,14 +274,14 @@ public abstract class DialogPackageExplorer implements IMenuListener,
 
 	/**
 	 * Stores the current selection in the tree
-	 * 
+	 *
 	 * @see #getSelection()
 	 */
 	private IStructuredSelection fCurrentSelection;
 
 	/**
 	 * The current script project
-	 * 
+	 *
 	 * @see #setInput(IScriptProject)
 	 */
 	private IScriptProject fCurrJProject;
@@ -319,14 +300,12 @@ public abstract class DialogPackageExplorer implements IMenuListener,
 		// fPackageViewer.setComparer(WorkingSetModel.COMPARER);
 		fPackageViewer.addFilter(new PackageFilter());
 		fPackageViewer.setSorter(new ExtendedModelElementSorter());
-		fPackageViewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-				Object element = ((IStructuredSelection) event.getSelection())
-						.getFirstElement();
-				if (fPackageViewer.isExpandable(element)) {
-					fPackageViewer.setExpandedState(element, !fPackageViewer
-							.getExpandedState(element));
-				}
+		fPackageViewer.addDoubleClickListener(event -> {
+			Object element = ((IStructuredSelection) event.getSelection())
+					.getFirstElement();
+			if (fPackageViewer.isExpandable(element)) {
+				fPackageViewer.setExpandedState(element,
+						!fPackageViewer.getExpandedState(element));
 			}
 		});
 		fPackageViewer.addSelectionChangedListener(this);
@@ -336,11 +315,7 @@ public abstract class DialogPackageExplorer implements IMenuListener,
 		menuMgr.addMenuListener(this);
 		fContextMenu = menuMgr.createContextMenu(fPackageViewer.getTree());
 		fPackageViewer.getTree().setMenu(fContextMenu);
-		parent.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				fContextMenu.dispose();
-			}
-		});
+		parent.addDisposeListener(e -> fContextMenu.dispose());
 
 		return fPackageViewer.getControl();
 	}
@@ -349,28 +324,27 @@ public abstract class DialogPackageExplorer implements IMenuListener,
 	 * Sets the action group for the package explorer. The action group is
 	 * necessary to populate the context menu with available actions. If no
 	 * context menu is needed, then this method does not have to be called.
-	 * 
+	 *
 	 * Should only be called once.
-	 * 
+	 *
 	 * @param actionGroup
 	 *            the action group to be used for the context menu.
 	 */
 	public void setActionGroup(
 			final DialogPackageExplorerActionGroup actionGroup) {
 		fActionGroup = actionGroup;
-		fPackageViewer.getControl().addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				if (actionGroup != null)
-					actionGroup.dispose();
-			}
+		fPackageViewer.getControl().addDisposeListener(e -> {
+			if (actionGroup != null)
+				actionGroup.dispose();
 		});
 	}
 
 	/**
 	 * Populate the context menu with the necessary actions.
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.IMenuListener#menuAboutToShow(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	public void menuAboutToShow(IMenuManager manager) {
 		if (fActionGroup == null) // no context menu
 			return;
@@ -398,7 +372,7 @@ public abstract class DialogPackageExplorer implements IMenuListener,
 
 	/**
 	 * Set the input for the package explorer.
-	 * 
+	 *
 	 * @param project
 	 *            the project to be displayed
 	 */
@@ -418,7 +392,7 @@ public abstract class DialogPackageExplorer implements IMenuListener,
 
 	/**
 	 * Set the selection and focus to the list of elements
-	 * 
+	 *
 	 * @param elements
 	 *            the object to be selected and displayed
 	 */
@@ -427,24 +401,20 @@ public abstract class DialogPackageExplorer implements IMenuListener,
 			return;
 		try {
 			ResourcesPlugin.getWorkspace().run(
-					new IWorkspaceRunnable() {
-						public void run(IProgressMonitor monitor)
-								throws CoreException {
-							fPackageViewer.refresh();
-							final IStructuredSelection selection = new StructuredSelection(
-									elements);
-							fPackageViewer.setSelection(selection, true);
-							fPackageViewer.getTree().setFocus();
-							if (fActionGroup != null)
-								fActionGroup
-										.refresh(new DialogExplorerActionContext(
-												selection, fCurrJProject));
+					monitor -> {
+						fPackageViewer.refresh();
+						final IStructuredSelection selection = new StructuredSelection(
+								elements);
+						fPackageViewer.setSelection(selection, true);
+						fPackageViewer.getTree().setFocus();
+						if (fActionGroup != null)
+							fActionGroup.refresh(
+									new DialogExplorerActionContext(selection,
+											fCurrJProject));
 
-							if (elements.size() == 1
-									&& elements.get(0) instanceof IScriptProject)
-								fPackageViewer
-										.expandToLevel(elements.get(0), 1);
-						}
+						if (elements.size() == 1
+								&& elements.get(0) instanceof IScriptProject)
+							fPackageViewer.expandToLevel(elements.get(0), 1);
 					}, ResourcesPlugin.getWorkspace().getRoot(),
 					IWorkspace.AVOID_UPDATE, new NullProgressMonitor());
 		} catch (CoreException e) {
@@ -455,7 +425,7 @@ public abstract class DialogPackageExplorer implements IMenuListener,
 	/**
 	 * The current list of selected elements. The list may be empty if no
 	 * element is selected.
-	 * 
+	 *
 	 * @return the current selection
 	 */
 	public IStructuredSelection getSelection() {
@@ -464,7 +434,7 @@ public abstract class DialogPackageExplorer implements IMenuListener,
 
 	/**
 	 * Get the viewer's control
-	 * 
+	 *
 	 * @return the viewers control
 	 */
 	public Control getViewerControl() {
@@ -474,10 +444,11 @@ public abstract class DialogPackageExplorer implements IMenuListener,
 	/**
 	 * Inform the <code>fActionGroup</code> about the selection change and store
 	 * the latest selection.
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 * @see DialogPackageExplorerActionGroup#setContext(DialogExplorerActionContext)
 	 */
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		fCurrentSelection = (IStructuredSelection) event.getSelection();
 		try {

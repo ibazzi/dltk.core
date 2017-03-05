@@ -13,25 +13,18 @@ import org.eclipse.swt.widgets.Shell;
 
 public class ScriptHotCodeReplaceListener implements IHotCodeReplaceListener {
 
-	/**
-	 * @see IScriptHotCodeReplaceListener#hotCodeReplaceSucceeded(IScriptDebugTarget)
-	 */
+	@Override
 	public void hotCodeReplaceSucceeded(IScriptDebugTarget target) {
 	}
 
-	/**
-	 * @see IScriptHotCodeReplaceListener#hotCodeReplaceFailed(IScriptDebugTarget,
-	 *      DebugException)
-	 */
+	@Override
 	public void hotCodeReplaceFailed(final IScriptDebugTarget target,
 			final DebugException exception) {
 		if ((exception != null && !DLTKDebugUIPlugin.getDefault()
 				.getPreferenceStore().getBoolean(
 						IDLTKDebugUIPreferenceConstants.PREF_ALERT_HCR_FAILED))
-				|| ((exception == null) && !DLTKDebugUIPlugin
-						.getDefault()
-						.getPreferenceStore()
-						.getBoolean(
+				|| ((exception == null) && !DLTKDebugUIPlugin.getDefault()
+						.getPreferenceStore().getBoolean(
 								IDLTKDebugUIPreferenceConstants.PREF_ALERT_HCR_NOT_SUPPORTED))) {
 			return;
 		}
@@ -47,39 +40,34 @@ public class ScriptHotCodeReplaceListener implements IHotCodeReplaceListener {
 		final String launchName = target.getLaunch().getLaunchConfiguration()
 				.getName();
 		if (exception == null) {
-			status = new Status(
-					IStatus.WARNING,
-					DLTKDebugUIPlugin.getUniqueIdentifier(),
-					IStatus.WARNING,
+			status = new Status(IStatus.WARNING,
+					DLTKDebugUIPlugin.getUniqueIdentifier(), IStatus.WARNING,
 					Messages.ScriptHotCodeReplaceListener_theTargetDoesntSupportHotCodeReplace,
 					null);
 			preference = IDLTKDebugUIPreferenceConstants.PREF_ALERT_HCR_NOT_SUPPORTED;
 			alertMessage = Messages.ScriptHotCodeReplaceListener_doNotShowErrorWhenHotCodeReplaceIsNotSupported;
 		} else {
-			status = new Status(IStatus.WARNING, DLTKDebugUIPlugin
-					.getUniqueIdentifier(), IStatus.WARNING, exception
-					.getMessage(), exception.getCause());
+			status = new Status(IStatus.WARNING,
+					DLTKDebugUIPlugin.getUniqueIdentifier(), IStatus.WARNING,
+					exception.getMessage(), exception.getCause());
 			preference = IDLTKDebugUIPreferenceConstants.PREF_ALERT_HCR_FAILED;
 			alertMessage = Messages.ScriptHotCodeReplaceListener_doNotShowErrorWhenHotCodeReplaceFails;
 		}
 		final String title = Messages.ScriptHotCodeReplaceListener_hotCodeReplaceFailed;
-		final String message = NLS
-				.bind(
-						Messages.ScriptHotCodeReplaceListener_someCodeChangesCannotBeHotSwappedIntoARunningInterpreter,
-						launchName);
-		display.asyncExec(new Runnable() {
-			public void run() {
-				if (display.isDisposed()) {
-					return;
-				}
-				Shell shell = DLTKDebugUIPlugin.getActiveWorkbenchShell();
-				HotCodeReplaceErrorDialog dialog = new HotCodeReplaceErrorDialog(
-						shell, title, message, status, preference,
-						alertMessage, DLTKDebugUIPlugin.getDefault()
-								.getPreferenceStore(), target);
-				dialog.setBlockOnOpen(false);
-				dialog.open();
+		final String message = NLS.bind(
+				Messages.ScriptHotCodeReplaceListener_someCodeChangesCannotBeHotSwappedIntoARunningInterpreter,
+				launchName);
+		display.asyncExec(() -> {
+			if (display.isDisposed()) {
+				return;
 			}
+			Shell shell = DLTKDebugUIPlugin.getActiveWorkbenchShell();
+			HotCodeReplaceErrorDialog dialog = new HotCodeReplaceErrorDialog(
+					shell, title, message, status, preference, alertMessage,
+					DLTKDebugUIPlugin.getDefault().getPreferenceStore(),
+					target);
+			dialog.setBlockOnOpen(false);
+			dialog.open();
 		});
 	}
 }

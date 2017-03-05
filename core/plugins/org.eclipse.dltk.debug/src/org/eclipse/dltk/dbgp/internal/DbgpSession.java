@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.dbgp.internal;
 
@@ -32,8 +31,8 @@ import org.eclipse.dltk.dbgp.internal.utils.DbgpXmlEntityParser;
 import org.eclipse.dltk.debug.core.IDebugOptions;
 import org.eclipse.dltk.debug.core.model.DefaultDebugOptions;
 
-public class DbgpSession extends DbgpTermination implements IDbgpSession,
-		IDbgpTerminationListener {
+public class DbgpSession extends DbgpTermination
+		implements IDbgpSession, IDbgpTerminationListener {
 	private final IDbgpDebugingEngine engine;
 
 	private final IDbgpCoreCommands coreCommands;
@@ -80,8 +79,8 @@ public class DbgpSession extends DbgpTermination implements IDbgpSession,
 		}
 	}
 
-	public DbgpSession(IDbgpDebugingEngine engine) throws DbgpException,
-			IOException {
+	public DbgpSession(IDbgpDebugingEngine engine)
+			throws DbgpException, IOException {
 		if (engine == null) {
 			throw new IllegalArgumentException();
 		}
@@ -128,31 +127,38 @@ public class DbgpSession extends DbgpTermination implements IDbgpSession,
 				DefaultDebugOptions.getDefaultInstance());
 	}
 
+	@Override
 	public IDbgpSessionInfo getInfo() {
 		return info;
 	}
 
+	@Override
 	public String toString() {
 		return "Session. appid: " + info.getApplicationId(); //$NON-NLS-1$
 	}
 
+	@Override
 	public IDbgpCoreCommands getCoreCommands() {
 		return coreCommands;
 	}
 
+	@Override
 	public IDbgpExtendedCommands getExtendedCommands() {
 		return extendedCommands;
 	}
 
+	@Override
 	public IDbgpStreamManager getStreamManager() {
 		return streamManager;
 	}
 
+	@Override
 	public IDbgpNotificationManager getNotificationManager() {
 		return notificationManager;
 	}
 
 	// IDbgpTermination
+	@Override
 	public void requestTermination() {
 		synchronized (terminatedLock) {
 			if (terminated) {
@@ -163,6 +169,7 @@ public class DbgpSession extends DbgpTermination implements IDbgpSession,
 		}
 	}
 
+	@Override
 	public void waitTerminated() throws InterruptedException {
 		synchronized (terminatedLock) {
 			if (terminated) {
@@ -174,6 +181,7 @@ public class DbgpSession extends DbgpTermination implements IDbgpSession,
 	}
 
 	// IDbgpTerminationListener
+	@Override
 	public void objectTerminated(Object object, Exception e) {
 		// Allows to unblock all terminating threads
 		synchronized (terminatedLock) {
@@ -201,15 +209,18 @@ public class DbgpSession extends DbgpTermination implements IDbgpSession,
 		fireObjectTerminated(e);
 	}
 
+	@Override
 	public void addRawListener(IDbgpRawListener listener) {
 		engine.addRawListener(listener);
 
 	}
 
+	@Override
 	public void removeRawListenr(IDbgpRawListener listener) {
 		engine.removeRawListenr(listener);
 	}
 
+	@Override
 	public IDbgpCommunicator getCommunicator() {
 		return this.communicator;
 	}
@@ -217,14 +228,17 @@ public class DbgpSession extends DbgpTermination implements IDbgpSession,
 	/*
 	 * @see org.eclipse.dltk.debug.core.IDebugConfigurable#getDebugOptions()
 	 */
+	@Override
 	public IDebugOptions getDebugOptions() {
 		return communicator.getDebugOptions();
 	}
 
+	@Override
 	public void configure(IDebugOptions debugOptions) {
 		communicator.configure(debugOptions);
 	}
 
+	@Override
 	public Object get(Class type) {
 		if (type == IDbgpSpawnpointCommands.class) {
 			return spawnpointCommands;

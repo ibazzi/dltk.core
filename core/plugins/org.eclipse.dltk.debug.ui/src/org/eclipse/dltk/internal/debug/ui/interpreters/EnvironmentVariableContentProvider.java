@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.debug.ui.interpreters;
 
@@ -24,19 +23,23 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.osgi.util.NLS;
 
-public class EnvironmentVariableContentProvider implements ITreeContentProvider {
+public class EnvironmentVariableContentProvider
+		implements ITreeContentProvider {
 
 	private Viewer fViewer;
 
 	private EnvironmentVariable[] fVariables = new EnvironmentVariable[0];
 
+	@Override
 	public void dispose() {
 	}
 
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		fViewer = viewer;
 	}
 
+	@Override
 	public Object[] getElements(Object inputElement) {
 		return fVariables;
 	}
@@ -112,7 +115,7 @@ public class EnvironmentVariableContentProvider implements ITreeContentProvider 
 	 * Remove the libraries contained in the given selection.
 	 */
 	public void remove(IStructuredSelection selection) {
-		List<EnvironmentVariable> newLibraries = new ArrayList<EnvironmentVariable>();
+		List<EnvironmentVariable> newLibraries = new ArrayList<>();
 		for (int i = 0; i < fVariables.length; i++) {
 			newLibraries.add(fVariables[i]);
 		}
@@ -124,8 +127,8 @@ public class EnvironmentVariableContentProvider implements ITreeContentProvider 
 				newLibraries.remove(element);
 			}
 		}
-		fVariables = newLibraries.toArray(new EnvironmentVariable[newLibraries
-				.size()]);
+		fVariables = newLibraries
+				.toArray(new EnvironmentVariable[newLibraries.size()]);
 		fViewer.refresh();
 	}
 
@@ -133,13 +136,14 @@ public class EnvironmentVariableContentProvider implements ITreeContentProvider 
 	 * Add the given libraries before the selection, or after the existing
 	 * libraries if the selection is empty.
 	 */
-	public void add(EnvironmentVariable[] libs, IStructuredSelection selection) {
-		List<EnvironmentVariable> newLibraries = new ArrayList<EnvironmentVariable>(
+	public void add(EnvironmentVariable[] libs,
+			IStructuredSelection selection) {
+		List<EnvironmentVariable> newLibraries = new ArrayList<>(
 				fVariables.length + libs.length);
 		for (int i = 0; i < fVariables.length; i++) {
 			newLibraries.add(fVariables[i]);
 		}
-		List<EnvironmentVariable> toAdd = new ArrayList<EnvironmentVariable>(
+		List<EnvironmentVariable> toAdd = new ArrayList<>(
 				libs.length);
 		for (int i = 0; i < libs.length; i++) {
 			toAdd.add(new EnvironmentVariable(libs[i]));
@@ -152,8 +156,8 @@ public class EnvironmentVariableContentProvider implements ITreeContentProvider 
 			int index = newLibraries.indexOf(firstLib);
 			newLibraries.addAll(index, toAdd);
 		}
-		fVariables = newLibraries.toArray(new EnvironmentVariable[newLibraries
-				.size()]);
+		fVariables = newLibraries
+				.toArray(new EnvironmentVariable[newLibraries.size()]);
 		fViewer.refresh();
 		fViewer.setSelection(new StructuredSelection(libs), true);
 	}
@@ -162,7 +166,7 @@ public class EnvironmentVariableContentProvider implements ITreeContentProvider 
 	 * Attempts to add the given variable. Returns whether the variable was
 	 * added or not (as when the user answers not to overwrite an existing
 	 * variable).
-	 * 
+	 *
 	 * @param variable
 	 *            the variable to add
 	 * @return whether the variable was added
@@ -170,19 +174,18 @@ public class EnvironmentVariableContentProvider implements ITreeContentProvider 
 	 */
 	public boolean addVariable(EnvironmentVariable variable) {
 		String name = variable.getName();
-		List<EnvironmentVariable> newVars = new ArrayList<EnvironmentVariable>();
+		List<EnvironmentVariable> newVars = new ArrayList<>();
 		newVars.addAll(Arrays.asList(fVariables));
-		for (Iterator<EnvironmentVariable> i = newVars.iterator(); i.hasNext();) {
+		for (Iterator<EnvironmentVariable> i = newVars.iterator(); i
+				.hasNext();) {
 			EnvironmentVariable existingVariable = i.next();
 			if (existingVariable.getName().equals(name)) {
-				boolean overWrite = MessageDialog
-						.openQuestion(
-								fViewer.getControl().getShell(),
-								Messages.EnvironmentVariableContentProvider_overwriteVariableTitle,
-								NLS
-										.bind(
-												Messages.EnvironmentVariableContentProvider_overwriteVariableMessage,
-												name));
+				boolean overWrite = MessageDialog.openQuestion(
+						fViewer.getControl().getShell(),
+						Messages.EnvironmentVariableContentProvider_overwriteVariableTitle,
+						NLS.bind(
+								Messages.EnvironmentVariableContentProvider_overwriteVariableMessage,
+								name));
 				if (!overWrite) {
 					return false;
 				}
@@ -197,23 +200,26 @@ public class EnvironmentVariableContentProvider implements ITreeContentProvider 
 
 	/**
 	 * Returns the standin libraries being edited.
-	 * 
+	 *
 	 * @return standins
 	 */
 	public EnvironmentVariable[] getStandins() {
 		return fVariables;
 	}
 
+	@Override
 	public Object[] getChildren(Object parentElement) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public Object getParent(Object element) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public boolean hasChildren(Object element) {
 		// TODO Auto-generated method stub
 		return false;

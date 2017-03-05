@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2009 xored software, Inc.  
+ * Copyright (c) 2009, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html  
+ * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
  *     xored software, Inc. - initial API and Implementation (Alex Panchenko)
@@ -31,6 +31,7 @@ public class ControlDecorationManager implements IControlDecorationManager {
 
 	private Map<Control, ControlDecoration> decorations = new IdentityHashMap<Control, ControlDecoration>();
 
+	@Override
 	public void show(Control control, IStatus status) {
 		ControlDecoration decoration = decorations.get(control);
 		if (decoration == null) {
@@ -65,6 +66,7 @@ public class ControlDecorationManager implements IControlDecorationManager {
 	/**
 	 * @param control
 	 */
+	@Override
 	public void hide(Control control) {
 		ControlDecoration decoration = decorations.get(control);
 		if (decoration != null) {
@@ -80,6 +82,7 @@ public class ControlDecorationManager implements IControlDecorationManager {
 		decorations.clear();
 	}
 
+	@Override
 	public void commit() {
 		// empty
 	}
@@ -96,6 +99,7 @@ public class ControlDecorationManager implements IControlDecorationManager {
 			this.activeDecorations.putAll(manager.decorations);
 		}
 
+		@Override
 		public void commit() {
 			if (!activeDecorations.isEmpty()) {
 				for (Control control : activeDecorations.keySet()) {
@@ -105,11 +109,13 @@ public class ControlDecorationManager implements IControlDecorationManager {
 			}
 		}
 
+		@Override
 		public void hide(Control control) {
 			activeDecorations.remove(control);
 			manager.hide(control);
 		}
 
+		@Override
 		public void show(Control control, IStatus status) {
 			activeDecorations.remove(control);
 			manager.show(control, status);

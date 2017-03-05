@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.debug.ui;
 
@@ -57,21 +56,19 @@ public class DebugImageDescriptor extends CompositeImageDescriptor {
 
 	/**
 	 * Create a new JDIImageDescriptor.
-	 * 
+	 *
 	 * @param baseImage
 	 *            an image descriptor used as the base image
 	 * @param flags
 	 *            flags indicating which adornments are to be rendered
-	 * 
+	 *
 	 */
 	public DebugImageDescriptor(ImageDescriptor baseImage, int flags) {
 		setBaseImage(baseImage);
 		setFlags(flags);
 	}
 
-	/**
-	 * @see CompositeImageDescriptor#getSize()
-	 */
+	@Override
 	protected Point getSize() {
 		if (fSize == null) {
 			ImageData data = getBaseImage().getImageData();
@@ -80,29 +77,23 @@ public class DebugImageDescriptor extends CompositeImageDescriptor {
 		return fSize;
 	}
 
-	/**
-	 * @see Object#equals(java.lang.Object)
-	 */
+	@Override
 	public boolean equals(Object object) {
 		if (!(object instanceof DebugImageDescriptor)) {
 			return false;
 		}
 
 		DebugImageDescriptor other = (DebugImageDescriptor) object;
-		return (getBaseImage().equals(other.getBaseImage()) && getFlags() == other
-				.getFlags());
+		return (getBaseImage().equals(other.getBaseImage())
+				&& getFlags() == other.getFlags());
 	}
 
-	/**
-	 * @see Object#hashCode()
-	 */
+	@Override
 	public int hashCode() {
 		return getBaseImage().hashCode() | getFlags();
 	}
 
-	/**
-	 * @see CompositeImageDescriptor#drawCompositeImage(int, int)
-	 */
+	@Override
 	protected void drawCompositeImage(int width, int height) {
 		ImageData bg = getBaseImage().getImageData();
 		if (bg == null) {
@@ -173,7 +164,8 @@ public class DebugImageDescriptor extends CompositeImageDescriptor {
 			} else if ((flags & IN_CONTENTION_FOR_MONITOR) != 0) {
 				x = getSize().x;
 				y = 0;
-				data = getImageData(ScriptDebugImages.IMG_OVR_IN_CONTENTION_FOR_MONITOR);
+				data = getImageData(
+						ScriptDebugImages.IMG_OVR_IN_CONTENTION_FOR_MONITOR);
 				x -= data.width;
 				drawImage(data, x, y);
 			} else {
@@ -191,9 +183,11 @@ public class DebugImageDescriptor extends CompositeImageDescriptor {
 			x = 0;
 			y = getSize().y;
 			if ((flags & ENABLED) != 0) {
-				data = getImageData(ScriptDebugImages.IMG_OVR_BREAKPOINT_INSTALLED);
+				data = getImageData(
+						ScriptDebugImages.IMG_OVR_BREAKPOINT_INSTALLED);
 			} else {
-				data = getImageData(ScriptDebugImages.IMG_OVR_BREAKPOINT_INSTALLED_DISABLED);
+				data = getImageData(
+						ScriptDebugImages.IMG_OVR_BREAKPOINT_INSTALLED_DISABLED);
 			}
 
 			y -= data.height;
@@ -201,9 +195,11 @@ public class DebugImageDescriptor extends CompositeImageDescriptor {
 		}
 		if ((flags & CAUGHT) != 0) {
 			if ((flags & ENABLED) != 0) {
-				data = getImageData(ScriptDebugImages.IMG_OVR_CAUGHT_BREAKPOINT);
+				data = getImageData(
+						ScriptDebugImages.IMG_OVR_CAUGHT_BREAKPOINT);
 			} else {
-				data = getImageData(ScriptDebugImages.IMG_OVR_CAUGHT_BREAKPOINT_DISABLED);
+				data = getImageData(
+						ScriptDebugImages.IMG_OVR_CAUGHT_BREAKPOINT_DISABLED);
 			}
 			x = 0;
 			y = 0;
@@ -211,9 +207,11 @@ public class DebugImageDescriptor extends CompositeImageDescriptor {
 		}
 		if ((flags & UNCAUGHT) != 0) {
 			if ((flags & ENABLED) != 0) {
-				data = getImageData(ScriptDebugImages.IMG_OVR_UNCAUGHT_BREAKPOINT);
+				data = getImageData(
+						ScriptDebugImages.IMG_OVR_UNCAUGHT_BREAKPOINT);
 			} else {
-				data = getImageData(ScriptDebugImages.IMG_OVR_UNCAUGHT_BREAKPOINT_DISABLED);
+				data = getImageData(
+						ScriptDebugImages.IMG_OVR_UNCAUGHT_BREAKPOINT_DISABLED);
 			}
 			x = data.width;
 			y = data.height;
@@ -221,9 +219,11 @@ public class DebugImageDescriptor extends CompositeImageDescriptor {
 		}
 		if ((flags & SCOPED) != 0) {
 			if ((flags & ENABLED) != 0) {
-				data = getImageData(ScriptDebugImages.IMG_OVR_SCOPED_BREAKPOINT);
+				data = getImageData(
+						ScriptDebugImages.IMG_OVR_SCOPED_BREAKPOINT);
 			} else {
-				data = getImageData(ScriptDebugImages.IMG_OVR_SCOPED_BREAKPOINT_DISABLED);
+				data = getImageData(
+						ScriptDebugImages.IMG_OVR_SCOPED_BREAKPOINT_DISABLED);
 			}
 			x = 0;
 			y = getSize().y;
@@ -232,9 +232,11 @@ public class DebugImageDescriptor extends CompositeImageDescriptor {
 		}
 		if ((flags & CONDITIONAL) != 0) {
 			if ((flags & ENABLED) != 0) {
-				data = getImageData(ScriptDebugImages.IMG_OVR_CONDITIONAL_BREAKPOINT);
+				data = getImageData(
+						ScriptDebugImages.IMG_OVR_CONDITIONAL_BREAKPOINT);
 			} else {
-				data = getImageData(ScriptDebugImages.IMG_OVR_CONDITIONAL_BREAKPOINT_DISABLED);
+				data = getImageData(
+						ScriptDebugImages.IMG_OVR_CONDITIONAL_BREAKPOINT_DISABLED);
 			}
 			x = 0;
 			y = 0;
@@ -244,9 +246,11 @@ public class DebugImageDescriptor extends CompositeImageDescriptor {
 			x = getSize().x;
 			y = 0;
 			if ((flags & ENABLED) != 0) {
-				data = getImageData(ScriptDebugImages.IMG_OVR_METHOD_BREAKPOINT_ENTRY);
+				data = getImageData(
+						ScriptDebugImages.IMG_OVR_METHOD_BREAKPOINT_ENTRY);
 			} else {
-				data = getImageData(ScriptDebugImages.IMG_OVR_METHOD_BREAKPOINT_ENTRY_DISABLED);
+				data = getImageData(
+						ScriptDebugImages.IMG_OVR_METHOD_BREAKPOINT_ENTRY_DISABLED);
 			}
 			x -= data.width;
 			drawImage(data, x, y);
@@ -255,9 +259,11 @@ public class DebugImageDescriptor extends CompositeImageDescriptor {
 			x = getSize().x;
 			y = getSize().y;
 			if ((flags & ENABLED) != 0) {
-				data = getImageData(ScriptDebugImages.IMG_OVR_METHOD_BREAKPOINT_EXIT);
+				data = getImageData(
+						ScriptDebugImages.IMG_OVR_METHOD_BREAKPOINT_EXIT);
 			} else {
-				data = getImageData(ScriptDebugImages.IMG_OVR_METHOD_BREAKPOINT_EXIT_DISABLED);
+				data = getImageData(
+						ScriptDebugImages.IMG_OVR_METHOD_BREAKPOINT_EXIT_DISABLED);
 			}
 			x -= data.width;
 			y -= data.height;

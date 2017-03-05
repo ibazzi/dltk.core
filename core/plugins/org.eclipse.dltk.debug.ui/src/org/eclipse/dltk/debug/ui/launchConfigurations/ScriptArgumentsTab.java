@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.debug.ui.launchConfigurations;
 
@@ -23,8 +22,6 @@ import org.eclipse.dltk.internal.launching.DLTKLaunchingPlugin;
 import org.eclipse.dltk.launching.ScriptLaunchConfigurationConstants;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
@@ -44,7 +41,7 @@ import org.eclipse.swt.widgets.Text;
  * This class may be instantiated. This class may be subclassed by overloading
  * createInterpreterArgsBlock and createWorkingDirBlock.
  * </p>
- * 
+ *
  */
 public class ScriptArgumentsTab extends CommonScriptLaunchTab {
 
@@ -73,6 +70,7 @@ public class ScriptArgumentsTab extends CommonScriptLaunchTab {
 		return new WorkingDirectoryBlock();
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
 		Composite comp = new Composite(parent, SWT.NONE);
@@ -94,27 +92,25 @@ public class ScriptArgumentsTab extends CommonScriptLaunchTab {
 		String controlName = (ScriptLaunchMessages.ArgumentsTab__Program_arguments__5);
 		group.setText(controlName);
 
-		fPrgmArgumentsText = new Text(group, SWT.MULTI | SWT.WRAP | SWT.BORDER
-				| SWT.V_SCROLL);
+		fPrgmArgumentsText = new Text(group,
+				SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 40;
 		gd.widthHint = 100;
 		fPrgmArgumentsText.setLayoutData(gd);
 		fPrgmArgumentsText.setFont(font);
-		fPrgmArgumentsText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent evt) {
-				updateLaunchConfigurationDialog();
-			}
-		});
-		ControlAccessibleListener.addListener(fPrgmArgumentsText, group
-				.getText());
+		fPrgmArgumentsText
+				.addModifyListener(evt -> updateLaunchConfigurationDialog());
+		ControlAccessibleListener.addListener(fPrgmArgumentsText,
+				group.getText());
 
 		String buttonLabel = ScriptLaunchMessages.ArgumentsTab_5;
 		Button pgrmArgVariableButton = createPushButton(group, buttonLabel,
 				null);
-		pgrmArgVariableButton.setLayoutData(new GridData(
-				GridData.HORIZONTAL_ALIGN_END));
+		pgrmArgVariableButton
+				.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		pgrmArgVariableButton.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(
 						getShell());
@@ -125,6 +121,7 @@ public class ScriptArgumentsTab extends CommonScriptLaunchTab {
 				}
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 
@@ -149,12 +146,14 @@ public class ScriptArgumentsTab extends CommonScriptLaunchTab {
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
+	@Override
 	public void dispose() {
 	}
 
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(ILaunchConfiguration)
 	 */
+	@Override
 	public boolean isValid(ILaunchConfiguration config) {
 		return fWorkingDirectoryBlock.isValid(config);
 	}
@@ -162,6 +161,7 @@ public class ScriptArgumentsTab extends CommonScriptLaunchTab {
 	/**
 	 * Defaults are empty.
 	 */
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(
 				ScriptLaunchConfigurationConstants.ATTR_SCRIPT_ARGUMENTS,
@@ -174,6 +174,7 @@ public class ScriptArgumentsTab extends CommonScriptLaunchTab {
 		fWorkingDirectoryBlock.setDefaults(config);
 	}
 
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
 			fPrgmArgumentsText.setText(configuration.getAttribute(
@@ -183,14 +184,14 @@ public class ScriptArgumentsTab extends CommonScriptLaunchTab {
 				fInterpreterArgumentsBlock.initializeFrom(configuration);
 			fWorkingDirectoryBlock.initializeFrom(configuration);
 		} catch (CoreException e) {
-			setErrorMessage(NLS
-					.bind(
-							ScriptLaunchMessages.ArgumentsTab_Exception_occurred_reading_configuration___15,
-							e.getStatus().getMessage()));
+			setErrorMessage(NLS.bind(
+					ScriptLaunchMessages.ArgumentsTab_Exception_occurred_reading_configuration___15,
+					e.getStatus().getMessage()));
 			DLTKLaunchingPlugin.log(e);
 		}
 	}
 
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(
 				ScriptLaunchConfigurationConstants.ATTR_SCRIPT_ARGUMENTS,
@@ -202,7 +203,7 @@ public class ScriptArgumentsTab extends CommonScriptLaunchTab {
 
 	/**
 	 * Returns the string in the text widget, or <code>null</code> if empty.
-	 * 
+	 *
 	 * @return text or <code>null</code>
 	 */
 	protected String getAttributeValueFrom(Text text) {
@@ -213,17 +214,21 @@ public class ScriptArgumentsTab extends CommonScriptLaunchTab {
 		return null;
 	}
 
+	@Override
 	public String getName() {
 		return ScriptLaunchMessages.ArgumentsTab__Arguments_16;
 	}
 
-	public void setLaunchConfigurationDialog(ILaunchConfigurationDialog dialog) {
+	@Override
+	public void setLaunchConfigurationDialog(
+			ILaunchConfigurationDialog dialog) {
 		super.setLaunchConfigurationDialog(dialog);
 		fWorkingDirectoryBlock.setLaunchConfigurationDialog(dialog);
 		if (fInterpreterArgumentsBlock != null)
 			fInterpreterArgumentsBlock.setLaunchConfigurationDialog(dialog);
 	}
 
+	@Override
 	public String getErrorMessage() {
 		String m = super.getErrorMessage();
 		if (m == null) {
@@ -232,6 +237,7 @@ public class ScriptArgumentsTab extends CommonScriptLaunchTab {
 		return m;
 	}
 
+	@Override
 	public String getMessage() {
 		String m = super.getMessage();
 		if (m == null) {
@@ -240,14 +246,17 @@ public class ScriptArgumentsTab extends CommonScriptLaunchTab {
 		return m;
 	}
 
+	@Override
 	public Image getImage() {
 		return ScriptDebugImages.get(ScriptDebugImages.IMG_VIEW_ARGUMENTS_TAB);
 	}
 
+	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		fWorkingDirectoryBlock.initializeFrom(workingCopy);
 	}
 
+	@Override
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing when deactivated
 	}

@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.wizards;
 
@@ -57,13 +56,11 @@ public abstract class NewElementWizard extends Wizard implements INewWizard {
 		if (activePage != null) {
 			final Display display = getShell().getDisplay();
 			if (display != null) {
-				display.asyncExec(new Runnable() {
-					public void run() {
-						try {
-							IDE.openEditor(activePage, resource, true);
-						} catch (PartInitException e) {
-							DLTKUIPlugin.log(e);
-						}
+				display.asyncExec(() -> {
+					try {
+						IDE.openEditor(activePage, resource, true);
+					} catch (PartInitException e) {
+						DLTKUIPlugin.log(e);
 					}
 				});
 			}
@@ -73,7 +70,7 @@ public abstract class NewElementWizard extends Wizard implements INewWizard {
 	/**
 	 * Subclasses should override to perform the actions of the wizard. This
 	 * method is run in the wizard container's context as a workspace runnable.
-	 * 
+	 *
 	 * @param monitor
 	 * @throws InterruptedException
 	 * @throws CoreException
@@ -102,21 +99,15 @@ public abstract class NewElementWizard extends Wizard implements INewWizard {
 		ExceptionHandler.handle(e, shell, title, message);
 	}
 
-	/*
-	 * @see Wizard#performFinish
-	 */
 	@Override
 	public boolean performFinish() {
-		IWorkspaceRunnable op = new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException,
-					OperationCanceledException {
-				try {
-					finishPage(monitor);
-				} catch (InterruptedException e) {
-					throw new OperationCanceledException(e.getMessage());
-				}
-			}
-		};
+		IWorkspaceRunnable op = monitor -> {
+try {
+		finishPage(monitor);
+} catch (InterruptedException e) {
+		throw new OperationCanceledException(e.getMessage());
+}
+};
 		try {
 			ISchedulingRule rule = null;
 			Job job = Job.getJobManager().currentJob();
@@ -160,9 +151,7 @@ public abstract class NewElementWizard extends Wizard implements INewWizard {
 		}
 	}
 
-	/*
-	 * @see IWorkbenchWizard#init(IWorkbench,IStructuredSelection)
-	 */
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 		fWorkbench = workbench;
 		fSelection = currentSelection;

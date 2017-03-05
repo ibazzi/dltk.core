@@ -1,11 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
+
  *******************************************************************************/
 package org.eclipse.dltk.internal.debug.ui.interpreters;
 
@@ -21,7 +21,7 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * Wrapper for an original library location, to support editing.
- * 
+ *
  */
 public final class LibraryStandin {
 	private IPath fLibraryLocation;
@@ -39,18 +39,14 @@ public final class LibraryStandin {
 
 	/**
 	 * Returns the InterpreterEnvironment library archive location.
-	 * 
+	 *
 	 * @return The InterpreterEnvironment library archive location.
 	 */
 	public String getLibraryPathString() {
 		return EnvironmentPathUtils.getLocalPathString(fLibraryLocation);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof LibraryStandin) {
 			LibraryStandin lib = (LibraryStandin) obj;
@@ -59,11 +55,7 @@ public final class LibraryStandin {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
+	@Override
 	public int hashCode() {
 		return fLibraryLocation.hashCode();
 	}
@@ -71,7 +63,7 @@ public final class LibraryStandin {
 	/**
 	 * Returns whether the given paths are equal - either may be
 	 * <code>null</code>.
-	 * 
+	 *
 	 * @param path1
 	 *            path to be compared
 	 * @param path2
@@ -85,13 +77,13 @@ public final class LibraryStandin {
 	/**
 	 * Returns whether the given objects are equal - either may be
 	 * <code>null</code>.
-	 * 
+	 *
 	 * @param o1
 	 *            object to be compared
 	 * @param o2
 	 *            object to be compared
 	 * @return whether the given objects are equal or both null
-	 * 
+	 *
 	 */
 	private boolean equalsOrNull(Object o1, Object o2) {
 		if (o1 == null) {
@@ -105,7 +97,7 @@ public final class LibraryStandin {
 
 	/**
 	 * Returns an equivalent library location.
-	 * 
+	 *
 	 * @return library location
 	 */
 	public LibraryLocation toLibraryLocation() {
@@ -114,18 +106,19 @@ public final class LibraryStandin {
 
 	/**
 	 * Returns a status for this library describing any error states
-	 * 
+	 *
 	 * @param environment
-	 * 
+	 *
 	 * @return
 	 */
 	public IStatus validate() {
 		IFileHandle f = EnvironmentPathUtils.getFile(fLibraryLocation);
 		if (!f.exists()) {
 			return new Status(IStatus.ERROR, DLTKDebugUIPlugin.PLUGIN_ID,
-					IDLTKDebugUIConstants.INTERNAL_ERROR, NLS
-							.bind(InterpretersMessages.LibraryStandin_0, f
-									.toString()), null);
+					IDLTKDebugUIConstants.INTERNAL_ERROR,
+					NLS.bind(InterpretersMessages.LibraryStandin_0,
+							f.toString()),
+					null);
 		}
 		return Status.OK_STATUS;
 	}

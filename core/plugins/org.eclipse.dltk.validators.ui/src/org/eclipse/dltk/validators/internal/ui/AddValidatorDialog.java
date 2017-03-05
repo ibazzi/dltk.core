@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.validators.internal.ui;
 
@@ -18,8 +17,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.internal.ui.wizards.dialogfields.ComboDialogField;
-import org.eclipse.dltk.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.dltk.internal.ui.wizards.dialogfields.IDialogFieldListener;
 import org.eclipse.dltk.internal.ui.wizards.dialogfields.StringDialogField;
 import org.eclipse.dltk.ui.dialogs.StatusInfo;
 import org.eclipse.dltk.validators.core.IValidator;
@@ -53,7 +50,7 @@ public class AddValidatorDialog extends StatusDialog implements IStatusHandler {
 	private IStatus[] fStati;
 	private int fPrevIndex = -1;
 
-	private Map createValidatorMap = new HashMap();
+	private Map<IValidatorType, IValidator> createValidatorMap = new HashMap<>();
 
 	private ValidatorConfigurationPage fConfigurationPage = null;
 
@@ -71,15 +68,14 @@ public class AddValidatorDialog extends StatusDialog implements IStatusHandler {
 		}
 
 		fValidatorTypes = validatorTypes;
-		fSelectedValidatorType = editedValidator != null ? editedValidator
-				.getValidatorType() : validatorTypes[0];
+		fSelectedValidatorType = editedValidator != null
+				? editedValidator.getValidatorType()
+				: validatorTypes[0];
 
 		fEditedValidator = editedValidator;
 	}
 
-	/**
-	 * @see Windows#configureShell
-	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		// PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell,
@@ -88,28 +84,23 @@ public class AddValidatorDialog extends StatusDialog implements IStatusHandler {
 
 	protected void createDialogFields() {
 		fValidatorTypeCombo = new ComboDialogField(SWT.READ_ONLY);
-		fValidatorTypeCombo
-				.setLabelText(ValidatorMessages.addValidatorDialog_ValidatorEnvironmentType);
+		fValidatorTypeCombo.setLabelText(
+				ValidatorMessages.addValidatorDialog_ValidatorEnvironmentType);
 		fValidatorTypeCombo.setItems(getValidatorTypeNames());
 
 		fValidatorName = new StringDialogField();
-		fValidatorName
-				.setLabelText(ValidatorMessages.addValidatorDialog_ValidatorEnvironmentName);
+		fValidatorName.setLabelText(
+				ValidatorMessages.addValidatorDialog_ValidatorEnvironmentName);
 	}
 
 	protected void createFieldListeners() {
 
-		fValidatorTypeCombo.setDialogFieldListener(new IDialogFieldListener() {
-			public void dialogFieldChanged(DialogField field) {
-				updateValidatorType();
-			}
-		});
+		fValidatorTypeCombo
+				.setDialogFieldListener(field -> updateValidatorType());
 
-		fValidatorName.setDialogFieldListener(new IDialogFieldListener() {
-			public void dialogFieldChanged(DialogField field) {
-				setValidatorNameStatus(validateValidatorName());
-				updateStatusLine();
-			}
+		fValidatorName.setDialogFieldListener(field -> {
+			setValidatorNameStatus(validateValidatorName());
+			updateStatusLine();
 		});
 	}
 
@@ -117,14 +108,17 @@ public class AddValidatorDialog extends StatusDialog implements IStatusHandler {
 		return fValidatorName.getText();
 	}
 
+	@Override
 	protected Control createDialogArea(Composite ancestor) {
 		createDialogFields();
 		Composite parent = (Composite) super.createDialogArea(ancestor);
 		((GridLayout) parent.getLayout()).numColumns = 3;
 
 		fValidatorTypeCombo.doFillIntoGrid(parent, 3);
-		((GridData) fValidatorTypeCombo.getComboControl(null).getLayoutData()).widthHint = convertWidthInCharsToPixels(50);
-		((GridData) fValidatorTypeCombo.getComboControl(null).getLayoutData()).grabExcessHorizontalSpace = true;
+		((GridData) fValidatorTypeCombo.getComboControl(null)
+				.getLayoutData()).widthHint = convertWidthInCharsToPixels(50);
+		((GridData) fValidatorTypeCombo.getComboControl(null)
+				.getLayoutData()).grabExcessHorizontalSpace = true;
 
 		// ((GridData)fValidatorName.getLabelControl(null).getLayoutData()).
 		// grabExcessHorizontalSpace
@@ -133,8 +127,8 @@ public class AddValidatorDialog extends StatusDialog implements IStatusHandler {
 		fValidatorName.doFillIntoGrid(parent, 3);
 
 		if (this.fEditedValidator != null) {
-			fValidatorName.setEnabled(!this.fEditedValidator.getValidatorType()
-					.isBuiltin());
+			fValidatorName.setEnabled(
+					!this.fEditedValidator.getValidatorType().isBuiltin());
 			if (this.fEditedValidator.getName().equals(
 					this.fEditedValidator.getValidatorType().getName())) {
 
@@ -198,8 +192,7 @@ public class AddValidatorDialog extends StatusDialog implements IStatusHandler {
 			return this.fEditedValidator;
 		}
 		if (this.createValidatorMap.containsKey(fSelectedValidatorType)) {
-			return (IValidator) this.createValidatorMap
-					.get(fSelectedValidatorType);
+			return this.createValidatorMap.get(fSelectedValidatorType);
 		} else {
 			IValidator validator = fSelectedValidatorType
 					.createValidator(createUniqueId(fSelectedValidatorType));
@@ -236,6 +229,7 @@ public class AddValidatorDialog extends StatusDialog implements IStatusHandler {
 		updateStatusLine();
 	}
 
+	@Override
 	public void create() {
 		super.create();
 		fValidatorName.setFocus();
@@ -281,11 +275,10 @@ public class AddValidatorDialog extends StatusDialog implements IStatusHandler {
 		if (name == null || name.trim().length() == 0) {
 			status.setInfo(ValidatorMessages.addValidatorDialog_enterName);
 		} else {
-			if (fRequestor.isDuplicateName(name)
-					&& (fEditedValidator == null || !name
-							.equals(fEditedValidator.getName()))) {
-				status
-						.setError(ValidatorMessages.addValidatorDialog_duplicateName);
+			if (fRequestor.isDuplicateName(name) && (fEditedValidator == null
+					|| !name.equals(fEditedValidator.getName()))) {
+				status.setError(
+						ValidatorMessages.addValidatorDialog_duplicateName);
 			}
 		}
 		return status;
@@ -306,11 +299,13 @@ public class AddValidatorDialog extends StatusDialog implements IStatusHandler {
 		updateStatus(max);
 	}
 
+	@Override
 	protected void okPressed() {
 		doOkPressed();
 		super.okPressed();
 	}
 
+	@Override
 	protected void cancelPressed() {
 		// TODO Auto-generated method stub
 		super.cancelPressed();
@@ -333,12 +328,12 @@ public class AddValidatorDialog extends StatusDialog implements IStatusHandler {
 	}
 
 	public void removeValidators(boolean removeAll) {
-		Iterator iterator = this.createValidatorMap.keySet().iterator();
+		Iterator<IValidatorType> iterator = this.createValidatorMap.keySet()
+				.iterator();
 		while (iterator.hasNext()) {
-			Object next = iterator.next();
-			IValidatorType type = (IValidatorType) next;
+			IValidatorType type = iterator.next();
 			if (removeAll || !type.equals(fSelectedValidatorType)) {
-				IValidator v = (IValidator) createValidatorMap.get(type);
+				IValidator v = createValidatorMap.get(type);
 				type.disposeValidator(v.getID());
 			}
 		}
@@ -394,32 +389,32 @@ public class AddValidatorDialog extends StatusDialog implements IStatusHandler {
 	/**
 	 * Updates the status of the ok button to reflect the given status.
 	 * Subclasses may override this method to update additional buttons.
-	 * 
+	 *
 	 * @param status
 	 *            the status.
 	 */
+	@Override
 	protected void updateButtonsEnableState(IStatus status) {
 		Button ok = getButton(IDialogConstants.OK_ID);
 		if (ok != null && !ok.isDisposed())
 			ok.setEnabled(status.getSeverity() == IStatus.OK);
 	}
 
-	/**
-	 * @see org.eclipse.jface.dialogs.Dialog#setButtonLayoutData(org.eclipse.swt.widgets.Button)
-	 */
+	@Override
 	public void setButtonLayoutData(Button button) {
 		super.setButtonLayoutData(button);
 	}
 
 	/**
 	 * Returns the name of the section that this dialog stores its settings in
-	 * 
+	 *
 	 * @return String
 	 */
 	protected String getDialogSettingsSectionName() {
 		return "ADD_Validator_DIALOG_SECTION"; //$NON-NLS-1$
 	}
 
+	@Override
 	public void updateStatus() {
 		if (this.fConfigurationPage != null) {
 			IStatus status = this.fConfigurationPage.getStatus();
@@ -430,18 +425,4 @@ public class AddValidatorDialog extends StatusDialog implements IStatusHandler {
 		updateStatusLine();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
-	 */
-	// protected IDialogSettings getDialogBoundsSettings() {
-	// IDialogSettings settings = ValidatorsUI.getDefault().getDialogSettings();
-	// IDialogSettings section =
-	// settings.getSection(getDialogSettingsSectionName());
-	// if (section == null) {
-	// section = settings.addNewSection(getDialogSettingsSectionName());
-	// }
-	// return section;
-	// }
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -102,10 +102,12 @@ class PackagesViewFlatContentProvider extends LogicalPackagesProvider implements
 	/*
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
+	@Override
 	public Object[] getElements(Object inputElement) {
 		return getChildren(inputElement);
 	}
 
+	@Override
 	protected void processDelta(IModelElementDelta delta) throws ModelException {
 
 		int kind= delta.getKind();
@@ -195,24 +197,20 @@ class PackagesViewFlatContentProvider extends LogicalPackagesProvider implements
 	}
 
 	private void postAdd(final Object child) {
-		postRunnable(new Runnable() {
-			public void run() {
-				Control ctrl = fViewer.getControl();
-				if (ctrl != null && !ctrl.isDisposed()) {
-					((TableViewer)fViewer).add(child);
-				}
+		postRunnable(() -> {
+			Control ctrl = fViewer.getControl();
+			if (ctrl != null && !ctrl.isDisposed()) {
+				((TableViewer) fViewer).add(child);
 			}
 		});
 	}
 
 
 	private void postRemove(final Object object) {
-		postRunnable(new Runnable() {
-			public void run() {
-				Control ctrl = fViewer.getControl();
-				if (ctrl != null && !ctrl.isDisposed()) {
-					((TableViewer)fViewer).remove(object);
-				}
+		postRunnable(() -> {
+			Control ctrl = fViewer.getControl();
+			if (ctrl != null && !ctrl.isDisposed()) {
+				((TableViewer) fViewer).remove(object);
 			}
 		});
 	}
@@ -257,12 +255,10 @@ class PackagesViewFlatContentProvider extends LogicalPackagesProvider implements
 
 
 	private void postRefresh(final Object element) {
-		postRunnable(new Runnable() {
-			public void run() {
-				Control ctrl= fViewer.getControl();
-				if (ctrl != null && !ctrl.isDisposed()) {
-					fViewer.refresh(element);
-				}
+		postRunnable(() -> {
+			Control ctrl = fViewer.getControl();
+			if (ctrl != null && !ctrl.isDisposed()) {
+				fViewer.refresh(element);
 			}
 		});
 	}

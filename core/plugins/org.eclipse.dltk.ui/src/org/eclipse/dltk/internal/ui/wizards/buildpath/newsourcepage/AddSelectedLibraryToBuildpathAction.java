@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,26 +57,23 @@ public class AddSelectedLibraryToBuildpathAction extends Action implements ISele
 		fSite= site;
 		fSelectedElements= null;
 	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
+
+	@Override
 	public void run() {
 		try {
 			final IFile[] files= fSelectedElements;
 			if (files == null) {
 				return;
 			}
-			
-			final IRunnableWithProgress runnable= new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					try {
-				        IScriptProject project= DLTKCore.create(files[0].getProject());
-				        List result= addLibraryEntries(files, project, monitor);
-						selectAndReveal(new StructuredSelection(result));
-					} catch (CoreException e) {
-						throw new InvocationTargetException(e);
-					}
+
+			final IRunnableWithProgress runnable = monitor -> {
+				try {
+					IScriptProject project = DLTKCore
+							.create(files[0].getProject());
+					List result = addLibraryEntries(files, project, monitor);
+					selectAndReveal(new StructuredSelection(result));
+				} catch (CoreException e) {
+					throw new InvocationTargetException(e);
 				}
 			};
 			PlatformUI.getWorkbench().getProgressService().run(true, false, runnable);
@@ -89,17 +86,17 @@ public class AddSelectedLibraryToBuildpathAction extends Action implements ISele
 		} catch (final InterruptedException e) {
 		}
 	}
-	
+
 	private List addLibraryEntries(IFile[] resources, IScriptProject project, IProgressMonitor monitor) throws CoreException {
 		List addedEntries= new ArrayList();
 		try {
-			monitor.beginTask(NewWizardMessages.BuildpathModifier_Monitor_AddToBuildpath, 4); 
+			monitor.beginTask(NewWizardMessages.BuildpathModifier_Monitor_AddToBuildpath, 4);
 			for (int i= 0; i < resources.length; i++) {
 				IResource res= resources[i];
 				addedEntries.add(new BPListElement(project, IBuildpathEntry.BPE_LIBRARY, res.getFullPath(), res, false));
 			}
 			monitor.worked(1);
-			
+
 			List existingEntries= BuildpathModifier.getExistingEntries(project);
 			BuildpathModifier.setNewEntry(existingEntries, addedEntries, project, new SubProgressMonitor(monitor, 1));
 			BuildpathModifier.commitBuildPath(existingEntries, project, new SubProgressMonitor(monitor, 1));
@@ -112,17 +109,15 @@ public class AddSelectedLibraryToBuildpathAction extends Action implements ISele
 					result.add(elem);
 				}
 			}
-					
+
 			monitor.worked(1);
 			return result;
 		} finally {
 			monitor.done();
 		}
 	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
+
+	@Override
 	public void selectionChanged(final SelectionChangedEvent event) {
 		final ISelection selection = event.getSelection();
 		if (selection instanceof IStructuredSelection) {
@@ -136,11 +131,11 @@ public class AddSelectedLibraryToBuildpathAction extends Action implements ISele
 		fSelectedElements= getSelectedResources(elements);
 		return fSelectedElements != null;
 	}
-	
+
 	private IFile[] getSelectedResources(IStructuredSelection elements) {
 		if (elements.size() == 0)
 			return null;
-		
+
 		ArrayList res= new ArrayList();
 		try {
 			for (Iterator iter= elements.iterator(); iter.hasNext();) {
@@ -150,7 +145,7 @@ public class AddSelectedLibraryToBuildpathAction extends Action implements ISele
 					IScriptProject project= DLTKCore.create(file.getProject());
 					if (project == null)
 						return null;
-					
+
 					if (!BuildpathModifier.isArchive(file, project))
 						return null;
 				} else {
@@ -163,12 +158,12 @@ public class AddSelectedLibraryToBuildpathAction extends Action implements ISele
 		}
 		return null;
 	}
-	
-	
+
+
 	private void showExceptionDialog(CoreException exception) {
 		showError(exception, fSite.getShell(), NewWizardMessages.AddSelectedLibraryToBuildpathAction_ErrorTitle, exception.getMessage());
 	}
-	
+
 	private void showError(CoreException e, Shell shell, String title, String message) {
 		IStatus status= e.getStatus();
 		if (status != null) {
@@ -212,11 +207,8 @@ public class AddSelectedLibraryToBuildpathAction extends Action implements ISele
 			if (target != null) {
 				// select and reveal resource
 				final ISetSelectionTarget finalTarget= target;
-				page.getWorkbenchWindow().getShell().getDisplay().asyncExec(new Runnable() {
-					public void run() {
-						finalTarget.selectReveal(selection);
-					}
-				});
+				page.getWorkbenchWindow().getShell().getDisplay()
+						.asyncExec(() -> finalTarget.selectReveal(selection));
 			}
 		}
 	}

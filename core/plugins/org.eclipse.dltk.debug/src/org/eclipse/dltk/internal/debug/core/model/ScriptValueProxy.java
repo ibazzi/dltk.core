@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -28,67 +28,83 @@ public class ScriptValueProxy implements IScriptValue {
 		this.origin = origin;
 	}
 
+	@Override
 	public IScriptEvaluationCommand createEvaluationCommand(
 			String messageTemplate, IScriptThread thread) {
 		return origin.createEvaluationCommand(messageTemplate, thread);
 	}
 
+	@Override
 	public String getDetailsString() {
 		return origin.getDetailsString();
 	}
 
+	@Override
 	public String getEvalName() {
 		return origin.getEvalName();
 	}
 
+	@Override
 	public String getInstanceId() {
 		return origin.getInstanceId();
 	}
 
+	@Override
 	public String getMemoryAddress() {
 		return origin.getMemoryAddress();
 	}
 
+	@Override
 	public String getRawValue() {
 		return origin.getRawValue();
 	}
 
+	@Override
 	public IScriptType getType() {
 		return origin.getType();
 	}
 
+	@Override
 	public IVariable getVariable(int offset) throws DebugException {
 		return origin.getVariable(offset);
 	}
 
+	@Override
 	public String getReferenceTypeName() throws DebugException {
 		return origin.getReferenceTypeName();
 	}
 
+	@Override
 	public String getValueString() throws DebugException {
 		return origin.getValueString();
 	}
 
+	@Override
 	public IVariable[] getVariables() throws DebugException {
 		return origin.getVariables();
 	}
 
+	@Override
 	public boolean hasVariables() throws DebugException {
 		return origin.hasVariables();
 	}
 
+	@Override
 	public boolean isAllocated() throws DebugException {
 		return origin.isAllocated();
 	}
 
+	@Override
 	public IDebugTarget getDebugTarget() {
 		return origin.getDebugTarget();
 	}
 
+	@Override
 	public ILaunch getLaunch() {
 		return origin.getLaunch();
 	}
 
+	@Override
 	public String getModelIdentifier() {
 		return origin.getModelIdentifier();
 	}

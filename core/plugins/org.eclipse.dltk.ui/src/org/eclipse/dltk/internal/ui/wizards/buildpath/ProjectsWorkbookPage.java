@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.wizards.buildpath;
 
@@ -92,21 +91,11 @@ public class ProjectsWorkbookPage extends BuildPathBasePage {
 		if (Display.getCurrent() != null) {
 			updateProjectsList();
 		} else {
-			Display.getDefault().asyncExec(new Runnable() {
-				public void run() {
-					updateProjectsList();
-				}
-			});
+			Display.getDefault().asyncExec(() -> updateProjectsList());
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.dltk.internal.ui.wizards.buildpath.BuildPathBasePage#setTitle
-	 * (java.lang.String)
-	 */
+	@Override
 	public void setTitle(String title) {
 		fProjectsList.setLabelText(title);
 	}
@@ -128,6 +117,7 @@ public class ProjectsWorkbookPage extends BuildPathBasePage {
 
 	// -------- UI creation ---------
 
+	@Override
 	public Control getControl(Composite parent) {
 		PixelConverter converter = new PixelConverter(parent);
 
@@ -169,16 +159,12 @@ public class ProjectsWorkbookPage extends BuildPathBasePage {
 		}
 	}
 
-	/*
-	 * @see BuildPathBasePage#getSelection
-	 */
+	@Override
 	public List getSelection() {
 		return fProjectsList.getSelectedElements();
 	}
 
-	/*
-	 * @see BuildPathBasePage#setSelection
-	 */
+	@Override
 	public void setSelection(List selElements, boolean expand) {
 		fProjectsList.selectElements(new StructuredSelection(selElements));
 		if (expand) {
@@ -188,6 +174,7 @@ public class ProjectsWorkbookPage extends BuildPathBasePage {
 		}
 	}
 
+	@Override
 	public boolean isEntryKind(int kind) {
 		return kind == IBuildpathEntry.BPE_PROJECT;
 	}
@@ -198,22 +185,27 @@ public class ProjectsWorkbookPage extends BuildPathBasePage {
 		private final Object[] EMPTY_ARR = new Object[0];
 
 		// -------- IListAdapter --------
+		@Override
 		public void customButtonPressed(TreeListDialogField field, int index) {
 			projectPageCustomButtonPressed(field, index);
 		}
 
+		@Override
 		public void selectionChanged(TreeListDialogField field) {
 			projectPageSelectionChanged(field);
 		}
 
+		@Override
 		public void doubleClicked(TreeListDialogField field) {
 			projectPageDoubleClicked(field);
 		}
 
+		@Override
 		public void keyPressed(TreeListDialogField field, KeyEvent event) {
 			projectPageKeyPressed(field, event);
 		}
 
+		@Override
 		public Object[] getChildren(TreeListDialogField field, Object element) {
 			if (element instanceof BPListElement) {
 				return ((BPListElement) element).getChildren();
@@ -221,6 +213,7 @@ public class ProjectsWorkbookPage extends BuildPathBasePage {
 			return EMPTY_ARR;
 		}
 
+		@Override
 		public Object getParent(TreeListDialogField field, Object element) {
 			if (element instanceof BPListElementAttribute) {
 				return ((BPListElementAttribute) element).getParent();
@@ -228,12 +221,14 @@ public class ProjectsWorkbookPage extends BuildPathBasePage {
 			return null;
 		}
 
+		@Override
 		public boolean hasChildren(TreeListDialogField field, Object element) {
 			return getChildren(field, element).length > 0;
 		}
 
 		// ---------- IDialogFieldListener --------
 
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 			projectPageDialogFieldChanged(field);
 		}

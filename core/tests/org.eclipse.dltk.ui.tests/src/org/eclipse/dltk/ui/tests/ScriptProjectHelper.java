@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.tests;
 
@@ -58,6 +57,7 @@ public class ScriptProjectHelper {
 	public static final IPath MYLIB= new Path("testresources/mylib.zip");
 	
 	private static class ImportOverwriteQuery implements IOverwriteQuery {
+		@Override
 		public String queryOverwrite(String file) {
 			return ALL;
 		}	
@@ -171,27 +171,25 @@ public class ScriptProjectHelper {
 		return result;
 	}
 	public static void delete(final IModelElement elem) throws CoreException {				
-		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				//performDummySearch();
-				if (elem instanceof IScriptProject) {
-					IScriptProject jproject= (IScriptProject) elem;
-					jproject.setRawBuildpath(new IBuildpathEntry[0], null);
-				}
-				for (int i= 0; i < MAX_RETRY; i++) {
-					try {
-						elem.getResource().delete(true, null);
-						i= MAX_RETRY;
-					} catch (CoreException e) {
-						if (i == MAX_RETRY - 1) {
-							DLTKUIPlugin.log(e);
-							throw e;
-						}
-						try {
-							Thread.sleep(1000); // sleep a second
-						} catch (InterruptedException e1) {
-						} 
+		IWorkspaceRunnable runnable= monitor -> {
+			//performDummySearch();
+			if (elem instanceof IScriptProject) {
+				IScriptProject jproject= (IScriptProject) elem;
+				jproject.setRawBuildpath(new IBuildpathEntry[0], null);
+			}
+			for (int i= 0; i < MAX_RETRY; i++) {
+				try {
+					elem.getResource().delete(true, null);
+					i= MAX_RETRY;
+				} catch (CoreException e) {
+					if (i == MAX_RETRY - 1) {
+						DLTKUIPlugin.log(e);
+						throw e;
 					}
+					try {
+						Thread.sleep(1000); // sleep a second
+					} catch (InterruptedException e1) {
+					} 
 				}
 			}
 		};
@@ -240,14 +238,8 @@ public class ScriptProjectHelper {
 	public static IProjectFragment addLibraryWithImport(IScriptProject jproject, IPath archivePath) throws IOException, CoreException {
 		IProject project= jproject.getProject();
 		IFile newFile= project.getFile(archivePath.lastSegment());
-		InputStream inputStream= null;
-		try {
-			inputStream= new FileInputStream(archivePath.toFile()); 
+		try (InputStream inputStream= new FileInputStream(archivePath.toFile())){
 			newFile.create(inputStream, true, null);
-		} finally {
-			if (inputStream != null) {
-				try { inputStream.close(); } catch (IOException e) { }
-			}
 		}				
 		return addLibrary(jproject, newFile.getFullPath());
 	}

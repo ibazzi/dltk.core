@@ -1,13 +1,13 @@
-/******************************************************************************* 
- * Copyright (c) 2008, 2016 xored software, Inc. and others.
- * 
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html  
- * 
- * Contributors: 
- *     xored software, Inc. - initial API and Implementation (Yuri Strot) 
+/*******************************************************************************
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     xored software, Inc. - initial API and Implementation (Yuri Strot)
  *******************************************************************************/
 package org.eclipse.dltk.ui.formatter.internal;
 
@@ -309,10 +309,12 @@ public abstract class AbstractFormatterSelectionBlock extends
 		updateComboFromProfiles();
 		fProfileCombo.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateSelection();
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				updateSelection();
 			}
@@ -323,10 +325,12 @@ public abstract class AbstractFormatterSelectionBlock extends
 				GridData.HORIZONTAL_ALIGN_BEGINNING);
 		fEditButton.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				editButtonPressed();
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				editButtonPressed();
 			}
@@ -337,10 +341,12 @@ public abstract class AbstractFormatterSelectionBlock extends
 				GridData.HORIZONTAL_ALIGN_BEGINNING);
 		fDeleteButton.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				doDelete();
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				doDelete();
 			}
@@ -366,10 +372,12 @@ public abstract class AbstractFormatterSelectionBlock extends
 				GridData.HORIZONTAL_ALIGN_BEGINNING);
 		fNewButton.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				createNewProfile();
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				createNewProfile();
 			}
@@ -397,10 +405,12 @@ public abstract class AbstractFormatterSelectionBlock extends
 				GridData.HORIZONTAL_ALIGN_END);
 		fLoadButton.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				doImport();
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				doImport();
 			}
@@ -508,10 +518,12 @@ public abstract class AbstractFormatterSelectionBlock extends
 
 			fFactoryCombo.addSelectionListener(new SelectionListener() {
 
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					doSetFactory(fFactoryCombo.getSelectionIndex());
 				}
 
+				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
 					doSetFactory(fFactoryCombo.getSelectionIndex());
 				}
@@ -617,14 +629,17 @@ public abstract class AbstractFormatterSelectionBlock extends
 
 	private class LoadDelegate implements IPreferencesLookupDelegate {
 
+		@Override
 		public boolean getBoolean(String qualifier, String key) {
 			return getBooleanValue(new PreferenceKey(qualifier, key));
 		}
 
+		@Override
 		public int getInt(String qualifier, String key) {
 			return getIntValue(new PreferenceKey(qualifier, key));
 		}
 
+		@Override
 		public String getString(String qualifier, String key) {
 			return getValue(new PreferenceKey(qualifier, key));
 		}
@@ -633,14 +648,17 @@ public abstract class AbstractFormatterSelectionBlock extends
 
 	private class SaveDelegate implements IPreferencesSaveDelegate {
 
+		@Override
 		public void setBoolean(String qualifier, String key, boolean value) {
 			setValue(new PreferenceKey(qualifier, key), value);
 		}
 
+		@Override
 		public void setInt(String qualifier, String key, int value) {
 			setValue(new PreferenceKey(qualifier, key), String.valueOf(value));
 		}
 
+		@Override
 		public void setString(String qualifier, String key, String value) {
 			setValue(new PreferenceKey(qualifier, key), value);
 		}

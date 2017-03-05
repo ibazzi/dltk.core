@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,7 @@ import org.eclipse.ui.IWorkbenchPartSite;
 
 /**
  * Semantic highlighting reconciler - Background thread implementation.
- * 
+ *
  * @since 3.0
  */
 public class SemanticHighlightingReconciler implements
@@ -64,14 +64,14 @@ public class SemanticHighlightingReconciler implements
 	private final Object fJobLock = new Object();
 	/**
 	 * Reconcile operation lock.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private final Object fReconcileLock = new Object();
 	/**
 	 * <code>true</code> if any thread is executing <code>reconcile</code>,
 	 * <code>false</code> otherwise.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private boolean fIsReconciling = false;
@@ -94,19 +94,12 @@ public class SemanticHighlightingReconciler implements
 	private HighlightingStyle[] fJobHighlightings;
 	private ISemanticHighlightingUpdater positionUpdater;
 
-	/*
-	 * @see org.eclipse.jdt.internal.ui.text.Script.IScriptReconcilingListener#
-	 * aboutToBeReconciled()
-	 */
+	@Override
 	public void aboutToBeReconciled() {
 		// Do nothing
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.jdt.internal.ui.text.Script.IScriptReconcilingListener#reconciled
-	 * (ModuleDeclaration, boolean, IProgressMonitor)
-	 */
+	@Override
 	public void reconciled(ISourceModule ast, boolean forced,
 			IProgressMonitor progressMonitor) {
 		if (positionUpdater == null)
@@ -168,7 +161,7 @@ public class SemanticHighlightingReconciler implements
 
 	/**
 	 * Update the presentation.
-	 * 
+	 *
 	 * @param textPresentation
 	 *            the text presentation
 	 * @param addedPositions
@@ -292,11 +285,7 @@ public class SemanticHighlightingReconciler implements
 		}
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.jface.text.ITextInputListener#inputDocumentAboutToBeChanged
-	 * (org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
-	 */
+	@Override
 	public void inputDocumentAboutToBeChanged(IDocument oldInput,
 			IDocument newInput) {
 		synchronized (fJobLock) {
@@ -307,11 +296,7 @@ public class SemanticHighlightingReconciler implements
 		}
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.jface.text.ITextInputListener#inputDocumentChanged(org.eclipse
-	 * .jface.text.IDocument, org.eclipse.jface.text.IDocument)
-	 */
+	@Override
 	public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
 		if (newInput != null)
 			scheduleJob();
@@ -319,7 +304,7 @@ public class SemanticHighlightingReconciler implements
 
 	/**
 	 * Refreshes the highlighting.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public void refresh() {

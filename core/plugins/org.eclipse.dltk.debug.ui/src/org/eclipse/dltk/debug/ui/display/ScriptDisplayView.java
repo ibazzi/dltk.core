@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -75,7 +75,7 @@ public class ScriptDisplayView extends PageBookView
 	/**
 	 * Stack of consoles in MRU order
 	 */
-	private List<IConsole> fStack = new ArrayList<IConsole>();
+	private List<IConsole> fStack = new ArrayList<>();
 
 	/**
 	 * The console being displayed, or <code>null</code> if none
@@ -198,7 +198,7 @@ public class ScriptDisplayView extends PageBookView
 
 	/**
 	 * Activates the participants for the given console, if any.
-	 * 
+	 *
 	 * @param console
 	 */
 	private void activateParticipants(IConsole console) {
@@ -228,7 +228,7 @@ public class ScriptDisplayView extends PageBookView
 
 	/**
 	 * Returns a stack of consoles in the view in MRU order.
-	 * 
+	 *
 	 * @return a stack of consoles in the view in MRU order
 	 */
 	public List<IConsole> getConsoleStack() {
@@ -311,7 +311,7 @@ public class ScriptDisplayView extends PageBookView
 	/**
 	 * Returns the page participants registered for the given console, or
 	 * <code>null</code>
-	 * 
+	 *
 	 * @param console
 	 * @return registered page participants or <code>null</code>
 	 */
@@ -386,7 +386,7 @@ public class ScriptDisplayView extends PageBookView
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.console.IConsoleListener#consolesAdded(org.eclipse.ui.
 	 * console.IConsole[])
@@ -406,31 +406,27 @@ public class ScriptDisplayView extends PageBookView
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.console.IConsoleListener#consolesRemoved(org.eclipse.ui
 	 * .console.IConsole[])
 	 */
 	public void consolesRemoved(final IConsole[] consoles) {
 		if (isAvailable()) {
-			Runnable r = new Runnable() {
-				@Override
-				public void run() {
-					for (int i = 0; i < consoles.length; i++) {
-						if (isAvailable()) {
-							IConsole console = consoles[i];
-							fStack.remove(console);
-							ConsoleWorkbenchPart part = fConsoleToPart
-									.get(console);
-							if (part != null) {
-								partClosed(part);
-							}
-							if (getConsole() == null) {
-								IConsole[] available = {}; // FIXME
-								// getConsoleManager().getConsoles();
-								if (available.length > 0) {
-									display(available[available.length - 1]);
-								}
+			Runnable r = () -> {
+				for (int i = 0; i < consoles.length; i++) {
+					if (isAvailable()) {
+						IConsole console = consoles[i];
+						fStack.remove(console);
+						ConsoleWorkbenchPart part = fConsoleToPart.get(console);
+						if (part != null) {
+							partClosed(part);
+						}
+						if (getConsole() == null) {
+							IConsole[] available = {}; // FIXME
+							// getConsoleManager().getConsoles();
+							if (available.length > 0) {
+								display(available[available.length - 1]);
 							}
 						}
 					}
@@ -445,9 +441,9 @@ public class ScriptDisplayView extends PageBookView
 	 */
 	public ScriptDisplayView() {
 		super();
-		fConsoleToPart = new LinkedHashMap<IConsole, ConsoleWorkbenchPart>();
-		fPartToConsole = new HashMap<ConsoleWorkbenchPart, IConsole>();
-		fConsoleToPageParticipants = new HashMap<IConsole, ListenerList>();
+		fConsoleToPart = new LinkedHashMap<>();
+		fPartToConsole = new HashMap<>();
+		fConsoleToPageParticipants = new HashMap<>();
 
 	}
 
@@ -532,7 +528,7 @@ public class ScriptDisplayView extends PageBookView
 	/**
 	 * Registers the given runnable with the display associated with this view's
 	 * control, if any.
-	 * 
+	 *
 	 * @see org.eclipse.swt.widgets.Display#asyncExec(java.lang.Runnable)
 	 */
 	public void asyncExec(Runnable r) {
@@ -554,7 +550,7 @@ public class ScriptDisplayView extends PageBookView
 	 * <li><code>configureToolBar(IToolBarManager)</code></li>
 	 * <li><code>getHelpContextId()</code></li>
 	 * </ul>
-	 * 
+	 *
 	 * @see IWorkbenchPart#createPartControl(Composite)
 	 */
 	@Override
@@ -708,7 +704,7 @@ public class ScriptDisplayView extends PageBookView
 	/**
 	 * Returns if the specified part reference is to this view part (if the part
 	 * reference is the console view or not)
-	 * 
+	 *
 	 * @param partRef
 	 * @return true if the specified part reference is the console view
 	 */
@@ -733,7 +729,7 @@ public class ScriptDisplayView extends PageBookView
 
 	/**
 	 * Deactivates participants for the given console, if any.
-	 * 
+	 *
 	 * @param console
 	 *            console to deactivate
 	 */

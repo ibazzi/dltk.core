@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -34,26 +34,31 @@ public class ValidateAllAction extends Action {
 	public ValidateAllAction(IStructuredSelection selection) {
 		this.selection = selection;
 		setText(Messages.DLTKValidatorsEditorContextMenu_validateAll);
-		setImageDescriptor(ValidatorsUI.getDefault().getImageDescriptor(
-				ValidateAction.VALIDATE_IMAGE));
+		setImageDescriptor(ValidatorsUI.getDefault()
+				.getImageDescriptor(ValidateAction.VALIDATE_IMAGE));
 	}
 
+	@Override
 	public void run() {
 		final AbstractConsoleValidateJob delegate = new AbstractConsoleValidateJob(
 				Messages.ValidateSelectionWithConsoleAction_validation) {
 
+			@Override
 			protected boolean isConsoleRequired() {
 				return false;
 			}
 
+			@Override
 			protected void invokeValidationFor(IValidatorOutput out,
 					IScriptProject project, ISourceModule[] modules,
 					IResource[] resources, IProgressMonitor monitor) {
 				// TODO create sub monitors
-				ValidatorRuntime.executeSourceModuleValidators(project, Arrays
-						.asList(modules), out, ValidatorRuntime.ALL, monitor);
-				ValidatorRuntime.executeResourceValidators(project, Arrays
-						.asList(resources), out, ValidatorRuntime.ALL, monitor);
+				ValidatorRuntime.executeSourceModuleValidators(project,
+						Arrays.asList(modules), out, ValidatorRuntime.ALL,
+						monitor);
+				ValidatorRuntime.executeResourceValidators(project,
+						Arrays.asList(resources), out, ValidatorRuntime.ALL,
+						monitor);
 			}
 		};
 		delegate.run(selection.toArray());

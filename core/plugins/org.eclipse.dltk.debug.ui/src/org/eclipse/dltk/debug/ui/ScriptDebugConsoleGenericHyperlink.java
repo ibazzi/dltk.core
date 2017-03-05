@@ -25,9 +25,11 @@ public abstract class ScriptDebugConsoleGenericHyperlink implements IHyperlink {
 		this.fConsole = console;
 	}
 
+	@Override
 	public void linkEntered() {
 	}
 
+	@Override
 	public void linkExited() {
 	}
 
@@ -37,7 +39,7 @@ public abstract class ScriptDebugConsoleGenericHyperlink implements IHyperlink {
 
 	/**
 	 * Returns this link's text
-	 * 
+	 *
 	 * @exception CoreException
 	 *                if unable to retrieve the text
 	 */
@@ -62,6 +64,7 @@ public abstract class ScriptDebugConsoleGenericHyperlink implements IHyperlink {
 
 	protected abstract int getLineNumber(String linkText) throws CoreException;
 
+	@Override
 	public void linkActivated() {
 		try {
 			String fileName;
@@ -109,8 +112,8 @@ public abstract class ScriptDebugConsoleGenericHyperlink implements IHyperlink {
 
 	public String getEditorId(IEditorInput input, Object inputObject) {
 		try {
-			IEditorDescriptor descriptor = IDE.getEditorDescriptor(input
-					.getName());
+			IEditorDescriptor descriptor = IDE
+					.getEditorDescriptor(input.getName());
 			return descriptor.getId();
 		} catch (PartInitException e) {
 			return null;

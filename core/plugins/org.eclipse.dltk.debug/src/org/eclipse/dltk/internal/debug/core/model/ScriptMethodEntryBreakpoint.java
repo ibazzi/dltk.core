@@ -11,8 +11,8 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.dltk.debug.core.DLTKDebugPlugin;
 import org.eclipse.dltk.debug.core.model.IScriptMethodEntryBreakpoint;
 
-public class ScriptMethodEntryBreakpoint extends ScriptLineBreakpoint implements
-		IScriptMethodEntryBreakpoint {
+public class ScriptMethodEntryBreakpoint extends ScriptLineBreakpoint
+		implements IScriptMethodEntryBreakpoint {
 
 	public static final String METHOD_NAME = DLTKDebugPlugin.PLUGIN_ID
 			+ ".methodName"; //$NON-NLS-1$
@@ -29,6 +29,7 @@ public class ScriptMethodEntryBreakpoint extends ScriptLineBreakpoint implements
 	private static final String EXIT_ID = DLTKDebugPlugin.PLUGIN_ID
 			+ ".exitBrId"; //$NON-NLS-1$
 
+	@Override
 	protected String getMarkerId() {
 		return ScriptMarkerFactory.METHOD_ENTRY_MARKER_ID;
 	}
@@ -52,42 +53,51 @@ public class ScriptMethodEntryBreakpoint extends ScriptLineBreakpoint implements
 	}
 
 	// Method name
+	@Override
 	public String getMethodName() throws CoreException {
 		return ensureMarker().getAttribute(METHOD_NAME, ""); //$NON-NLS-1$
 	}
 
 	// Break on entry
+	@Override
 	public boolean breakOnEntry() throws CoreException {
 		return ensureMarker().getAttribute(BREAK_ON_ENTRY, false);
 	}
 
+	@Override
 	public void setBreakOnEntry(boolean value) throws CoreException {
 		ensureMarker().setAttribute(BREAK_ON_ENTRY, value);
 	}
 
 	// Break on exit
+	@Override
 	public boolean breakOnExit() throws CoreException {
 		return ensureMarker().getAttribute(BREAK_ON_EXIT, false);
 	}
 
+	@Override
 	public void setBreakOnExit(boolean value) throws CoreException {
 		ensureMarker().setAttribute(BREAK_ON_EXIT, value);
 	}
 
 	// Entry breakpoint id
+	@Override
 	public String getEntryBreakpointId() throws CoreException {
 		return ensureMarker().getAttribute(ENTRY_ID, null);
 	}
 
+	@Override
 	public void setEntryBreakpointId(String id) throws CoreException {
 		ensureMarker().setAttribute(ENTRY_ID, id);
 	}
 
 	// Exit breakpoint id
+	@Override
 	public String getExitBreakpointId() throws CoreException {
 		return ensureMarker().getAttribute(EXIT_ID, null);
 	}
 
+	@Override
 	public void setExitBreakpointId(String id) throws CoreException {
 		ensureMarker().setAttribute(EXIT_ID, id);
 	}
@@ -95,6 +105,7 @@ public class ScriptMethodEntryBreakpoint extends ScriptLineBreakpoint implements
 	private static final String[] UPDATABLE_ATTRS = new String[] { METHOD_NAME,
 			BREAK_ON_ENTRY, BREAK_ON_EXIT };
 
+	@Override
 	public String[] getUpdatableAttributes() {
 		List all = new ArrayList();
 		all.addAll(Arrays.asList(super.getUpdatableAttributes()));

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -25,16 +25,11 @@ public class HTMLUtils {
 		final Display display = Display.getDefault();
 		if (display != null && !display.isDisposed()) {
 			try {
-				display.asyncExec(new Runnable() {
-					/*
-					 * @see java.lang.Runnable#run()
-					 */
-					public void run() {
-						BG_COLOR_RGB = display.getSystemColor(
-								SWT.COLOR_INFO_BACKGROUND).getRGB();
-						FG_COLOR_RGB = display.getSystemColor(
-								SWT.COLOR_INFO_FOREGROUND).getRGB();
-					}
+				display.asyncExec(() -> {
+					BG_COLOR_RGB = display.getSystemColor(
+							SWT.COLOR_INFO_BACKGROUND).getRGB();
+					FG_COLOR_RGB = display.getSystemColor(
+							SWT.COLOR_INFO_FOREGROUND).getRGB();
 				});
 			} catch (SWTError err) {
 				// see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=45294

@@ -92,7 +92,7 @@ public class ScriptDebugConsole extends IOConsole {
 	 */
 	public synchronized void connect(IScriptProcess process) {
 		if (connectedProcesses == null) {
-			connectedProcesses = new HashSet<IScriptProcess>();
+			connectedProcesses = new HashSet<>();
 		}
 		if (connectedProcesses.add(process)) {
 			final IStreamsProxy proxy = process.getScriptStreamsProxy();
@@ -117,13 +117,14 @@ public class ScriptDebugConsole extends IOConsole {
 		}
 	}
 
-	private List<StreamListener> fStreamListeners = new ArrayList<StreamListener>();
+	private List<StreamListener> fStreamListeners = new ArrayList<>();
 
 	/**
 	 * @param streamMonitor
 	 * @param idStandardErrorStream
 	 */
-	private void connect(IStreamMonitor streamMonitor, String streamIdentifier) {
+	private void connect(IStreamMonitor streamMonitor,
+			String streamIdentifier) {
 		synchronized (streamMonitor) {
 			IOConsoleOutputStream stream = newOutputStream();
 			stream.setColor(fColorProvider.getColor(streamIdentifier));
@@ -170,6 +171,7 @@ public class ScriptDebugConsole extends IOConsole {
 			streamAppended(null, monitor);
 		}
 
+		@Override
 		public void streamAppended(String text, IStreamMonitor monitor) {
 			String encoding = getEncoding();
 			if (fFlushed) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
@@ -38,42 +39,39 @@ public abstract class AbstractValidateJob extends Job {
 		super(jobName);
 	}
 
-	protected abstract void invokeValidationFor(final IValidatorOutput out,
-			final IScriptProject project, final ISourceModule[] elements,
-			final IResource[] resources, final IProgressMonitor monitor);
+	protected abstract void invokeValidationFor(final IValidatorOutput out, final IScriptProject project,
+			final ISourceModule[] elements, final IResource[] resources, final IProgressMonitor monitor);
 
 	private static class ProjectInfo {
-		final List resources = new ArrayList();
-		final List elements = new ArrayList();
+		final List<IResource> resources = new ArrayList<>();
+		final List<ISourceModule> elements = new ArrayList<>();
 
 		/**
 		 * @return
 		 */
 		public ISourceModule[] elementsToArray() {
-			return (ISourceModule[]) elements
-					.toArray(new ISourceModule[elements.size()]);
+			return elements.toArray(new ISourceModule[elements.size()]);
 		}
 
 		/**
 		 * @return
 		 */
 		public IResource[] resourcesToArray() {
-			return (IResource[]) resources.toArray(new IResource[resources
-					.size()]);
+			return resources.toArray(new IResource[resources.size()]);
 		}
 	}
 
-	private final Map byProject = new HashMap();
+	private final Map<IProject, ProjectInfo> byProject = new HashMap<>();
 
 	public void run(Object[] selection) {
-		final Set elements = new HashSet();
-		final Set resources = new HashSet();
+		final Set<ISourceModule> elements = new HashSet<>();
+		final Set<IResource> resources = new HashSet<>();
 		for (int i = 0; i < selection.length; ++i) {
 			Object o = selection[i];
 			ValidatorUtils.processResourcesToElements(o, elements, resources);
 		}
-		for (Iterator i = elements.iterator(); i.hasNext();) {
-			final ISourceModule module = (ISourceModule) i.next();
+		for (Iterator<ISourceModule> i = elements.iterator(); i.hasNext();) {
+			final ISourceModule module = i.next();
 			final IScriptProject sproject = module.getScriptProject();
 			if (sproject != null) {
 				final IProject project = sproject.getProject();
@@ -82,8 +80,8 @@ public abstract class AbstractValidateJob extends Job {
 				}
 			}
 		}
-		for (Iterator i = resources.iterator(); i.hasNext();) {
-			final IResource resource = (IResource) i.next();
+		for (Iterator<IResource> i = resources.iterator(); i.hasNext();) {
+			final IResource resource = i.next();
 			final IProject project = resource.getProject();
 			if (project != null) {
 				getProjectInfo(project).resources.add(resource);
@@ -95,7 +93,7 @@ public abstract class AbstractValidateJob extends Job {
 	}
 
 	private ProjectInfo getProjectInfo(final IProject project) {
-		ProjectInfo info = (ProjectInfo) byProject.get(project);
+		ProjectInfo info = byProject.get(project);
 		if (info == null) {
 			info = new ProjectInfo();
 			byProject.put(project, info);
@@ -103,10 +101,10 @@ public abstract class AbstractValidateJob extends Job {
 		return info;
 	}
 
-	private ISchedulingRule buildSchedulingRule(Set elements, Set resources) {
-		final Set all = new HashSet(resources);
-		for (Iterator i = elements.iterator(); i.hasNext();) {
-			final ISourceModule module = (ISourceModule) i.next();
+	private ISchedulingRule buildSchedulingRule(Set<ISourceModule> elements, Set<IResource> resources) {
+		final Set<IResource> all = new HashSet<>(resources);
+		for (Iterator<ISourceModule> i = elements.iterator(); i.hasNext();) {
+			final ISourceModule module = i.next();
 			final IResource resource = module.getResource();
 			if (resource != null) {
 				all.add(resource);
@@ -117,16 +115,17 @@ public abstract class AbstractValidateJob extends Job {
 		return MultiRule.combine(rules);
 	}
 
+	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		IValidatorOutput output = null;
 		try {
 			output = createOutput();
-			for (Iterator i = byProject.entrySet().iterator(); i.hasNext();) {
-				Map.Entry entry = (Map.Entry) i.next();
-				final IProject project = (IProject) entry.getKey();
-				final ProjectInfo info = (ProjectInfo) entry.getValue();
-				invokeValidationFor(output, DLTKCore.create(project), info
-						.elementsToArray(), info.resourcesToArray(), monitor);
+			for (Iterator<Entry<IProject, ProjectInfo>> i = byProject.entrySet().iterator(); i.hasNext();) {
+				Map.Entry<IProject, ProjectInfo> entry = i.next();
+				final IProject project = entry.getKey();
+				final ProjectInfo info = entry.getValue();
+				invokeValidationFor(output, DLTKCore.create(project), info.elementsToArray(), info.resourcesToArray(),
+						monitor);
 			}
 		} finally {
 			if (output != null) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,9 +61,7 @@ public class RemoveFromBuildpathAction extends Action implements ISelectionChang
 		fSelectedElements = new ArrayList();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void run() {
 		try {
 			final IScriptProject project;
@@ -80,23 +78,24 @@ public class RemoveFromBuildpathAction extends Action implements ISelectionChang
 			final List elementsToRemove = new ArrayList();
 			final List foldersToDelete = new ArrayList();
 			queryToRemoveLinkedFolders(elementsToRemove, foldersToDelete);
-			final IRunnableWithProgress runnable = new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					try {
-						monitor.beginTask(NewWizardMessages.BuildpathModifier_Monitor_RemoveFromBuildpath, elementsToRemove.size()
-								+ foldersToDelete.size());
-						List result = removeFromBuildpath(elementsToRemove, project, new SubProgressMonitor(monitor,
-								elementsToRemove.size()));
-						result.removeAll(foldersToDelete);
-						deleteFolders(foldersToDelete, new SubProgressMonitor(monitor, foldersToDelete.size()));
-						if (result.size() == 0)
-							result.add(project);
-						selectAndReveal(new StructuredSelection(result));
-					} catch (CoreException e) {
-						throw new InvocationTargetException(e);
-					} finally {
-						monitor.done();
-					}
+			final IRunnableWithProgress runnable = monitor -> {
+				try {
+					monitor.beginTask(
+							NewWizardMessages.BuildpathModifier_Monitor_RemoveFromBuildpath,
+							elementsToRemove.size() + foldersToDelete.size());
+					List result = removeFromBuildpath(elementsToRemove, project,
+							new SubProgressMonitor(monitor,
+									elementsToRemove.size()));
+					result.removeAll(foldersToDelete);
+					deleteFolders(foldersToDelete, new SubProgressMonitor(
+							monitor, foldersToDelete.size()));
+					if (result.size() == 0)
+						result.add(project);
+					selectAndReveal(new StructuredSelection(result));
+				} catch (CoreException e) {
+					throw new InvocationTargetException(e);
+				} finally {
+					monitor.done();
 				}
 			};
 			PlatformUI.getWorkbench().getProgressService().run(true, false, runnable);
@@ -190,6 +189,7 @@ public class RemoveFromBuildpathAction extends Action implements ISelectionChang
 		return folder;
 	}
 
+	@Override
 	public void selectionChanged(final SelectionChangedEvent event) {
 		final ISelection selection = event.getSelection();
 		if (selection instanceof IStructuredSelection) {
@@ -267,11 +267,8 @@ public class RemoveFromBuildpathAction extends Action implements ISelectionChang
 			if (target != null) {
 				// select and reveal resource
 				final ISetSelectionTarget finalTarget = target;
-				page.getWorkbenchWindow().getShell().getDisplay().asyncExec(new Runnable() {
-					public void run() {
-						finalTarget.selectReveal(selection);
-					}
-				});
+				page.getWorkbenchWindow().getShell().getDisplay()
+						.asyncExec(() -> finalTarget.selectReveal(selection));
 			}
 		}
 	}

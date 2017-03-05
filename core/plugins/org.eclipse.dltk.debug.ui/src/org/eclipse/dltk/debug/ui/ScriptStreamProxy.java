@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.debug.ui;
 
@@ -46,16 +45,14 @@ public class ScriptStreamProxy implements IScriptStreamProxy {
 		stdErr.setActivateOnWrite(debugUIStore
 				.getBoolean(IDebugPreferenceConstants.CONSOLE_OPEN_ON_ERR));
 
-		getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				final DLTKDebugUIPlugin colors = DLTKDebugUIPlugin.getDefault();
-				stdOut.setColor(colors.getColor(PreferenceConverter.getColor(
-						debugUIStore,
-						IDebugPreferenceConstants.CONSOLE_SYS_OUT_COLOR)));
-				stdErr.setColor(colors.getColor(PreferenceConverter.getColor(
-						debugUIStore,
-						IDebugPreferenceConstants.CONSOLE_SYS_ERR_COLOR)));
-			}
+		getDisplay().asyncExec(() -> {
+			final DLTKDebugUIPlugin colors = DLTKDebugUIPlugin.getDefault();
+			stdOut.setColor(
+					colors.getColor(PreferenceConverter.getColor(debugUIStore,
+							IDebugPreferenceConstants.CONSOLE_SYS_OUT_COLOR)));
+			stdErr.setColor(
+					colors.getColor(PreferenceConverter.getColor(debugUIStore,
+							IDebugPreferenceConstants.CONSOLE_SYS_ERR_COLOR)));
 		});
 	}
 
@@ -72,18 +69,22 @@ public class ScriptStreamProxy implements IScriptStreamProxy {
 		return Display.getDefault();
 	}
 
+	@Override
 	public OutputStream getStderr() {
 		return stdErr;
 	}
 
+	@Override
 	public OutputStream getStdout() {
 		return stdOut;
 	}
 
+	@Override
 	public InputStream getStdin() {
 		return input;
 	}
 
+	@Override
 	public synchronized void close() {
 		if (!closed) {
 			try {
@@ -102,21 +103,24 @@ public class ScriptStreamProxy implements IScriptStreamProxy {
 	private boolean needsEncoding = false;
 	private String encoding = null;
 
+	@Override
 	public String getEncoding() {
 		return encoding;
 	}
 
+	@Override
 	public void setEncoding(String encoding) {
 		this.encoding = encoding;
-		needsEncoding = encoding != null
-				&& !encoding.equals(WorkbenchEncoding
-						.getWorkbenchDefaultEncoding());
+		needsEncoding = encoding != null && !encoding
+				.equals(WorkbenchEncoding.getWorkbenchDefaultEncoding());
 	}
 
+	@Override
 	public void writeStdout(String value) {
 		write(stdOut, value);
 	}
 
+	@Override
 	public void writeStderr(String value) {
 		write(stdErr, value);
 	}

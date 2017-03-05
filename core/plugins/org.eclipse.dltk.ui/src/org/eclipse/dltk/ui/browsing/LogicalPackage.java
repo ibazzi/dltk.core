@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,7 +87,7 @@ public class LogicalPackage extends PlatformObject {
 
 		return false;
 	}
-	
+
 	public boolean hasSubpackages() throws ModelException {
 		for (Iterator<IScriptFolder> iter = fPackages.iterator(); iter
 				.hasNext();) {
@@ -98,11 +98,12 @@ public class LogicalPackage extends PlatformObject {
 		}
 		return false;
 	}
-	
+
 	public boolean isDefaultPackage() {
 		return fName.length() == 0;
 	}
 
+	@Override
 	public boolean equals(Object o){
 		if (!(o instanceof LogicalPackage))
 			return false;
@@ -126,9 +127,7 @@ public class LogicalPackage extends PlatformObject {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
+	@Override
 	public int hashCode() {
 		IScriptFolder[] fragments= getScriptFolders();
 		return fScriptProject.hashCode() + getHash(fragments, fragments.length-1);

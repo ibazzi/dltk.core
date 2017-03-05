@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,7 @@ import org.eclipse.ui.IWorkingSet;
 public class ScriptExplorerLabelProvider extends AppearanceAwareLabelProvider {
 
 	protected ScriptExplorerContentProvider fContentProvider;
-	private Map fWorkingSetImages;
+	private Map<ImageDescriptor, Image> fWorkingSetImages;
 
 	private boolean fIsFlatLayout;
 	private ScriptExplorerProblemsDecorator fProblemDecorator;
@@ -48,8 +48,9 @@ public class ScriptExplorerLabelProvider extends AppearanceAwareLabelProvider {
 		super(DEFAULT_TEXTFLAGS | ScriptElementLabels.P_COMPRESSED
 				| ScriptElementLabels.REFERENCED_ARCHIVE_POST_QUALIFIED
 				| ScriptElementLabels.REFERENCED_EXTERNAL_POST_QUALIFIED
-				| ScriptElementLabels.ALL_CATEGORY, DEFAULT_IMAGEFLAGS
-				| ScriptElementImageProvider.SMALL_ICONS, store);
+				| ScriptElementLabels.ALL_CATEGORY,
+				DEFAULT_IMAGEFLAGS | ScriptElementImageProvider.SMALL_ICONS,
+				store);
 
 		fProblemDecorator = new ScriptExplorerProblemsDecorator();
 		addLabelDecorator(fProblemDecorator);
@@ -74,6 +75,7 @@ public class ScriptExplorerLabelProvider extends AppearanceAwareLabelProvider {
 		return null;
 	}
 
+	@Override
 	public String getText(Object element) {
 		String text = getSpecificText(element);
 		if (text != null) {
@@ -82,14 +84,15 @@ public class ScriptExplorerLabelProvider extends AppearanceAwareLabelProvider {
 		return super.getText(element);
 	}
 
+	@Override
 	public StyledString getStyledText(Object element) {
 		String text = getSpecificText(element);
 		if (text != null) {
 			String decorated = decorateText(text, element);
 			if (decorated != null) {
 				return StyledCellLabelProvider.styleDecoratedString(decorated,
-								StyledString.DECORATIONS_STYLER,
-								new StyledString(text));
+						StyledString.DECORATIONS_STYLER,
+						new StyledString(text));
 			}
 		}
 		return super.getStyledText(element);
@@ -110,7 +113,8 @@ public class ScriptExplorerLabelProvider extends AppearanceAwareLabelProvider {
 		IPath fullPath = fragment.getPath();
 		if (prefix.isPrefixOf(fullPath)) {
 			StringBuffer buf = new StringBuffer();
-			for (int i = prefix.segmentCount(); i < fullPath.segmentCount(); i++) {
+			for (int i = prefix.segmentCount(); i < fullPath
+					.segmentCount(); i++) {
 				if (buf.length() > 0)
 					buf.append(IScriptFolder.PACKAGE_DELIMITER);
 				buf.append(fullPath.segment(i));
@@ -120,15 +124,16 @@ public class ScriptExplorerLabelProvider extends AppearanceAwareLabelProvider {
 		return fragment.getElementName();
 	}
 
+	@Override
 	public Image getImage(Object element) {
 		if (element instanceof IWorkingSet) {
 			ImageDescriptor image = ((IWorkingSet) element)
 					.getImageDescriptor();
 			if (fWorkingSetImages == null) {
-				fWorkingSetImages = new HashMap();
+				fWorkingSetImages = new HashMap<>();
 			}
 
-			Image result = (Image) fWorkingSetImages.get(image);
+			Image result = fWorkingSetImages.get(image);
 			if (result == null) {
 				result = image.createImage();
 				fWorkingSetImages.put(image, result);
@@ -143,11 +148,12 @@ public class ScriptExplorerLabelProvider extends AppearanceAwareLabelProvider {
 		fProblemDecorator.setIsFlatLayout(state);
 	}
 
+	@Override
 	public void dispose() {
 		if (fWorkingSetImages != null) {
-			for (Iterator iter = fWorkingSetImages.values().iterator(); iter
-					.hasNext();) {
-				((Image) iter.next()).dispose();
+			for (Iterator<Image> iter = fWorkingSetImages.values()
+					.iterator(); iter.hasNext();) {
+				iter.next().dispose();
 			}
 		}
 		super.dispose();

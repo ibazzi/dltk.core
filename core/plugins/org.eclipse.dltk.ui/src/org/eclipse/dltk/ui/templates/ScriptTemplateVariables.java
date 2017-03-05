@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,11 +28,13 @@ public final class ScriptTemplateVariables {
 			super(NAME, TemplateMessages.Variable_File_Description);
 		}
 
+		@Override
 		protected String resolve(TemplateContext context) {
 			ISourceModule module = getSourceModule(context);
 			return (module == null) ? null : module.getElementName();
 		}
 
+		@Override
 		protected boolean isUnambiguous(TemplateContext context) {
 			return resolve(context) != null;
 		}
@@ -45,6 +47,7 @@ public final class ScriptTemplateVariables {
 			super(NAME, TemplateMessages.Variable_Language_Description);
 		}
 
+		@Override
 		protected String resolve(TemplateContext context) {
 			String name = null;
 			ISourceModule module = getSourceModule(context);
@@ -56,6 +59,7 @@ public final class ScriptTemplateVariables {
 			return name;
 		}
 
+		@Override
 		protected boolean isUnambiguous(TemplateContext context) {
 			return resolve(context) != null;
 		}
@@ -68,6 +72,7 @@ public final class ScriptTemplateVariables {
 			super(NAME, TemplateMessages.Variable_Interpreter_Description);
 		}
 
+		@Override
 		protected String resolve(TemplateContext context) {
 			final ISourceModule module = getSourceModule(context);
 			if (module != null) {
@@ -86,6 +91,7 @@ public final class ScriptTemplateVariables {
 			return null;
 		}
 
+		@Override
 		protected boolean isUnambiguous(TemplateContext context) {
 			return resolve(context) != null;
 		}

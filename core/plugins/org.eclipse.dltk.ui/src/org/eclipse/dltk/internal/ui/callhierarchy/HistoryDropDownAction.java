@@ -1,12 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
- * 			(report 36180: Callers/Callees view)
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.callhierarchy;
 
@@ -24,22 +22,23 @@ import org.eclipse.swt.widgets.MenuItem;
 
 
 class HistoryDropDownAction extends Action implements IMenuCreator {
-	
+
 	private static class ClearHistoryAction extends Action {
 
 		private CallHierarchyViewPart fView;
-		
+
 		public ClearHistoryAction(CallHierarchyViewPart view) {
 			super(CallHierarchyMessages.HistoryDropDownAction_clearhistory_label);
 			fView= view;
 		}
-			
+
+		@Override
 		public void run() {
 			fView.setHistoryEntries(new IMethod[0]);
 			fView.setMethod(null);
 		}
 	}
-	
+
     public static final int RESULTS_IN_DROP_DOWN = 10;
     private CallHierarchyViewPart fView;
     private Menu fMenu;
@@ -47,22 +46,24 @@ class HistoryDropDownAction extends Action implements IMenuCreator {
     public HistoryDropDownAction(CallHierarchyViewPart view) {
         fView = view;
         fMenu = null;
-        setToolTipText(CallHierarchyMessages.HistoryDropDownAction_tooltip); 
+        setToolTipText(CallHierarchyMessages.HistoryDropDownAction_tooltip);
         DLTKPluginImages.setLocalImageDescriptors(this, "history_list.png"); //$NON-NLS-1$
 
 //        PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IJavaHelpContextIds.CALL_HIERARCHY_HISTORY_DROP_DOWN_ACTION);
         if (DLTKCore.DEBUG) {
 			System.err.println("Add help support here..."); //$NON-NLS-1$
-		}	
+		}
 
         setMenuCreator(this);
     }
 
-    public Menu getMenu(Menu parent) {
+	@Override
+	public Menu getMenu(Menu parent) {
         return null;
     }
 
-    public Menu getMenu(Control parent) {
+	@Override
+	public Menu getMenu(Control parent) {
         if (fMenu != null) {
             fMenu.dispose();
         }
@@ -75,7 +76,8 @@ class HistoryDropDownAction extends Action implements IMenuCreator {
         return fMenu;
     }
 
-    public void dispose() {
+	@Override
+	public void dispose() {
         fView = null;
 
         if (fMenu != null) {
@@ -104,7 +106,8 @@ class HistoryDropDownAction extends Action implements IMenuCreator {
         return checked;
     }
 
-    public void run() {
+	@Override
+	public void run() {
         (new HistoryListAction(fView)).run();
     }
 }

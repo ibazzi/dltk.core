@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@ package org.eclipse.dltk.console.ui;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -23,8 +22,7 @@ import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.swt.graphics.Image;
 
-public abstract class ScriptConsoleCompletionProcessor
-		implements IContentAssistProcessor {
+public abstract class ScriptConsoleCompletionProcessor implements IContentAssistProcessor {
 	protected static interface IProposalDecorator {
 		String formatProposal(ScriptConsoleCompletionProposal c);
 
@@ -37,8 +35,7 @@ public abstract class ScriptConsoleCompletionProcessor
 		if (defaultDecorator == null) {
 			defaultDecorator = new IProposalDecorator() {
 				@Override
-				public String formatProposal(
-						ScriptConsoleCompletionProposal c) {
+				public String formatProposal(ScriptConsoleCompletionProposal c) {
 					return c.getDisplay();
 				}
 
@@ -54,8 +51,7 @@ public abstract class ScriptConsoleCompletionProcessor
 
 	private IScriptConsoleShell interpreterShell;
 
-	public ScriptConsoleCompletionProcessor(
-			IScriptConsoleShell interpreterShell) {
+	public ScriptConsoleCompletionProcessor(IScriptConsoleShell interpreterShell) {
 		this.interpreterShell = interpreterShell;
 	}
 
@@ -63,15 +59,14 @@ public abstract class ScriptConsoleCompletionProcessor
 		return this.interpreterShell;
 	}
 
-	protected List<CompletionProposal> createProposalsFromString(
-			List<ScriptConsoleCompletionProposal> list, int offset,
+	protected List<CompletionProposal> createProposalsFromString(List<ScriptConsoleCompletionProposal> list, int offset,
 			IProposalDecorator decorator) {
 
 		if (decorator == null) {
 			decorator = getDefaultDecorator();
 		}
 
-		List<CompletionProposal> result = new ArrayList<CompletionProposal>();
+		List<CompletionProposal> result = new ArrayList<>();
 
 		Iterator<ScriptConsoleCompletionProposal> it = list.iterator();
 		while (it.hasNext()) {
@@ -89,27 +84,18 @@ public abstract class ScriptConsoleCompletionProcessor
 			result.add(proposal);
 		}
 
-		Collections.sort(result, new Comparator<CompletionProposal>() {
-			@Override
-			public int compare(CompletionProposal p1, CompletionProposal p2) {
-				return p1.getDisplayString().compareTo(p2.getDisplayString());
-			}
-		});
+		Collections.sort(result, (p1, p2) -> p1.getDisplayString().compareTo(p2.getDisplayString()));
 
 		return result;
 	}
 
-	protected abstract ICompletionProposal[] computeCompletionProposalsImpl(
-			IScriptConsoleViewer viewer, int offset);
+	protected abstract ICompletionProposal[] computeCompletionProposalsImpl(IScriptConsoleViewer viewer, int offset);
 
-	protected abstract IContextInformation[] computeContextInformationImpl(
-			ITextViewer viewer, int offset);
+	protected abstract IContextInformation[] computeContextInformationImpl(ITextViewer viewer, int offset);
 
 	@Override
-	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer,
-			int offset) {
-		return computeCompletionProposalsImpl((IScriptConsoleViewer) viewer,
-				offset);
+	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
+		return computeCompletionProposalsImpl((IScriptConsoleViewer) viewer, offset);
 	}
 
 	@Override
@@ -118,8 +104,7 @@ public abstract class ScriptConsoleCompletionProcessor
 	}
 
 	@Override
-	public IContextInformation[] computeContextInformation(ITextViewer viewer,
-			int offset) {
+	public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
 		return computeContextInformationImpl(viewer, offset);
 	}
 

@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.text;
 
@@ -40,8 +39,6 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
@@ -75,8 +72,8 @@ import org.eclipse.ui.keys.KeySequence;
 
 /**
  * Abstract class for Show hierarchy in light-weight controls.
- * 
- * 
+ *
+ *
  */
 public abstract class AbstractInformationControl extends PopupDialog implements
 		IInformationControl, IInformationControlExtension,
@@ -91,9 +88,7 @@ public abstract class AbstractInformationControl extends PopupDialog implements
 		public NamePatternFilter() {
 		}
 
-		/*
-		 * (non-Javadoc) Method declared on ViewerFilter.
-		 */
+		@Override
 		public boolean select(Viewer viewer, Object parentElement,
 				Object element) {
 			StringMatcher matcher = getMatcher();
@@ -132,8 +127,8 @@ public abstract class AbstractInformationControl extends PopupDialog implements
 
 	/**
 	 * Fields that support the dialog menu
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	private Composite fViewMenuButtonComposite;
 
@@ -146,15 +141,15 @@ public abstract class AbstractInformationControl extends PopupDialog implements
 
 	/**
 	 * Field for tree style since it must be remembered by the instance.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	private int fTreeStyle;
 
 	/**
 	 * Creates a tree information control with the given shell as parent. The
 	 * given styles are applied to the shell and the tree widget.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent shell
 	 * @param shellStyle
@@ -210,12 +205,13 @@ public abstract class AbstractInformationControl extends PopupDialog implements
 
 	/**
 	 * Create the main content for this information control.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent composite
 	 * @return The control representing the main content.
-	 * 
+	 *
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		fTreeViewer = createTreeViewer(parent, fTreeStyle);
 
@@ -224,21 +220,25 @@ public abstract class AbstractInformationControl extends PopupDialog implements
 
 		final Tree tree = fTreeViewer.getTree();
 		tree.addKeyListener(new KeyListener() {
+			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.character == 0x1B) // ESC
 					dispose();
 			}
 
+			@Override
 			public void keyReleased(KeyEvent e) {
 				// do nothing
 			}
 		});
 
 		tree.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				// do nothing
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				gotoSelectedElement();
 			}
@@ -247,6 +247,7 @@ public abstract class AbstractInformationControl extends PopupDialog implements
 		tree.addMouseMoveListener(new MouseMoveListener() {
 			TreeItem fLastItem = null;
 
+			@Override
 			public void mouseMove(MouseEvent e) {
 				if (tree.equals(e.getSource())) {
 					Object o = tree.getItem(new Point(e.x, e.y));
@@ -278,6 +279,7 @@ public abstract class AbstractInformationControl extends PopupDialog implements
 		});
 
 		tree.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseUp(MouseEvent e) {
 
 				if (tree.getSelectionCount() < 1)
@@ -304,7 +306,7 @@ public abstract class AbstractInformationControl extends PopupDialog implements
 	/**
 	 * Creates a tree information control with the given shell as parent. The
 	 * given styles are applied to the shell and the tree widget.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent shell
 	 * @param shellStyle
@@ -321,7 +323,7 @@ public abstract class AbstractInformationControl extends PopupDialog implements
 
 	/**
 	 * Returns the name of the dialog settings section.
-	 * 
+	 *
 	 * @return the name of the dialog settings section
 	 */
 	protected abstract String getId();
@@ -336,7 +338,7 @@ public abstract class AbstractInformationControl extends PopupDialog implements
 	 * <p>
 	 * The default is to return <code>false</code>.
 	 * </p>
-	 * 
+	 *
 	 * @return <code>true</code> if the control has a header
 	 */
 	protected boolean hasHeader() {
@@ -363,6 +365,7 @@ public abstract class AbstractInformationControl extends PopupDialog implements
 		fFilterText.setLayoutData(data);
 
 		fFilterText.addKeyListener(new KeyListener() {
+			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == 0x0D) // return
 					gotoSelectedElement();
@@ -374,6 +377,7 @@ public abstract class AbstractInformationControl extends PopupDialog implements
 					dispose();
 			}
 
+			@Override
 			public void keyReleased(KeyEvent e) {
 				// do nothing
 			}
@@ -408,15 +412,13 @@ public abstract class AbstractInformationControl extends PopupDialog implements
 	private void installFilter() {
 		fFilterText.setText(""); //$NON-NLS-1$
 
-		fFilterText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				String text = ((Text) e.widget).getText();
-				int length = text.length();
-				if (length > 0 && text.charAt(length - 1) != '*') {
-					text = text + '*';
-				}
-				setMatcherString(text, true);
+		fFilterText.addModifyListener(e -> {
+			String text = ((Text) e.widget).getText();
+			int length = text.length();
+			if (length > 0 && text.charAt(length - 1) != '*') {
+				text = text + '*';
 			}
+			setMatcherString(text, true);
 		});
 	}
 
@@ -439,7 +441,7 @@ public abstract class AbstractInformationControl extends PopupDialog implements
 	 * The following characters have special meaning: ? => any character * =>
 	 * any string
 	 * </p>
-	 * 
+	 *
 	 * @param pattern
 	 *            the pattern
 	 * @param update
@@ -463,7 +465,7 @@ public abstract class AbstractInformationControl extends PopupDialog implements
 
 	/**
 	 * Implementers can modify
-	 * 
+	 *
 	 * @return the selected element
 	 */
 	protected Object getSelectedElement() {
@@ -523,6 +525,7 @@ public abstract class AbstractInformationControl extends PopupDialog implements
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void setInformation(String information) {
 		// this method is ignored, see IInformationControlExtension2
 	}
@@ -530,14 +533,15 @@ public abstract class AbstractInformationControl extends PopupDialog implements
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public abstract void setInput(Object information);
 
 	/**
 	 * Fills the view menu. Clients can extend or override.
-	 * 
+	 *
 	 * @param viewMenu
 	 *            the menu manager that manages the menu
-	 * 
+	 *
 	 */
 	protected void fillViewMenu(IMenuManager viewMenu) {
 		fCustomFiltersActionGroup.fillViewMenu(viewMenu);
@@ -545,9 +549,10 @@ public abstract class AbstractInformationControl extends PopupDialog implements
 
 	/*
 	 * Overridden to call the old framework method.
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.PopupDialog#fillDialogMenu(IMenuManager)
 	 */
+	@Override
 	protected void fillDialogMenu(IMenuManager dialogMenu) {
 		super.fillDialogMenu(dialogMenu);
 		fillViewMenu(dialogMenu);
@@ -564,6 +569,7 @@ public abstract class AbstractInformationControl extends PopupDialog implements
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void setVisible(boolean visible) {
 		if (visible) {
 			addHandlerAndKeyBindingSupport();
@@ -579,19 +585,21 @@ public abstract class AbstractInformationControl extends PopupDialog implements
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public final void dispose() {
 		close();
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @param event
 	 *            can be null
 	 *            <p>
 	 *            Subclasses may extend.
 	 *            </p>
 	 */
+	@Override
 	public void widgetDisposed(DisposeEvent event) {
 		removeHandlerAndKeyBindingSupport();
 		fTreeViewer = null;
@@ -601,8 +609,8 @@ public abstract class AbstractInformationControl extends PopupDialog implements
 
 	/**
 	 * Adds handler and key binding support.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	protected void addHandlerAndKeyBindingSupport() {
 		// Remember current scope and then set window context.
@@ -625,8 +633,8 @@ public abstract class AbstractInformationControl extends PopupDialog implements
 
 	/**
 	 * Removes handler and key binding support.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	protected void removeHandlerAndKeyBindingSupport() {
 		// Remove handler submission
@@ -644,6 +652,7 @@ public abstract class AbstractInformationControl extends PopupDialog implements
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean hasContents() {
 		return fTreeViewer != null && fTreeViewer.getInput() != null;
 	}
@@ -651,6 +660,7 @@ public abstract class AbstractInformationControl extends PopupDialog implements
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void setSizeConstraints(int maxWidth, int maxHeight) {
 		// ignore
 	}
@@ -658,6 +668,7 @@ public abstract class AbstractInformationControl extends PopupDialog implements
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Point computeSizeHint() {
 		// return the shell's size - note that it already has the persisted size
 		// if persisting
@@ -668,6 +679,7 @@ public abstract class AbstractInformationControl extends PopupDialog implements
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void setLocation(Point location) {
 		/*
 		 * If the location is persisted, it gets managed by PopupDialog - fine.
@@ -686,67 +698,49 @@ public abstract class AbstractInformationControl extends PopupDialog implements
 			getShell().setLocation(location);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void setSize(int width, int height) {
 		getShell().setSize(width, height);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void addDisposeListener(DisposeListener listener) {
 		getShell().addDisposeListener(listener);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void removeDisposeListener(DisposeListener listener) {
 		getShell().removeDisposeListener(listener);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void setForegroundColor(Color foreground) {
 		applyForegroundColor(foreground, getContents());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void setBackgroundColor(Color background) {
 		applyBackgroundColor(background, getContents());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean isFocusControl() {
 		return fTreeViewer.getControl().isFocusControl()
 				|| fFilterText.isFocusControl();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void setFocus() {
 		getShell().forceFocus();
 		fFilterText.setFocus();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void addFocusListener(FocusListener listener) {
 		getShell().addFocusListener(listener);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void removeFocusListener(FocusListener listener) {
 		getShell().removeFocusListener(listener);
 	}
@@ -772,9 +766,7 @@ public abstract class AbstractInformationControl extends PopupDialog implements
 		return fInvokingCommandKeySequences;
 	}
 
-	/*
-	 * @see org.eclipse.jface.dialogs.PopupDialog#getDialogSettings()
-	 */
+	@Override
 	protected IDialogSettings getDialogSettings() {
 		String sectionName = getId();
 
@@ -790,6 +782,7 @@ public abstract class AbstractInformationControl extends PopupDialog implements
 	/*
 	 * Overridden to insert the filter text into the title and menu area.
 	 */
+	@Override
 	protected Control createTitleMenuArea(Composite parent) {
 		fViewMenuButtonComposite = (Composite) super
 				.createTitleMenuArea(parent);
@@ -812,6 +805,7 @@ public abstract class AbstractInformationControl extends PopupDialog implements
 			/*
 			 * @see org.eclipse.jface.action.Action#run()
 			 */
+			@Override
 			public void run() {
 				showDialogMenu();
 			}
@@ -829,6 +823,7 @@ public abstract class AbstractInformationControl extends PopupDialog implements
 	 * Overridden to insert the filter text into the title control if there is
 	 * no header specified.
 	 */
+	@Override
 	protected Control createTitleControl(Composite parent) {
 		if (hasHeader()) {
 			return super.createTitleControl(parent);
@@ -837,11 +832,7 @@ public abstract class AbstractInformationControl extends PopupDialog implements
 		return fFilterText;
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.jface.dialogs.PopupDialog#setTabOrder(org.eclipse.swt.widgets
-	 * .Composite)
-	 */
+	@Override
 	protected void setTabOrder(Composite composite) {
 		if (hasHeader()) {
 			composite.setTabList(new Control[] { fFilterText,

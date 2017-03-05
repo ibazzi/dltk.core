@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui;
 
@@ -42,7 +41,7 @@ public class ScriptElementImageDescriptor extends CompositeImageDescriptor {
 
 	/**
 	 * Flag to render the 'deprecated' adornment.
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public final static int DEPRECATED = 0x400;
@@ -64,7 +63,7 @@ public class ScriptElementImageDescriptor extends CompositeImageDescriptor {
 
 	/**
 	 * Sets the size of the image created by calling <code>createImage()</code>.
-	 * 
+	 *
 	 * @param size
 	 *            the size of the image returned from calling
 	 *            <code>createImage()</code>
@@ -79,7 +78,7 @@ public class ScriptElementImageDescriptor extends CompositeImageDescriptor {
 	/**
 	 * Returns the size of the image created by calling
 	 * <code>createImage()</code>.
-	 * 
+	 *
 	 * @return the size of the image created by calling
 	 *         <code>createImage()</code>
 	 * @see ImageDescriptor#createImage()
@@ -88,16 +87,12 @@ public class ScriptElementImageDescriptor extends CompositeImageDescriptor {
 		return new Point(fSize.x, fSize.y);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared in CompositeImageDescriptor
-	 */
+	@Override
 	protected Point getSize() {
 		return fSize;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on Object.
-	 */
+	@Override
 	public boolean equals(Object object) {
 		if (object == null
 				|| !ScriptElementImageDescriptor.class
@@ -112,9 +107,7 @@ public class ScriptElementImageDescriptor extends CompositeImageDescriptor {
 				&& fSize.equals(other.fSize);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on Object.
-	 */
+	@Override
 	public int hashCode() {
 		return fBaseImage.hashCode() | fSize.hashCode() | this.fFlags;
 	}
@@ -132,6 +125,7 @@ public class ScriptElementImageDescriptor extends CompositeImageDescriptor {
 		return data;
 	}
 
+	@Override
 	protected void drawCompositeImage(int width, int height) {
 		ImageData bg = getImageData(fBaseImage);
 

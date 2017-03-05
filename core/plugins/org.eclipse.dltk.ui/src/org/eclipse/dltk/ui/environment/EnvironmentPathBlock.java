@@ -65,10 +65,12 @@ public class EnvironmentPathBlock {
 			this.pathColumn = pathColumn;
 		}
 
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
 		}
 
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			if (element instanceof IEnvironment) {
 				if (columnIndex == 0) {
@@ -118,6 +120,7 @@ public class EnvironmentPathBlock {
 
 		pathViewer.setLabelProvider(createPathLabelProvider());
 		pathViewer.setContentProvider(new IStructuredContentProvider() {
+			@Override
 			public Object[] getElements(Object inputElement) {
 				if (inputElement instanceof IEnvironment[]) {
 					return (Object[]) inputElement;
@@ -125,9 +128,11 @@ public class EnvironmentPathBlock {
 				return new Object[0];
 			}
 
+			@Override
 			public void dispose() {
 			}
 
+			@Override
 			public void inputChanged(Viewer viewer, Object oldInput,
 					Object newInput) {
 			}
@@ -289,11 +294,9 @@ public class EnvironmentPathBlock {
 
 	public void setPaths(Map<IEnvironment, String> paths) {
 		this.paths = paths;
-		pathTable.getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				pathViewer.refresh();
-				fireValueChanged();
-			}
+		pathTable.getDisplay().asyncExec(() -> {
+			pathViewer.refresh();
+			fireValueChanged();
 		});
 	}
 
@@ -306,6 +309,7 @@ public class EnvironmentPathBlock {
 		for (int i = 0; i < array.length; i++) {
 			final IEnvironmentPathBlockListener listener = (IEnvironmentPathBlockListener) array[i];
 			SafeRunnable.run(new SafeRunnable() {
+				@Override
 				public void run() {
 					listener.valueChanged(getPaths());
 				}

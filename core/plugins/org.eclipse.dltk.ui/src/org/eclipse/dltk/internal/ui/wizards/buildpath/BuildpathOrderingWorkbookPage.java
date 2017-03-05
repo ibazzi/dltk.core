@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.wizards.buildpath;
 
@@ -29,6 +28,7 @@ public class BuildpathOrderingWorkbookPage extends BuildPathBasePage {
 		fBuildpathList = buildpathList;
 	}
 
+	@Override
 	public Control getControl(Composite parent) {
 		PixelConverter converter = new PixelConverter(parent);
 
@@ -46,24 +46,22 @@ public class BuildpathOrderingWorkbookPage extends BuildPathBasePage {
 		return composite;
 	}
 
-	/*
-	 * @see BuildPathBasePage#getSelection
-	 */
+	@Override
 	public List getSelection() {
 		return fBuildpathList.getSelectedElements();
 	}
 
-	/*
-	 * @see BuildPathBasePage#setSelection
-	 */
+	@Override
 	public void setSelection(List selElements, boolean expand) {
 		fBuildpathList.selectElements(new StructuredSelection(selElements));
 	}
 
+	@Override
 	public boolean isEntryKind(int kind) {
 		return true;
 	}
 
+	@Override
 	public void init(IScriptProject scriptProject) {
 	}
 

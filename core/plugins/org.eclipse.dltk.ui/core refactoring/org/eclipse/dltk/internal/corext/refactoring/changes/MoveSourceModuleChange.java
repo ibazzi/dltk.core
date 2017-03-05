@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.corext.refactoring.changes;
 
@@ -35,15 +34,18 @@ public class MoveSourceModuleChange extends SourceModuleReorgChange {
 		fStampToRestore= stampToRestore;
 	}
 	
+	@Override
 	public String getName() {
 		return Messages.format(RefactoringCoreMessages.MoveSourceModuleChange_name, 
 		new String[]{getCu().getElementName(), getPackageName(getDestinationPackage())}); 
 	}
 
+	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
 		return super.isValid(pm, READ_ONLY | SAVE_IF_DIRTY);
 	}
 	
+	@Override
 	Change doPerformReorg(IProgressMonitor pm) throws CoreException {
 		String name;
 		String newName= getNewName();

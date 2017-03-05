@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.dbgp.internal.commands;
 
@@ -23,8 +22,8 @@ import org.eclipse.dltk.dbgp.internal.utils.DbgpXmlEntityParser;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-public class DbgpStackCommands extends DbgpBaseCommands implements
-		IDbgpStackCommands {
+public class DbgpStackCommands extends DbgpBaseCommands
+		implements IDbgpStackCommands {
 	private static final String STACK_DEPTH_COMMAND = "stack_depth"; //$NON-NLS-1$
 
 	private static final String STACK_GET_COMMAND = "stack_get"; //$NON-NLS-1$
@@ -50,24 +49,20 @@ public class DbgpStackCommands extends DbgpBaseCommands implements
 		return list;
 	}
 
-	private static final Comparator STACK_LEVEL_COMPARATOR = new Comparator() {
-
-		public int compare(Object o1, Object o2) {
-			final IDbgpStackLevel level1 = (IDbgpStackLevel) o1;
-			final IDbgpStackLevel level2 = (IDbgpStackLevel) o2;
-			return level1.getLevel() - level2.getLevel();
-		}
-
-	};
+	private static final Comparator<IDbgpStackLevel> STACK_LEVEL_COMPARATOR = (
+			o1, o2) -> o1.getLevel() - o2.getLevel();
 
 	public DbgpStackCommands(IDbgpCommunicator communicator) {
 		super(communicator);
 	}
 
+	@Override
 	public int getStackDepth() throws DbgpException {
-		return parseStackDepthResponse(communicate(createRequest(STACK_DEPTH_COMMAND)));
+		return parseStackDepthResponse(
+				communicate(createRequest(STACK_DEPTH_COMMAND)));
 	}
 
+	@Override
 	public IDbgpStackLevel getStackLevel(int stackDepth) throws DbgpException {
 		DbgpRequest request = createRequest(STACK_GET_COMMAND);
 		request.addOption("-d", stackDepth); //$NON-NLS-1$
@@ -75,6 +70,7 @@ public class DbgpStackCommands extends DbgpBaseCommands implements
 		return levels.length == 1 ? levels[0] : null;
 	}
 
+	@Override
 	public IDbgpStackLevel[] getStackLevels() throws DbgpException {
 		return parseStackLevels(communicate(createRequest(STACK_GET_COMMAND)));
 	}

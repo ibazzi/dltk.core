@@ -1,12 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
- * 			(report 36180: Callers/Callees view)
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.callhierarchy;
 
@@ -30,7 +28,7 @@ public class CallHierarchyContentProvider implements ITreeContentProvider {
 
     private DeferredTreeContentManager fManager;
     private CallHierarchyViewPart fPart;
-    
+
     private class MethodWrapperRunnable implements IRunnableWithProgress {
         private MethodWrapper fMethodWrapper;
         private MethodWrapper[] fCalls= null;
@@ -38,11 +36,12 @@ public class CallHierarchyContentProvider implements ITreeContentProvider {
         MethodWrapperRunnable(MethodWrapper methodWrapper) {
             fMethodWrapper= methodWrapper;
         }
-                
-        public void run(IProgressMonitor pm) {
+
+        @Override
+		public void run(IProgressMonitor pm) {
         	fCalls= fMethodWrapper.getCalls(pm);
         }
-        
+
         MethodWrapper[] getCalls() {
             if (fCalls != null) {
                 return fCalls;
@@ -56,10 +55,8 @@ public class CallHierarchyContentProvider implements ITreeContentProvider {
         fPart= part;
     }
 
-    /**
-     * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
-     */
-    public Object[] getChildren(Object parentElement) {
+    @Override
+	public Object[] getChildren(Object parentElement) {
         if (parentElement instanceof TreeRoot) {
             TreeRoot dummyRoot = (TreeRoot) parentElement;
 
@@ -75,7 +72,7 @@ public class CallHierarchyContentProvider implements ITreeContentProvider {
                     if (children != null)
                         return children;
                 }
-                return fetchChildren(methodWrapper);            
+                return fetchChildren(methodWrapper);
             }
         }
 
@@ -88,12 +85,12 @@ public class CallHierarchyContentProvider implements ITreeContentProvider {
         try {
             context.run(true, true, runnable);
         } catch (InvocationTargetException e) {
-            ExceptionHandler.handle(e, CallHierarchyMessages.CallHierarchyContentProvider_searchError_title, CallHierarchyMessages.CallHierarchyContentProvider_searchError_message);  
+            ExceptionHandler.handle(e, CallHierarchyMessages.CallHierarchyContentProvider_searchError_title, CallHierarchyMessages.CallHierarchyContentProvider_searchError_message);
             return EMPTY_ARRAY;
         } catch (InterruptedException e) {
             return new Object[] { TreeTermination.SEARCH_CANCELED };
         }
-        
+
         return runnable.getCalls();
     }
 
@@ -104,14 +101,16 @@ public class CallHierarchyContentProvider implements ITreeContentProvider {
     /**
      * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
      */
-    public Object[] getElements(Object inputElement) {
+    @Override
+	public Object[] getElements(Object inputElement) {
         return getChildren(inputElement);
     }
 
     /**
      * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
      */
-    public Object getParent(Object element) {
+    @Override
+	public Object getParent(Object element) {
         if (element instanceof MethodWrapper) {
             return ((MethodWrapper) element).getParent();
         }
@@ -122,13 +121,15 @@ public class CallHierarchyContentProvider implements ITreeContentProvider {
     /**
      * @see org.eclipse.jface.viewers.IContentProvider#dispose()
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
         // Nothing to dispose
     }
 
     /**
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
+	@Override
 	public boolean hasChildren(Object element) {
 		if (element == TreeRoot.EMPTY_ROOT || element == TreeTermination.SEARCH_CANCELED) {
 			return false;
@@ -171,7 +172,7 @@ public class CallHierarchyContentProvider implements ITreeContentProvider {
     }
 
     /**
-     * Cancel all current jobs. 
+     * Cancel all current jobs.
      */
     void cancelJobs(MethodWrapper wrapper) {
         if (fManager != null && wrapper != null) {
@@ -183,7 +184,7 @@ public class CallHierarchyContentProvider implements ITreeContentProvider {
     }
 
     /**
-     * 
+     *
      */
     public void doneFetching() {
         if (fPart != null) {
@@ -192,7 +193,7 @@ public class CallHierarchyContentProvider implements ITreeContentProvider {
     }
 
     /**
-     * 
+     *
      */
     public void startFetching() {
         if (fPart != null) {

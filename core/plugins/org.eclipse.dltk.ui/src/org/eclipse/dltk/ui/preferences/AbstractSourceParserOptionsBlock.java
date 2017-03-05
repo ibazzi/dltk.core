@@ -15,30 +15,22 @@ public abstract class AbstractSourceParserOptionsBlock extends
 		super(context, project, allKeys, container);
 	}
 
-	/*
-	 * @see org.eclipse.dltk.ui.preferences.ContributedExtensionOptionsBlock#getExtensionManager()
-	 */
+	@Override
 	protected DLTKContributionExtensionManager getExtensionManager() {
 		return SourceParserManager.getInstance();
 	}
 
-	/*
-	 * @see org.eclipse.dltk.ui.preferences.ContributedExtensionOptionsBlock#getSelectorGroupLabel()
-	 */
+	@Override
 	protected String getSelectorGroupLabel() {
 		return PreferencesMessages.SourceParsers_groupLabel;
 	}
 
-	/*
-	 * @see org.eclipse.dltk.ui.preferences.ContributedExtensionOptionsBlock#getSelectorNameLabel()
-	 */
+	@Override
 	protected String getSelectorNameLabel() {
 		return PreferencesMessages.SourceParsers_nameLabel;
 	}
 
-	/*
-	 * @see org.eclipse.dltk.ui.preferences.ContributedExtensionOptionsBlock#getPreferenceLinkMessage()
-	 */
+	@Override
 	protected String getPreferenceLinkMessage() {
 		return PreferencesMessages.SourceParsers_LinkToPreferences;
 	}

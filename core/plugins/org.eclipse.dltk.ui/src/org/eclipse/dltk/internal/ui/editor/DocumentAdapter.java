@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.editor;
 
@@ -57,32 +56,52 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 		 * Internal implementation of a NULL instanceof IBuffer.
 		 */
 		static private class NullBuffer implements IBuffer {
+			@Override
 			public void addBufferChangedListener(IBufferChangedListener listener) {}
+			@Override
 			public void append(char[] text) {}
+			@Override
 			public void append(String text) {}
+			@Override
 			public void close() {}
+			@Override
 			public char getChar(int position) { return 0; }
+			@Override
 			public char[] getCharacters() { return null; }
+			@Override
 			public String getContents() { return null; }
+			@Override
 			public int getLength() { return 0; }
+			@Override
 			public IOpenable getOwner() { return null; }
+			@Override
 			public String getText(int offset, int length) { return null; }
+			@Override
 			public IResource getUnderlyingResource() { return null; }
+			@Override
 			public boolean hasUnsavedChanges() { return false; }
+			@Override
 			public boolean isClosed() { return false; }
+			@Override
 			public boolean isReadOnly() { return true; }
+			@Override
 			public void removeBufferChangedListener(IBufferChangedListener listener) {}
+			@Override
 			public void replace(int position, int length, char[] text) {}
+			@Override
 			public void replace(int position, int length, String text) {}
+			@Override
 			public void save(IProgressMonitor progress, boolean force) throws ModelException {}
+			@Override
 			public void setContents(char[] contents) {}
+			@Override
 			public void setContents(String contents) {}
 		}
 
 
 		/** NULL implementing <code>IBuffer</code> */
 		public final static IBuffer NULL= new NullBuffer();
-		
+
 		/*
 	 *
 		 */
@@ -96,6 +115,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 
 			private String fContents;
 
+			@Override
 			public void run() {
 				fDocument.set(fContents);
 			}
@@ -116,6 +136,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 			private int fLength;
 			private String fText;
 
+			@Override
 			public void run() {
 				try {
 					fDocument.replace(fOffset, fLength, fText);
@@ -173,17 +194,17 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 	 */
 	public DocumentAdapter(IOpenable owner, IPath path) {
 		Assert.isLegal(path != null);
-		
+
 		fOwner= owner;
 		fPath= path;
 		fLocationKind = LocationKind.NORMALIZE;
-		
+
 		initialize();
 	}
 
 	/**
 	 * Constructs a new document adapter.
-	 * 
+	 *
 	 * @param owner
 	 *            the owner of this buffer
 	 * @param fileStore
@@ -248,6 +269,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 	/*
 	 * @see IBuffer#addBufferChangedListener(IBufferChangedListener)
 	 */
+	@Override
 	public void addBufferChangedListener(IBufferChangedListener listener) {
 		Assert.isNotNull(listener);
 		if (!fBufferListeners.contains(listener))
@@ -257,21 +279,18 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 	/*
 	 * @see IBuffer#removeBufferChangedListener(IBufferChangedListener)
 	 */
+	@Override
 	public void removeBufferChangedListener(IBufferChangedListener listener) {
 		Assert.isNotNull(listener);
 		fBufferListeners.remove(listener);
 	}
 
-	/*
-	 * @see IBuffer#append(char[])
-	 */
+	@Override
 	public void append(char[] text) {
 		append(new String(text));
 	}
 
-	/*
-	 * @see IBuffer#append(String)
-	 */
+	@Override
 	public void append(String text) {
 		if (DEBUG_LINE_DELIMITERS) {
 			validateLineDelimiters(text);
@@ -279,9 +298,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 		fReplaceCmd.replace(fDocument.getLength(), 0, text);
 	}
 
-	/*
-	 * @see IBuffer#close()
-	 */
+	@Override
 	public void close() {
 
 		if (isClosed())
@@ -310,9 +327,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 		fBufferListeners.clear();
 	}
 
-	/*
-	 * @see IBuffer#getChar(int)
-	 */
+	@Override
 	public char getChar(int position) {
 		try {
 			return fDocument.getChar(position);
@@ -321,38 +336,28 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 		}
 	}
 
-	/*
-	 *  @see IBuffer#getCharacters()
-	 */
+	@Override
 	public char[] getCharacters() {
 		String content= getContents();
 		return content == null ? null : content.toCharArray();
 	}
 
-	/*
-	 * @see IBuffer#getContents()
-	 */
+	@Override
 	public String getContents() {
 		return fDocument.get();
 	}
 
-	/*
-	 * @see IBuffer#getLength()
-	 */
+	@Override
 	public int getLength() {
 		return fDocument.getLength();
 	}
 
-	/*
-	 * @see IBuffer#getOwner()
-	 */
+	@Override
 	public IOpenable getOwner() {
 		return fOwner;
 	}
 
-	/*
-	 * @see IBuffer#getText(int, int)
-	 */
+	@Override
 	public String getText(int offset, int length) {
 		try {
 			return fDocument.get(offset, length);
@@ -361,46 +366,34 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 		}
 	}
 
-	/*
-	 * @see IBuffer#getUnderlyingResource()
-	 */
+	@Override
 	public IResource getUnderlyingResource() {
 		return fFile;
 	}
 
-	/*
-	 * @see IBuffer#hasUnsavedChanges()
-	 */
+	@Override
 	public boolean hasUnsavedChanges() {
 		return fTextFileBuffer != null ? fTextFileBuffer.isDirty() : false;
 	}
 
-	/*
-	 * @see IBuffer#isClosed()
-	 */
+	@Override
 	public boolean isClosed() {
 		return fDocument == null;
 	}
 
-	/*
-	 * @see IBuffer#isReadOnly()
-	 */
+	@Override
 	public boolean isReadOnly() {
 		IResource resource= getUnderlyingResource();
 		return resource == null ? true
 				: resource.getResourceAttributes().isReadOnly();
 	}
 
-	/*
-	 * @see IBuffer#replace(int, int, char[])
-	 */
+	@Override
 	public void replace(int position, int length, char[] text) {
 		replace(position, length, new String(text));
 	}
 
-	/*
-	 * @see IBuffer#replace(int, int, String)
-	 */
+	@Override
 	public void replace(int position, int length, String text) {
 		if (DEBUG_LINE_DELIMITERS) {
 			validateLineDelimiters(text);
@@ -408,9 +401,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 		fReplaceCmd.replace(position, length, text);
 	}
 
-	/*
-	 * @see IBuffer#save(IProgressMonitor, boolean)
-	 */
+	@Override
 	public void save(IProgressMonitor progress, boolean force) throws ModelException {
 		try {
 			if (fTextFileBuffer != null)
@@ -420,16 +411,12 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 		}
 	}
 
-	/*
-	 * @see IBuffer#setContents(char[])
-	 */
+	@Override
 	public void setContents(char[] contents) {
 		setContents(new String(contents));
 	}
 
-	/*
-	 * @see IBuffer#setContents(String)
-	 */
+	@Override
 	public void setContents(String contents) {
 		int oldLength= fDocument.getLength();
 
@@ -503,16 +490,12 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 		}
 	}
 
-	/*
-	 * @see IDocumentListener#documentAboutToBeChanged(DocumentEvent)
-	 */
+	@Override
 	public void documentAboutToBeChanged(DocumentEvent event) {
 		// there is nothing to do here
 	}
 
-	/*
-	 * @see IDocumentListener#documentChanged(DocumentEvent)
-	 */
+	@Override
 	public void documentChanged(DocumentEvent event) {
 		fireBufferChanged(new BufferChangedEvent(this, event.getOffset(), event.getLength(), event.getText()));
 	}
@@ -528,7 +511,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 
 	/**
 	 * Run the given runnable in the UI thread.
-	 * 
+	 *
 	 * @param runnable the runnable
 	 * @since 3.3
 	 */
@@ -539,5 +522,5 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 		else
 			Display.getDefault().syncExec(runnable);
 	}
-	
+
 }

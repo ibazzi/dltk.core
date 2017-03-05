@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.typehierarchy;
 
@@ -104,16 +103,13 @@ public class TypeHierarchyLifeCycle implements ITypeHierarchyChangedListener,
 
 		if (hierachyCreationNeeded || fHierarchyRefreshNeeded) {
 
-			IRunnableWithProgress op = new IRunnableWithProgress() {
-				public void run(IProgressMonitor pm)
-						throws InvocationTargetException, InterruptedException {
-					try {
-						doHierarchyRefresh(element, pm);
-					} catch (ModelException e) {
-						throw new InvocationTargetException(e);
-					} catch (OperationCanceledException e) {
-						throw new InterruptedException();
-					}
+			IRunnableWithProgress op = pm -> {
+				try {
+					doHierarchyRefresh(element, pm);
+				} catch (ModelException e1) {
+					throw new InvocationTargetException(e1);
+				} catch (OperationCanceledException e2) {
+					throw new InterruptedException();
 				}
 			};
 			fHierarchyRefreshNeeded = true;
@@ -185,17 +181,13 @@ public class TypeHierarchyLifeCycle implements ITypeHierarchyChangedListener,
 		fHierarchyRefreshNeeded = false;
 	}
 
-	/*
-	 * @see ITypeHierarchyChangedListener#typeHierarchyChanged
-	 */
+	@Override
 	public void typeHierarchyChanged(ITypeHierarchy typeHierarchy) {
 		fHierarchyRefreshNeeded = true;
 		fireChange(null);
 	}
 
-	/*
-	 * @see IElementChangedListener#elementChanged(ElementChangedEvent)
-	 */
+	@Override
 	public void elementChanged(ElementChangedEvent event) {
 		if (fChangeListeners.isEmpty()) {
 			return;

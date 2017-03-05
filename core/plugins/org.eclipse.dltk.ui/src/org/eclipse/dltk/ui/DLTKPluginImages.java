@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,13 +26,13 @@ import org.osgi.framework.Bundle;
 public class DLTKPluginImages {
 	//TODO: Please sort me...
 	public static final IPath ICONS_PATH = new Path("/icons/full"); //$NON-NLS-1$
-	
+
 	private static final String NAME_PREFIX = "org.eclipse.dltk.ui."; //$NON-NLS-1$
 	private static final int NAME_PREFIX_LENGTH = NAME_PREFIX.length();
-	
+
 	// The plug-in registry
 	private static ImageRegistry fgImageRegistry = null;
-	
+
 	private static HashMap<String, ImageDescriptor> fgAvoidSWTErrorMap = null;
 	private static final String T_OBJ = "obj16"; //$NON-NLS-1$
 	private static final String T_OVR = "ovr16"; //$NON-NLS-1$
@@ -41,11 +41,11 @@ public class DLTKPluginImages {
 	private static final String T_DLCL = "dlcl16"; //$NON-NLS-1$
 	private static final String T_ETOOL = "etool16"; //$NON-NLS-1$
 //	private static final String T_EVIEW = "eview16"; //$NON-NLS-1$
-	
+
 	public static final String TERMINATE_CONSOLE = NAME_PREFIX + "term_sbook.gif"; //$NON-NLS-1$
-	
+
 	public static final String IMG_OBJS_GHOST = NAME_PREFIX + "unknown_obj.png"; //$NON-NLS-1$
-	public static final String IMG_OBJS_CLASSALT = NAME_PREFIX + "classfo_obj.png"; //$NON-NLS-1$	
+	public static final String IMG_OBJS_CLASSALT = NAME_PREFIX + "classfo_obj.png"; //$NON-NLS-1$
 	public static final String IMG_OBJS_CLASS = NAME_PREFIX + "class_obj.png"; //$NON-NLS-1$
 	/**
 	 * @since 3.0
@@ -67,7 +67,7 @@ public class DLTKPluginImages {
 	 */
 	public static final String IMG_OBJS_JAVADOCTAG = NAME_PREFIX
 			+ "jdoc_tag_obj.png"; //$NON-NLS-1$
-	
+
 	public static final String IMG_CORRECTION_CHANGE= NAME_PREFIX + "correction_change.png"; //$NON-NLS-1$
 	public static final String IMG_CORRECTION_ADD = NAME_PREFIX
 			+ "add_correction.png"; //$NON-NLS-1$
@@ -79,22 +79,22 @@ public class DLTKPluginImages {
 			+ "correction_move.png"; //$NON-NLS-1$
 	public static final String IMG_CORRECTION_RENAME = NAME_PREFIX
 			+ "correction_rename.png"; //$NON-NLS-1$
-	
+
 	public static final String IMG_OBJS_ANNOTATION= NAME_PREFIX + "annotation_obj.png"; //$NON-NLS-1$
 	public static final String IMG_OBJS_ANNOTATION_DEFAULT= NAME_PREFIX + "annotation_default_obj.png"; //$NON-NLS-1$
 	public static final String IMG_OBJS_ANNOTATION_PROTECTED= NAME_PREFIX + "annotation_protected_obj.png"; //$NON-NLS-1$
 	public static final String IMG_OBJS_ANNOTATION_PRIVATE= NAME_PREFIX + "annotation_private_obj.png"; //$NON-NLS-1$
 	public static final String IMG_OBJS_ANNOTATION_ALT= NAME_PREFIX + "annotation_alt_obj.png"; //$NON-NLS-1$
-	
+
 	public static final String IMG_OBJS_INNER_CLASS_PUBLIC= NAME_PREFIX + "innerclass_public_obj.png"; //$NON-NLS-1$
 	public static final String IMG_OBJS_INNER_CLASS_DEFAULT= NAME_PREFIX + "innerclass_default_obj.png"; //$NON-NLS-1$
 	public static final String IMG_OBJS_INNER_CLASS_PROTECTED= NAME_PREFIX + "innerclass_protected_obj.png"; //$NON-NLS-1$
 	public static final String IMG_OBJS_INNER_CLASS_PRIVATE= NAME_PREFIX + "innerclass_private_obj.png"; //$NON-NLS-1$
-	
+
 	public static final String IMG_OBJS_INTERFACE= NAME_PREFIX + "int_obj.png"; 			//$NON-NLS-1$
-	public static final String IMG_OBJS_INTERFACEALT= NAME_PREFIX + "intf_obj.png"; 			//$NON-NLS-1$	
+	public static final String IMG_OBJS_INTERFACEALT= NAME_PREFIX + "intf_obj.png"; 			//$NON-NLS-1$
 	public static final String IMG_OBJS_INTERFACE_DEFAULT= NAME_PREFIX + "int_default_obj.png"; 		//$NON-NLS-1$
-	
+
 	public static final String IMG_OBJS_INNER_INTERFACE_PUBLIC= NAME_PREFIX + "innerinterface_public_obj.png"; //$NON-NLS-1$
 	public static final String IMG_OBJS_INNER_INTERFACE_DEFAULT= NAME_PREFIX + "innerinterface_default_obj.png"; //$NON-NLS-1$
 	public static final String IMG_OBJS_INNER_INTERFACE_PROTECTED= NAME_PREFIX + "innerinterface_protected_obj.png"; //$NON-NLS-1$
@@ -105,7 +105,7 @@ public class DLTKPluginImages {
 	public static final String IMG_FIELD_PRIVATE = NAME_PREFIX + "field_private_obj.png"; //$NON-NLS-1$
 	public static final String IMG_FIELD_PROTECTED = NAME_PREFIX + "field_protected_obj.png"; //$NON-NLS-1$
 	public static final String IMG_FIELD_PUBLIC = NAME_PREFIX + "field_public_obj.png"; //$NON-NLS-1$
-	
+
 	public static final String IMG_METHOD_PUBLIC = NAME_PREFIX + "methpub_obj.png"; //$NON-NLS-1$
 	public static final String IMG_METHOD_PROTECTED = NAME_PREFIX + "methpro_obj.png"; //$NON-NLS-1$
 	public static final String IMG_METHOD_PRIVATE= NAME_PREFIX + "methpri_obj.png"; 		//$NON-NLS-1$
@@ -149,7 +149,7 @@ public class DLTKPluginImages {
 	public static final String IMG_OBJS_KEYWORD = NAME_PREFIX
 			+ "keyword_obj.png"; //$NON-NLS-1$
 	public static final String IMG_OBJS_PROJECT_SETTINGS = NAME_PREFIX + "settings_obj.gif"; //$NON-NLS-1$
-	public static final String IMG_OBJS_TEMPLATE= NAME_PREFIX + "template_obj.png"; 		//$NON-NLS-1$	
+	public static final String IMG_OBJS_TEMPLATE= NAME_PREFIX + "template_obj.png"; 		//$NON-NLS-1$
 	public static final String IMG_OBJS_PACKDECL = NAME_PREFIX
 			+ "packd_obj.png"; //$NON-NLS-1$
 	public static final String IMG_OBJS_IMPDECL = NAME_PREFIX + "imp_obj.png"; //$NON-NLS-1$
@@ -158,44 +158,44 @@ public class DLTKPluginImages {
 			+ "jsearch_obj.png"; //$NON-NLS-1$
 	public static final String IMG_OBJS_SEARCH_DECL= NAME_PREFIX + "search_decl_obj.png"; //$NON-NLS-1$
 	public static final String IMG_OBJS_SEARCH_REF= NAME_PREFIX + "search_ref_obj.png"; 	//$NON-NLS-1$
-	
+
 	public static final String IMG_OBJS_JAR = NAME_PREFIX + "jar_obj.png"; //$NON-NLS-1$
 	public static final String IMG_OBJS_EXTJAR = NAME_PREFIX + "jar_l_obj.png"; //$NON-NLS-1$
 	public static final String IMG_OBJS_JAR_WSRC = NAME_PREFIX
 			+ "jar_src_obj.png"; //$NON-NLS-1$
 	public static final String IMG_OBJS_EXTJAR_WSRC = NAME_PREFIX
 			+ "jar_lsrc_obj.png"; //$NON-NLS-1$
-	
+
 	public static final String IMG_ELCL_VIEW_MENU= NAME_PREFIX + T_ELCL + "view_menu.png"; //$NON-NLS-1$
 	public static final String IMG_DLCL_VIEW_MENU= NAME_PREFIX + T_DLCL + "view_menu.png"; //$NON-NLS-1$
-	
+
 	public static final String IMG_OBJS_SEARCH_OCCURRENCE = NAME_PREFIX
 			+ "occ_match.png"; //$NON-NLS-1$
-		
+
 	//TERMINATE_CONSOLE
-	
+
 	public static final ImageDescriptor DESC_TERMINATE_CONSOLE = createUnManaged(T_ELCL, "ch_cancel.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_SAVE_SESSION = createUnManaged(T_ELCL, "save.gif"); //$NON-NLS-1$
-	
+
 	public static final String IMG_OBJS_EXCEPTION= NAME_PREFIX + "jexception_obj.png"; 	//$NON-NLS-1$
 	public static final String IMG_OBJS_ERROR= NAME_PREFIX + "error_obj.png"; 		//$NON-NLS-1$
-	
+
 	public static final String IMG_OBJS_BREAKPOINT_INSTALLED= NAME_PREFIX + "brkpi_obj.png"; //$NON-NLS-1$
 	public static final String IMG_OBJS_QUICK_ASSIST= NAME_PREFIX + "quickassist_obj.png"; //$NON-NLS-1$
 	public static final String IMG_OBJS_FIXABLE_PROBLEM= NAME_PREFIX + "quickfix_warning_obj.png"; //$NON-NLS-1$
 	public static final String IMG_OBJS_FIXABLE_ERROR= NAME_PREFIX + "quickfix_error_obj.png"; //$NON-NLS-1$
 
-	
+
 	public static final ImageDescriptor DESC_OBJS_EXCLUSION_FILTER_ATTRIB = createUnManaged(T_OBJ, "exclusion_filter_attrib.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OBJS_INCLUSION_FILTER_ATTRIB = createUnManaged(T_OBJ, "inclusion_filter_attrib.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OBJS_OUTPUT_FOLDER_ATTRIB = createUnManaged(T_OBJ, "output_folder_attrib.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OBJS_SOURCE_ATTACH_ATTRIB = createUnManaged(T_OBJ, "source_attach_attrib.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OBJS_JAVADOC_LOCATION_ATTRIB = createUnManaged(T_OBJ, "javadoc_location_attrib.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OBJS_INFO_OBJ = createUnManaged(T_OBJ, "info_obj.png"); //$NON-NLS-1$
-	
+
 	public static final ImageDescriptor DESC_OBJS_ACCESSRULES_ATTRIB = createManagedFromKey(T_OBJ, IMG_OBJS_ACCESSRULES_ATTRIB);
 	public static final ImageDescriptor DESC_OBJS_NATIVE_LIB_PATH_ATTRIB = createUnManaged(T_OBJ, "native_lib_path_attrib.png"); //$NON-NLS-1$
-		
+
 	public static final ImageDescriptor DESC_OBJS_CLASS= createManagedFromKey(T_OBJ, IMG_OBJS_CLASS);
 
 	/**
@@ -257,72 +257,72 @@ public class DLTKPluginImages {
 	public static final ImageDescriptor DESC_WIZBAN_EXTERNALIZE_STRINGS = createUnManaged(T_WIZBAN, "extstr_wiz.png");//$NON-NLS-1$
 	public static final ImageDescriptor DESC_WIZBAN_ADD_LIBRARY = createUnManaged(T_WIZBAN, "addlibrary_wiz.png");//$NON-NLS-1$
 	public static final ImageDescriptor DESC_WIZBAN_CLEAN_UP = createUnManaged(T_WIZBAN, "cleanup_wiz.png"); //$NON-NLS-1$
-	
+
 	public static final ImageDescriptor DESC_TOOL_BUILDPATH_ORDER= createUnManaged(T_OBJ, "cp_order_obj.png"); //$NON-NLS-1$
 	/*
 	 * Set of predefined Image Descriptors.
 	 */
 	public static final ImageDescriptor DESC_ELCL_FILTER = createUnManaged(T_ELCL, "filter_ps.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_DLCL_FILTER = createUnManaged(T_DLCL, "filter_ps.png"); //$NON-NLS-1$
-	
+
 	public static final ImageDescriptor DESC_ELCL_VIEW_MENU = createUnManaged(T_ELCL, "view_menu.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_DLCL_VIEW_MENU = createUnManaged(T_DLCL, "view_menu.png"); //$NON-NLS-1$
-	
-	
+
+
 	public static final ImageDescriptor DESC_OBJS_JAR= createManagedFromKey(T_OBJ, IMG_OBJS_JAR);
 	public static final ImageDescriptor DESC_OBJS_EXTJAR= createManagedFromKey(T_OBJ, IMG_OBJS_EXTJAR);
 	public static final ImageDescriptor DESC_OBJS_JAR_WSRC= createManagedFromKey(T_OBJ, IMG_OBJS_JAR_WSRC);
 	public static final ImageDescriptor DESC_OBJS_EXTJAR_WSRC= createManagedFromKey(T_OBJ, IMG_OBJS_EXTJAR_WSRC);
 	public static final ImageDescriptor DESC_OBJS_ENV_VAR= createManagedFromKey(T_OBJ, IMG_OBJS_ENV_VAR);
-	
+
 	public static final ImageDescriptor DESC_OBJS_PACKDECL= createManagedFromKey(T_OBJ, IMG_OBJS_PACKDECL);
 	public static final ImageDescriptor DESC_OBJS_IMPDECL= createManagedFromKey(T_OBJ, IMG_OBJS_IMPDECL);
-	public static final ImageDescriptor DESC_OBJS_IMPCONT= createManagedFromKey(T_OBJ, IMG_OBJS_IMPCONT);	
+	public static final ImageDescriptor DESC_OBJS_IMPCONT= createManagedFromKey(T_OBJ, IMG_OBJS_IMPCONT);
 	public static final ImageDescriptor DESC_OBJS_JSEARCH= createManagedFromKey(T_OBJ, IMG_OBJS_JSEARCH);
 	public static final ImageDescriptor DESC_OBJS_SEARCH_DECL= createManagedFromKey(T_OBJ, IMG_OBJS_SEARCH_DECL);
 	public static final ImageDescriptor DESC_OBJS_SEARCH_REF= createManagedFromKey(T_OBJ, IMG_OBJS_SEARCH_REF);
 	public static final ImageDescriptor DESC_OBJS_CUNIT= createManagedFromKey(T_OBJ, IMG_OBJS_CUNIT);
 	public static final ImageDescriptor DESC_OBJS_CUNIT_RESOURCE= createManagedFromKey(T_OBJ, IMG_OBJS_CUNIT_RESOURCE);
-	public static final ImageDescriptor DESC_OBJS_CFILE= createManagedFromKey(T_OBJ, IMG_OBJS_CFILE); 
+	public static final ImageDescriptor DESC_OBJS_CFILE= createManagedFromKey(T_OBJ, IMG_OBJS_CFILE);
 	public static final ImageDescriptor DESC_OBJS_CFILECLASS= createManagedFromKey(T_OBJ, IMG_OBJS_CFILECLASS);
 	public static final ImageDescriptor DESC_ELCL_CLEAR= createUnManaged(T_ELCL, "clear_co.png"); //$NON-NLS-1$
     public static final ImageDescriptor DESC_DLCL_CLEAR= createUnManaged(T_DLCL, "clear_co.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_OBJS_CFILEINT= createManagedFromKey(T_OBJ, IMG_OBJS_CFILEINT); 
+	public static final ImageDescriptor DESC_OBJS_CFILEINT= createManagedFromKey(T_OBJ, IMG_OBJS_CFILEINT);
 	public static final ImageDescriptor DESC_OBJS_PACKAGE= createManagedFromKey(T_OBJ, IMG_OBJS_PACKAGE);
 	public static final ImageDescriptor DESC_OBJS_EMPTY_LOGICAL_PACKAGE= createManagedFromKey(T_OBJ, IMG_OBJS_EMPTY_LOGICAL_PACKAGE);
 	public static final ImageDescriptor DESC_OBJS_LOGICAL_PACKAGE= createManagedFromKey(T_OBJ, IMG_OBJS_LOGICAL_PACKAGE);
 	public static final ImageDescriptor DESC_OBJS_EMPTY_PACKAGE_RESOURCES= createManagedFromKey(T_OBJ, IMG_OBJS_EMPTY_PACK_RESOURCE);
-	public static final ImageDescriptor DESC_OBJS_EMPTY_PACKAGE= createManagedFromKey(T_OBJ, IMG_OBJS_EMPTY_PACKAGE);	
+	public static final ImageDescriptor DESC_OBJS_EMPTY_PACKAGE= createManagedFromKey(T_OBJ, IMG_OBJS_EMPTY_PACKAGE);
 	public static final ImageDescriptor DESC_OBJS_PACKFRAG_ROOT= createManagedFromKey(T_OBJ, IMG_OBJS_PACKFRAG_ROOT);
 	public static final ImageDescriptor DESC_OBJS_PROJECT_SETTINGS= createManagedFromKey(T_OBJ, IMG_OBJS_PROJECT_SETTINGS);
-	
+
     public static final ImageDescriptor DESC_DLCL_ADD_LINKED_SOURCE_TO_BUILDPATH= createUnManaged(T_DLCL, "add_linked_source_to_buildpath.png"); //$NON-NLS-1$
     public static final ImageDescriptor DESC_ELCL_ADD_LINKED_SOURCE_TO_BUILDPATH= createUnManaged(T_ELCL, "add_linked_source_to_buildpath.png"); //$NON-NLS-1$
-    
+
     public static final ImageDescriptor DESC_DLCL_CONFIGURE_BUILDPATH= createUnManaged(T_DLCL, "configure_build_path.png"); //$NON-NLS-1$
     public static final ImageDescriptor DESC_ELCL_CONFIGURE_BUILDPATH= createUnManaged(T_ELCL, "configure_build_path.png"); //$NON-NLS-1$
-    
+
     public static final ImageDescriptor DESC_DLCL_CONFIGURE_BUILDPATH_FILTERS= createUnManaged(T_DLCL, "configure_buildpath_filters.png"); //$NON-NLS-1$
     public static final ImageDescriptor DESC_ELCL_CONFIGURE_BUILDPATH_FILTERS= createUnManaged(T_ELCL, "configure_buildpath_filters.png"); //$NON-NLS-1$
-    
+
     public static final ImageDescriptor DESC_DLCL_CONFIGURE_OUTPUT_FOLDER= createUnManaged(T_DLCL, "configure_output_folder.png"); //$NON-NLS-1$
     public static final ImageDescriptor DESC_ELCL_CONFIGURE_OUTPUT_FOLDER= createUnManaged(T_ELCL, "configure_output_folder.png"); //$NON-NLS-1$
-    
+
     public static final ImageDescriptor DESC_DLCL_EXCLUDE_FROM_BUILDPATH= createUnManaged(T_DLCL, "exclude_from_buildpath.png");  //$NON-NLS-1$
     public static final ImageDescriptor DESC_ELCL_EXCLUDE_FROM_BUILDPATH= createUnManaged(T_ELCL, "exclude_from_buildpath.png");  //$NON-NLS-1$
-    
+
     public static final ImageDescriptor DESC_DLCL_INCLUDE_ON_BUILDPATH= createUnManaged(T_DLCL, "include_on_buildpath.png");  //$NON-NLS-1$
     public static final ImageDescriptor DESC_ELCL_INCLUDE_ON_BUILDPATH= createUnManaged(T_ELCL, "include_on_buildpath.png");  //$NON-NLS-1$
-    
+
     public static final ImageDescriptor DESC_DLCL_ADD_AS_SOURCE_FOLDER= createUnManaged(T_DLCL, "add_as_source_folder.png");  //$NON-NLS-1$
     public static final ImageDescriptor DESC_ELCL_ADD_AS_SOURCE_FOLDER= createUnManaged(T_ELCL, "add_as_source_folder.png");  //$NON-NLS-1$
-    
+
     public static final ImageDescriptor DESC_DLCL_REMOVE_AS_SOURCE_FOLDER= createUnManaged(T_DLCL, "remove_as_source_folder.png");  //$NON-NLS-1$
     public static final ImageDescriptor DESC_ELCL_REMOVE_AS_SOURCE_FOLDER= createUnManaged(T_ELCL, "remove_as_source_folder.png");  //$NON-NLS-1$
-    
+
     public static final ImageDescriptor DESC_DLCL_COPY_QUALIFIED_NAME= createUnManaged(T_DLCL, "cpyqual_menu.gif"); //$NON-NLS-1$
     public static final ImageDescriptor DESC_ELCL_COPY_QUALIFIED_NAME= createUnManaged(T_ELCL, "cpyqual_menu.gif"); //$NON-NLS-1$
-    
+
 	public static final ImageDescriptor DESC_OBJS_FIXABLE_PROBLEM= createManagedFromKey(T_OBJ, IMG_OBJS_FIXABLE_PROBLEM);
 	public static final ImageDescriptor DESC_OBJS_FIXABLE_ERROR= createManagedFromKey(T_OBJ, IMG_OBJS_FIXABLE_ERROR);
 
@@ -330,7 +330,7 @@ public class DLTKPluginImages {
     public static final ImageDescriptor DESC_ELCL_REMOVE_FROM_BP= createUnManaged(T_ELCL, "remove_from_buildpath.png"); //$NON-NLS-1$
     public static final ImageDescriptor DESC_ELCL_INCLUSION= createUnManaged(T_ELCL, "inclusion_filter_attrib.png"); //$NON-NLS-1$
     public static final ImageDescriptor DESC_ELCL_EXCLUSION= createUnManaged(T_ELCL, "exclusion_filter_attrib.png"); //$NON-NLS-1$
-    
+
     public static final ImageDescriptor DESC_OBJS_LIBRARY= createManagedFromKey(T_OBJ, IMG_OBJS_LIBRARY);
     public static final ImageDescriptor DESC_OBJS_LIBRARY_SRC= createManagedFromKey(T_OBJ, IMG_OBJS_LIBRARY_SRC);
 	/**
@@ -338,7 +338,7 @@ public class DLTKPluginImages {
 	 */
 	public static final ImageDescriptor DESC_OBJS_JAVADOCTAG = createManagedFromKey(
 			T_OBJ, IMG_OBJS_JAVADOCTAG);
-    
+
     public static final ImageDescriptor DESC_TOOL_OPENMETHOD= createUnManaged(T_ETOOL, "opentype.png"); 					//$NON-NLS-1$
     public static final ImageDescriptor DESC_TOOL_OPENTYPE= createUnManaged(T_ETOOL, "opentype.png"); 					//$NON-NLS-1$
 	public static final ImageDescriptor DESC_TOOL_NEWPROJECT= createUnManaged(T_ETOOL, "newjprj_wiz.png"); 			//$NON-NLS-1$
@@ -348,23 +348,23 @@ public class DLTKPluginImages {
 	public static final ImageDescriptor DESC_TOOL_NEWSNIPPET= createUnManaged(T_ETOOL, "newsbook_wiz.png"); 			//$NON-NLS-1$
     public static final ImageDescriptor DESC_TOOL_NEWPACKROOT= createUnManaged(T_ETOOL, "newpackfolder_wiz.png");         //$NON-NLS-1$
     public static final ImageDescriptor DESC_DLCL_NEWPACKROOT= createUnManaged(T_DLCL, "newpackfolder_wiz.png");        //$NON-NLS-1$
-        
+
     public static final ImageDescriptor DESC_OBJS_GHOST= createManagedFromKey(T_OBJ, IMG_OBJS_GHOST);
     public static final ImageDescriptor DESC_OBJS_CLASSALT= createManagedFromKey(T_OBJ, IMG_OBJS_CLASSALT);
     public static final ImageDescriptor DESC_OBJS_INTERFACEALT= createManagedFromKey(T_OBJ, IMG_OBJS_INTERFACEALT);
-    
+
     public static final ImageDescriptor DESC_OBJS_UNKNOWN= createManagedFromKey(T_OBJ, IMG_OBJS_UNKNOWN);
-    
+
     public static final ImageDescriptor DESC_OBJS_TYPE_SEPARATOR= createUnManaged(T_OBJ, "type_separator.png");  //$NON-NLS-1$
-    
+
     public static final ImageDescriptor DESC_OVR_WARNING= createUnManagedCached(T_OVR, "warning_co.png"); 					//$NON-NLS-1$
 	public static final ImageDescriptor DESC_OVR_ERROR= createUnManagedCached(T_OVR, "error_co.png"); 						//$NON-NLS-1$
-	
+
 	public static final ImageDescriptor DESC_OVR_FIELD_NAMESPACE = createUnManagedCached(T_OVR, "native_co.png"); 						//$NON-NLS-1$
 	public static final ImageDescriptor DESC_OVR_FIELD_UPVAR = createUnManagedCached(T_OVR, "over_co1.gif"); 						//$NON-NLS-1$
 	public static final ImageDescriptor DESC_OVR_FIELD_GLOBAL = createUnManagedCached(T_OVR, "global_co.gif"); 						//$NON-NLS-1$
 	public static final ImageDescriptor DESC_OVR_FIELD_INDEX = createUnManagedCached(T_OVR, "index_co.gif"); 						//$NON-NLS-1$
-		
+
 	public static final ImageDescriptor DESC_ELCL_CODE_ASSIST= createUnManaged(T_ELCL, "metharg_obj.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_DLCL_CODE_ASSIST= createUnManaged(T_DLCL, "metharg_obj.png"); //$NON-NLS-1$
 
@@ -372,17 +372,17 @@ public class DLTKPluginImages {
 	public static final ImageDescriptor DESC_FIELD_PRIVATE= createManagedFromKey(T_OBJ, IMG_FIELD_PRIVATE);
 	public static final ImageDescriptor DESC_FIELD_PROTECTED= createManagedFromKey(T_OBJ, IMG_FIELD_PROTECTED);
 	public static final ImageDescriptor DESC_FIELD_PUBLIC= createManagedFromKey(T_OBJ, IMG_FIELD_PUBLIC);
-	
+
 	public static final ImageDescriptor DESC_OBJS_FIELD = DESC_FIELD_DEFAULT;
-	
+
 	public static final ImageDescriptor DESC_OBJS_LOCAL_VARIABLE= createManagedFromKey(T_OBJ, IMG_OBJS_LOCAL_VARIABLE);
 	public static final ImageDescriptor DESC_OBJS_KEYWORD= createManagedFromKey(T_OBJ, IMG_OBJS_KEYWORD);
-	
+
 	public static final ImageDescriptor DESC_METHOD_PUBLIC= createManagedFromKey(T_OBJ, IMG_METHOD_PUBLIC);
 	public static final ImageDescriptor DESC_METHOD_PROTECTED= createManagedFromKey(T_OBJ, IMG_METHOD_PROTECTED);
 	public static final ImageDescriptor DESC_METHOD_PRIVATE= createManagedFromKey(T_OBJ, IMG_METHOD_PRIVATE);
 	public static final ImageDescriptor DESC_METHOD_DEFAULT = createManagedFromKey(T_OBJ, IMG_METHOD_DEFAULT);
-	
+
 	/**
 	 * @since 3.0
 	 */
@@ -406,6 +406,7 @@ public class DLTKPluginImages {
 			fDescriptor = descriptor;
 		}
 
+		@Override
 		public ImageData getImageData() {
 			if (fData == null) {
 				fData= fDescriptor.getImageData();
@@ -413,13 +414,13 @@ public class DLTKPluginImages {
 			return fData;
 		}
 	}
-	
+
 	private static ImageDescriptor createUnManagedCached(String prefix, String name) {
 		return new CachedImageDescriptor(create(prefix, name, true));
 	}
 	/**
 	 * Returns the image managed under the given key in this registry.
-	 * 
+	 *
 	 * @param key
 	 *            the image's key
 	 * @return the image managed under the given key
@@ -431,7 +432,7 @@ public class DLTKPluginImages {
 	/**
 	 * Returns the image descriptor for the given key in this registry. Might be
 	 * called in a non-UI thread.
-	 * 
+	 *
 	 * @param key
 	 *            the image's key
 	 * @return the image descriptor for the given key
@@ -446,7 +447,7 @@ public class DLTKPluginImages {
 	/**
 	 * Sets the three image descriptors for enabled, disabled, and hovered to an
 	 * action. The actions are retrieved from the *tool16 folders.
-	 * 
+	 *
 	 * @param action
 	 *            the action
 	 * @param iconName
@@ -459,7 +460,7 @@ public class DLTKPluginImages {
 	/**
 	 * Sets the three image descriptors for enabled, disabled, and hovered to an
 	 * action. The actions are retrieved from the *lcl16 folders.
-	 * 
+	 *
 	 * @param action
 	 *            the action
 	 * @param iconName
@@ -573,7 +574,7 @@ public class DLTKPluginImages {
 	 * Retrieved the the specified image from the specified plugin. Image is
 	 * cached in the plugin {@link ImageRegistry} the specified
 	 * <code>imagePath</code> is used as the registry key.
-	 * 
+	 *
 	 * @param plugin
 	 * @param imagePath
 	 * @return

@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.debug.ui;
 
@@ -317,7 +316,7 @@ public abstract class ScriptDebugModelPresentation extends LabelProvider
 
 	private static String retrieveStackFrameLine(IScriptStackFrame frame,
 			final IDocument document)
-					throws BadLocationException, DebugException {
+			throws BadLocationException, DebugException {
 		if (frame.getBeginLine() > 0 && frame.getEndLine() > 0) {
 			final IRegion region = document
 					.getLineInformation(frame.getBeginLine() - 1);
@@ -426,12 +425,10 @@ public abstract class ScriptDebugModelPresentation extends LabelProvider
 	private String getVariableDetail(IScriptValue value) {
 		final String[] detail = new String[1];
 		final Object lock = new Object();
-		computeDetail(value, new IValueDetailListener() {
-			public void detailComputed(IValue computedValue, String result) {
-				synchronized (lock) {
-					detail[0] = result;
-					lock.notifyAll();
-				}
+		computeDetail(value, (computedValue, result) -> {
+			synchronized (lock) {
+				detail[0] = result;
+				lock.notifyAll();
 			}
 		});
 		synchronized (lock) {
@@ -508,7 +505,7 @@ public abstract class ScriptDebugModelPresentation extends LabelProvider
 				/*
 				 * TODO: Uncomment this comment when add support for caught and
 				 * uncaught exceptions
-				 * 
+				 *
 				 * String state; boolean c= b.isCaught(); boolean u=
 				 * b.isUncaught(); if (c && u) { state= "caught and uncaught"; }
 				 * else if (c) { state= "caught"; } else if (u) { state=
@@ -564,6 +561,7 @@ public abstract class ScriptDebugModelPresentation extends LabelProvider
 		return type.getName();
 	}
 
+	@Override
 	public final String getText(Object element) {
 		if (element instanceof IScriptDebugTarget) {
 			return getDebugTargetText((IScriptDebugTarget) element);
@@ -587,6 +585,7 @@ public abstract class ScriptDebugModelPresentation extends LabelProvider
 	}
 
 	// Details
+	@Override
 	public void computeDetail(IValue value, IValueDetailListener listener) {
 		if (value instanceof IScriptValue) {
 			IScriptDebugTarget target = (IScriptDebugTarget) value
@@ -606,6 +605,7 @@ public abstract class ScriptDebugModelPresentation extends LabelProvider
 		}
 	}
 
+	@Override
 	public void setAttribute(String id, Object value) {
 		if (value == null) {
 			return;
@@ -650,6 +650,7 @@ public abstract class ScriptDebugModelPresentation extends LabelProvider
 		return null;
 	}
 
+	@Override
 	public Image getImage(Object element) {
 		if (element instanceof IScriptBreakpoint) {
 			return getBreakpointImage((IScriptBreakpoint) element);
@@ -665,6 +666,7 @@ public abstract class ScriptDebugModelPresentation extends LabelProvider
 	}
 
 	// Editor
+	@Override
 	public IEditorInput getEditorInput(Object element) {
 		if (element instanceof IFileHandle) {
 			return new ExternalFileEditorInput((IFileHandle) element);
@@ -715,5 +717,6 @@ public abstract class ScriptDebugModelPresentation extends LabelProvider
 		return null;
 	}
 
+	@Override
 	public abstract String getEditorId(IEditorInput input, Object element);
 }

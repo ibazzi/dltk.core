@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,9 +29,7 @@ import org.eclipse.dltk.ui.viewsupport.ScriptUILabelProvider;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -50,7 +48,7 @@ public class MembersView extends ScriptBrowsingPart implements
 	// private MemberFilterActionGroup fMemberFilterActionGroup;
 	/**
 	 * Category filter action group.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	// private CategoryFilterActionGroup fCategoryFilterActionGroup;
@@ -65,20 +63,14 @@ public class MembersView extends ScriptBrowsingPart implements
 	@Override
 	public <T> T getAdapter(Class<T> key) {
 		if (key == IShowInTargetList.class) {
-			return (T) new IShowInTargetList() {
-				@Override
-				public String[] getShowInTargetIds() {
-					return new String[] { DLTKUIPlugin.ID_SCRIPTEXPLORER };
-				}
-
-			};
+			return (T) (IShowInTargetList) () -> new String[] { DLTKUIPlugin.ID_SCRIPTEXPLORER };
 		}
 		return super.getAdapter(key);
 	}
 
 	/**
 	 * Creates and returns the label provider for this part.
-	 * 
+	 *
 	 * @return the label provider
 	 * @see org.eclipse.jface.viewers.ILabelProvider
 	 */
@@ -95,7 +87,7 @@ public class MembersView extends ScriptBrowsingPart implements
 
 	/**
 	 * Returns the context ID for the Help system
-	 * 
+	 *
 	 * @return the string used as ID for the Help context
 	 */
 	@Override
@@ -109,13 +101,6 @@ public class MembersView extends ScriptBrowsingPart implements
 		return PreferenceConstants.LINK_BROWSING_MEMBERS_TO_EDITOR;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jdt.internal.ui.browsing.JavaBrowsingPart#createViewer(org
-	 * .eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
 		ProblemTreeViewer viewer = new ProblemTreeViewer(parent, SWT.MULTI);
@@ -137,7 +122,7 @@ public class MembersView extends ScriptBrowsingPart implements
 	 * @see
 	 * org.eclipse.jdt.internal.ui.browsing.JavaBrowsingPart#fillActionBars(
 	 * org.eclipse.ui.IActionBars)
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	@Override
@@ -154,7 +139,7 @@ public class MembersView extends ScriptBrowsingPart implements
 	 * @see
 	 * org.eclipse.jdt.internal.ui.browsing.JavaBrowsingPart#setInput(java.lang
 	 * .Object)
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	@Override
@@ -165,16 +150,9 @@ public class MembersView extends ScriptBrowsingPart implements
 		// .setInput(getCategoryFilterActionGroupInput());
 	}
 
-	private IModelElement[] getCategoryFilterActionGroupInput() {
-		Object input = getInput();
-		if (input instanceof IModelElement)
-			return new IModelElement[] { (IModelElement) input };
-		return new IModelElement[0];
-	}
-
 	/**
 	 * Answers if the given <code>element</code> is a valid input for this part.
-	 * 
+	 *
 	 * @param element
 	 *            the object to test
 	 * @return <true> if the given element is a valid input
@@ -246,7 +224,7 @@ public class MembersView extends ScriptBrowsingPart implements
 	/**
 	 * Answers if the given <code>element</code> is a valid element for this
 	 * part.
-	 * 
+	 *
 	 * @param element
 	 *            the object to test
 	 * @return <true> if the given element is a valid element
@@ -261,7 +239,7 @@ public class MembersView extends ScriptBrowsingPart implements
 
 	/**
 	 * Finds the element which has to be selected in this part.
-	 * 
+	 *
 	 * @param je
 	 *            the Java element which has the focus
 	 * @return the element to select
@@ -288,7 +266,7 @@ public class MembersView extends ScriptBrowsingPart implements
 	/**
 	 * Finds the closest Java element which can be used as input for this part
 	 * and has the given Java element as child.
-	 * 
+	 *
 	 * @param je
 	 *            the Java element for which to search the closest input
 	 * @return the closest Java element used as input for this part, or
@@ -314,9 +292,6 @@ public class MembersView extends ScriptBrowsingPart implements
 		}
 	}
 
-	/*
-	 * Implements method from IViewPart.
-	 */
 	@Override
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
@@ -335,16 +310,13 @@ public class MembersView extends ScriptBrowsingPart implements
 	@Override
 	protected void hookViewerListeners() {
 		super.hookViewerListeners();
-		getViewer().addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				TreeViewer viewer = (TreeViewer) getViewer();
-				Object element = ((IStructuredSelection) event.getSelection())
-						.getFirstElement();
-				if (viewer.isExpandable(element))
-					viewer.setExpandedState(element, !viewer
-							.getExpandedState(element));
-			}
+		getViewer().addDoubleClickListener(event -> {
+			TreeViewer viewer = (TreeViewer) getViewer();
+			Object element = ((IStructuredSelection) event.getSelection())
+					.getFirstElement();
+			if (viewer.isExpandable(element))
+				viewer.setExpandedState(element, !viewer
+						.getExpandedState(element));
 		});
 	}
 
@@ -366,13 +338,6 @@ public class MembersView extends ScriptBrowsingPart implements
 			setSelectionFromEditor(editor);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse
-	 * .jface.util.PropertyChangeEvent)
-	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (MembersOrderPreferenceCache.isMemberOrderProperty(event
@@ -381,9 +346,6 @@ public class MembersView extends ScriptBrowsingPart implements
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jdt.internal.ui.browsing.JavaBrowsingPart#dispose()
-	 */
 	@Override
 	public void dispose() {
 		// if (fMemberFilterActionGroup != null) {

@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.corext.refactoring.changes;
 
@@ -52,6 +51,7 @@ public class RenameScriptFolderChange extends AbstractModelElementRenameChange {
 		fRenameSubpackages= renameSubpackages;
 	}
 	
+	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
 		RefactoringStatus result= new RefactoringStatus();
 		IModelElement element= (IModelElement)getModifiedElement();
@@ -93,6 +93,7 @@ public class RenameScriptFolderChange extends AbstractModelElementRenameChange {
 		pm.done();
 	}
 
+	@Override
 	protected IPath createNewPath() {
 		IScriptFolder oldPackage= getPackage();
 		IPath oldPackageName= createPath(oldPackage.getElementName());
@@ -114,6 +115,7 @@ public class RenameScriptFolderChange extends AbstractModelElementRenameChange {
 		return getNewName() + subpackage.getElementName().substring(getOldName().length());
 	}
 
+	@Override
 	public String getName() {
 		String msg= fRenameSubpackages
 				? RefactoringCoreMessages.RenamePackageChange_name_with_subpackages
@@ -121,6 +123,7 @@ public class RenameScriptFolderChange extends AbstractModelElementRenameChange {
 		return Messages.format(msg, new String[]{getOldName(), getNewName()});
 	}
 
+	@Override
 	protected Change createUndoChange(long stampToRestore) throws CoreException {
 		IScriptFolder pack= getPackage();
 		if (pack == null)
@@ -149,6 +152,7 @@ public class RenameScriptFolderChange extends AbstractModelElementRenameChange {
 		}
 	}
 
+	@Override
 	protected void doRename(IProgressMonitor pm) throws CoreException {
 		IScriptFolder pack= getPackage();
 		if (pack == null)

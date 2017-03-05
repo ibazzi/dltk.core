@@ -1,16 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.dltk.debug.ui.actions;
 
- 
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IMarker;
@@ -26,7 +25,6 @@ import org.eclipse.dltk.ui.util.ExceptionHandler;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPart;
@@ -34,33 +32,30 @@ import org.eclipse.ui.IWorkbenchPart;
 /**
  * Provides a general toggle action for breakpoints to reuse
  */
-public abstract class BreakpointToggleAction implements IObjectActionDelegate, IBreakpointsListener, IPartListener {
-	
+public abstract class BreakpointToggleAction
+		implements IObjectActionDelegate, IBreakpointsListener, IPartListener {
+
 	private IStructuredSelection fSelection;
 	private IAction fAction;
 	private IWorkbenchPart fPart;
 
-	/**
-	 * @see IActionDelegate#run(IAction)
-	 */
+	@Override
 	public void run(IAction action) {
-		IStructuredSelection selection= getStructuredSelection();
-		Iterator itr= selection.iterator();
+		IStructuredSelection selection = getStructuredSelection();
+		Iterator itr = selection.iterator();
 		while (itr.hasNext()) {
 			try {
-				IScriptBreakpoint breakpoint= (IScriptBreakpoint) itr.next();
+				IScriptBreakpoint breakpoint = (IScriptBreakpoint) itr.next();
 				doAction(breakpoint);
 			} catch (CoreException e) {
-				String title= ActionMessages.BreakpointAction_Breakpoint_configuration_1; 
-				String message= ActionMessages.BreakpointAction_Exceptions_occurred_attempting_to_modify_breakpoint__2; 
+				String title = ActionMessages.BreakpointAction_Breakpoint_configuration_1;
+				String message = ActionMessages.BreakpointAction_Exceptions_occurred_attempting_to_modify_breakpoint__2;
 				ExceptionHandler.handle(e, title, message);
-			}			
+			}
 		}
 	}
 
-	/**
-	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
-	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		setAction(action);
 		if (selection.isEmpty()) {
@@ -68,14 +63,16 @@ public abstract class BreakpointToggleAction implements IObjectActionDelegate, I
 			return;
 		}
 		if (selection instanceof IStructuredSelection) {
-			setStructuredSelection((IStructuredSelection)selection);
+			setStructuredSelection((IStructuredSelection) selection);
 			boolean enabled = isEnabledFor(getStructuredSelection());
 			action.setEnabled(enabled);
 			if (enabled && isToggleAction()) {
-				IBreakpoint breakpoint = (IBreakpoint)getStructuredSelection().getFirstElement();
+				IBreakpoint breakpoint = (IBreakpoint) getStructuredSelection()
+						.getFirstElement();
 				if (breakpoint instanceof IScriptBreakpoint) {
 					try {
-						action.setChecked(getToggleState((IScriptBreakpoint) breakpoint));
+						action.setChecked(
+								getToggleState((IScriptBreakpoint) breakpoint));
 					} catch (CoreException e) {
 						DLTKDebugPlugin.log(e);
 					}
@@ -85,44 +82,53 @@ public abstract class BreakpointToggleAction implements IObjectActionDelegate, I
 	}
 
 	/**
-	 * Returns if the action is a checkable action. i.e. if we should bother updating checked state
-	 * @return if the action is a checkable action
+	 * Returns if the action is a checkable action. i.e. if we should bother
+	 * updating checked state
 	 * 
+	 * @return if the action is a checkable action
+	 *
 	 * @since 3.3
 	 */
 	protected boolean isToggleAction() {
 		return true;
 	}
-	
+
 	/**
 	 * Toggle the state of this action
 	 */
-	public abstract void doAction(IScriptBreakpoint breakpoint) throws CoreException;
-	
+	public abstract void doAction(IScriptBreakpoint breakpoint)
+			throws CoreException;
+
 	/**
 	 * Returns whether this action is currently toggled on
 	 */
-	protected abstract boolean getToggleState(IScriptBreakpoint breakpoint) throws CoreException;
-	
+	protected abstract boolean getToggleState(IScriptBreakpoint breakpoint)
+			throws CoreException;
+
 	/**
 	 * Get the current selection
 	 */
 	protected IStructuredSelection getStructuredSelection() {
 		return fSelection;
 	}
-	
+
 	/**
 	 * Allows the current structured selection to be set
-	 * @param selection the new selection
+	 * 
+	 * @param selection
+	 *            the new selection
 	 */
 	protected void setStructuredSelection(IStructuredSelection selection) {
-		fSelection= selection;
+		fSelection = selection;
 	}
-	
+
 	/**
-	 * Returns if the underlying action should be enabled for the given selection
+	 * Returns if the underlying action should be enabled for the given
+	 * selection
+	 * 
 	 * @param selection
-	 * @return if the underlying action should be enabled for the given selection
+	 * @return if the underlying action should be enabled for the given
+	 *         selection
 	 */
 	public abstract boolean isEnabledFor(IStructuredSelection selection);
 
@@ -130,9 +136,9 @@ public abstract class BreakpointToggleAction implements IObjectActionDelegate, I
 	 * Get the breakpoint manager for the debug plugin
 	 */
 	protected IBreakpointManager getBreakpointManager() {
-		return DebugPlugin.getDefault().getBreakpointManager();		
+		return DebugPlugin.getDefault().getBreakpointManager();
 	}
-	
+
 	/**
 	 * Get the breakpoint associated with the given marker
 	 */
@@ -142,6 +148,7 @@ public abstract class BreakpointToggleAction implements IObjectActionDelegate, I
 
 	/**
 	 * Returns the underlying <code>IAction</code> for this delegate
+	 * 
 	 * @return the underlying <code>IAction</code> for this delegate
 	 */
 	protected IAction getAction() {
@@ -150,26 +157,26 @@ public abstract class BreakpointToggleAction implements IObjectActionDelegate, I
 
 	/**
 	 * Allows the underlying <code>IAction</code> for this delegate to be set
-	 * @param action the new action to set for this delegate
+	 * 
+	 * @param action
+	 *            the new action to set for this delegate
 	 */
 	protected void setAction(IAction action) {
 		fAction = action;
 	}
-	
-	/**
-	 * @see IBreakpointsListener#breakpointsAdded(IBreakpoint[])
-	 */
+
+	@Override
 	public void breakpointsAdded(IBreakpoint[] breakpoints) {
 	}
 
-	/**
-	 * @see IBreakpointsListener#breakpointsChanged(IBreakpoint[], IMarkerDelta[])
-	 */
-	public void breakpointsChanged(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
+	@Override
+	public void breakpointsChanged(IBreakpoint[] breakpoints,
+			IMarkerDelta[] deltas) {
 		if (getAction() != null) {
-			IStructuredSelection selection= getStructuredSelection();
+			IStructuredSelection selection = getStructuredSelection();
 			if (selection != null) {
-				IBreakpoint selectedBreakpoint= (IBreakpoint)selection.getFirstElement();
+				IBreakpoint selectedBreakpoint = (IBreakpoint) selection
+						.getFirstElement();
 				for (int i = 0; i < breakpoints.length; i++) {
 					IBreakpoint breakpoint = breakpoints[i];
 					if (selectedBreakpoint.equals(breakpoint)) {
@@ -177,18 +184,18 @@ public abstract class BreakpointToggleAction implements IObjectActionDelegate, I
 						return;
 					}
 				}
-			}			
+			}
 		}
 	}
 
-	/**
-	 * @see IBreakpointsListener#breakpointsRemoved(IBreakpoint[], IMarkerDelta[])
-	 */
-	public void breakpointsRemoved(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
+	@Override
+	public void breakpointsRemoved(IBreakpoint[] breakpoints,
+			IMarkerDelta[] deltas) {
 	}
-	
+
 	/**
 	 * Returns the <code>IWorkbenchPart</code> this delegate is associated with
+	 * 
 	 * @return the <code>IWorkbenchPart</code> this delegate is associated with
 	 */
 	protected IWorkbenchPart getPart() {
@@ -197,27 +204,23 @@ public abstract class BreakpointToggleAction implements IObjectActionDelegate, I
 
 	/**
 	 * Allows the <code>IWorkbenchPart</code> to be set for this delegate
-	 * @param part the new part to set
+	 * 
+	 * @param part
+	 *            the new part to set
 	 */
 	protected void setPart(IWorkbenchPart part) {
 		fPart = part;
 	}
-	
-	/**
-	 * @see IPartListener#partActivated(IWorkbenchPart)
-	 */
+
+	@Override
 	public void partActivated(IWorkbenchPart part) {
 	}
 
-	/**
-	 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
-	 */
+	@Override
 	public void partBroughtToTop(IWorkbenchPart part) {
 	}
 
-	/**
-	 * @see IPartListener#partClosed(IWorkbenchPart)
-	 */
+	@Override
 	public void partClosed(IWorkbenchPart part) {
 		if (part == getPart()) {
 			getBreakpointManager().removeBreakpointListener(this);
@@ -225,30 +228,23 @@ public abstract class BreakpointToggleAction implements IObjectActionDelegate, I
 		}
 	}
 
-	/**
-	 * @see IPartListener#partDeactivated(IWorkbenchPart)
-	 */
+	@Override
 	public void partDeactivated(IWorkbenchPart part) {
 	}
 
-	/**
-	 * @see IPartListener#partOpened(IWorkbenchPart)
-	 */
+	@Override
 	public void partOpened(IWorkbenchPart part) {
 	}
-	
-	/**
-	 * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
-	 */
+
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-		IWorkbenchPart oldPart= getPart();
+		IWorkbenchPart oldPart = getPart();
 		if (oldPart != null) {
-			getPart().getSite().getPage().removePartListener(this);			
-		}	
-		
+			getPart().getSite().getPage().removePartListener(this);
+		}
+
 		getBreakpointManager().addBreakpointListener(this);
 		setPart(targetPart);
-		targetPart.getSite().getPage().addPartListener(this);	
+		targetPart.getSite().getPage().addPartListener(this);
 	}
 }
-

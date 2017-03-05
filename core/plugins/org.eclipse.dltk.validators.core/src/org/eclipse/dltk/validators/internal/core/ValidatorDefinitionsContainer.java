@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -46,25 +47,24 @@ public class ValidatorDefinitionsContainer {
 
 	private static final String ATTR_ID = "id"; //$NON-NLS-1$
 
-	private final Map fValidatorsByType = new HashMap(10);
-	private final List fValidatorList = new ArrayList(10);
+	private final Map<IValidatorType, List<IValidator>> fValidatorsByType = new HashMap<>(10);
+	private final List<IValidator> fValidatorList = new ArrayList<>(10);
 
 	public void addValidator(IValidator validator) {
 		if (!fValidatorList.contains(validator)) {
 			fValidatorList.add(validator);
 			IValidatorType type = validator.getValidatorType();
-			List typeValidators = (List) fValidatorsByType.get(type);
+			List<IValidator> typeValidators = fValidatorsByType.get(type);
 			if (typeValidators == null) {
-				typeValidators = new ArrayList(3);
+				typeValidators = new ArrayList<>(3);
 				fValidatorsByType.put(type, typeValidators);
 			}
 			typeValidators.add(validator);
 		}
 	}
 
-	public void addValidators(List validatorList) {
-		for (Iterator i = validatorList.iterator(); i.hasNext();) {
-			final IValidator validator = (IValidator) i.next();
+	public void addValidators(List<IValidator> validatorList) {
+		for (IValidator validator : validatorList) {
 			addValidator(validator);
 		}
 	}
@@ -77,36 +77,35 @@ public class ValidatorDefinitionsContainer {
 
 	/**
 	 * Returns unmodifiable list of all {@link IValidator}s
-	 * 
+	 *
 	 * @return
 	 */
-	public List getValidatorList() {
+	public List<IValidator> getValidatorList() {
 		return Collections.unmodifiableList(fValidatorList);
 	}
 
 	/**
 	 * Returns unmodifiable list of {@link IValidator}s of the specified nature,
 	 * validators contributed to all natures are also returned.
-	 * 
+	 *
 	 * @param nature
 	 * @return
 	 */
-	public List getValidatorList(String nature) {
-		final List result = new ArrayList(fValidatorList.size());
-		for (Iterator i = fValidatorsByType.entrySet().iterator(); i.hasNext();) {
-			final Map.Entry entry = (Map.Entry) i.next();
-			final IValidatorType type = (IValidatorType) entry.getKey();
+	public List<IValidator> getValidatorList(String nature) {
+		final List<IValidator> result = new ArrayList<>(fValidatorList.size());
+		for (Iterator<Entry<IValidatorType, List<IValidator>>> i = fValidatorsByType.entrySet().iterator(); i
+				.hasNext();) {
+			final Entry<IValidatorType, List<IValidator>> entry = i.next();
+			final IValidatorType type = entry.getKey();
 			final String typeNature = type.getNature();
-			if (nature.equals(typeNature)
-					|| ValidatorRuntime.ANY_NATURE.equals(typeNature)) {
-				result.addAll((List) entry.getValue());
+			if (nature.equals(typeNature) || ValidatorRuntime.ANY_NATURE.equals(typeNature)) {
+				result.addAll(entry.getValue());
 			}
 		}
 		return Collections.unmodifiableList(result);
 	}
 
-	public String getAsXML() throws ParserConfigurationException, IOException,
-			TransformerException {
+	public String getAsXML() throws ParserConfigurationException, IOException, TransformerException {
 
 		// Create the Document and the top-level node
 		Document doc = ValidatorsCore.getDocument();
@@ -114,13 +113,12 @@ public class ValidatorDefinitionsContainer {
 		doc.appendChild(config);
 
 		// Create a node for each validator type represented in this container
-		for (Iterator i = fValidatorsByType.entrySet().iterator(); i.hasNext();) {
-			final Map.Entry entry = (Map.Entry) i.next();
-			final IValidatorType validatorType = (IValidatorType) entry
-					.getKey();
+		for (Iterator<Entry<IValidatorType, List<IValidator>>> i = fValidatorsByType.entrySet().iterator(); i
+				.hasNext();) {
+			final Entry<IValidatorType, List<IValidator>> entry = i.next();
+			final IValidatorType validatorType = entry.getKey();
 			if (validatorType.isConfigurable()) {
-				Element valiatorTypeElement = validatorTypeAsElement(doc,
-						validatorType, (List) entry.getValue());
+				Element valiatorTypeElement = validatorTypeAsElement(doc, validatorType, entry.getValue());
 				config.appendChild(valiatorTypeElement);
 			}
 		}
@@ -129,8 +127,7 @@ public class ValidatorDefinitionsContainer {
 		return ValidatorsCore.serializeDocument(doc);
 	}
 
-	private Element validatorTypeAsElement(Document doc,
-			IValidatorType validatorType, List validatorList) {
+	private Element validatorTypeAsElement(Document doc, IValidatorType validatorType, List<IValidator> validatorList) {
 
 		// Create a node for the Interpreter type and set its 'id' attribute
 		Element element = doc.createElement(NODE_VALIDATOR_TYPE);
@@ -138,8 +135,8 @@ public class ValidatorDefinitionsContainer {
 
 		// For each validator of the specified type, create a subordinate node
 		// for it
-		for (Iterator i = validatorList.iterator(); i.hasNext();) {
-			IValidator validator = (IValidator) i.next();
+		for (Iterator<IValidator> i = validatorList.iterator(); i.hasNext();) {
+			IValidator validator = i.next();
 			Element validatorElement = validatorAsElement(doc, validator);
 			element.appendChild(validatorElement);
 		}
@@ -157,8 +154,7 @@ public class ValidatorDefinitionsContainer {
 		return element;
 	}
 
-	public static ValidatorDefinitionsContainer createFromXML(Reader input)
-			throws IOException {
+	public static ValidatorDefinitionsContainer createFromXML(Reader input) throws IOException {
 		ValidatorDefinitionsContainer container = new ValidatorDefinitionsContainer();
 		container.parseXML(new InputSource(input));
 		return container;
@@ -169,8 +165,7 @@ public class ValidatorDefinitionsContainer {
 		// Do the parsing and obtain the top-level node
 		Element config = null;
 		try {
-			DocumentBuilder parser = DocumentBuilderFactory.newInstance()
-					.newDocumentBuilder();
+			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			parser.setErrorHandler(new DefaultHandler());
 			config = parser.parse(input).getDocumentElement();
 		} catch (SAXException e) {
@@ -193,8 +188,7 @@ public class ValidatorDefinitionsContainer {
 			short type = node.getNodeType();
 			if (type == Node.ELEMENT_NODE) {
 				Element validatorTypeElement = (Element) node;
-				if (validatorTypeElement.getNodeName().equalsIgnoreCase(
-						NODE_VALIDATOR_TYPE)) {
+				if (validatorTypeElement.getNodeName().equalsIgnoreCase(NODE_VALIDATOR_TYPE)) {
 					populateValidatorType(validatorTypeElement);
 				}
 			}
@@ -210,8 +204,7 @@ public class ValidatorDefinitionsContainer {
 		// Retrieve the 'id' attribute and the corresponding Interpreter type
 		// object
 		String id = validatorTypeElement.getAttribute(ATTR_ID);
-		IValidatorType validatorType = ValidatorManager
-				.getValidatorTypeFromID(id);
+		IValidatorType validatorType = ValidatorManager.getValidatorTypeFromID(id);
 		if (validatorType != null) {
 
 			// For each validator child node, populate the container with a
@@ -222,8 +215,7 @@ public class ValidatorDefinitionsContainer {
 				short type = childNode.getNodeType();
 				if (type == Node.ELEMENT_NODE) {
 					Element validatorElement = (Element) childNode;
-					if (validatorElement.getNodeName().equalsIgnoreCase(
-							NODE_VALIDATOR)) {
+					if (validatorElement.getNodeName().equalsIgnoreCase(NODE_VALIDATOR)) {
 						populateValidator(validatorType, validatorElement);
 					}
 				}
@@ -260,21 +252,20 @@ public class ValidatorDefinitionsContainer {
 			}
 		} else {
 			if (DLTKCore.DEBUG) {
-				System.err
-						.println("id attribute missing from validator element specification."); //$NON-NLS-1$
+				System.err.println("id attribute missing from validator element specification."); //$NON-NLS-1$
 			}
 		}
 	}
 
 	/**
 	 * Removes the specified {@link IValidator} from this container.
-	 * 
+	 *
 	 * @param validator
 	 *            validator instance
 	 */
 	public void removeValidator(IValidator validator) {
 		fValidatorList.remove(validator);
-		List list = (List) fValidatorsByType.get(validator.getValidatorType());
+		List<IValidator> list = fValidatorsByType.get(validator.getValidatorType());
 		if (list != null) {
 			list.remove(validator);
 		}

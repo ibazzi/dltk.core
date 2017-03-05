@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.core.tests;
 
@@ -33,52 +32,20 @@ import org.eclipse.dltk.core.tests.utils.CharOperationTests;
 import org.eclipse.dltk.core.tests.utils.IntListTests;
 import org.eclipse.dltk.core.tests.utils.InternalCoreUtilTest;
 import org.eclipse.dltk.core.tests.utils.TextUtilsTest;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-import junit.framework.JUnit4TestAdapter;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ BuildParticipantManagerTests.class, BuildpathTests.class,
+		UserLibraryTests.class, CacheTests.class, CompilerUtilTests.class,
+		CompilerCharOperationTests.class, IntListTests.class,
+		CoreDDPTests.class, EnvironmentResolverTests.class,
+		InterpreterConfigTests.class, MixinIndexTests.class,
+		MixinModelTests.class, BufferTests.class, ModelMembersTests.class,
+		NamespaceTests.class, WorkingCopyTests.class,
+		ExternalFragmentTests.class, SourceParserTests.class,
+		CharacterStackTests.class, CharOperationTests.class,
+		InternalCoreUtilTest.class, TextUtilsTest.class, Bug387751Test.class,
+		SourceModuleInfoCacheTest.class, SetContainerEventsTest.class })
 public class AllTests {
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite("org.eclipse.dltk.core.tests.model");
-		// $JUnit-BEGIN$
-		suite.addTest(new TestSuite(BuildParticipantManagerTests.class));
-		suite.addTest(BuildpathTests.suite());
-
-		suite.addTest(new TestSuite(UserLibraryTests.class));
-
-		suite.addTest(new TestSuite(CacheTests.class));
-
-		suite.addTest(new TestSuite(CompilerUtilTests.class));
-		suite.addTest(new TestSuite(CompilerCharOperationTests.class));
-		suite.addTestSuite(IntListTests.class);
-
-		suite.addTest(CoreDDPTests.suite());
-
-		suite.addTest(EnvironmentResolverTests.suite());
-		suite.addTest(InterpreterConfigTests.suite());
-
-		suite.addTest(new TestSuite(MixinIndexTests.class));
-		suite.addTest(new TestSuite(MixinModelTests.class));
-
-		suite.addTest(BufferTests.suite());
-		suite.addTest(ModelMembersTests.suite());
-		suite.addTestSuite(NamespaceTests.class);
-		suite.addTest(WorkingCopyTests.suite());
-		suite.addTestSuite(ExternalFragmentTests.class);
-
-		suite.addTest(new TestSuite(SourceParserTests.class));
-
-		suite.addTestSuite(CharacterStackTests.class);
-
-		suite.addTest(CharOperationTests.suite());
-		suite.addTest(new TestSuite(InternalCoreUtilTest.class));
-		suite.addTest(TextUtilsTest.suite());
-		suite.addTest(new JUnit4TestAdapter(Bug387751Test.class));
-		suite.addTest(new JUnit4TestAdapter(SourceModuleInfoCacheTest.class));
-		suite.addTest(new JUnit4TestAdapter(SetContainerEventsTest.class));
-		// $JUnit-END$
-		return suite;
-	}
 }

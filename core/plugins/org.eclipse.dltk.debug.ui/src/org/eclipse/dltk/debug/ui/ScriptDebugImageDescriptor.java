@@ -6,164 +6,162 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 
 /**
- * A JDIImageDescriptor consists of a main icon and several adornments. The adornments
- * are computed according to flags set on creation of the descriptor.
+ * A JDIImageDescriptor consists of a main icon and several adornments. The
+ * adornments are computed according to flags set on creation of the descriptor.
  */
 public class ScriptDebugImageDescriptor extends CompositeImageDescriptor {
-	
+
 	/** Flag to render the is out of synch adornment */
-	public final static int IS_OUT_OF_SYNCH= 			0x0001;
+	public final static int IS_OUT_OF_SYNCH = 0x0001;
 	/** Flag to render the may be out of synch adornment */
-	public final static int MAY_BE_OUT_OF_SYNCH= 		0x0002;
+	public final static int MAY_BE_OUT_OF_SYNCH = 0x0002;
 	/** Flag to render the installed breakpoint adornment */
-	public final static int INSTALLED= 					0x0004;
+	public final static int INSTALLED = 0x0004;
 	/** Flag to render the entry method breakpoint adornment */
-	public final static int ENTRY=				 		0x0008;
+	public final static int ENTRY = 0x0008;
 	/** Flag to render the exit method breakpoint adornment */
-	public final static int EXIT=				 		0x0010;
+	public final static int EXIT = 0x0010;
 	/** Flag to render the enabled breakpoint adornment */
-	public final static int ENABLED=						0x0020;
+	public final static int ENABLED = 0x0020;
 	/** Flag to render the conditional breakpoint adornment */
-	public final static int CONDITIONAL=					0x0040;
+	public final static int CONDITIONAL = 0x0040;
 	/** Flag to render the caught breakpoint adornment */
-	public final static int CAUGHT=						0x0080;
+	public final static int CAUGHT = 0x0080;
 	/** Flag to render the uncaught breakpoint adornment */
-	public final static int UNCAUGHT=					0x0100;
+	public final static int UNCAUGHT = 0x0100;
 	/** Flag to render the scoped breakpoint adornment */
-	public final static int SCOPED=						0x0200;
-	
+	public final static int SCOPED = 0x0200;
+
 	/** Flag to render the owning a monitor thread adornment */
-	public final static int OWNS_MONITOR=				0x0400;
+	public final static int OWNS_MONITOR = 0x0400;
 	/** Flag to render the owned monitor adornment */
-	public final static int OWNED_MONITOR=				0x0800;
+	public final static int OWNED_MONITOR = 0x0800;
 	/** Flag to render the in contention monitor adornment */
-	public final static int CONTENTED_MONITOR=			0x1000;
+	public final static int CONTENTED_MONITOR = 0x1000;
 	/** Flag to render the in contention for monitor thread adornment */
-	public final static int IN_CONTENTION_FOR_MONITOR=	0x2000;
+	public final static int IN_CONTENTION_FOR_MONITOR = 0x2000;
 	/** Flag to render the in deadlock adornment */
-	public final static int IN_DEADLOCK= 				0x8000;
-	
+	public final static int IN_DEADLOCK = 0x8000;
+
 	/** Flag to render the synchronized stack frame adornment */
-	public final static int SYNCHRONIZED=				0x4000;
+	public final static int SYNCHRONIZED = 0x4000;
 
 	private ImageDescriptor fBaseImage;
 	private int fFlags;
 	private Point fSize;
-	
+
 	/**
 	 * Create a new JDIImageDescriptor.
-	 * 
-	 * @param baseImage an image descriptor used as the base image
-	 * @param flags flags indicating which adornments are to be rendered
-	 * 
+	 *
+	 * @param baseImage
+	 *            an image descriptor used as the base image
+	 * @param flags
+	 *            flags indicating which adornments are to be rendered
+	 *
 	 */
 	public ScriptDebugImageDescriptor(ImageDescriptor baseImage, int flags) {
 		setBaseImage(baseImage);
 		setFlags(flags);
 	}
-	
-	/**
-	 * @see CompositeImageDescriptor#getSize()
-	 */
+
+	@Override
 	protected Point getSize() {
 		if (fSize == null) {
-			ImageData data= getBaseImage().getImageData();
+			ImageData data = getBaseImage().getImageData();
 			setSize(new Point(data.width, data.height));
 		}
 		return fSize;
 	}
-	
-	/**
-	 * @see Object#equals(java.lang.Object)
-	 */
+
+	@Override
 	public boolean equals(Object object) {
-		if (!(object instanceof ScriptDebugImageDescriptor)){
+		if (!(object instanceof ScriptDebugImageDescriptor)) {
 			return false;
 		}
-			
-		ScriptDebugImageDescriptor other= (ScriptDebugImageDescriptor)object;
-		return (getBaseImage().equals(other.getBaseImage()) && getFlags() == other.getFlags());
+
+		ScriptDebugImageDescriptor other = (ScriptDebugImageDescriptor) object;
+		return (getBaseImage().equals(other.getBaseImage())
+				&& getFlags() == other.getFlags());
 	}
-	
-	/**
-	 * @see Object#hashCode()
-	 */
+
+	@Override
 	public int hashCode() {
 		return getBaseImage().hashCode() | getFlags();
 	}
-	
-	/**
-	 * @see CompositeImageDescriptor#drawCompositeImage(int, int)
-	 */
+
+	@Override
 	protected void drawCompositeImage(int width, int height) {
-		ImageData bg= getBaseImage().getImageData();
+		ImageData bg = getBaseImage().getImageData();
 		if (bg == null) {
-			bg= DEFAULT_IMAGE_DATA;
+			bg = DEFAULT_IMAGE_DATA;
 		}
 		drawImage(bg, 0, 0);
 		drawOverlays();
 	}
 
 	private ImageData getImageData(String imageDescriptorKey) {
-		return ScriptDebugImages.getImageDescriptor(imageDescriptorKey).getImageData();
+		return ScriptDebugImages.getImageDescriptor(imageDescriptorKey)
+				.getImageData();
 	}
+
 	/**
 	 * Add any overlays to the image as specified in the flags.
 	 */
 	protected void drawOverlays() {
-		int flags= getFlags();
-		int x= 0;
-		int y= 0;
-		ImageData data= null;
+		int flags = getFlags();
+		int x = 0;
+		int y = 0;
+		ImageData data = null;
 		if ((flags & IS_OUT_OF_SYNCH) != 0) {
-			x= getSize().x;
-			y= 0;
-			data= getImageData(ScriptDebugImages.IMG_OVR_OUT_OF_SYNCH);
+			x = getSize().x;
+			y = 0;
+			data = getImageData(ScriptDebugImages.IMG_OVR_OUT_OF_SYNCH);
 			x -= data.width;
 			drawImage(data, x, y);
 		} else if ((flags & MAY_BE_OUT_OF_SYNCH) != 0) {
-			x= getSize().x;
-			y= 0;
-			data= getImageData(ScriptDebugImages.IMG_OVR_MAY_BE_OUT_OF_SYNCH);
+			x = getSize().x;
+			y = 0;
+			data = getImageData(ScriptDebugImages.IMG_OVR_MAY_BE_OUT_OF_SYNCH);
 			x -= data.width;
 			drawImage(data, x, y);
 		} else if ((flags & SYNCHRONIZED) != 0) {
-			x= getSize().x;
-			y= 0;
-			data= getImageData(ScriptDebugImages.IMG_OVR_SYNCHRONIZED);
+			x = getSize().x;
+			y = 0;
+			data = getImageData(ScriptDebugImages.IMG_OVR_SYNCHRONIZED);
 			x -= data.width;
 			drawImage(data, x, y);
 		} else {
 			if ((flags & IN_DEADLOCK) != 0) {
-				x= 0;
-				y= 0;
-				data= getImageData(ScriptDebugImages.IMG_OVR_IN_DEADLOCK);
+				x = 0;
+				y = 0;
+				data = getImageData(ScriptDebugImages.IMG_OVR_IN_DEADLOCK);
 				drawImage(data, x, y);
 			}
 			if ((flags & OWNED_MONITOR) != 0) {
-				x= getSize().x;
-				y= getSize().y;
-				data= getImageData(ScriptDebugImages.IMG_OVR_OWNED);
+				x = getSize().x;
+				y = getSize().y;
+				data = getImageData(ScriptDebugImages.IMG_OVR_OWNED);
 				x -= data.width;
 				y -= data.height;
 				drawImage(data, x, y);
 			} else if ((flags & CONTENTED_MONITOR) != 0) {
-				x= getSize().x;
-				y= getSize().y;
-				data= getImageData(ScriptDebugImages.IMG_OVR_IN_CONTENTION);
+				x = getSize().x;
+				y = getSize().y;
+				data = getImageData(ScriptDebugImages.IMG_OVR_IN_CONTENTION);
 				x -= data.width;
 				y -= data.height;
 				drawImage(data, x, y);
 			} else if ((flags & OWNS_MONITOR) != 0) {
-				x= getSize().x;
-				y= 0;
-				data= getImageData(ScriptDebugImages.IMG_OVR_OWNS_MONITOR);
+				x = getSize().x;
+				y = 0;
+				data = getImageData(ScriptDebugImages.IMG_OVR_OWNS_MONITOR);
 				x -= data.width;
 				drawImage(data, x, y);
 			} else if ((flags & IN_CONTENTION_FOR_MONITOR) != 0) {
-				x= getSize().x;
-				y= 0;
-				data= getImageData(ScriptDebugImages.IMG_OVR_IN_CONTENTION_FOR_MONITOR);
+				x = getSize().x;
+				y = 0;
+				data = getImageData(
+						ScriptDebugImages.IMG_OVR_IN_CONTENTION_FOR_MONITOR);
 				x -= data.width;
 				drawImage(data, x, y);
 			} else {
@@ -171,89 +169,104 @@ public class ScriptDebugImageDescriptor extends CompositeImageDescriptor {
 			}
 		}
 	}
-	
+
 	protected void drawBreakpointOverlays() {
-		int flags= getFlags();
-		int x= 0;
-		int y= 0;
-		ImageData data= null;
+		int flags = getFlags();
+		int x = 0;
+		int y = 0;
+		ImageData data = null;
 		if ((flags & INSTALLED) != 0) {
-			x= 0;
-			y= getSize().y;
-			if ((flags & ENABLED) !=0) {
-				data= getImageData(ScriptDebugImages.IMG_OVR_BREAKPOINT_INSTALLED);
+			x = 0;
+			y = getSize().y;
+			if ((flags & ENABLED) != 0) {
+				data = getImageData(
+						ScriptDebugImages.IMG_OVR_BREAKPOINT_INSTALLED);
 			} else {
-				data= getImageData(ScriptDebugImages.IMG_OVR_BREAKPOINT_INSTALLED_DISABLED);
+				data = getImageData(
+						ScriptDebugImages.IMG_OVR_BREAKPOINT_INSTALLED_DISABLED);
 			}
-				
+
 			y -= data.height;
 			drawImage(data, x, y);
 		}
 		if ((flags & CAUGHT) != 0) {
-			if ((flags & ENABLED) !=0) {
-			data= getImageData(ScriptDebugImages.IMG_OVR_CAUGHT_BREAKPOINT);
+			if ((flags & ENABLED) != 0) {
+				data = getImageData(
+						ScriptDebugImages.IMG_OVR_CAUGHT_BREAKPOINT);
 			} else {
-				data= getImageData(ScriptDebugImages.IMG_OVR_CAUGHT_BREAKPOINT_DISABLED);
+				data = getImageData(
+						ScriptDebugImages.IMG_OVR_CAUGHT_BREAKPOINT_DISABLED);
 			}
-			x= 0;
-			y= 0;
+			x = 0;
+			y = 0;
 			drawImage(data, x, y);
 		}
 		if ((flags & UNCAUGHT) != 0) {
-			if ((flags & ENABLED) !=0) {
-				data= getImageData(ScriptDebugImages.IMG_OVR_UNCAUGHT_BREAKPOINT);
+			if ((flags & ENABLED) != 0) {
+				data = getImageData(
+						ScriptDebugImages.IMG_OVR_UNCAUGHT_BREAKPOINT);
 			} else {
-				data= getImageData(ScriptDebugImages.IMG_OVR_UNCAUGHT_BREAKPOINT_DISABLED);
+				data = getImageData(
+						ScriptDebugImages.IMG_OVR_UNCAUGHT_BREAKPOINT_DISABLED);
 			}
-			x= data.width;
-			y= data.height;
+			x = data.width;
+			y = data.height;
 			drawImage(data, x, y);
 		}
 		if ((flags & SCOPED) != 0) {
-			if ((flags & ENABLED) !=0) {
-				data= getImageData(ScriptDebugImages.IMG_OVR_SCOPED_BREAKPOINT);
+			if ((flags & ENABLED) != 0) {
+				data = getImageData(
+						ScriptDebugImages.IMG_OVR_SCOPED_BREAKPOINT);
 			} else {
-				data= getImageData(ScriptDebugImages.IMG_OVR_SCOPED_BREAKPOINT_DISABLED);
+				data = getImageData(
+						ScriptDebugImages.IMG_OVR_SCOPED_BREAKPOINT_DISABLED);
 			}
-			x= 0;
-			y= getSize().y;
-			y-= data.height;
+			x = 0;
+			y = getSize().y;
+			y -= data.height;
 			drawImage(data, x, y);
 		}
 		if ((flags & CONDITIONAL) != 0) {
-			if ((flags & ENABLED) !=0) {
-				data= getImageData(ScriptDebugImages.IMG_OVR_CONDITIONAL_BREAKPOINT);
+			if ((flags & ENABLED) != 0) {
+				data = getImageData(
+						ScriptDebugImages.IMG_OVR_CONDITIONAL_BREAKPOINT);
 			} else {
-				data= getImageData(ScriptDebugImages.IMG_OVR_CONDITIONAL_BREAKPOINT_DISABLED);
+				data = getImageData(
+						ScriptDebugImages.IMG_OVR_CONDITIONAL_BREAKPOINT_DISABLED);
 			}
-			x= 0;
-			y= 0;
+			x = 0;
+			y = 0;
 			drawImage(data, x, y);
 		}
 		if ((flags & ENTRY) != 0) {
-			x= getSize().x;
-			y= 0;
-			if ((flags & ENABLED) !=0) {
-				data= getImageData(ScriptDebugImages.IMG_OVR_METHOD_BREAKPOINT_ENTRY);
+			x = getSize().x;
+			y = 0;
+			if ((flags & ENABLED) != 0) {
+				data = getImageData(
+						ScriptDebugImages.IMG_OVR_METHOD_BREAKPOINT_ENTRY);
 			} else {
-				data= getImageData(ScriptDebugImages.IMG_OVR_METHOD_BREAKPOINT_ENTRY_DISABLED);
+				data = getImageData(
+						ScriptDebugImages.IMG_OVR_METHOD_BREAKPOINT_ENTRY_DISABLED);
 			}
 			x -= data.width;
 			drawImage(data, x, y);
 		}
-		if ((flags & EXIT)  != 0){
-			x= getSize().x;
-			y= getSize().y;
+		if ((flags & EXIT) != 0) {
+			x = getSize().x;
+			y = getSize().y;
 			if ((flags & ENABLED) != 0) {
-				data= getImageData(ScriptDebugImages.IMG_OVR_METHOD_BREAKPOINT_EXIT);
+				data = getImageData(
+						ScriptDebugImages.IMG_OVR_METHOD_BREAKPOINT_EXIT);
 			} else {
-				data= getImageData(ScriptDebugImages.IMG_OVR_METHOD_BREAKPOINT_EXIT_DISABLED);
+				data = getImageData(
+						ScriptDebugImages.IMG_OVR_METHOD_BREAKPOINT_EXIT_DISABLED);
 			}
 			x -= data.width;
 			y -= data.height;
 			drawImage(data, x, y);
 		}
 	}
+
 	protected ImageDescriptor getBaseImage() {
 		return fBaseImage;
 	}

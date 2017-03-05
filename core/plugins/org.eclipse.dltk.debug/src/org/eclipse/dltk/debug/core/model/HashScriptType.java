@@ -14,6 +14,7 @@ public class HashScriptType extends CollectionScriptType {
 		super(HASH);
 	}
 
+	@Override
 	protected String buildDetailString(IVariable variable)
 			throws DebugException {
 		StringBuffer sb = new StringBuffer();
@@ -25,17 +26,19 @@ public class HashScriptType extends CollectionScriptType {
 		return sb.toString();
 	}
 
+	@Override
 	protected char getCloseBrace() {
 		return '}';
 	}
 
+	@Override
 	protected char getOpenBrace() {
 		return '{';
 	}
 
 	/**
 	 * Returns the variable name (key) for the hash element.
-	 * 
+	 *
 	 * <p>
 	 * Subclasses may override this method if they need to process the variable
 	 * name before it is displayed.

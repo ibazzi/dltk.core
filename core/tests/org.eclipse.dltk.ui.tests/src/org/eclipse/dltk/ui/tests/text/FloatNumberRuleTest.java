@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 NumberFour AG
+ * Copyright (c) 2012, 2017 NumberFour AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -12,15 +12,16 @@
 package org.eclipse.dltk.ui.tests.text;
 
 import static org.eclipse.jface.text.rules.Token.UNDEFINED;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.dltk.ui.text.rules.FloatNumberRule;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.rules.BufferedRuleBasedScanner;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.Token;
+import org.junit.Test;
 
-public class FloatNumberRuleTest extends TestCase {
+public class FloatNumberRuleTest {
 
 	static final IToken NUMBER = new Token("Number");
 
@@ -68,18 +69,18 @@ public class FloatNumberRuleTest extends TestCase {
 		final IToken token = rule.evaluate(scanner);
 		return new Value(token, scanner.getOffset());
 	}
-
+	@Test
 	public void testDecimal() {
 		assertEquals(value(NUMBER, 3), evaluate("123"));
 		assertEquals(value(NUMBER, 3), evaluate("123,"));
 	}
-
+	@Test
 	public void testHex() {
 		assertEquals(value(NUMBER, 4), evaluate("0xFF"));
 		assertEquals(value(NUMBER, 4), evaluate("0xFF,"));
 		assertEquals(value(UNDEFINED, 0), evaluate("0x,"));
 	}
-
+	@Test
 	public void testFloat() {
 		assertEquals(value(NUMBER, 1), evaluate("1"));
 		assertEquals(value(NUMBER, 2), evaluate("1L"));
@@ -101,7 +102,7 @@ public class FloatNumberRuleTest extends TestCase {
 		assertEquals(value(NUMBER, 4), evaluate("1e-1"));
 		assertEquals(value(UNDEFINED, 0), evaluate("1e+"));
 	}
-
+	@Test
 	public void testDot() {
 		assertEquals(value(UNDEFINED, 0), evaluate("."));
 		assertEquals(value(UNDEFINED, 0), evaluate("..1"));

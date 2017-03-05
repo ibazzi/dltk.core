@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.refactoring.actions;
 
@@ -27,7 +26,8 @@ public class RenameResourceAction extends SelectionDispatchAction {
 	public RenameResourceAction(IWorkbenchSite site) {
 		super(site);
 	}
-	
+
+	@Override
 	public void selectionChanged(IStructuredSelection selection) {
 		IResource element= getResource(selection);
 		if (element == null)
@@ -36,9 +36,10 @@ public class RenameResourceAction extends SelectionDispatchAction {
 			setEnabled(RefactoringAvailabilityTester.isRenameAvailable(element));
 	}
 
+	@Override
 	public void run(IStructuredSelection selection) {
 		IResource resource = getResource(selection);
-		// Work around for http://dev.eclipse.org/bugs/show_bug.cgi?id=19104		
+		// Work around for http://dev.eclipse.org/bugs/show_bug.cgi?id=19104
 		if (!ActionUtil.isProcessable(getShell(), resource))
 			return;
 		if (!RefactoringAvailabilityTester.isRenameAvailable(resource))
@@ -46,7 +47,7 @@ public class RenameResourceAction extends SelectionDispatchAction {
 		try {
 			RefactoringExecutionStarter.startRenameResourceRefactoring(resource, getShell());
 		} catch (CoreException e) {
-			ExceptionHandler.handle(e, RefactoringMessages.RenameScriptElementAction_name, RefactoringMessages.RenameScriptElementAction_exception);  
+			ExceptionHandler.handle(e, RefactoringMessages.RenameScriptElementAction_name, RefactoringMessages.RenameScriptElementAction_exception);
 		}
 	}
 

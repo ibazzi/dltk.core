@@ -13,7 +13,6 @@ import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.internal.ui.dialogs.StatusUtil;
-import org.eclipse.dltk.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.dltk.internal.ui.wizards.dialogfields.IDialogFieldListener;
 import org.eclipse.dltk.internal.ui.wizards.dialogfields.LayoutUtil;
 import org.eclipse.dltk.internal.ui.wizards.dialogfields.SelectionButtonDialogField;
@@ -96,6 +95,7 @@ public abstract class PropertyAndPreferencePage extends PreferencePage
 		return fData == null || !Boolean.TRUE.equals(fData.get(DATA_NO_LINK));
 	}
 
+	@Override
 	protected Label createDescriptionLabel(Composite parent) {
 		fParentComposite = parent;
 		if (isProjectPreferencePage()) {
@@ -109,12 +109,8 @@ public abstract class PropertyAndPreferencePage extends PreferencePage
 			composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
 					false));
 
-			IDialogFieldListener listener = new IDialogFieldListener() {
-				public void dialogFieldChanged(DialogField field) {
-					enableProjectSpecificSettings(((SelectionButtonDialogField) field)
-							.isSelected());
-				}
-			};
+			IDialogFieldListener listener = field -> enableProjectSpecificSettings(((SelectionButtonDialogField) field)
+					.isSelected());
 
 			fUseProjectSettings = new SelectionButtonDialogField(SWT.CHECK);
 			fUseProjectSettings.setDialogFieldListener(listener);
@@ -151,9 +147,7 @@ public abstract class PropertyAndPreferencePage extends PreferencePage
 		return super.createDescriptionLabel(parent);
 	}
 
-	/*
-	 * @see IPreferencePage#createContents(Composite)
-	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -181,10 +175,12 @@ public abstract class PropertyAndPreferencePage extends PreferencePage
 		link.setFont(composite.getFont());
 		link.setText("<A>" + text + "</A>"); //$NON-NLS-1$//$NON-NLS-2$
 		link.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				doLinkActivated((Link) e.widget);
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				doLinkActivated((Link) e.widget);
 			}
@@ -280,11 +276,7 @@ public abstract class PropertyAndPreferencePage extends PreferencePage
 	 * @return The new listener
 	 */
 	protected IStatusChangeListener getNewStatusChangedListener() {
-		return new IStatusChangeListener() {
-			public void statusChanged(IStatus status) {
-				setPreferenceContentStatus(status);
-			}
-		};
+		return status -> setPreferenceContentStatus(status);
 	}
 
 	protected IStatus getPreferenceContentStatus() {
@@ -313,9 +305,7 @@ public abstract class PropertyAndPreferencePage extends PreferencePage
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferencePage#performDefaults()
-	 */
+	@Override
 	protected void performDefaults() {
 		if (useProjectSettings()) {
 			enableProjectSpecificSettings(false);
@@ -328,29 +318,21 @@ public abstract class PropertyAndPreferencePage extends PreferencePage
 		StatusUtil.applyToStatusLine(this, status);
 	}
 
-	/*
-	 * @see IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 
-	/*
-	 * @see org.eclipse.ui.IWorkbenchPropertyPage#getElement()
-	 */
+	@Override
 	public IAdaptable getElement() {
 		return fProject;
 	}
 
-	/*
-	 * @see IWorkbenchPropertyPage#setElement(IAdaptable)
-	 */
+	@Override
 	public void setElement(IAdaptable element) {
 		fProject = (IProject) element.getAdapter(IResource.class);
 	}
 
-	/*
-	 * @see PreferencePage#applyData(java.lang.Object)
-	 */
+	@Override
 	public void applyData(Object data) {
 		if (data instanceof Map) {
 			fData = (Map) data;

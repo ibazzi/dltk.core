@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2017 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,9 +42,7 @@ public class FileTemplateContext extends TemplateContext {
 		fLineDelimiter = lineDelimiter;
 	}
 
-	/*
-	 * @see TemplateContext#evaluate(Template)
-	 */
+	@Override
 	public TemplateBuffer evaluate(Template template)
 			throws BadLocationException, TemplateException {
 		// test that all variables are defined
@@ -97,9 +95,7 @@ public class FileTemplateContext extends TemplateContext {
 		}
 	}
 
-	/*
-	 * @see TemplateContext#canEvaluate(Template)
-	 */
+	@Override
 	public boolean canEvaluate(Template template) {
 		return true;
 	}

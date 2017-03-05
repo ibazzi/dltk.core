@@ -1,14 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
- *     Nick Edgar - added element comparer support
  *******************************************************************************/
-
 package org.eclipse.dltk.internal.ui.scriptview;
 
 import java.util.Enumeration;
@@ -43,11 +40,13 @@ import org.eclipse.jface.viewers.IElementComparer;
     }
 
     private static final class EmptyEnumerator implements Enumeration {
-        public boolean hasMoreElements() {
+        @Override
+		public boolean hasMoreElements() {
             return false;
         }
 
-        public Object nextElement() {
+        @Override
+		public Object nextElement() {
             throw new NoSuchElementException();
         }
     }
@@ -64,7 +63,8 @@ import org.eclipse.jface.viewers.IElementComparer;
             start = firstSlot;
         }
 
-        public boolean hasMoreElements() {
+        @Override
+		public boolean hasMoreElements() {
             if (entry != null)
                 return true;
             while (start <= lastSlot)
@@ -75,7 +75,8 @@ import org.eclipse.jface.viewers.IElementComparer;
             return false;
         }
 
-        public Object nextElement() {
+        @Override
+		public Object nextElement() {
             if (hasMoreElements()) {
                 Object result = key ? entry.key : entry.value;
                 entry = entry.next;
@@ -129,7 +130,7 @@ import org.eclipse.jface.viewers.IElementComparer;
      * element comparer.
      *
      * @param comparer the element comparer to use to compare keys and obtain
-     *   hash codes for keys, or <code>null</code>  to use the normal 
+     *   hash codes for keys, or <code>null</code>  to use the normal
      *   <code>equals</code> and <code>hashCode</code> methods
      */
     public CustomHashtable(IElementComparer comparer) {
@@ -139,11 +140,11 @@ import org.eclipse.jface.viewers.IElementComparer;
     /**
      * Constructs a new hash table with the given capacity and the given
      * element comparer.
-     * 
+     *
      * @param capacity the maximum number of elements that can be added without
      *   rehashing
      * @param comparer the element comparer to use to compare keys and obtain
-     *   hash codes for keys, or <code>null</code>  to use the normal 
+     *   hash codes for keys, or <code>null</code>  to use the normal
      *   <code>equals</code> and <code>hashCode</code> methods
      */
     public CustomHashtable(int capacity, IElementComparer comparer) {
@@ -162,10 +163,10 @@ import org.eclipse.jface.viewers.IElementComparer;
      * Constructs a new hash table with enough capacity to hold all keys in the
      * given hash table, then adds all key/value pairs in the given hash table
      * to the new one, using the given element comparer.
-     * 
+     *
      * @param table the hash table to add from
      * @param comparer the element comparer to use to compare keys and obtain
-     *   hash codes for keys, or <code>null</code>  to use the normal 
+     *   hash codes for keys, or <code>null</code>  to use the normal
      *   <code>equals</code> and <code>hashCode</code> methods
      */
     public CustomHashtable(CustomHashtable table, IElementComparer comparer) {
@@ -377,7 +378,8 @@ import org.eclipse.jface.viewers.IElementComparer;
      *
      * @return		the string representation of this Hashtable
      */
-    public String toString() {
+    @Override
+	public String toString() {
         if (size() == 0)
             return "{}"; //$NON-NLS-1$
 

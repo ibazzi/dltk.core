@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -54,6 +54,7 @@ public abstract class FormatterModifyTabPage implements
 
 	private Button fShowInvisibleButton;
 
+	@Override
 	public Composite createContents(IFormatterControlManager manager,
 			Composite parent) {
 
@@ -113,6 +114,7 @@ public abstract class FormatterModifyTabPage implements
 				SWT.DEFAULT));
 
 		scroll.addControlListener(new ControlAdapter() {
+			@Override
 			public void controlResized(ControlEvent e) {
 				settingsContainer.setSize(settingsContainer.computeSize(
 						SWT.DEFAULT, SWT.DEFAULT));
@@ -162,6 +164,7 @@ public abstract class FormatterModifyTabPage implements
 		fShowInvisibleButton.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP,
 				true, false));
 		fShowInvisibleButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				final boolean newValue = fShowInvisibleButton.getSelection();
 				updateShowInvisible(newValue);
@@ -189,6 +192,7 @@ public abstract class FormatterModifyTabPage implements
 		return ((FormatterModifyDialog) dialog).fDialogSettings;
 	}
 
+	@Override
 	public void updatePreview() {
 		if (previewViewer != null) {
 			FormatterPreviewUtils.updatePreview(previewViewer,
@@ -221,6 +225,7 @@ public abstract class FormatterModifyTabPage implements
 			fMinimalHight = minimalHight;
 		}
 
+		@Override
 		public Point computeSize(Composite composite, int wHint, int hHint,
 				boolean force) {
 			if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT) {
@@ -260,6 +265,7 @@ public abstract class FormatterModifyTabPage implements
 			return new Point(x, y);
 		}
 
+		@Override
 		public void layout(Composite composite, boolean force) {
 			Rectangle rect = composite.getClientArea();
 			Control[] children = composite.getChildren();

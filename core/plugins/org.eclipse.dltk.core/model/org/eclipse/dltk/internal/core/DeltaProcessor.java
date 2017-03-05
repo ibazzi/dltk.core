@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -340,19 +339,16 @@ public class DeltaProcessor {
 				// taking the workspace lock
 				// so that there is no concurrency with the builder
 				// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=96575
-				IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-					@Override
-					public void run(IProgressMonitor progressMonitor)
-							throws CoreException {
-						for (int i = 0; i < length; i++) {
-							IProject project = projectsToTouch[i];
-							// touch to force a build of this project
-							if (DLTKCore.DEBUG) {
-								System.out
-										.println("Touching project " + project.getName() + " due to external jar file change"); //$NON-NLS-1$ //$NON-NLS-2$
-							}
-							project.touch(progressMonitor);
+				IWorkspaceRunnable runnable = progressMonitor -> {
+					for (int i = 0; i < length; i++) {
+						IProject project = projectsToTouch[i];
+						// touch to force a build of this project
+						if (DLTKCore.DEBUG) {
+							System.out.println("Touching project " //$NON-NLS-1$
+									+ project.getName()
+									+ " due to external jar file change"); //$NON-NLS-1$
 						}
+						project.touch(progressMonitor);
 					}
 				};
 				try {
@@ -1507,31 +1503,26 @@ public class DeltaProcessor {
 				// RuntimeExceptions)
 			}
 			try {
-				rootDelta.accept(new IResourceDeltaVisitor() {
-					@Override
-					public boolean visit(IResourceDelta delta) /*
-																 * throws
-																 * CoreException
-																 */{
-						switch (delta.getKind()) {
-						case IResourceDelta.ADDED:
-						case IResourceDelta.REMOVED:
+				rootDelta.accept(delta -> {
+					switch (delta.getKind()) {
+					case IResourceDelta.ADDED:
+					case IResourceDelta.REMOVED:
+						throw new FoundRelevantDeltaException();
+					case IResourceDelta.CHANGED:
+						// if any flag is set but SYNC or MARKER, this
+						// delta
+						// should be considered
+						if (delta.getAffectedChildren().length == 0 // only
+								// check
+								// leaf
+								// delta
+								// nodes
+								&& (delta.getFlags() & ~(IResourceDelta.SYNC
+										| IResourceDelta.MARKERS)) != 0) {
 							throw new FoundRelevantDeltaException();
-						case IResourceDelta.CHANGED:
-							// if any flag is set but SYNC or MARKER, this
-							// delta
-							// should be considered
-							if (delta.getAffectedChildren().length == 0 // only
-									// check
-									// leaf
-									// delta
-									// nodes
-									&& (delta.getFlags() & ~(IResourceDelta.SYNC | IResourceDelta.MARKERS)) != 0) {
-								throw new FoundRelevantDeltaException();
-							}
 						}
-						return true;
 					}
+					return true;
 				});
 			} catch (FoundRelevantDeltaException e) {
 				// System.out.println("RELEVANT DELTA detected in: "+
@@ -2706,12 +2697,8 @@ public class DeltaProcessor {
 							final IScriptProject project = (IScriptProject) element;
 							this.rootsToRefresh.add(project);
 							this.projectCachesToReset.add(project);
-							this.postActions.add(new Runnable() {
-								@Override
-								public void run() {
-									ProjectIndexerManager.indexProject(res);
-								}
-							});
+							this.postActions.add(() -> ProjectIndexerManager
+									.indexProject(res));
 						}
 					} else {
 						boolean wasDylanProject = this.state.findProject(res
@@ -2787,12 +2774,8 @@ public class DeltaProcessor {
 			switch (delta.getKind()) {
 			case IResourceDelta.ADDED:
 				final IScriptProject scriptProject = element.getScriptProject();
-				this.postActions.add(new Runnable() {
-					@Override
-					public void run() {
-						ProjectIndexerManager.indexProject(scriptProject);
-					}
-				});
+				this.postActions.add(() -> ProjectIndexerManager
+						.indexProject(scriptProject));
 				break;
 			case IResourceDelta.REMOVED:
 				final IPath projectPath = element.getScriptProject()

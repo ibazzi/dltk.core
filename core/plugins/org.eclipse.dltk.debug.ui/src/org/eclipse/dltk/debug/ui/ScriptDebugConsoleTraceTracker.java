@@ -18,14 +18,16 @@ public class ScriptDebugConsoleTraceTracker extends ScriptDebugConsoleTracker {
 		this.patternString = patternString;
 	}
 
+	@Override
 	public void matchFound(PatternMatchEvent event) {
 		try {
 			int offset = event.getOffset();
 			int length = event.getLength();
 			ScriptDebuggerConsoleToFileHyperlink link = new ScriptDebuggerConsoleToFileHyperlink(
 					console, getPatternInstance());
-			console.addHyperlink(link, link.computeOffset(offset, length,
-					console), link.computeLength(offset, length, console));
+			console.addHyperlink(link,
+					link.computeOffset(offset, length, console),
+					link.computeLength(offset, length, console));
 
 		} catch (BadLocationException e) {
 		}
@@ -38,8 +40,9 @@ public class ScriptDebugConsoleTraceTracker extends ScriptDebugConsoleTracker {
 		return pattern;
 	}
 
+	@Override
 	public String getPattern() {
-		return patternString; //$NON-NLS-1$
+		return patternString; // $NON-NLS-1$
 	}
 
 }

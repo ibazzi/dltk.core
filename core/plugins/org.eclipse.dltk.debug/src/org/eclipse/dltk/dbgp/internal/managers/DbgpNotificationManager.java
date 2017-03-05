@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.dbgp.internal.managers;
 
@@ -18,8 +17,8 @@ import org.eclipse.dltk.dbgp.internal.DbgpWorkingThread;
 import org.eclipse.dltk.dbgp.internal.IDbgpDebugingEngine;
 import org.eclipse.dltk.dbgp.internal.packets.DbgpNotifyPacket;
 
-public class DbgpNotificationManager extends DbgpWorkingThread implements
-		IDbgpNotificationManager {
+public class DbgpNotificationManager extends DbgpWorkingThread
+		implements IDbgpNotificationManager {
 	private final ListenerList listeners = new ListenerList();
 
 	private final IDbgpDebugingEngine engine;
@@ -31,13 +30,14 @@ public class DbgpNotificationManager extends DbgpWorkingThread implements
 		}
 	}
 
+	@Override
 	protected void workingCycle() throws Exception {
 		try {
 			while (!Thread.interrupted()) {
 				DbgpNotifyPacket packet = engine.getNotifyPacket();
 
-				fireDbgpNotify(new DbgpNotification(packet.getName(), packet
-						.getContent()));
+				fireDbgpNotify(new DbgpNotification(packet.getName(),
+						packet.getContent()));
 			}
 		} catch (InterruptedException e) {
 			// OK, interrupted
@@ -53,10 +53,12 @@ public class DbgpNotificationManager extends DbgpWorkingThread implements
 		this.engine = engine;
 	}
 
+	@Override
 	public void addNotificationListener(IDbgpNotificationListener listener) {
 		listeners.add(listener);
 	}
 
+	@Override
 	public void removeNotificationListener(IDbgpNotificationListener listener) {
 		listeners.remove(listener);
 	}

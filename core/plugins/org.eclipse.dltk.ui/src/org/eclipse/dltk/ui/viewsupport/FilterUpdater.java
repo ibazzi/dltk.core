@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.viewsupport;
 
@@ -19,16 +18,17 @@ import org.eclipse.swt.widgets.Control;
 public class FilterUpdater implements IResourceChangeListener {
 
 	private StructuredViewer fViewer;
-	
+
 	public FilterUpdater(StructuredViewer viewer) {
 		fViewer= viewer;
 	}
 
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		IResourceDelta delta= event.getDelta();
 		if (delta == null)
 			return;
-		
+
 		IResourceDelta[] projDeltas = delta.getAffectedChildren(IResourceDelta.CHANGED);
 		for (int i= 0; i < projDeltas.length; i++) {
 			IResourceDelta pDelta= projDeltas[i];
@@ -36,11 +36,9 @@ public class FilterUpdater implements IResourceChangeListener {
 				final Control ctrl= fViewer.getControl();
 				if (ctrl != null && !ctrl.isDisposed()) {
 					// async is needed due to bug 33783
-					ctrl.getDisplay().asyncExec(new Runnable() {
-						public void run() {
-							if (!ctrl.isDisposed())
-								fViewer.refresh(false);
-						}
+					ctrl.getDisplay().asyncExec(() -> {
+						if (!ctrl.isDisposed())
+							fViewer.refresh(false);
 					});
 				}
 			}

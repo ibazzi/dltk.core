@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,56 +54,69 @@ public class DbgpProperty implements IDbgpProperty {
 		this.pageSize = pageSize;
 	}
 
+	@Override
 	public String getEvalName() {
 		return fullName;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public String getType() {
 		return type;
 	}
 
+	@Override
 	public String getValue() {
 		return value;
 	}
 
+	@Override
 	public boolean hasChildren() {
 		return hasChildren;
 	}
 
+	@Override
 	public int getChildrenCount() {
 		return childrenCount;
 	}
 
+	@Override
 	public IDbgpProperty[] getAvailableChildren() {
 		return availableChildren.clone();
 	}
 
+	@Override
 	public boolean isConstant() {
 		return constant;
 	}
 
+	@Override
 	public String toString() {
 		return "DbgpProperty (Name: " + name + "; Full name: " + fullName //$NON-NLS-1$ //$NON-NLS-2$
 				+ "; Type: " + type + "; Value: " + value + " Address: " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				+ address + ")"; //$NON-NLS-1$
 	}
 
+	@Override
 	public String getKey() {
 		return key;
 	}
 
+	@Override
 	public int getPage() {
 		return page;
 	}
 
+	@Override
 	public int getPageSize() {
 		return pageSize;
 	}
 
+	@Override
 	public String getAddress() {
 		return address;
 	}

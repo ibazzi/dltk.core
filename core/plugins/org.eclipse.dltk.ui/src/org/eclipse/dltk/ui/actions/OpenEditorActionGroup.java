@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,7 @@ import org.eclipse.ui.actions.OpenWithMenu;
 /**
  * Action group that adds the actions opening a new editor to the context menu
  * and the action bar's navigate menu.
- * 
+ *
  */
 public class OpenEditorActionGroup extends ActionGroup {
 	private IWorkbenchSite fSite;
@@ -44,7 +44,7 @@ public class OpenEditorActionGroup extends ActionGroup {
 	 * Creates a new <code>OpenActionGroup</code>. The group requires that
 	 * the selection provided by the part's selection provider is of type <code>
 	 * org.eclipse.jface.viewers.IStructuredSelection</code>.
-	 * 
+	 *
 	 * @param part
 	 *            the view part that owns this action group
 	 */
@@ -58,7 +58,7 @@ public class OpenEditorActionGroup extends ActionGroup {
 	/**
 	 * Note: This constructor is for internal use only. Clients should not call
 	 * this constructor.
-	 * 
+	 *
 	 * @param editor
 	 *            the Script editor
 	 */
@@ -73,7 +73,7 @@ public class OpenEditorActionGroup extends ActionGroup {
 
 	/**
 	 * Returns the open action managed by this action group.
-	 * 
+	 *
 	 * @return the open action. Returns <code>null</code> if the group doesn't
 	 *         provide any open action
 	 */
@@ -89,17 +89,13 @@ public class OpenEditorActionGroup extends ActionGroup {
 		}
 	}
 
-	/*
-	 * (non-Javadoc) Method declared in ActionGroup
-	 */
+	@Override
 	public void fillActionBars(IActionBars actionBar) {
 		super.fillActionBars(actionBar);
 		setGlobalActionHandlers(actionBar);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared in ActionGroup
-	 */
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		super.fillContextMenu(menu);
 		appendToGroup(menu, fOpen);
@@ -108,9 +104,7 @@ public class OpenEditorActionGroup extends ActionGroup {
 		}
 	}
 
-	/*
-	 * @see ActionGroup#dispose()
-	 */
+	@Override
 	public void dispose() {
 		ISelectionProvider provider = fSite.getSelectionProvider();
 		provider.removeSelectionChangedListener(fOpen);
@@ -157,6 +151,6 @@ public class OpenEditorActionGroup extends ActionGroup {
 			submenu.add(new OpenWithMenu(fSite.getPage(), resource));
 			// Add the submenu.
 			menu.appendToGroup(IContextMenuConstants.GROUP_OPEN, submenu);
-		} 
+		}
 	}
 }

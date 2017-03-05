@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2011 xored software, Inc.
+ * Copyright (c) 2007, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -8,7 +8,7 @@
  *
  * Contributors:
  *     xored software, Inc. - initial API and Implementation
- *     jdesgats@sierrawireless.com - fix for Bug 352826 
+ *     jdesgats@sierrawireless.com - fix for Bug 352826
  *******************************************************************************/
 package org.eclipse.dltk.debug.core.model;
 
@@ -22,14 +22,17 @@ public class CollectionScriptType extends AtomicScriptType {
 		super(name);
 	}
 
+	@Override
 	public boolean isAtomic() {
 		return false;
 	}
 
+	@Override
 	public boolean isCollection() {
 		return true;
 	}
 
+	@Override
 	public String formatDetails(IScriptValue value) {
 		final StringBuffer sb = new StringBuffer();
 		try {
@@ -51,6 +54,7 @@ public class CollectionScriptType extends AtomicScriptType {
 		return sb.toString();
 	}
 
+	@Override
 	public String formatValue(IScriptValue value) {
 		StringBuffer sb = new StringBuffer();
 
@@ -77,7 +81,7 @@ public class CollectionScriptType extends AtomicScriptType {
 
 	/**
 	 * Build the detail string for the given variable.
-	 * 
+	 *
 	 * <p>
 	 * Default implementation just returns the value of the specified variable.
 	 * Subclasses may override if they wish to return something different. For
@@ -91,7 +95,7 @@ public class CollectionScriptType extends AtomicScriptType {
 
 	/**
 	 * Returns the brace that will be used to close the collection.
-	 * 
+	 *
 	 * <p>
 	 * Default implementation returns <code>[</code>. Subclasses may override if
 	 * they wish to use something different.
@@ -103,7 +107,7 @@ public class CollectionScriptType extends AtomicScriptType {
 
 	/**
 	 * Returns the brace that will be used to close the collection.
-	 * 
+	 *
 	 * <p>
 	 * Default implementation returns <code>]</code>. Subclasses may override if
 	 * they wish to use something different.

@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.util;
 
@@ -33,14 +32,14 @@ import org.eclipse.swt.widgets.TableColumn;
 public class TableLayoutComposite extends Composite {
 
 	/**
-	 * The number of extra pixels taken as horizontal trim by the table column. 
+	 * The number of extra pixels taken as horizontal trim by the table column.
 	 * To ensure there are N pixels available for the content of the column,
 	 * assign N+COLUMN_TRIM for the column width.
-	 * 
+	 *
 	 *
 	 */
 	private static int COLUMN_TRIM = "carbon".equals(SWT.getPlatform()) ? 24 : 3; //$NON-NLS-1$
-	
+
 	private List columns= new ArrayList();
 
 	/**
@@ -49,7 +48,8 @@ public class TableLayoutComposite extends Composite {
 	public TableLayoutComposite(Composite parent, int style) {
 		super(parent, style);
         addControlListener(new ControlAdapter() {
-            public void controlResized(ControlEvent e) {
+            @Override
+			public void controlResized(ControlEvent e) {
                 Rectangle area= getClientArea();
                 Table table= (Table)getChildren()[0];
                 Point preferredSize= computeTableSize(table);
@@ -64,7 +64,7 @@ public class TableLayoutComposite extends Composite {
             }
         });
 	}
-	
+
 	/**
 	 * Adds a new column of data to this table layout.
 	 *
@@ -73,12 +73,12 @@ public class TableLayoutComposite extends Composite {
 	public void addColumnData(ColumnLayoutData data) {
 		columns.add(data);
 	}
-	
+
 	//---- Helpers -------------------------------------------------------------------------------------
-	
+
 	private Point computeTableSize(Table table) {
 		Point result= table.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		
+
 		int width= 0;
 		int size= columns.size();
 		for (int i= 0; i < size; ++i) {
@@ -100,7 +100,7 @@ public class TableLayoutComposite extends Composite {
 			result.x= width;
 		return result;
 	}
-	
+
 	private void layoutTable(Table table, int width, Rectangle area, boolean increase) {
 		// XXX: Layout is being called with an invalid value the first time
 		// it is being called on Linux. This method resets the
@@ -171,7 +171,7 @@ public class TableLayoutComposite extends Composite {
 				}
 			}
 		}
-		
+
 		if (increase) {
 			table.setSize(area.width, area.height);
 		}

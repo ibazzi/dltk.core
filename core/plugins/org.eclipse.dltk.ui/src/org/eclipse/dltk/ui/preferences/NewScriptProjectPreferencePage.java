@@ -1,14 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
-// AW
 package org.eclipse.dltk.ui.preferences;
+
+import static org.eclipse.dltk.ui.PreferenceConstants.SRCBIN_FOLDERS_IN_NEWPROJ;
+import static org.eclipse.dltk.ui.PreferenceConstants.SRC_SRCNAME;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -36,7 +37,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -51,9 +51,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-
-import static org.eclipse.dltk.ui.PreferenceConstants.SRCBIN_FOLDERS_IN_NEWPROJ;
-import static org.eclipse.dltk.ui.PreferenceConstants.SRC_SRCNAME;
 
 /*
  * The page for defaults for classpath entries in newscriptprojects.
@@ -200,40 +197,37 @@ public abstract class NewScriptProjectPreferencePage extends PreferencePage
 		fTextControls = new ArrayList();
 
 		fSelectionListener = new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				controlChanged(e.widget);
 			}
 		};
 
-		fModifyListener = new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				controlModified(e.widget);
-			}
-		};
+		fModifyListener = e -> controlModified(e.widget);
 
 	}
 
 	public static void initDefaults(IPreferenceStore store) {
 		store.setDefault(SRCBIN_FOLDERS_IN_NEWPROJ, false);
-		store.setDefault(SRC_SRCNAME, "src"); //$NON-NLS-1$		
+		store.setDefault(SRC_SRCNAME, "src"); //$NON-NLS-1$
 
 		// store.setDefault(CLASSPATH_InterpreterEnvironmentLIBRARY_LIST,
 		// getDefaultInterpreterEnvironmentLibraries());
 		// store.setDefault(CLASSPATH_InterpreterEnvironmentLIBRARY_INDEX, 0);
 	}
 
-	/*
-	 * @see IWorkbenchPreferencePage#init(IWorkbench)
-	 */
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 
 	/**
 	 * @see PreferencePage#createControl(Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		if (DLTKCore.DEBUG) {
@@ -279,6 +273,7 @@ public abstract class NewScriptProjectPreferencePage extends PreferencePage
 		return text;
 	}
 
+	@Override
 	protected Control createContents(Composite parent) {
 		initializeDialogUnits(parent);
 
@@ -332,7 +327,7 @@ public abstract class NewScriptProjectPreferencePage extends PreferencePage
 		// SWT.NONE);
 		// InterpreterEnvironmentSelectionLabel.setText(PreferencesMessages.NewScriptProjectPreferencePage_InterpreterEnvironmentlibrary_label);
 		// InterpreterEnvironmentSelectionLabel.setLayoutData(new GridData());
-		//		
+		//
 		// int index=
 		// getPreferenceStore().getInt(CLASSPATH_InterpreterEnvironmentLIBRARY_INDEX);
 		// fInterpreterEnvironmentCombo= new Combo(result, SWT.READ_ONLY);
@@ -408,9 +403,7 @@ public abstract class NewScriptProjectPreferencePage extends PreferencePage
 		}
 	}
 
-	/*
-	 * @see PreferencePage#performDefaults()
-	 */
+	@Override
 	protected void performDefaults() {
 		IPreferenceStore store = getPreferenceStore();
 		for (int i = 0; i < fCheckBoxes.size(); i++) {
@@ -438,9 +431,7 @@ public abstract class NewScriptProjectPreferencePage extends PreferencePage
 		super.performDefaults();
 	}
 
-	/*
-	 * @see IPreferencePage#performOk()
-	 */
+	@Override
 	public boolean performOk() {
 		IPreferenceStore store = getPreferenceStore();
 		for (int i = 0; i < fCheckBoxes.size(); i++) {

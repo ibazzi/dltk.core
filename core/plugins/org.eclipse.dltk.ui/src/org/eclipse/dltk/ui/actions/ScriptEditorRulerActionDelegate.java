@@ -14,17 +14,17 @@ import org.eclipse.ui.texteditor.ITextEditor;
 /**
  * Delegate used to handle 'single clicks' that occur within the vertical ruler
  * of a script editor when an annotation is present.
- * 
+ *
  * <p>
  * Implementations need only addd the following snippet in their
  * <code>plugin.xml</code> to add support.
  * </p>
- * 
+ *
  * <pre>
  * &lt;extension point=&quot;org.eclipse.ui.editorActions&quot;&gt;
  *   &lt;editorContribution
  *     targetID=&quot;editor_id&quot;
- *     id=&quot;...&quot;&gt;     
+ *     id=&quot;...&quot;&gt;
  *     &lt;action
  *       label=&quot;...&quot;
  *       class=&quot;org.eclipse.dltk.ui.actions.ScriptEditorRulerActionDelegate:nature_id&quot;
@@ -39,12 +39,14 @@ public class ScriptEditorRulerActionDelegate extends
 
 	private IDLTKUILanguageToolkit uiToolkit;
 
+	@Override
 	protected IAction createAction(ITextEditor editor,
 			IVerticalRulerInfo rulerInfo) {
 		return new ScriptSelectAnnotationRulerAction(editor, rulerInfo,
 				uiToolkit);
 	}
 
+	@Override
 	public void setInitializationData(IConfigurationElement config,
 			String propertyName, Object data) {
 		IDLTKLanguageToolkit toolkit = DLTKExecuteExtensionHelper

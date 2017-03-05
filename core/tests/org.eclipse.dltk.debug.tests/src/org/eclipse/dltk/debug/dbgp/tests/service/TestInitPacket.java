@@ -11,30 +11,27 @@
  *******************************************************************************/
 package org.eclipse.dltk.debug.dbgp.tests.service;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 class TestInitPacket {
 
 	public static byte[] build(String ideKey) {
-		final Map attributes = createTestInitAttributes();
+		final Map<String, String> attributes = createTestInitAttributes();
 		attributes.put("idekey", ideKey);
 		StringBuffer sb = new StringBuffer();
 		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 		sb.append("<init");
 		appendAttributes(sb, attributes);
 		sb.append("/>");
-		try {
-			return sb.toString().getBytes("UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			return null;
-		}
+		return sb.toString().getBytes(StandardCharsets.UTF_8);
 	}
 
-	private static Map createTestInitAttributes() {
-		final Map attributes = new HashMap();
+	private static Map<String, String> createTestInitAttributes() {
+		final Map<String, String> attributes = new HashMap<>();
 		attributes.put("appid", "APPID");
 		attributes.put("session", "DBGP_COOKIE");
 		attributes.put("thread", "THREAD_ID");
@@ -45,15 +42,14 @@ class TestInitPacket {
 		return attributes;
 	}
 
-	private static void appendAttributes(StringBuffer sb, Map attributes) {
-		for (Iterator i = attributes.entrySet().iterator(); i.hasNext();) {
-			final Map.Entry entry = (Map.Entry) i.next();
+	private static void appendAttributes(StringBuffer sb, Map<String, String> attributes) {
+		for (Iterator<Map.Entry<String, String>> i = attributes.entrySet().iterator(); i.hasNext();) {
+			final Entry<String, String> entry = i.next();
 			appendAttribute(sb, entry.getKey(), entry.getValue());
 		}
 	}
 
-	private static void appendAttribute(StringBuffer sb, Object name,
-			Object value) {
+	private static void appendAttribute(StringBuffer sb, Object name, Object value) {
 		sb.append(' ');
 		sb.append(name);
 		sb.append("=\"");

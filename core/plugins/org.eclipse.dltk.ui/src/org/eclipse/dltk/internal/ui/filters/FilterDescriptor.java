@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,7 @@ import com.ibm.icu.text.Collator;
 /**
  * Represents a custom filter which is provided by the
  * "org.eclipse.dltk.dltkElementFilters" extension point.
- * 
+ *
  */
 public class FilterDescriptor implements Comparable, IPluginContribution {
 
@@ -44,7 +44,7 @@ public class FilterDescriptor implements Comparable, IPluginContribution {
 
 	private static final String FILTER_TAG= "filter"; //$NON-NLS-1$
 
-	private static final String PATTERN_ATTRIBUTE= "pattern"; //$NON-NLS-1$	
+	private static final String PATTERN_ATTRIBUTE= "pattern"; //$NON-NLS-1$
 	private static final String ID_ATTRIBUTE= "id"; //$NON-NLS-1$
 	/**
 	 * @deprecated as of 3.0 use {@link FilterDescriptor#TARGET_ID_ATTRIBUTE}
@@ -55,7 +55,7 @@ public class FilterDescriptor implements Comparable, IPluginContribution {
 	private static final String CLASS_ATTRIBUTE= "class"; //$NON-NLS-1$
 	private static final String NAME_ATTRIBUTE= "name"; //$NON-NLS-1$
 	private static final String ENABLED_ATTRIBUTE= "enabled"; //$NON-NLS-1$
-	private static final String DESCRIPTION_ATTRIBUTE= "description"; //$NON-NLS-1$	
+	private static final String DESCRIPTION_ATTRIBUTE= "description"; //$NON-NLS-1$
 	/**
 	 * @deprecated	use "enabled" instead
 	 */
@@ -75,9 +75,9 @@ public class FilterDescriptor implements Comparable, IPluginContribution {
 			IExtensionRegistry registry= Platform.getExtensionRegistry();
 			IConfigurationElement[] elements= registry.getConfigurationElementsFor(DLTKUIPlugin.PLUGIN_ID, EXTENSION_POINT_NAME);
 			fgFilterDescriptors= createFilterDescriptors(elements);
-		}	
+		}
 		return fgFilterDescriptors;
-	} 
+	}
 	/**
 	 * Returns all element filters which
 	 * are contributed to the given view.
@@ -95,7 +95,7 @@ public class FilterDescriptor implements Comparable, IPluginContribution {
 		}
 		return result.toArray(new FilterDescriptor[result.size()]);
 	}
-	
+
 	/**
 	 * Creates a new filter descriptor for the given configuration element.
 	 */
@@ -114,24 +114,25 @@ public class FilterDescriptor implements Comparable, IPluginContribution {
 	public ViewerFilter createViewerFilter() {
 		if (!isCustomFilter())
 			return null;
-		
+
 		final ViewerFilter[] result= new ViewerFilter[1];
-		String message= Messages.format(FilterMessages.FilterDescriptor_filterCreationError_message, getId()); 
+		String message= Messages.format(FilterMessages.FilterDescriptor_filterCreationError_message, getId());
 		ISafeRunnable code= new SafeRunnable(message) {
 			/*
 			 * @see org.eclipse.core.runtime.ISafeRunnable#run()
 			 */
+			@Override
 			public void run() throws Exception {
 				result[0]= (ViewerFilter)fElement.createExecutableExtension(CLASS_ATTRIBUTE);
 			}
-			
+
 		};
 		SafeRunner.run(code);
 		return result[0];
 	}
-	
+
 	//---- XML Attribute accessors ---------------------------------------------
-	
+
 	/**
 	 * Returns the filter's id.
 	 * <p>
@@ -150,7 +151,7 @@ public class FilterDescriptor implements Comparable, IPluginContribution {
 		} else
 			return fElement.getAttribute(ID_ATTRIBUTE);
 	}
-	
+
 	/**
 	 * Returns the filter's name.
 	 * <p>
@@ -167,7 +168,7 @@ public class FilterDescriptor implements Comparable, IPluginContribution {
 
 	/**
 	 * Returns the filter's pattern.
-	 * 
+	 *
 	 * @return the pattern string or <code>null</code> if it's not a pattern filter
 	 */
 	public String getPattern() {
@@ -176,24 +177,24 @@ public class FilterDescriptor implements Comparable, IPluginContribution {
 
 	/**
 	 * Returns the filter's viewId.
-	 * 
+	 *
 	 * @return the view ID or <code>null</code> if the filter is for all views
 	 *
 	 */
 	public String getTargetId() {
 		String tid= fElement.getAttribute(TARGET_ID_ATTRIBUTE);
-		
+
 		if (tid != null)
 			return tid;
-		
+
 		// Backwards compatibility code
 		return fElement.getAttribute(VIEW_ID_ATTRIBUTE);
-		
+
 	}
 
 	/**
 	 * Returns the filter's description.
-	 * 
+	 *
 	 * @return the description or <code>null</code> if no description is provided
 	 */
 	public String getDescription() {
@@ -220,7 +221,7 @@ public class FilterDescriptor implements Comparable, IPluginContribution {
 	/**
 	 * Returns <code>true</code> if the filter
 	 * is initially enabled.
-	 * 
+	 *
 	 * This attribute is optional and defaults to <code>true</code>.
 	 */
 	public boolean isEnabled() {
@@ -231,9 +232,10 @@ public class FilterDescriptor implements Comparable, IPluginContribution {
 		return strVal == null || Boolean.valueOf(strVal).booleanValue();
 	}
 
-	/* 
-	 * Implements a method from IComparable 
-	 */ 
+	/*
+	 * Implements a method from IComparable
+	 */
+	@Override
 	public int compareTo(Object o) {
 		if (o instanceof FilterDescriptor)
 			return Collator.getInstance().compare(getName(), ((FilterDescriptor)o).getName());
@@ -242,7 +244,7 @@ public class FilterDescriptor implements Comparable, IPluginContribution {
 	}
 
 	//---- initialization ---------------------------------------------------
-	
+
 	/**
 	 * Creates the filter descriptors.
 	 */
@@ -254,7 +256,8 @@ public class FilterDescriptor implements Comparable, IPluginContribution {
 			if (FILTER_TAG.equals(element.getName())) {
 
 				final FilterDescriptor[] desc= new FilterDescriptor[1];
-				SafeRunner.run(new SafeRunnable(FilterMessages.FilterDescriptor_filterDescriptionCreationError_message) { 
+				SafeRunner.run(new SafeRunnable(FilterMessages.FilterDescriptor_filterDescriptionCreationError_message) {
+					@Override
 					public void run() throws Exception {
 						desc[0]= new FilterDescriptor(element);
 					}
@@ -268,12 +271,14 @@ public class FilterDescriptor implements Comparable, IPluginContribution {
 		}
 		return result.toArray(new FilterDescriptor[result.size()]);
 	}
-	
+
+	@Override
 	public String getLocalId() {
 		return fElement.getAttribute(ID_ATTRIBUTE);
 	}
 
-    public String getPluginId() {
+	@Override
+	public String getPluginId() {
         return fElement.getContributor().getName();
     }
 }

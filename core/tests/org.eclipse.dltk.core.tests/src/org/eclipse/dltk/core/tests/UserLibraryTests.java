@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Zend Techologies Ltd.
+ * Copyright (c) 2015, 2017 Zend Techologies Ltd. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.dltk.core.tests;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
-
-import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.Path;
 import org.eclipse.dltk.core.DLTKCore;
@@ -24,8 +24,9 @@ import org.eclipse.dltk.core.IBuildpathEntry;
 import org.eclipse.dltk.core.environment.EnvironmentManager;
 import org.eclipse.dltk.core.environment.EnvironmentPathUtils;
 import org.eclipse.dltk.internal.core.UserLibrary;
+import org.junit.Test;
 
-public class UserLibraryTests extends TestCase {
+public class UserLibraryTests {
 
 	private static String TEMPLATE = "";
 	static {
@@ -34,7 +35,7 @@ public class UserLibraryTests extends TestCase {
 		TEMPLATE += "	<archive path=\"org.eclipse.dltk.core.environment.localEnvironment/:{0}\"/>\n";
 		TEMPLATE += "</userlibrary>\n";
 	}
-
+	@Test
 	public void testSerializationSystemLibrary() throws IOException {
 		String path = "/segment01";
 
@@ -44,7 +45,7 @@ public class UserLibraryTests extends TestCase {
 
 		assertEquals(output, createXML(path, true));
 	}
-
+	@Test
 	public void testSerializationNotSystemLibrary() throws IOException {
 		String path = "/segment01/segment02";
 
@@ -54,7 +55,7 @@ public class UserLibraryTests extends TestCase {
 
 		assertEquals(output, createXML(path, false));
 	}
-
+	@Test
 	public void testSerializationAttributes() throws IOException {
 		String path = "/segment01/segment02";
 
@@ -69,7 +70,7 @@ public class UserLibraryTests extends TestCase {
 		attributesOutput += "__attribute__libraryVersion=\"1.0.0\" ";
 		assertEquals(output, createXML(path, false, attributesOutput));
 	}
-
+	@Test
 	public void testDeserializationSystemLibrary() throws IOException {
 		String path = "/library/path";
 		IBuildpathEntry buildpathEntry = createBuildpathEntry(path);
@@ -82,7 +83,7 @@ public class UserLibraryTests extends TestCase {
 		assertEquals(userLibrary.isSystemLibrary(), true);
 		assertEquals(userLibrary.getAttributes().size(), 0);
 	}
-
+	@Test
 	public void testDeserializationNotSystemLibrary() throws IOException {
 		String path = "/library/path";
 		IBuildpathEntry buildpathEntry = createBuildpathEntry(path);
@@ -95,7 +96,7 @@ public class UserLibraryTests extends TestCase {
 		assertEquals(userLibrary.isSystemLibrary(), false);
 		assertEquals(userLibrary.getAttributes().size(), 0);
 	}
-
+	@Test
 	public void testDeserializationAttributes() throws IOException {
 		String path = "/library/path";
 		IBuildpathEntry buildpathEntry = createBuildpathEntry(path);

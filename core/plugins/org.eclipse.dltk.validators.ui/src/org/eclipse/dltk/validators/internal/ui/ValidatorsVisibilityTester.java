@@ -15,6 +15,7 @@ public class ValidatorsVisibilityTester implements IActionFilterTester {
 	public ValidatorsVisibilityTester() {
 	}
 
+	@Override
 	public boolean test(Object target, String name, String value) {
 		if (target instanceof IModelElement) {
 			final IDLTKLanguageToolkit toolkit = DLTKLanguageManager

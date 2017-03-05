@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -45,10 +45,12 @@ public class FormatterControlManager implements IFormatterControlManager,
 		this.listener = listener;
 	}
 
+	@Override
 	public Button createCheckbox(Composite parent, String key, String text) {
 		return createCheckbox(parent, key, text, 1);
 	}
 
+	@Override
 	public Button createCheckbox(Composite parent, String key, String text,
 			int hspan) {
 		Button button = SWTFactory.createCheckButton(parent, text, null, false,
@@ -57,6 +59,7 @@ public class FormatterControlManager implements IFormatterControlManager,
 		return button;
 	}
 
+	@Override
 	public Combo createCombo(Composite parent, String key, String label,
 			String[] items) {
 		final Label labelControl = SWTFactory.createLabel(parent, label, 1);
@@ -67,6 +70,7 @@ public class FormatterControlManager implements IFormatterControlManager,
 		return combo;
 	}
 
+	@Override
 	public Combo createCombo(Composite parent, String key, String label,
 			String[] itemValues, String[] itemLabels) {
 		final Label labelControl = SWTFactory.createLabel(parent, label, 1);
@@ -77,6 +81,7 @@ public class FormatterControlManager implements IFormatterControlManager,
 		return combo;
 	}
 
+	@Override
 	public Text createNumber(Composite parent, String key, String label) {
 		final Label labelControl = SWTFactory.createLabel(parent, label, 1);
 		Text text = SWTFactory.createText(parent, SWT.BORDER, 1,
@@ -97,6 +102,7 @@ public class FormatterControlManager implements IFormatterControlManager,
 		labelAssociations.put(control, label);
 	}
 
+	@Override
 	public void enableControl(Control control, boolean enabled) {
 		control.setEnabled(enabled);
 		final Label label = labelAssociations.get(control);
@@ -107,10 +113,12 @@ public class FormatterControlManager implements IFormatterControlManager,
 
 	private final ListenerList initListeners = new ListenerList();
 
+	@Override
 	public void addInitializeListener(IInitializeListener listener) {
 		initListeners.add(listener);
 	}
 
+	@Override
 	public void removeInitializeListener(IInitializeListener listener) {
 		initListeners.remove(listener);
 	}
@@ -131,24 +139,29 @@ public class FormatterControlManager implements IFormatterControlManager,
 		listener.statusChanged(bindingManager.getStatus());
 	}
 
+	@Override
 	public void statusChanged(IStatus status) {
 		if (!initialization) {
 			listener.statusChanged(status);
 		}
 	}
 
+	@Override
 	public boolean getBoolean(String key) {
 		return delegate.getBoolean(key);
 	}
 
+	@Override
 	public String getString(String key) {
 		return delegate.getString(key);
 	}
 
+	@Override
 	public void setBoolean(String key, boolean value) {
 		delegate.setBoolean(key, value);
 	}
 
+	@Override
 	public void setString(String key, String value) {
 		delegate.setString(key, value);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -177,12 +178,7 @@ public class ProfileStore implements IProfileStore {
 	public List<IProfile> readProfilesFromString(String profiles)
 			throws CoreException {
 		if (profiles != null && profiles.length() > 0) {
-			byte[] bytes;
-			try {
-				bytes = profiles.getBytes(ENCODING);
-			} catch (UnsupportedEncodingException e) {
-				bytes = profiles.getBytes();
-			}
+			byte[] bytes = profiles.getBytes(StandardCharsets.UTF_8);
 			InputStream is = new ByteArrayInputStream(bytes);
 			try {
 				List<IProfile> res = readProfilesFromStream(is);

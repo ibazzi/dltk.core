@@ -47,6 +47,7 @@ public class DefaultFoldingPreferenceConfigurationBlock extends
 
 	private Composite foldingOptionsComposite;
 
+	@Override
 	public Control createControl(Composite parent) {
 		Composite composite = SWTFactory.createComposite(parent, parent
 				.getFont(), 1, 1, GridData.FILL_BOTH);

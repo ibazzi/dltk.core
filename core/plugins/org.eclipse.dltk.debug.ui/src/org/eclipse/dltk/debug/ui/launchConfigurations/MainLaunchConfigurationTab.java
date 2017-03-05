@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.debug.ui.launchConfigurations;
 
@@ -69,10 +68,12 @@ public abstract class MainLaunchConfigurationTab extends
 		super(mode);
 	}
 
+	@Override
 	public void addListener(IMainLaunchConfigurationTabListener listener) {
 		this.listeners.add(listener);
 	}
 
+	@Override
 	public void removeListener(IMainLaunchConfigurationTabListener listener) {
 		this.listeners.remove(listener);
 	}
@@ -129,22 +130,19 @@ public abstract class MainLaunchConfigurationTab extends
 
 	private void initializeDebugConsole(ILaunchConfiguration config) {
 		if (debugConsole != null) {
-			debugConsole
-					.setSelection(LaunchConfigurationUtils
-							.getBoolean(
-									config,
-									ScriptLaunchConfigurationConstants.ATTR_DEBUG_CONSOLE,
-									true));
+			debugConsole.setSelection(LaunchConfigurationUtils.getBoolean(
+					config,
+					ScriptLaunchConfigurationConstants.ATTR_DEBUG_CONSOLE,
+					true));
 		}
 	}
 
-	protected void initializeInteractiveConsoleFrom(ILaunchConfiguration config) {
+	protected void initializeInteractiveConsoleFrom(
+			ILaunchConfiguration config) {
 		if (useInteractiveConsoleGroup) {
-			boolean console = LaunchConfigurationUtils
-					.getBoolean(
-							config,
-							ScriptLaunchConfigurationConstants.ATTR_USE_INTERACTIVE_CONSOLE,
-							false);
+			boolean console = LaunchConfigurationUtils.getBoolean(config,
+					ScriptLaunchConfigurationConstants.ATTR_USE_INTERACTIVE_CONSOLE,
+					false);
 			this.interactiveConsoleCheck.setSelection(console);
 		}
 	}
@@ -155,7 +153,7 @@ public abstract class MainLaunchConfigurationTab extends
 
 	/**
 	 * Creates the widgets for specifying a main type.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 */
@@ -207,10 +205,10 @@ public abstract class MainLaunchConfigurationTab extends
 		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(
 				getShell(), new WorkbenchLabelProvider(),
 				new WorkbenchContentProvider());
-		dialog
-				.setTitle(DLTKLaunchConfigurationsMessages.mainTab_searchButton_title);
-		dialog
-				.setMessage(DLTKLaunchConfigurationsMessages.mainTab_searchButton_message);
+		dialog.setTitle(
+				DLTKLaunchConfigurationsMessages.mainTab_searchButton_title);
+		dialog.setMessage(
+				DLTKLaunchConfigurationsMessages.mainTab_searchButton_message);
 		IScriptProject proj = getProject();
 		if (proj == null)
 			return;
@@ -226,7 +224,7 @@ public abstract class MainLaunchConfigurationTab extends
 
 	/**
 	 * Loads the main type from the launch configuration's preference store
-	 * 
+	 *
 	 * @param config
 	 *            the config to load the main type from
 	 */
@@ -244,10 +242,8 @@ public abstract class MainLaunchConfigurationTab extends
 	protected void createDebugOptions(Composite group) {
 		super.createDebugOptions(group);
 		if (canSelectDebugConsoleType()) {
-			debugConsole = SWTFactory
-					.createCheckButton(
-							group,
-							DLTKLaunchConfigurationsMessages.mainTab_debugConsoleRedirect);
+			debugConsole = SWTFactory.createCheckButton(group,
+					DLTKLaunchConfigurationsMessages.mainTab_debugConsoleRedirect);
 			debugConsole.addSelectionListener(getWidgetListener());
 		}
 	}
@@ -261,6 +257,7 @@ public abstract class MainLaunchConfigurationTab extends
 	/*
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
+	@Override
 	public String getName() {
 		return DLTKLaunchConfigurationsMessages.mainTab_title;
 	}
@@ -278,7 +275,8 @@ public abstract class MainLaunchConfigurationTab extends
 	}
 
 	private void setDefaultsDebugConsole(
-			ILaunchConfigurationWorkingCopy configuration, IModelElement element) {
+			ILaunchConfigurationWorkingCopy configuration,
+			IModelElement element) {
 		if (debugConsole != null) {
 			debugConsole.setSelection(true);
 		}
@@ -309,10 +307,9 @@ public abstract class MainLaunchConfigurationTab extends
 
 	protected void performApplyConnectionTimeout(
 			ILaunchConfigurationWorkingCopy config) {
-		config
-				.setAttribute(
-						ScriptLaunchConfigurationConstants.ATTR_DLTK_DBGP_WAITING_TIMEOUT,
-						(String) null);
+		config.setAttribute(
+				ScriptLaunchConfigurationConstants.ATTR_DLTK_DBGP_WAITING_TIMEOUT,
+				(String) null);
 	}
 
 	@Override
@@ -346,26 +343,23 @@ public abstract class MainLaunchConfigurationTab extends
 		if (useInteractiveConsoleGroup) {
 			final boolean useInteractiveConsole = this.interactiveConsoleCheck
 					.getSelection();
-			config
-					.setAttribute(
-							ScriptLaunchConfigurationConstants.ATTR_USE_INTERACTIVE_CONSOLE,
-							useInteractiveConsole);
+			config.setAttribute(
+					ScriptLaunchConfigurationConstants.ATTR_USE_INTERACTIVE_CONSOLE,
+					useInteractiveConsole);
 			String old = null;
 			try {
-				old = config
-						.getAttribute(
-								ScriptLaunchConfigurationConstants.ATTR_DLTK_CONSOLE_ID,
-								(String) null);
+				old = config.getAttribute(
+						ScriptLaunchConfigurationConstants.ATTR_DLTK_CONSOLE_ID,
+						(String) null);
 			} catch (CoreException e) {
 				if (DLTKCore.DEBUG) {
 					e.printStackTrace();
 				}
 			}
 			if (old == null) {
-				config
-						.setAttribute(
-								ScriptLaunchConfigurationConstants.ATTR_DLTK_CONSOLE_ID,
-								"dltk_" + System.currentTimeMillis()); //$NON-NLS-1$
+				config.setAttribute(
+						ScriptLaunchConfigurationConstants.ATTR_DLTK_CONSOLE_ID,
+						"dltk_" + System.currentTimeMillis()); //$NON-NLS-1$
 			}
 		}
 	}
@@ -380,7 +374,7 @@ public abstract class MainLaunchConfigurationTab extends
 
 	/**
 	 * Validates the selected launch script.
-	 * 
+	 *
 	 * @return true if the selected script is valid, false otherwise
 	 */
 	protected boolean validateScript() {
@@ -393,21 +387,24 @@ public abstract class MainLaunchConfigurationTab extends
 
 			if (!result.isOK()) {
 				IFileHandle file = PlatformFileUtils
-						.findAbsoluteOrEclipseRelativeFile(environment, Path
-								.fromPortableString(script.getPath()));
+						.findAbsoluteOrEclipseRelativeFile(environment,
+								Path.fromPortableString(script.getPath()));
 				if (file.exists() && file.isDirectory()) {
 					if (useInteractiveConsoleGroup) {
 						if (!interactiveConsoleCheck.getSelection()) {
-							setErrorMessage(DLTKLaunchConfigurationsMessages.MainLaunchConfigurationTab_0);
+							setErrorMessage(
+									DLTKLaunchConfigurationsMessages.MainLaunchConfigurationTab_0);
 							return false;
 						}
 						return true;
 					} else {
-						setErrorMessage(DLTKLaunchConfigurationsMessages.error_scriptNotFound);
+						setErrorMessage(
+								DLTKLaunchConfigurationsMessages.error_scriptNotFound);
 						return false;
 					}
 				}
-				setErrorMessage(DLTKLaunchConfigurationsMessages.error_scriptNotFound);
+				setErrorMessage(
+						DLTKLaunchConfigurationsMessages.error_scriptNotFound);
 				return false;
 			}
 		}
@@ -416,7 +413,7 @@ public abstract class MainLaunchConfigurationTab extends
 
 	/**
 	 * typo in method name
-	 * 
+	 *
 	 * @return
 	 */
 	@Deprecated
@@ -426,7 +423,7 @@ public abstract class MainLaunchConfigurationTab extends
 
 	/**
 	 * Gets the currently selected {@link ISourceModule}.
-	 * 
+	 *
 	 * @return the selected source module or <code>null</code>
 	 */
 	protected ISourceModule getSourceModule() {
@@ -452,15 +449,16 @@ public abstract class MainLaunchConfigurationTab extends
 		}
 		URI location = proj.getProject().getLocationURI();
 		if (location == null) {
-			setErrorMessage(DLTKLaunchConfigurationsMessages.error_notAValidProject);
+			setErrorMessage(
+					DLTKLaunchConfigurationsMessages.error_notAValidProject);
 			return null;
 		}
 
 		URI script = null;
 		try {
-			script = new URI(location.getScheme(), location.getHost(), location
-					.getPath()
-					+ '/' + getScriptName(), location.getFragment());
+			script = new URI(location.getScheme(), location.getHost(),
+					location.getPath() + '/' + getScriptName(),
+					location.getFragment());
 		} catch (URISyntaxException e) {
 			if (DLTKCore.DEBUG) {
 				e.printStackTrace();
@@ -500,23 +498,22 @@ public abstract class MainLaunchConfigurationTab extends
 	protected void createCustomSections(Composite parent) {
 		if (useInteractiveConsoleGroup) {
 			Group group = new Group(parent, SWT.NONE);
-			group
-					.setText(DLTKLaunchConfigurationsMessages.MainLaunchConfigurationTab_1);
+			group.setText(
+					DLTKLaunchConfigurationsMessages.MainLaunchConfigurationTab_1);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			group.setLayoutData(gd);
 			GridLayout layout = new GridLayout();
 			layout.numColumns = 2;
 			group.setLayout(layout);
-			interactiveConsoleCheck = createCheckButton(
-					group,
+			interactiveConsoleCheck = createCheckButton(group,
 					DLTKLaunchConfigurationsMessages.MainLaunchConfigurationTab_2);
 			interactiveConsoleCheck.addSelectionListener(getWidgetListener());
 			interactiveConsoleCheck
 					.addSelectionListener(new SelectionAdapter() {
 						@Override
 						public void widgetSelected(SelectionEvent e) {
-							notifyInteractiveChangedListeners(interactiveConsoleCheck
-									.getSelection());
+							notifyInteractiveChangedListeners(
+									interactiveConsoleCheck.getSelection());
 						}
 					});
 		}

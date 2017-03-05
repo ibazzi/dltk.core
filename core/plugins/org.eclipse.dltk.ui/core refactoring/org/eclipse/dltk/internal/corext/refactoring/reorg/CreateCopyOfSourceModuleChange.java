@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.corext.refactoring.reorg;
 
@@ -17,8 +16,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.dltk.core.DLTKCore;
-import org.eclipse.dltk.core.ScriptModelUtil;
 import org.eclipse.dltk.core.ISourceModule;
+import org.eclipse.dltk.core.ScriptModelUtil;
 import org.eclipse.dltk.internal.corext.refactoring.nls.changes.CreateTextFileChange;
 import org.eclipse.dltk.internal.corext.refactoring.util.ResourceUtil;
 import org.eclipse.dltk.internal.ui.model.DLTKElementResourceMapping;
@@ -30,14 +29,15 @@ public class CreateCopyOfSourceModuleChange extends CreateTextFileChange {
 
 	private ISourceModule fOldCu;
 	private INewNameQuery fNameQuery;
-	
+
 	public CreateCopyOfSourceModuleChange(IPath path, String source, ISourceModule oldCu, INewNameQuery nameQuery) {
 		super(path, source, null, "java"); //$NON-NLS-1$
 		fOldCu= oldCu;
 		fNameQuery= nameQuery;
 		setEncoding(oldCu);
 	}
-	
+
+	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		ISourceModule unit= fOldCu;
 		ResourceMapping mapping= DLTKElementResourceMapping.create(unit);
@@ -45,7 +45,7 @@ public class CreateCopyOfSourceModuleChange extends CreateTextFileChange {
 		markAsExecuted(unit, mapping);
 		return result;
 	}
-	
+
 	private void setEncoding(ISourceModule cunit) {
 		IResource resource= cunit.getResource();
 		// no file so the encoding is taken from the target
@@ -67,9 +67,7 @@ public class CreateCopyOfSourceModuleChange extends CreateTextFileChange {
 		}
 	}
 
-	/*
-	 * @see CreateFileChange#getOldFile()
-	 */
+	@Override
 	protected IFile getOldFile(IProgressMonitor pm) {
 		pm.beginTask("", 10); //$NON-NLS-1$
 		String oldSource= super.getSource();

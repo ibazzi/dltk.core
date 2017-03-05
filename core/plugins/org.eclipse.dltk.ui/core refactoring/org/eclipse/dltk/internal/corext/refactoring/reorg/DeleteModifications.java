@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -134,6 +134,7 @@ public class DeleteModifications extends RefactoringModifications {
 		}
 	}
 
+	@Override
 	public void buildDelta(IResourceChangeDescriptionFactory deltaFactory) {
 		for (Iterator iter = fDelete.iterator(); iter.hasNext();) {
 			Object element = iter.next();
@@ -144,6 +145,7 @@ public class DeleteModifications extends RefactoringModifications {
 		getResourceModifications().buildDelta(deltaFactory);
 	}
 
+	@Override
 	public RefactoringParticipant[] loadParticipants(RefactoringStatus status,
 			RefactoringProcessor owner, String[] natures,
 			SharableParticipants shared) {
@@ -165,7 +167,7 @@ public class DeleteModifications extends RefactoringModifications {
 	 * without the package folder ("package cleaning") * deletion of the package
 	 * folder if it is not only cleared and if its parent is not removed as
 	 * well.
-	 * 
+	 *
 	 */
 	private void handleScriptFolderDelete(IScriptFolder pack)
 			throws CoreException {

@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.filters;
 
@@ -16,17 +15,13 @@ import org.eclipse.dltk.internal.ui.scriptview.BuildPathContainer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
-
-
 /**
  * The LibraryFilter is a filter used to determine whether
  * a script library is shown
  */
 public class LibraryFilter extends ViewerFilter {
-	
-	/* (non-Javadoc)
-	 * Method declared on ViewerFilter.
-	 */
+
+	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		if (element instanceof BuildPathContainer)
 			return false;

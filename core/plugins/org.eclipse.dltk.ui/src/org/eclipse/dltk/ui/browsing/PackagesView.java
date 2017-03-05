@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -139,7 +139,7 @@ public class PackagesView extends ScriptBrowsingPart {
 	/**
 	 * Creates new NonJavaElementFilter and overrides method select to allow for
 	 * LogicalPackages.
-	 * 
+	 *
 	 * @return NonJavaElementFilter
 	 */
 	protected NonScriptElementFilter createNonJavaElementFilter() {
@@ -194,7 +194,7 @@ public class PackagesView extends ScriptBrowsingPart {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.ui.browsing.JavaBrowsingPart#createViewer(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -269,7 +269,7 @@ public class PackagesView extends ScriptBrowsingPart {
 
 	/**
 	 * Returns the context ID for the Help system
-	 * 
+	 *
 	 * @return the string used as ID for the Help context
 	 */
 	@Override
@@ -286,7 +286,7 @@ public class PackagesView extends ScriptBrowsingPart {
 	/**
 	 * Answers if the given <code>element</code> is a valid input for this
 	 * part.
-	 * 
+	 *
 	 * @param element
 	 *            the object to test
 	 * @return <true> if the given element is a valid input
@@ -308,7 +308,7 @@ public class PackagesView extends ScriptBrowsingPart {
 	/**
 	 * Answers if the given <code>element</code> is a valid element for this
 	 * part.
-	 * 
+	 *
 	 * @param element
 	 *            the object to test
 	 * @return <true> if the given element is a valid element
@@ -326,7 +326,7 @@ public class PackagesView extends ScriptBrowsingPart {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.ui.browsing.JavaBrowsingPart#findElementToSelect(org.eclipse.jdt.core.IJavaElement)
 	 */
 	@Override
@@ -510,17 +510,6 @@ public class PackagesView extends ScriptBrowsingPart {
 //						IJavaHelpContextIds.LAYOUT_HIERARCHICAL_ACTION);
 		}
 
-		public int getState() {
-			return fState;
-		}
-
-		public void setRunnable(Runnable runnable) {
-			Assert.isNotNull(runnable);
-		}
-
-		/*
-		 * @see org.eclipse.jface.action.IAction#run()
-		 */
 		@Override
 		public void run() {
 			switchViewer(fState);
@@ -622,7 +611,7 @@ public class PackagesView extends ScriptBrowsingPart {
 	/**
 	 * Override the getText and getImage methods for the DecoratingLabelProvider
 	 * to handel the decoration of logical packages.
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.ui.browsing.ScriptBrowsingPart#createDecoratingLabelProvider(JavaUILabelProvider)
 	 */
 	@Override
@@ -665,7 +654,7 @@ public class PackagesView extends ScriptBrowsingPart {
 	/*
 	 * Overridden from JavaBrowsingPart to handel LogicalPackages and tree
 	 * structure.
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.ui.browsing.JavaBrowsingPart#adjustInputAndSetSelection(org.eclipse.jdt.core.IJavaElement)
 	 */
 	void adjustInputAndSetSelection(IModelElement je) {

@@ -11,6 +11,7 @@ public abstract class AbstractDebugTests extends AbstractModelTests {
 	protected IScriptProject scriptProject;
 
 	// Configuration
+	@Override
 	public void setUpSuite() throws Exception {
 		super.setUpSuite();
 
@@ -22,6 +23,7 @@ public abstract class AbstractDebugTests extends AbstractModelTests {
 		// project.setDescription(description, null);
 	}
 
+	@Override
 	public void tearDownSuite() throws Exception {
 		deleteProject(getProjectName());
 

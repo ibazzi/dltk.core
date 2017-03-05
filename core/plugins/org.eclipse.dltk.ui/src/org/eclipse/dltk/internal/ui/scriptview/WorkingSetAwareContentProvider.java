@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,34 +43,24 @@ public abstract class WorkingSetAwareContentProvider extends
 			WorkingSetModel model) {
 		super(provideMembers);
 		fWorkingSetModel = model;
-		fListener = new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				workingSetModelChanged(event);
-			}
-		};
+		fListener = event -> workingSetModelChanged(event);
 		fWorkingSetModel.addPropertyChangeListener(fListener);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void dispose() {
 		fWorkingSetModel.removePropertyChangeListener(fListener);
 		super.dispose();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public boolean hasChildren(Object element) {
 		if (element instanceof IWorkingSet)
 			return true;
 		return super.hasChildren(element);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Object[] getChildren(Object element) {
 		Object[] children;
 		if (element instanceof WorkingSetModel) {
@@ -141,6 +131,7 @@ public abstract class WorkingSetAwareContentProvider extends
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public TreePath[] getTreePaths(Object element) {
 		if (element instanceof IWorkingSet) {
 			TreePath path = new TreePath(new Object[] { element });
@@ -186,9 +177,7 @@ public abstract class WorkingSetAwareContentProvider extends
 		return result;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Object getParent(Object child) {
 		Object parent = getExtendedParent(child);
 		if (parent != null) {
@@ -201,6 +190,7 @@ public abstract class WorkingSetAwareContentProvider extends
 		return first;
 	}
 
+	@Override
 	protected void augmentElementToRefresh(List toRefresh, int relation,
 			Object affectedElement) {
 		// we are refreshing the ScriptModel and are in working set mode.

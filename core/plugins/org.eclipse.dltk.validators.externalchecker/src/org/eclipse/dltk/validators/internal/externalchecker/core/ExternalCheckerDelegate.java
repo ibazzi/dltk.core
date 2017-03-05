@@ -32,8 +32,7 @@ import org.eclipse.dltk.validators.core.ValidatorReporter;
  */
 class ExternalCheckerDelegate {
 
-	public static final String MARKER_ID = ExternalCheckerPlugin.PLUGIN_ID
-			+ ".externalcheckerproblem"; // $NON-NLS-1$
+	public static final String MARKER_ID = ExternalCheckerPlugin.PLUGIN_ID + ".externalcheckerproblem"; // $NON-NLS-1$
 
 	private final String arguments;
 	private final String command;
@@ -42,17 +41,15 @@ class ExternalCheckerDelegate {
 	private final IExecutionEnvironment execEnvironment;
 	private final String[] extensions;
 	private final boolean passInterpreterEnvironmentVars;
-	private final List<Rule> rules = new ArrayList<Rule>();
+	private final List<Rule> rules = new ArrayList<>();
 
 	static interface IExternalReporterDelegate {
 		void report(IValidatorProblem problem) throws CoreException;
 	}
 
-	public ExternalCheckerDelegate(IEnvironment environment,
-			ExternalChecker externalChecker) {
+	public ExternalCheckerDelegate(IEnvironment environment, ExternalChecker externalChecker) {
 		this.environment = environment;
-		this.execEnvironment = (IExecutionEnvironment) environment
-				.getAdapter(IExecutionEnvironment.class);
+		this.execEnvironment = environment.getAdapter(IExecutionEnvironment.class);
 
 		for (int i = 0; i < externalChecker.getNRules(); ++i) {
 			rules.add(externalChecker.getRule(i));
@@ -60,8 +57,7 @@ class ExternalCheckerDelegate {
 
 		this.arguments = externalChecker.getArguments();
 		this.extensions = prepareExtensions(externalChecker.getExtensions());
-		this.passInterpreterEnvironmentVars = externalChecker
-				.isPassInterpreterEnvironmentVars();
+		this.passInterpreterEnvironmentVars = externalChecker.isPassInterpreterEnvironmentVars();
 		this.command = prepareCommand(externalChecker.getCommand(), environment);
 	}
 
@@ -99,10 +95,10 @@ class ExternalCheckerDelegate {
 		String[] environmentVars;
 	}
 
-	private final Map<IProject, EnvContainer> projectEnvs = new HashMap<IProject, EnvContainer>();
+	private final Map<IProject, EnvContainer> projectEnvs = new HashMap<>();
 
-	public void runValidator(IResource resource, IValidatorOutput console,
-			IExternalReporterDelegate delegate) throws CoreException {
+	public void runValidator(IResource resource, IValidatorOutput console, IExternalReporterDelegate delegate)
+			throws CoreException {
 		CommandLine cmdLine = new CommandLine(arguments);
 		cmdLine.replaceSequence('f', getResourcePath(resource));
 		cmdLine.add(0, command);
@@ -112,18 +108,14 @@ class ExternalCheckerDelegate {
 			EnvContainer envContainer = projectEnvs.get(project);
 			if (envContainer == null) {
 				envContainer = new EnvContainer();
-				IInterpreterInstall install = ScriptRuntime
-						.getInterpreterInstall(DLTKCore.create(project));
+				IInterpreterInstall install = ScriptRuntime.getInterpreterInstall(DLTKCore.create(project));
 				if (install != null) {
-					EnvironmentVariable[] resolved = EnvironmentResolver
-							.resolve(execEnvironment
-									.getEnvironmentVariables(true), install
-									.getEnvironmentVariables(), true);
+					EnvironmentVariable[] resolved = EnvironmentResolver.resolve(
+							execEnvironment.getEnvironmentVariables(true), install.getEnvironmentVariables(), true);
 					if (resolved != null) {
 						envContainer.environmentVars = new String[resolved.length];
 						for (int i = 0; i < resolved.length; ++i) {
-							envContainer.environmentVars[i] = resolved[i]
-									.toString();
+							envContainer.environmentVars[i] = resolved[i].toString();
 						}
 					}
 				}
@@ -134,8 +126,7 @@ class ExternalCheckerDelegate {
 			env = null;
 		}
 		Process process = execEnvironment.exec(cmdLine.toArray(), null, env);
-		BufferedReader input = new BufferedReader(new InputStreamReader(process
-				.getInputStream()));
+		BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
 		try {
 			String line = null;
@@ -161,9 +152,9 @@ class ExternalCheckerDelegate {
 	}
 
 	private IValidatorProblem parseProblem(String problem) {
-		List wlist = ExternalCheckerWildcardManager.loadCustomWildcards();
+		List<CustomWildcard> wlist = ExternalCheckerWildcardManager.loadCustomWildcards();
 		for (int i = 0; i < rules.size(); i++) {
-			Rule rule = (Rule) this.rules.get(i);
+			Rule rule = this.rules.get(i);
 			// String wcard = rule.getDescription();
 			// List tlist = null;
 			try {
@@ -184,9 +175,8 @@ class ExternalCheckerDelegate {
 		return null;
 	}
 
-	private String prepareCommand(Map<IEnvironment, String> commands,
-			IEnvironment environment) {
-		String result = (String) commands.get(environment);
+	private String prepareCommand(Map<IEnvironment, String> commands, IEnvironment environment) {
+		String result = commands.get(environment);
 		if (result != null) {
 			result = result.trim();
 		}

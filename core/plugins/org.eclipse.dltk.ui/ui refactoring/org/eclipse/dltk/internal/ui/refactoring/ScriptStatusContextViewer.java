@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 
 
 public class ScriptStatusContextViewer extends TextStatusContextViewer {
+	@Override
 	protected SourceViewer createSourceViewer(Composite parent) {
 		return new ScriptSourceViewer(parent, null, null, false,
 				SWT.LEFT_TO_RIGHT | SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI
@@ -50,6 +51,7 @@ public class ScriptStatusContextViewer extends TextStatusContextViewer {
 		return (IPackageFragmentRoot) element;
 	}*/
 
+	@Override
 	public void setInput(RefactoringStatusContext context) {
 		if (context instanceof ScriptStatusContext) {
 			ScriptStatusContext jsc = (ScriptStatusContext) context;

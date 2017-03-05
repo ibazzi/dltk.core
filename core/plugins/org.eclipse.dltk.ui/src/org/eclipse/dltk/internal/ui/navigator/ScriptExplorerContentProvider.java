@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,12 +58,12 @@ import org.eclipse.ui.progress.UIJob;
 
 /**
  * Content provider for the PackageExplorer.
- * 
+ *
  * <p>
  * Since 2.1 this content provider can provide the children for flat or
  * hierarchical layout.
  * </p>
- * 
+ *
  * @see org.eclipse.jdt.ui.StandardJavaElementContentProvider
  */
 public class ScriptExplorerContentProvider extends
@@ -87,7 +87,7 @@ public class ScriptExplorerContentProvider extends
 
 	/**
 	 * Creates a new content provider for Java elements.
-	 * 
+	 *
 	 * @param provideMembers
 	 *            if set, members of compilation units and class files are shown
 	 */
@@ -118,6 +118,7 @@ public class ScriptExplorerContentProvider extends
 	/*
 	 * (non-Javadoc) Method declared on IElementChangedListener.
 	 */
+	@Override
 	public void elementChanged(final ElementChangedEvent event) {
 		final ArrayList<Runnable> runnables = new ArrayList<Runnable>();
 		try {
@@ -168,6 +169,7 @@ public class ScriptExplorerContentProvider extends
 	private void postAsyncUpdate(final Display display) {
 		if (fUpdateJob == null) {
 			fUpdateJob = new UIJob(display, "Update Script explorer") { //$NON-NLS-1$
+				@Override
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 					TreeViewer viewer = fViewer;
 					if (viewer != null && viewer.isBusy()) {
@@ -232,9 +234,7 @@ public class ScriptExplorerContentProvider extends
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IContentProvider.
-	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		DLTKCore.removeElementChangedListener(this);
@@ -242,12 +242,7 @@ public class ScriptExplorerContentProvider extends
 				.removePropertyChangeListener(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.eclipse.jdt.ui.StandardJavaElementContentProvider#
-	 * getPackageFragmentRootContent(org.eclipse.jdt.core.IPackageFragmentRoot)
-	 */
+	@Override
 	protected Object[] getProjectFragmentContent(final IProjectFragment root)
 			throws ModelException {
 		if (fIsFlatLayout) {
@@ -266,13 +261,7 @@ public class ScriptExplorerContentProvider extends
 		return result.toArray();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jdt.ui.StandardJavaElementContentProvider#getPackageContent
-	 * (org.eclipse.jdt.core.IPackageFragment)
-	 */
+	@Override
 	protected Object[] getScriptFolderContent(final IScriptFolder fragment)
 			throws ModelException {
 		if (fIsFlatLayout) {
@@ -294,13 +283,7 @@ public class ScriptExplorerContentProvider extends
 		return result.toArray();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jdt.ui.StandardJavaElementContentProvider#getFolderContent
-	 * (org.eclipse.core.resources.IFolder)
-	 */
+	@Override
 	protected Object[] getFolderContent(final IFolder folder)
 			throws CoreException {
 		if (fIsFlatLayout) {
@@ -321,6 +304,7 @@ public class ScriptExplorerContentProvider extends
 		return result.toArray();
 	}
 
+	@Override
 	public Object[] getChildren(final Object parentElement) {
 		try {
 			if (parentElement instanceof IScriptModel) {
@@ -353,13 +337,7 @@ public class ScriptExplorerContentProvider extends
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jdt.ui.StandardJavaElementContentProvider#getPackageFragmentRoots
-	 * (org.eclipse.jdt.core.IJavaProject)
-	 */
+	@Override
 	protected Object[] getProjectFragments(final IScriptProject project)
 			throws ModelException {
 		if (!project.getProject().isOpen()) {
@@ -437,6 +415,7 @@ public class ScriptExplorerContentProvider extends
 		return model.getForeignResources();
 	}
 
+	@Override
 	protected Object internalGetParent(final Object element) {
 		if (!fIsFlatLayout && element instanceof IScriptFolder) {
 			return getHierarchicalPackageParent((IScriptFolder) element);
@@ -474,9 +453,7 @@ public class ScriptExplorerContentProvider extends
 		return super.internalGetParent(element);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IContentProvider.
-	 */
+	@Override
 	public void inputChanged(final Viewer viewer, final Object oldInput,
 			final Object newInput) {
 		super.inputChanged(viewer, oldInput, newInput);
@@ -492,7 +469,7 @@ public class ScriptExplorerContentProvider extends
 	// hierarchical packages
 	/**
 	 * Returns the hierarchical packages inside a given fragment or root.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent package fragment root
 	 * @param fragment
@@ -554,7 +531,7 @@ public class ScriptExplorerContentProvider extends
 
 	/**
 	 * Returns the hierarchical packages inside a given folder.
-	 * 
+	 *
 	 * @param folder
 	 *            The parent folder
 	 * @param result
@@ -663,7 +640,7 @@ public class ScriptExplorerContentProvider extends
 	/**
 	 * Processes a delta recursively. When more than two children are affected
 	 * the tree is fully refreshed starting at this node.
-	 * 
+	 *
 	 * @param delta
 	 *            the delta to process
 	 * @param runnables
@@ -972,7 +949,7 @@ public class ScriptExplorerContentProvider extends
 
 	/**
 	 * Updates the package icon
-	 * 
+	 *
 	 * @param element
 	 *            the element to update
 	 * @param runnables
@@ -981,18 +958,13 @@ public class ScriptExplorerContentProvider extends
 	 */
 	private void postUpdateIcon(final IModelElement element,
 			final Collection<Runnable> runnables) {
-		runnables.add(new Runnable() {
-			public void run() {
-				// 1GF87WR: ITPUI:ALL - SWTEx + NPE closing a workbench window.
-				fViewer.update(element,
-						new String[] { IBasicPropertyConstants.P_IMAGE });
-			}
-		});
+		runnables.add(() -> fViewer.update(element,
+				new String[] { IBasicPropertyConstants.P_IMAGE }));
 	}
 
 	/**
 	 * Process a resource delta.
-	 * 
+	 *
 	 * @param delta
 	 *            the delta to process
 	 * @param parent
@@ -1096,7 +1068,7 @@ public class ScriptExplorerContentProvider extends
 
 	/**
 	 * Can be implemented by subclasses to add additional elements to refresh
-	 * 
+	 *
 	 * @param toRefresh
 	 *            the elements to refresh
 	 * @param relation
@@ -1122,55 +1094,45 @@ public class ScriptExplorerContentProvider extends
 
 	protected void postRefresh(final List<?> toRefresh,
 			final boolean updateLabels, final Collection<Runnable> runnables) {
-		runnables.add(new Runnable() {
-			public void run() {
-				for (Object item : toRefresh) {
-					fViewer.refresh(item, updateLabels);
-				}
+		runnables.add(() -> {
+			for (Object item : toRefresh) {
+				fViewer.refresh(item, updateLabels);
 			}
 		});
 	}
 
 	protected void postAdd(final Object parent, final Object element,
 			final Collection<Runnable> runnables) {
-		runnables.add(new Runnable() {
-			public void run() {
-				Widget[] items = fViewer.testFindItems(element);
-				for (int i = 0; i < items.length; i++) {
-					Widget item = items[i];
-					if (item instanceof TreeItem && !item.isDisposed()) {
-						TreeItem parentItem = ((TreeItem) item).getParentItem();
-						if (parentItem != null && !parentItem.isDisposed()
-								&& parent.equals(parentItem.getData())) {
-							return; // no add, element already added (most
-							// likely by a refresh)
-						}
+		runnables.add(() -> {
+			Widget[] items = fViewer.testFindItems(element);
+			for (int i = 0; i < items.length; i++) {
+				Widget item = items[i];
+				if (item instanceof TreeItem && !item.isDisposed()) {
+					TreeItem parentItem = ((TreeItem) item).getParentItem();
+					if (parentItem != null && !parentItem.isDisposed()
+							&& parent.equals(parentItem.getData())) {
+						return; // no add, element already added (most
+						// likely by a refresh)
 					}
 				}
-				fViewer.add(parent, element);
 			}
+			fViewer.add(parent, element);
 		});
 	}
 
 	protected void postRemove(final Object element,
 			final Collection<Runnable> runnables) {
-		runnables.add(new Runnable() {
-			public void run() {
-				fViewer.remove(element);
-			}
-		});
+		runnables.add(() -> fViewer.remove(element));
 	}
 
 	protected void postProjectStateChanged(final Object root,
 			final Collection<Runnable> runnables) {
-		runnables.add(new Runnable() {
-			public void run() {
-				fViewer.refresh(root, true);
-				// trigger a synthetic selection change so that action refresh
-				// their
-				// enable state.
-				fViewer.setSelection(fViewer.getSelection());
-			}
+		runnables.add(() -> {
+			fViewer.refresh(root, true);
+			// trigger a synthetic selection change so that action refresh
+			// their
+			// enable state.
+			fViewer.setSelection(fViewer.getSelection());
 		});
 	}
 
@@ -1179,6 +1141,7 @@ public class ScriptExplorerContentProvider extends
 	 * org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse
 	 * .jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange(final PropertyChangeEvent event) {
 		if (arePackagesFoldedInHierarchicalLayout() != fFoldPackages) {
 			fFoldPackages = arePackagesFoldedInHierarchicalLayout();

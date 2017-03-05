@@ -1,7 +1,6 @@
 package org.eclipse.dltk.ui.browsing.ext;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -36,21 +35,16 @@ import org.eclipse.dltk.ui.ModelElementSorter;
 import org.eclipse.dltk.ui.actions.OpenEditorActionGroup;
 import org.eclipse.dltk.ui.actions.OpenViewActionGroup;
 import org.eclipse.dltk.ui.actions.SearchActionGroup;
-import org.eclipse.dltk.ui.browsing.ScriptElementTypeComparator;
 import org.eclipse.dltk.ui.infoviews.AbstractInfoView;
 import org.eclipse.dltk.ui.viewsupport.IViewPartInputProvider;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -78,17 +72,14 @@ public class ExtendedClassesView extends ViewPart implements
 
 	private final class IElementChangedListenerImplementation implements
 			IElementChangedListener {
+		@Override
 		public void elementChanged(ElementChangedEvent event) {
 			// We need to update
 			// if (event.getType() == ElementChangedEvent.POST_CHANGE) {
 			IModelElementDelta delta = event.getDelta();
 			if (browsingPane != null && !browsingPane.isDisposed()
 					&& typesChanged(delta)) {
-				browsingPane.getDisplay().asyncExec(new Runnable() {
-					public void run() {
-						browsingPane.refresh();
-					}
-				});
+				browsingPane.getDisplay().asyncExec(() -> browsingPane.refresh());
 			}
 			// }
 		}
@@ -129,6 +120,7 @@ public class ExtendedClassesView extends ViewPart implements
 				.addElementChangedListener(elementChangedListenerImplementation);
 	}
 
+	@Override
 	public void dispose() {
 		if (fContextActivation != null) {
 			IContextService ctxService = getSite()
@@ -143,9 +135,11 @@ public class ExtendedClassesView extends ViewPart implements
 	}
 
 	//
+	@Override
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new FillLayout());
 		browsingPane = new MultiSelectionListViewer(parent, SWT.NONE) {
+			@Override
 			public void elementSelectionChanged(ISelection selection) {
 				Object[] listeners = listenerList.getListeners();
 				SelectionChangedEvent event = new SelectionChangedEvent(
@@ -156,10 +150,12 @@ public class ExtendedClassesView extends ViewPart implements
 				}
 			}
 
+			@Override
 			protected void configureViewer(TreeViewer viewer) {
 				// viewer.setCom
 				viewer.setUseHashlookup(true);
 				viewer.setSorter(new ModelElementSorter() {
+					@Override
 					public int compare(Viewer viewer, Object e1, Object e2) {
 						e1 = unWrap(e1);
 						e2 = unWrap(e2);
@@ -176,37 +172,35 @@ public class ExtendedClassesView extends ViewPart implements
 						return e1;
 					}
 
+					@Override
 					protected String getElementName(Object element) {
 						element = unWrap(element);
 						return super.getElementName(element);
 					}
 
+					@Override
 					public int category(Object element) {
 						return super.category(unWrap(element));
 					}
 
 				});
 
-				viewer.addDoubleClickListener(new IDoubleClickListener() {
-					public void doubleClick(DoubleClickEvent event) {
-						IAction openAction = fOpenEditorGroup.getOpenAction();
-						if (openAction != null && openAction.isEnabled()) {
-							openAction.run();
-							return;
-						}
-						fLastOpenSelection = event.getSelection();
+				viewer.addDoubleClickListener(event -> {
+					IAction openAction = fOpenEditorGroup.getOpenAction();
+					if (openAction != null && openAction.isEnabled()) {
+						openAction.run();
+						return;
 					}
+					fLastOpenSelection = event.getSelection();
 				});
 
-				viewer.addOpenListener(new IOpenListener() {
-					public void open(OpenEvent event) {
-						IAction openAction = fOpenEditorGroup.getOpenAction();
-						if (openAction != null && openAction.isEnabled()) {
-							openAction.run();
-							return;
-						}
-						fLastOpenSelection = event.getSelection();
+				viewer.addOpenListener(event -> {
+					IAction openAction = fOpenEditorGroup.getOpenAction();
+					if (openAction != null && openAction.isEnabled()) {
+						openAction.run();
+						return;
 					}
+					fLastOpenSelection = event.getSelection();
 				});
 
 				// Initialize menu
@@ -261,7 +255,7 @@ public class ExtendedClassesView extends ViewPart implements
 
 	/**
 	 * We need to prefer local elements with same name
-	 * 
+	 *
 	 * @param selection
 	 * @return
 	 */
@@ -286,9 +280,11 @@ public class ExtendedClassesView extends ViewPart implements
 		return new StructuredSelection();
 	}
 
+	@Override
 	public void setFocus() {
 	}
 
+	@Override
 	public Object getViewPartInput() {
 		return browsingPane.getSelection();
 	}
@@ -358,15 +354,7 @@ public class ExtendedClassesView extends ViewPart implements
 		return firstElement;
 	}
 
-	private ScriptElementTypeComparator fTypeComparator;
-
-	private Comparator getTypeComparator() {
-		if (fTypeComparator == null) {
-			fTypeComparator = new ScriptElementTypeComparator();
-		}
-		return fTypeComparator;
-	}
-
+	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		if (!needsToProcessSelectionChanged(part, selection))
 			return;
@@ -422,24 +410,31 @@ public class ExtendedClassesView extends ViewPart implements
 
 	private boolean fProcessSelectionEvents = true;
 	private IPartListener2 fPartListener = new IPartListener2() {
+		@Override
 		public void partActivated(IWorkbenchPartReference ref) {
 		}
 
+		@Override
 		public void partBroughtToTop(IWorkbenchPartReference ref) {
 		}
 
+		@Override
 		public void partInputChanged(IWorkbenchPartReference ref) {
 		}
 
+		@Override
 		public void partClosed(IWorkbenchPartReference ref) {
 		}
 
+		@Override
 		public void partDeactivated(IWorkbenchPartReference ref) {
 		}
 
+		@Override
 		public void partOpened(IWorkbenchPartReference ref) {
 		}
 
+		@Override
 		public void partVisible(IWorkbenchPartReference ref) {
 			if (ref != null && ref.getId() == getSite().getId()) {
 				fProcessSelectionEvents = true;
@@ -450,6 +445,7 @@ public class ExtendedClassesView extends ViewPart implements
 			}
 		}
 
+		@Override
 		public void partHidden(IWorkbenchPartReference ref) {
 			if (ref != null && ref.getId() == getSite().getId())
 				fProcessSelectionEvents = false;
@@ -460,22 +456,27 @@ public class ExtendedClassesView extends ViewPart implements
 	private IDLTKLanguageToolkit fToolkit;
 	private IElementChangedListenerImplementation elementChangedListenerImplementation;
 
+	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
 		listenerList.add(listener);
 	}
 
+	@Override
 	public ISelection getSelection() {
 		return convertSelection(browsingPane.getSelection());
 	}
 
+	@Override
 	public void removeSelectionChangedListener(
 			ISelectionChangedListener listener) {
 		listenerList.remove(listener);
 	}
 
+	@Override
 	public void setSelection(ISelection selection) {
 	}
 
+	@Override
 	public void setInitializationData(IConfigurationElement config,
 			String propertyName, Object data) {
 		super.setInitializationData(config, propertyName, data);
@@ -483,6 +484,7 @@ public class ExtendedClassesView extends ViewPart implements
 				propertyName, data);
 	}
 
+	@Override
 	public void menuAboutToShow(IMenuManager menu) {
 		DLTKUIPlugin.createStandardGroups(menu);
 

@@ -35,13 +35,11 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultInformationControl;
-import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextHoverExtension;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.editors.text.EditorsUI;
@@ -50,8 +48,8 @@ import org.osgi.framework.Bundle;
 /**
  * Abstract class for providing hover information for Script elements.
  */
-public abstract class AbstractScriptEditorTextHover implements
-		IScriptEditorTextHover, ITextHoverExtension {
+public abstract class AbstractScriptEditorTextHover
+		implements IScriptEditorTextHover, ITextHoverExtension {
 
 	/**
 	 * The style sheet (css).
@@ -95,23 +93,6 @@ public abstract class AbstractScriptEditorTextHover implements
 
 	@Override
 	public IRegion getHoverRegion(final ITextViewer textViewer, int offset) {
-
-		// final IRegion[] result = new IRegion[] { ScriptWordFinder.findWord(
-		// textViewer.getDocument(), offset) };
-		//
-		// textViewer.getTextWidget().getDisplay().syncExec(new Runnable() {
-		// public void run() {
-		// Point selection = textViewer.getSelectedRange();
-		// int off = selection.x;
-		// int len = selection.y;
-		//
-		// if (len > 0) {
-		// result[0] = new Region(off, len);
-		// }
-		// }
-		// });
-		//
-		// return result[0];
 		return ScriptWordFinder.findWord(textViewer.getDocument(), offset);
 	}
 
@@ -165,17 +146,18 @@ public abstract class AbstractScriptEditorTextHover implements
 	}
 
 	@Deprecated
-	protected String getHoverInfo(String nature, IModelElement[] modelElements) {
+	protected String getHoverInfo(String nature,
+			IModelElement[] modelElements) {
 		return null;
 	}
 
 	/**
 	 * Provides hover information for the given elements.
-	 * 
+	 *
 	 * @param elements
 	 *            the Script elements for which to provide hover information
 	 * @return the hover information string
-	 * 
+	 *
 	 */
 	protected String getHoverInfo(String nature, Object[] elements) {
 		final List<IModelElement> modelElements = new ArrayList<IModelElement>();
@@ -190,7 +172,7 @@ public abstract class AbstractScriptEditorTextHover implements
 
 	/**
 	 * Provides hover information for the given elements.
-	 * 
+	 *
 	 * @param selection
 	 *            the Script elements for which to provide hover information
 	 * @return the hover information string
@@ -201,11 +183,11 @@ public abstract class AbstractScriptEditorTextHover implements
 
 	/**
 	 * Provides hover information for the keyword.
-	 * 
+	 *
 	 * @param content
 	 *            text of the keyword
 	 * @return the hover information string
-	 * 
+	 *
 	 */
 	protected String getHoverInfo(String nature, String content) {
 		return null;
@@ -213,21 +195,16 @@ public abstract class AbstractScriptEditorTextHover implements
 
 	@Override
 	public IInformationControlCreator getHoverControlCreator() {
-		return new IInformationControlCreator() {
-			@Override
-			public IInformationControl createInformationControl(Shell parent) {
-				return new DefaultInformationControl(parent,
-						EditorsUI.getTooltipAffordanceString());
-			}
-		};
+		return parent -> new DefaultInformationControl(parent,
+				EditorsUI.getTooltipAffordanceString());
 	}
 
 	/**
 	 * Returns the tool tip affordance string.
-	 * 
+	 *
 	 * @return the affordance string or <code>null</code> if disabled or no key
 	 *         binding is defined
-	 * 
+	 *
 	 */
 	// protected String getTooltipAffordanceString() {
 	// if (this.getPreferenceStore() == null) {
@@ -246,12 +223,12 @@ public abstract class AbstractScriptEditorTextHover implements
 	//
 	// return Messages.format(
 	// ScriptHoverMessages.ScriptTextHover_makeStickyHint,
-	//				keySequence == null ? "" : keySequence); //$NON-NLS-1$
+	// keySequence == null ? "" : keySequence); //$NON-NLS-1$
 	// }
 	/**
 	 * Returns the style sheet.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	protected static String getStyleSheet() {
 		if (fgCSSStyles == null) {

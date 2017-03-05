@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.text;
 
@@ -19,8 +18,6 @@ import org.eclipse.dltk.ui.text.IColorManagerExtension;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
-
-
 
 /**
  * DLTK color manager.
@@ -71,9 +68,7 @@ public class DLTKColorManager implements IColorManager, IColorManagerExtension {
 		}
 	}
 
-	/*
-	 * @see IColorManager#getColor(RGB)
-	 */
+	@Override
 	public Color getColor(RGB rgb) {
 
 		if (rgb == null)
@@ -85,11 +80,7 @@ public class DLTKColorManager implements IColorManager, IColorManagerExtension {
 			colorTable= new HashMap(10);
 			fDisplayTable.put(display, colorTable);
 			if (fAutoDisposeOnDisplayDispose) {
-				display.disposeExec(new Runnable() {
-					public void run() {
-						dispose(display);
-					}
-				});
+				display.disposeExec(() -> dispose(display));
 			}
 		}
 
@@ -102,17 +93,13 @@ public class DLTKColorManager implements IColorManager, IColorManagerExtension {
 		return color;
 	}
 
-	/*
-	 * @see IColorManager#dispose
-	 */
+	@Override
 	public void dispose() {
 		if (!fAutoDisposeOnDisplayDispose)
 			dispose(Display.getCurrent());
 	}
 
-	/*
-	 * @see IColorManager#getColor(String)
-	 */
+	@Override
 	public Color getColor(String key) {
 
 		if (key == null)
@@ -122,9 +109,7 @@ public class DLTKColorManager implements IColorManager, IColorManagerExtension {
 		return getColor(rgb);
 	}
 
-	/*
-	 * @see IColorManagerExtension#bindColor(String, RGB)
-	 */
+	@Override
 	public void bindColor(String key, RGB rgb) {
 		Object value= fKeyTable.get(key);
 		if (value != null)
@@ -133,9 +118,7 @@ public class DLTKColorManager implements IColorManager, IColorManagerExtension {
 		fKeyTable.put(key, rgb);
 	}
 
-	/*
-	 * @see IColorManagerExtension#unbindColor(String)
-	 */
+	@Override
 	public void unbindColor(String key) {
 		fKeyTable.remove(key);
 	}

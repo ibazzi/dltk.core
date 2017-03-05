@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,8 +15,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -1490,18 +1490,8 @@ public class ScriptProject extends Openable implements IScriptProject,
 		IFile rscFile = this.project.getFile(key);
 		if (rscFile.exists()) {
 			byte[] bytes = Util.getResourceContentsAsByteArray(rscFile);
-			try {
-				property = new String(bytes,
-						org.eclipse.dltk.compiler.util.Util.UTF_8); // .buildpath
-				// always
-				// encoded
-				// with
-				// UTF-8
-			} catch (UnsupportedEncodingException e) {
-				Util.log(e, "Could not read .buildpath with UTF-8 encoding"); //$NON-NLS-1$
-				// fallback to default
-				property = new String(bytes);
-			}
+			property = new String(bytes, StandardCharsets.UTF_8);
+			// .buildpath always encoded with UTF-8
 		} else {
 			// when a project is imported, we get a first delta for the addition
 			// of the .project, but the .buildpath is not accessible
@@ -1509,10 +1499,10 @@ public class ScriptProject extends Openable implements IScriptProject,
 			// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=96258
 			URI location = rscFile.getLocationURI();
 			if (location != null) {
-				File file = Util.toLocalFile(location, null/*
-															 * no progress
-															 * monitor available
-															 */);
+				File file = Util.toLocalFile(location,
+						null/*
+							 * no progress monitor available
+							 */);
 				if (file != null && file.exists()) {
 					byte[] bytes;
 					try {
@@ -1521,20 +1511,8 @@ public class ScriptProject extends Openable implements IScriptProject,
 					} catch (IOException e) {
 						return null;
 					}
-					try {
-						property = new String(bytes,
-								org.eclipse.dltk.compiler.util.Util.UTF_8); // .
-						// buildpath
-						// always
-						// encoded
-						// with
-						// UTF-8
-					} catch (UnsupportedEncodingException e) {
-						Util.log(e,
-								"Could not read .buildpath with UTF-8 encoding"); //$NON-NLS-1$
-						// fallback to default
-						property = new String(bytes);
-					}
+					property = new String(bytes, StandardCharsets.UTF_8);
+					// .buildpath always encoded with UTF-8
 				}
 			}
 		}
@@ -1606,27 +1584,16 @@ public class ScriptProject extends Openable implements IScriptProject,
 	public void setSharedProperty(String key, String value)
 			throws CoreException {
 		IFile rscFile = this.project.getFile(key);
-		byte[] bytes = null;
-		try {
-			bytes = value.getBytes(org.eclipse.dltk.compiler.util.Util.UTF_8); // .
-			// buildpath
-			// always
-			// encoded
-			// with
-			// UTF-8
-		} catch (UnsupportedEncodingException e) {
-			Util.log(e, "Could not write .buildpath with UTF-8 encoding "); //$NON-NLS-1$
-			// fallback to default
-			bytes = value.getBytes();
-		}
+		byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
+		// .buildpath always encoded with UTF-8
 		InputStream inputStream = new ByteArrayInputStream(bytes);
 		// update the resource content
 		if (rscFile.exists()) {
 			if (rscFile.isReadOnly()) {
 				// provide opportunity to checkout read-only .buildpath file
 				// (23984)
-				ResourcesPlugin.getWorkspace().validateEdit(
-						new IFile[] { rscFile }, null);
+				ResourcesPlugin.getWorkspace()
+						.validateEdit(new IFile[] { rscFile }, null);
 			}
 			rscFile.setContents(inputStream, IResource.FORCE, null);
 		} else {
@@ -1641,7 +1608,8 @@ public class ScriptProject extends Openable implements IScriptProject,
 			boolean indent, Map unknownElements) throws ModelException {
 		try {
 			ByteArrayOutputStream s = new ByteArrayOutputStream();
-			OutputStreamWriter writer = new OutputStreamWriter(s, "UTF8"); //$NON-NLS-1$
+			OutputStreamWriter writer = new OutputStreamWriter(s,
+					StandardCharsets.UTF_8);
 			XMLWriter xmlWriter = new XMLWriter(writer, this, true/*
 																 * print XML
 																 * version
@@ -1946,14 +1914,8 @@ public class ScriptProject extends Openable implements IScriptProject,
 		((IEclipsePreferences) eclipsePreferences.parent())
 				.addNodeChangeListener(nodeListener);
 		// Listen to preference changes
-		IEclipsePreferences.IPreferenceChangeListener preferenceListener = new IEclipsePreferences.IPreferenceChangeListener() {
-			@Override
-			public void preferenceChange(
-					IEclipsePreferences.PreferenceChangeEvent event) {
-				ModelManager.getModelManager().resetProjectOptions(
-						ScriptProject.this);
-			}
-		};
+		IEclipsePreferences.IPreferenceChangeListener preferenceListener = event -> ModelManager
+				.getModelManager().resetProjectOptions(ScriptProject.this);
 		eclipsePreferences.addPreferenceChangeListener(preferenceListener);
 		return eclipsePreferences;
 	}
@@ -2144,17 +2106,8 @@ public class ScriptProject extends Openable implements IScriptProject,
 			int length = bytes.length-IContentDescription.BOM_UTF_8.length;
 			System.arraycopy(bytes, IContentDescription.BOM_UTF_8.length, bytes = new byte[length], 0, length);
 		}
-		String xmlBuildpath;
-		try {
-			xmlBuildpath = new String(bytes, Util.UTF_8); // .buildpath
-			// always
-			// encoded with
-			// UTF-8
-		} catch (UnsupportedEncodingException e) {
-			Util.log(e, "Could not read .buildpath with UTF-8 encoding"); //$NON-NLS-1$
-			// fallback to default
-			xmlBuildpath = new String(bytes);
-		}
+		String xmlBuildpath = new String(bytes, StandardCharsets.UTF_8);
+		// .buildpath always encoded with UTF-8
 		return decodeBuildpath(xmlBuildpath, unknownElements);
 	}
 

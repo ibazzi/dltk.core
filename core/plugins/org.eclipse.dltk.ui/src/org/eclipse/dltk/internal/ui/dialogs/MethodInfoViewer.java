@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,8 +60,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MenuAdapter;
@@ -76,7 +74,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Table;
@@ -87,7 +84,7 @@ import org.eclipse.ui.progress.UIJob;
  * A viewer to present method queried form the method history and form the
  * search engine. All viewer updating takes place in the UI thread. Therefore no
  * synchronization of the methods is necessary.
- * 
+ *
  */
 public class MethodInfoViewer {
 	private IDLTKUILanguageToolkit fToolkit;
@@ -122,12 +119,7 @@ public class MethodInfoViewer {
 			fHistory = history;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @seeorg.eclipse.jdt.core.search.MethodNameMatchRequestor#
-		 * acceptMethodNameMatch(org.eclipse.jdt.core.search.MethodNameMatch)
-		 */
+		@Override
 		public void acceptMethodNameMatch(MethodNameMatch match) {
 			if (fStop)
 				return;
@@ -150,6 +142,7 @@ public class MethodInfoViewer {
 			fFilter = filter;
 		}
 
+		@Override
 		public int compare(Object left, Object right) {
 			MethodNameMatch leftInfo = (MethodNameMatch) left;
 			MethodNameMatch rightInfo = (MethodNameMatch) right;
@@ -452,6 +445,7 @@ public class MethodInfoViewer {
 			cancel();
 		}
 
+		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			if (stopped())
 				return new Status(IStatus.CANCEL, DLTKUIPlugin.getPluginId(),
@@ -480,11 +474,13 @@ public class MethodInfoViewer {
 			fViewer = viewer;
 		}
 
+		@Override
 		public void setTaskName(String name) {
 			super.setTaskName(name);
 			fName = name;
 		}
 
+		@Override
 		public void beginTask(String name, int totalWork) {
 			super.beginTask(name, totalWork);
 			if (fName == null)
@@ -492,17 +488,20 @@ public class MethodInfoViewer {
 			fTotalWork = totalWork;
 		}
 
+		@Override
 		public void worked(int work) {
 			super.worked(work);
 			internalWorked(work);
 		}
 
+		@Override
 		public void done() {
 			fDone = true;
 			fViewer.setProgressMessage(""); //$NON-NLS-1$
 			super.done();
 		}
 
+		@Override
 		public void internalWorked(double work) {
 			fWorked = fWorked + work;
 			fViewer.setProgressMessage(getMessage());
@@ -534,6 +533,7 @@ public class MethodInfoViewer {
 			setSystem(true);
 		}
 
+		@Override
 		protected final IStatus run(IProgressMonitor parent) {
 			ProgressMonitor monitor = new ProgressMonitor(parent, fViewer);
 			try {
@@ -572,6 +572,7 @@ public class MethodInfoViewer {
 			cancel();
 		}
 
+		@Override
 		protected IStatus doRun(ProgressMonitor monitor) {
 			try {
 				if (VIRTUAL) {
@@ -741,11 +742,13 @@ public class MethodInfoViewer {
 			fReqestor = new SearchRequestor(filter, new MethodFilter(toolkit));
 		}
 
+		@Override
 		public void stop() {
 			fReqestor.cancel();
 			super.stop();
 		}
 
+		@Override
 		protected MethodNameMatch[] getSearchResult(Set matchIdsInHistory,
 				ProgressMonitor monitor) throws CoreException {
 			long start = System.currentTimeMillis();
@@ -796,6 +799,7 @@ public class MethodInfoViewer {
 			fLastResult = lastResult;
 		}
 
+		@Override
 		protected MethodNameMatch[] getSearchResult(Set filteredHistory,
 				ProgressMonitor monitor) throws CoreException {
 			List<MethodNameMatch> result = new ArrayList<MethodNameMatch>(2048);
@@ -829,6 +833,7 @@ public class MethodInfoViewer {
 			cancel();
 		}
 
+		@Override
 		protected IStatus doRun(ProgressMonitor monitor) {
 			try {
 				monitor
@@ -970,6 +975,7 @@ public class MethodInfoViewer {
 		fTable.setHeaderVisible(false);
 		addPopupMenu();
 		fTable.addControlListener(new ControlAdapter() {
+			@Override
 			public void controlResized(ControlEvent event) {
 				int itemHeight = fTable.getItemHeight();
 				Rectangle clientArea = fTable.getClientArea();
@@ -977,6 +983,7 @@ public class MethodInfoViewer {
 			}
 		});
 		fTable.addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == SWT.DEL) {
 					deleteHistoryEntry();
@@ -996,6 +1003,7 @@ public class MethodInfoViewer {
 			}
 		});
 		fTable.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (fLastSelection != null) {
 					for (int i = 0; i < fLastSelection.length; i++) {
@@ -1022,26 +1030,22 @@ public class MethodInfoViewer {
 				}
 			}
 		});
-		fTable.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				stop(true, true);
-				fDashLineColor.dispose();
-				fSeparatorIcon.dispose();
-				fImageManager.dispose();
-				if (fProgressUpdateJob != null) {
-					fProgressUpdateJob.stop();
-					fProgressUpdateJob = null;
-				}
+		fTable.addDisposeListener(e -> {
+			stop(true, true);
+			fDashLineColor.dispose();
+			fSeparatorIcon.dispose();
+			fImageManager.dispose();
+			if (fProgressUpdateJob != null) {
+				fProgressUpdateJob.stop();
+				fProgressUpdateJob = null;
 			}
 		});
 		if (VIRTUAL) {
 			fHistoryMatches = EMTPY_TYPE_INFO_ARRAY;
 			fSearchMatches = EMTPY_TYPE_INFO_ARRAY;
-			fTable.addListener(SWT.SetData, new Listener() {
-				public void handleEvent(Event event) {
-					TableItem item = (TableItem) event.item;
-					setData(item);
-				}
+			fTable.addListener(SWT.SetData, event -> {
+				TableItem item = (TableItem) event.item;
+				setData(item);
 			});
 		}
 
@@ -1231,12 +1235,14 @@ public class MethodInfoViewer {
 		final MenuItem remove = new MenuItem(menu, SWT.NONE);
 		remove.setText(DLTKUIMessages.TypeInfoViewer_remove_from_history);
 		menu.addMenuListener(new MenuAdapter() {
+			@Override
 			public void menuShown(MenuEvent e) {
 				TableItem[] selection = fTable.getSelection();
 				remove.setEnabled(canEnable(selection));
 			}
 		});
 		remove.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				deleteHistoryEntry();
 			}
@@ -1298,24 +1304,20 @@ public class MethodInfoViewer {
 	// ----------------------------------------------------
 
 	private void clear(int ticket) {
-		syncExec(ticket, new Runnable() {
-			public void run() {
-				fNextElement = 0;
-				fDashLineIndex = -1;
-				fLastSelection = null;
-				fLastLabels = null;
-				fExpectedItemCount = 0;
-			}
+		syncExec(ticket, () -> {
+			fNextElement = 0;
+			fDashLineIndex = -1;
+			fLastSelection = null;
+			fLastLabels = null;
+			fExpectedItemCount = 0;
 		});
 	}
 
 	private void rememberResult(int ticket, final MethodNameMatch[] result) {
-		syncExec(ticket, new Runnable() {
-			public void run() {
-				if (fLastCompletedResult == null) {
-					fLastCompletedFilter = fMethodInfoFilter;
-					fLastCompletedResult = result;
-				}
+		syncExec(ticket, () -> {
+			if (fLastCompletedResult == null) {
+				fLastCompletedFilter = fMethodInfoFilter;
+				fLastCompletedResult = result;
 			}
 		});
 	}
@@ -1327,39 +1329,34 @@ public class MethodInfoViewer {
 
 	private void addAll(int ticket, final List elements,
 			final List imageDescriptors, final List labels) {
-		syncExec(ticket, new Runnable() {
-			public void run() {
-				int size = elements.size();
-				for (int i = 0; i < size; i++) {
-					addSingleElement(elements.get(i),
-							(ImageDescriptor) imageDescriptors.get(i),
-							(String) labels.get(i));
-				}
+		syncExec(ticket, () -> {
+			int size = elements.size();
+			for (int i = 0; i < size; i++) {
+				addSingleElement(elements.get(i),
+						(ImageDescriptor) imageDescriptors.get(i),
+						(String) labels.get(i));
 			}
 		});
 	}
 
 	private void addDashLineAndUpdateLastHistoryEntry(int ticket,
 			final MethodNameMatch next) {
-		syncExec(ticket, new Runnable() {
-			public void run() {
-				if (fNextElement > 0) {
-					TableItem item = fTable.getItem(fNextElement - 1);
-					String label = item.getText();
-					String newLabel = fLabelProvider.getText(null,
-							(MethodNameMatch) item.getData(), next);
-					if (fLastSelection != null
-							&& fLastSelection.length > 0
-							&& fLastSelection[fLastSelection.length - 1] == item) {
-						fLastLabels[fLastLabels.length - 1] = newLabel;
-					} else {
-						if (newLabel.length() != label.length())
-							item.setText(newLabel);
-					}
+		syncExec(ticket, () -> {
+			if (fNextElement > 0) {
+				TableItem item = fTable.getItem(fNextElement - 1);
+				String label = item.getText();
+				String newLabel = fLabelProvider.getText(null,
+						(MethodNameMatch) item.getData(), next);
+				if (fLastSelection != null && fLastSelection.length > 0
+						&& fLastSelection[fLastSelection.length - 1] == item) {
+					fLastLabels[fLastLabels.length - 1] = newLabel;
+				} else {
+					if (newLabel.length() != label.length())
+						item.setText(newLabel);
 				}
-				fDashLineIndex = fNextElement;
-				addDashLine();
 			}
+			fDashLineIndex = fNextElement;
+			addDashLine();
 		});
 	}
 
@@ -1434,24 +1431,20 @@ public class MethodInfoViewer {
 	}
 
 	private void searchJobDone(int ticket) {
-		syncExec(ticket, new Runnable() {
-			public void run() {
-				shortenTable();
-				checkEmptyList();
-				fSearchJob = null;
-			}
+		syncExec(ticket, () -> {
+			shortenTable();
+			checkEmptyList();
+			fSearchJob = null;
 		});
 	}
 
 	private void searchJobCanceled(int ticket, final boolean removePendingItems) {
-		syncExec(ticket, new Runnable() {
-			public void run() {
-				if (removePendingItems) {
-					shortenTable();
-					checkEmptyList();
-				}
-				fSearchJob = null;
+		syncExec(ticket, () -> {
+			if (removePendingItems) {
+				shortenTable();
+				checkEmptyList();
 			}
+			fSearchJob = null;
 		});
 	}
 
@@ -1464,48 +1457,45 @@ public class MethodInfoViewer {
 	// -------------------------------------------------------
 
 	private void setHistoryResult(int ticket, final MethodNameMatch[] types) {
-		syncExec(ticket, new Runnable() {
-			public void run() {
-				fExpectedItemCount = types.length;
-				int lastHistoryLength = fHistoryMatches.length;
-				fHistoryMatches = types;
-				int length = fHistoryMatches.length + fSearchMatches.length;
-				int dash = (fHistoryMatches.length > 0 && fSearchMatches.length > 0) ? 1
-						: 0;
-				fTable.setItemCount(length + dash);
-				if (length == 0) {
-					// bug under windows.
-					fTable.redraw();
-					return;
-				}
-				int update = Math
-						.max(lastHistoryLength, fHistoryMatches.length);
-				if (update > 0) {
-					fTable.clear(0, update + dash - 1);
-				}
+		syncExec(ticket, () -> {
+			fExpectedItemCount = types.length;
+			int lastHistoryLength = fHistoryMatches.length;
+			fHistoryMatches = types;
+			int length = fHistoryMatches.length + fSearchMatches.length;
+			int dash = (fHistoryMatches.length > 0 && fSearchMatches.length > 0)
+					? 1
+					: 0;
+			fTable.setItemCount(length + dash);
+			if (length == 0) {
+				// bug under windows.
+				fTable.redraw();
+				return;
+			}
+			int update = Math.max(lastHistoryLength, fHistoryMatches.length);
+			if (update > 0) {
+				fTable.clear(0, update + dash - 1);
 			}
 		});
 	}
 
 	private void setSearchResult(int ticket, final MethodNameMatch[] types) {
-		syncExec(ticket, new Runnable() {
-			public void run() {
-				fExpectedItemCount += types.length;
-				fSearchMatches = types;
-				int length = fHistoryMatches.length + fSearchMatches.length;
-				int dash = (fHistoryMatches.length > 0 && fSearchMatches.length > 0) ? 1
-						: 0;
-				fTable.setItemCount(length + dash);
-				if (length == 0) {
-					// bug under windows.
-					fTable.redraw();
-					return;
-				}
-				if (fHistoryMatches.length == 0) {
-					fTable.clear(0, length + dash - 1);
-				} else {
-					fTable.clear(fHistoryMatches.length - 1, length + dash - 1);
-				}
+		syncExec(ticket, () -> {
+			fExpectedItemCount += types.length;
+			fSearchMatches = types;
+			int length = fHistoryMatches.length + fSearchMatches.length;
+			int dash = (fHistoryMatches.length > 0 && fSearchMatches.length > 0)
+					? 1
+					: 0;
+			fTable.setItemCount(length + dash);
+			if (length == 0) {
+				// bug under windows.
+				fTable.redraw();
+				return;
+			}
+			if (fHistoryMatches.length == 0) {
+				fTable.clear(0, length + dash - 1);
+			} else {
+				fTable.clear(fHistoryMatches.length - 1, length + dash - 1);
 			}
 		});
 	}
@@ -1552,12 +1542,10 @@ public class MethodInfoViewer {
 	}
 
 	private void syncJobDone() {
-		syncExec(new Runnable() {
-			public void run() {
-				fSyncJob = null;
-				if (fMethodInfoFilter != null) {
-					scheduleSearchJob(FULL);
-				}
+		syncExec(() -> {
+			fSyncJob = null;
+			if (fMethodInfoFilter != null) {
+				scheduleSearchJob(FULL);
 			}
 		});
 	}
@@ -1570,28 +1558,24 @@ public class MethodInfoViewer {
 	// -----------------------------------------------------
 
 	private void scheduleProgressUpdateJob() {
-		syncExec(new Runnable() {
-			public void run() {
-				if (fProgressCounter == 0) {
-					clearProgressMessage();
-					fProgressUpdateJob = new ProgressUpdateJob(fDisplay,
-							MethodInfoViewer.this);
-					fProgressUpdateJob.schedule(300);
-				}
-				fProgressCounter++;
+		syncExec(() -> {
+			if (fProgressCounter == 0) {
+				clearProgressMessage();
+				fProgressUpdateJob = new ProgressUpdateJob(fDisplay,
+						MethodInfoViewer.this);
+				fProgressUpdateJob.schedule(300);
 			}
+			fProgressCounter++;
 		});
 	}
 
 	private void stopProgressUpdateJob() {
-		syncExec(new Runnable() {
-			public void run() {
-				fProgressCounter--;
-				if (fProgressCounter == 0 && fProgressUpdateJob != null) {
-					fProgressUpdateJob.stop();
-					fProgressUpdateJob = null;
-					clearProgressMessage();
-				}
+		syncExec(() -> {
+			fProgressCounter--;
+			if (fProgressCounter == 0 && fProgressUpdateJob != null) {
+				fProgressUpdateJob.stop();
+				fProgressUpdateJob = null;
+				clearProgressMessage();
 			}
 		});
 	}
@@ -1615,24 +1599,20 @@ public class MethodInfoViewer {
 	private void syncExec(final Runnable runnable) {
 		if (fDisplay.isDisposed())
 			return;
-		fDisplay.syncExec(new Runnable() {
-			public void run() {
-				if (fTable.isDisposed())
-					return;
-				runnable.run();
-			}
+		fDisplay.syncExec(() -> {
+			if (fTable.isDisposed())
+				return;
+			runnable.run();
 		});
 	}
 
 	private void syncExec(final int ticket, final Runnable runnable) {
 		if (fDisplay.isDisposed())
 			return;
-		fDisplay.syncExec(new Runnable() {
-			public void run() {
-				if (fTable.isDisposed() || ticket != fSearchJobTicket)
-					return;
-				runnable.run();
-			}
+		fDisplay.syncExec(() -> {
+			if (fTable.isDisposed() || ticket != fSearchJobTicket)
+				return;
+			runnable.run();
 		});
 	}
 

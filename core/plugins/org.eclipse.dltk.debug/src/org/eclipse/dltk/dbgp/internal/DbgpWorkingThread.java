@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.dbgp.internal;
 
@@ -23,23 +22,20 @@ public abstract class DbgpWorkingThread extends DbgpTermination {
 
 	public void start() {
 		if (thread == null || !thread.isAlive()) {
-			thread = new Thread(new Runnable() {
-				public void run() {
-					try {
-						workingCycle();
-					} catch (Exception e) {
-						if (isLoggable(e)) {
-							DLTKDebugPlugin
-									.logError(
-											Messages.DbgpWorkingThread_workingCycleError,
-											e);
-						}
-						fireObjectTerminated(e);
-						return;
+			thread = new Thread((Runnable) () -> {
+				try {
+					workingCycle();
+				} catch (Exception e) {
+					if (isLoggable(e)) {
+						DLTKDebugPlugin.logError(
+								Messages.DbgpWorkingThread_workingCycleError,
+								e);
 					}
-
-					fireObjectTerminated(null);
+					fireObjectTerminated(e);
+					return;
 				}
+
+				fireObjectTerminated(null);
 			}, name);
 
 			thread.start();
@@ -49,12 +45,14 @@ public abstract class DbgpWorkingThread extends DbgpTermination {
 		}
 	}
 
+	@Override
 	public void requestTermination() {
 		if (thread != null && thread.isAlive()) {
 			thread.interrupt();
 		}
 	}
 
+	@Override
 	public void waitTerminated() throws InterruptedException {
 		if (thread != null)
 			thread.join();
@@ -64,7 +62,7 @@ public abstract class DbgpWorkingThread extends DbgpTermination {
 	 * Tests if this exception should be logged. The rationale here is
 	 * IOExceptions/SocketExceptions occurs always after socket is closed, so
 	 * there is no point to log it.
-	 * 
+	 *
 	 * @param e
 	 * @return
 	 */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,12 +48,13 @@ public class BasicSourceModuleEditorActionContributor extends BasicScriptEditorA
 			fMenu= menu;
         }
 
+		@Override
 		public void menuAboutToShow(IMenuManager manager) {
 	    	for (int i= 0; i < fSpecificAssistActions.length; i++) {
 	            fSpecificAssistActions[i].update();
 	        }
 	    }
-		
+
 		public void dispose() {
 			fMenu.removeMenuListener(this);
 		}
@@ -64,7 +65,7 @@ public class BasicSourceModuleEditorActionContributor extends BasicScriptEditorA
 	protected RetargetTextEditorAction fContextInformation;
 	protected RetargetTextEditorAction fQuickAssistAction;
 	protected RetargetTextEditorAction fChangeEncodingAction;
-	
+
 	protected SpecificContentAssistAction[] fSpecificAssistActions;
 
 	private MenuListener fContentAssistMenuListener;
@@ -92,9 +93,7 @@ public class BasicSourceModuleEditorActionContributor extends BasicScriptEditorA
 		fChangeEncodingAction= new RetargetTextEditorAction(ScriptEditorMessages.getBundleForConstructedKeys(), "Editor.ChangeEncodingAction."); //$NON-NLS-1$
 	}
 
-	/*
-	 * @see EditorActionBarContributor#contributeToMenu(IMenuManager)
-	 */
+	@Override
 	public void contributeToMenu(IMenuManager menu) {
 
 		super.contributeToMenu(menu);
@@ -106,7 +105,7 @@ public class BasicSourceModuleEditorActionContributor extends BasicScriptEditorA
 			editMenu.add(fChangeEncodingAction);
 			IMenuManager caMenu= new MenuManager(ScriptEditorMessages.BasicEditorActionContributor_specific_content_assist_menu, "specific_content_assist"); //$NON-NLS-1$
 			editMenu.insertAfter(ITextEditorActionConstants.GROUP_ASSIST, caMenu);
-			
+
 			caMenu.add(fRetargetContentAssist);
 			Collection descriptors= CompletionProposalComputerRegistry.getDefault().getProposalCategories();
 			List<SpecificContentAssistAction> specificAssistActions = new ArrayList<SpecificContentAssistAction>(
@@ -129,14 +128,12 @@ public class BasicSourceModuleEditorActionContributor extends BasicScriptEditorA
 			}
 			caMenu.add(new Separator("context_info")); //$NON-NLS-1$
 			caMenu.add(fContextInformation);
-			
+
 			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_ASSIST, fQuickAssistAction);
 		}
 	}
 
-	/*
-	 * @see IEditorActionBarContributor#setActiveEditor(IEditorPart)
-	 */
+	@Override
 	public void setActiveEditor(IEditorPart part) {
 		super.setActiveEditor(part);
 
@@ -147,7 +144,7 @@ public class BasicSourceModuleEditorActionContributor extends BasicScriptEditorA
 		fContentAssist.setAction(getAction(textEditor, "ContentAssistProposal")); //$NON-NLS-1$
 		fContextInformation.setAction(getAction(textEditor, "ContentAssistContextInformation")); //$NON-NLS-1$
 		fQuickAssistAction.setAction(getAction(textEditor, ITextEditorActionConstants.QUICK_ASSIST));
-		
+
 		if (fSpecificAssistActions != null) {
 			for (int i= 0; i < fSpecificAssistActions.length; i++) {
 				SpecificContentAssistAction assistAction= fSpecificAssistActions[i];
@@ -165,15 +162,14 @@ public class BasicSourceModuleEditorActionContributor extends BasicScriptEditorA
 		actionBars.setGlobalActionHandler(IDEActionFactory.BOOKMARK.getId(), getAction(textEditor, IDEActionFactory.BOOKMARK.getId()));
 	}
 
-	/*
-	 * @see IEditorActionBarContributor#init(IActionBars, IWorkbenchPage)
-	 */
+	@Override
 	public void init(IActionBars bars, IWorkbenchPage page) {
 		super.init(bars, page);
 		// register actions that have a dynamic editor.
 		bars.setGlobalActionHandler(DLTKActionConstants.CONTENT_ASSIST, fContentAssist);
 	}
 
+	@Override
 	public void dispose() {
 		if (fRetargetContentAssist != null) {
 			fRetargetContentAssist.dispose();

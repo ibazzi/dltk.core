@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.core.tests.model;
 
@@ -21,7 +20,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.core.IBuildpathEntry;
@@ -162,14 +160,11 @@ public class ModifyingResourceTests extends AbstractModelTests {
 	protected void swapFiles(String firstPath, String secondPath) throws CoreException {
 		final IFile first = this.getFile(firstPath);
 		final IFile second = this.getFile(secondPath);
-		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				IPath tempPath = first.getParent().getFullPath().append("swappingFile.temp");
-				first.move(tempPath, false, monitor);
-				second.move(first.getFullPath(), false, monitor);
-				getWorkspaceRoot().getFile(tempPath).move(second.getFullPath(), false, monitor);
-			}
+		IWorkspaceRunnable runnable = monitor -> {
+			IPath tempPath = first.getParent().getFullPath().append("swappingFile.temp");
+			first.move(tempPath, false, monitor);
+			second.move(first.getFullPath(), false, monitor);
+			getWorkspaceRoot().getFile(tempPath).move(second.getFullPath(), false, monitor);
 		};
 		getWorkspace().run(runnable, null);
 	}

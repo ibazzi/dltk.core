@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,10 +20,11 @@ import org.eclipse.swt.widgets.Sash;
 
 /**
  * This class provides the layout for SashForm
- * 
+ *
  * @see ColumnForm
  */
 class ColumnFormLayout extends Layout {
+	@Override
 	protected Point computeSize(Composite composite, int wHint, int hHint,
 			boolean flushCache) {
 		ColumnForm sashForm = (ColumnForm) composite;
@@ -60,10 +61,12 @@ class ColumnFormLayout extends Layout {
 		return new Point(width, height);
 	}
 
+	@Override
 	protected boolean flushCache(Control control) {
 		return true;
 	}
 
+	@Override
 	protected void layout(Composite composite, boolean flushCache) {
 		ColumnForm columnForm = (ColumnForm) composite;
 		Rectangle area = columnForm.getClientArea();

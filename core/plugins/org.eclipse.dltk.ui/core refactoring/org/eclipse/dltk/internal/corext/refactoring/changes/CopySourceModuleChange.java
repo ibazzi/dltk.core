@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.corext.refactoring.changes;
 
@@ -21,26 +20,29 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 
 public class CopySourceModuleChange extends SourceModuleReorgChange {
-	
+
 	public CopySourceModuleChange(ISourceModule cu, IScriptFolder dest, INewNameQuery newNameQuery){
 		super(cu, dest, newNameQuery);
 	}
-		
+
+	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
 		// Copy compilation unit change isn't undoable and isn't used
-		// as a redo/undo change right now. Furthermore the current 
-		// implementation allows copying dirty files. In this case only 
+		// as a redo/undo change right now. Furthermore the current
+		// implementation allows copying dirty files. In this case only
 		// the content on disk is copied.
 		return super.isValid(pm, NONE);
 	}
-	
+
+	@Override
 	Change doPerformReorg(IProgressMonitor pm) throws CoreException {
 		getCu().copy(getDestinationPackage(), null, getNewName(), true, pm);
 		return null;
 	}
 
+	@Override
 	public String getName() {
-		return Messages.format(RefactoringCoreMessages.CopySourceModuleChange_copy, 
+		return Messages.format(RefactoringCoreMessages.CopySourceModuleChange_copy,
 			new String[]{getCu().getElementName(), getPackageName(getDestinationPackage())});
 	}
 }

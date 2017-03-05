@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -29,7 +29,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * Following is example plug-in XML used to contribute this action to an editor.
  * Note that the label attribute of this action is not displayed in the editor.
  * Instead, the label of the created action is displayed.
- * 
+ *
  * <pre>
  * &lt;extension point=&quot;org.eclipse.ui.editorActions&quot;&gt;
  *    &lt;editorContribution
@@ -44,13 +44,13 @@ import org.eclipse.ui.texteditor.ITextEditor;
  *    &lt;/editorContribution&gt;
  * &lt;/extension&gt;
  * </pre>
- * 
+ *
  * </p>
  * <p>
  * This action can also be contributed to a vertical ruler context menu via the
  * <code>popupMenus</code> extension point, by referencing the ruler's context
  * menu identifier in the <code>targetID</code> attribute.
- * 
+ *
  * <pre>
  * &lt;extension point=&quot;org.eclipse.ui.popupMenus&quot;&gt;
  *   &lt;viewerContribution
@@ -64,18 +64,19 @@ import org.eclipse.ui.texteditor.ITextEditor;
  *       &lt;/action&gt;
  *   &lt;/viewerContribution&gt;
  * </pre>
- * 
+ *
  * </p>
  * <p>
  * Clients may refer to this class as an action delegate in plug-in XML. This
  * class is not intended to be subclassed.
  * </p>
- * 
+ *
  * @since 3.1
  */
-public class RulerToggleWatchPointActionDelegate extends
-		AbstractRulerActionDelegate implements IActionDelegate2 {
+public class RulerToggleWatchPointActionDelegate
+		extends AbstractRulerActionDelegate implements IActionDelegate2 {
 
+	@Override
 	public void menuAboutToShow(IMenuManager manager) {
 		super.menuAboutToShow(manager);
 
@@ -84,13 +85,16 @@ public class RulerToggleWatchPointActionDelegate extends
 	private IEditorPart fEditor = null;
 	private ToggleWatchPointAction fDelegate = null;
 
+	@Override
 	protected IAction createAction(ITextEditor editor,
 			IVerticalRulerInfo rulerInfo) {
 		fDelegate = new ToggleWatchPointAction(editor, null, rulerInfo);
 		return fDelegate;
 	}
 
-	public void setActiveEditor(IAction callerAction, IEditorPart targetEditor) {
+	@Override
+	public void setActiveEditor(IAction callerAction,
+			IEditorPart targetEditor) {
 		if (fEditor != null) {
 			if (fDelegate != null) {
 				fDelegate.dispose();
@@ -101,9 +105,11 @@ public class RulerToggleWatchPointActionDelegate extends
 		super.setActiveEditor(callerAction, targetEditor);
 	}
 
+	@Override
 	public void init(IAction action) {
 	}
 
+	@Override
 	public void dispose() {
 		if (fDelegate != null) {
 			fDelegate.dispose();
@@ -112,6 +118,7 @@ public class RulerToggleWatchPointActionDelegate extends
 		fEditor = null;
 	}
 
+	@Override
 	public void runWithEvent(IAction action, Event event) {
 		run(action);
 	}

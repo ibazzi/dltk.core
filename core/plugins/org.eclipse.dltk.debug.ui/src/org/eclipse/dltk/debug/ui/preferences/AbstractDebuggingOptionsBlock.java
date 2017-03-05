@@ -15,8 +15,8 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 /**
  * Options block for general debugging engine settings.
  */
-public abstract class AbstractDebuggingOptionsBlock extends
-		AbstractOptionsBlock {
+public abstract class AbstractDebuggingOptionsBlock
+		extends AbstractOptionsBlock {
 
 	private static String DLTK_DEBUG_PREF_PAGE_ID = "org.eclipse.dltk.preferences.debug"; //$NON-NLS-1$
 
@@ -26,12 +26,10 @@ public abstract class AbstractDebuggingOptionsBlock extends
 		super(context, project, allKeys, container);
 	}
 
-	/*
-	 * @see AbstractOptionsBlock#createOptionsBlock(Composite)
-	 */
+	@Override
 	protected Control createOptionsBlock(Composite parent) {
-		Composite composite = SWTFactory.createComposite(parent, parent
-				.getFont(), 1, 1, GridData.FILL_HORIZONTAL);
+		Composite composite = SWTFactory.createComposite(parent,
+				parent.getFont(), 1, 1, GridData.FILL_HORIZONTAL);
 
 		createSettingsGroup(SWTFactory.createGroup(composite,
 				ScriptDebugPreferencesMessages.EngineSettingsLabel, 1, 1,

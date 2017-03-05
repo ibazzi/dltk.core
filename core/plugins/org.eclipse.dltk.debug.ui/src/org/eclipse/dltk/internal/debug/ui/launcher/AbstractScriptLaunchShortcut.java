@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,6 +53,7 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public abstract class AbstractScriptLaunchShortcut implements ILaunchShortcut {
+	@Override
 	public void launch(ISelection selection, String mode) {
 		if (selection instanceof IStructuredSelection) {
 			searchAndLaunch(((IStructuredSelection) selection).toArray(), mode,
@@ -95,12 +96,12 @@ public abstract class AbstractScriptLaunchShortcut implements ILaunchShortcut {
 
 	/**
 	 * Prompts the user to select a type from the given types.
-	 * 
+	 *
 	 * @param types
 	 *            the types to choose from
 	 * @param title
 	 *            the selection dialog title
-	 * 
+	 *
 	 * @return the selected type or <code>null</code> if none.
 	 */
 	protected IResource chooseScript(IResource[] scripts, String title) {
@@ -118,7 +119,7 @@ public abstract class AbstractScriptLaunchShortcut implements ILaunchShortcut {
 
 	/**
 	 * Opens an error dialog on the given excpetion.
-	 * 
+	 *
 	 * @param exception
 	 */
 	protected void reportErorr(CoreException exception) {
@@ -127,6 +128,7 @@ public abstract class AbstractScriptLaunchShortcut implements ILaunchShortcut {
 				exception.getStatus().getMessage());
 	}
 
+	@Override
 	public void launch(IEditorPart editor, String mode) {
 		IEditorInput editorInput = editor.getEditorInput();
 		if (editorInput == null)
@@ -150,7 +152,7 @@ public abstract class AbstractScriptLaunchShortcut implements ILaunchShortcut {
 
 	/**
 	 * Returns the type of configuration this shortcut is applicable to.
-	 * 
+	 *
 	 * @return the type of configuration this shortcut is applicable to
 	 */
 	protected abstract ILaunchConfigurationType getConfigurationType();
@@ -158,7 +160,7 @@ public abstract class AbstractScriptLaunchShortcut implements ILaunchShortcut {
 	/**
 	 * Locate a configuration to relaunch for the given type. If one cannot be
 	 * found, create one.
-	 * 
+	 *
 	 * @return a re-useable config or <code>null</code> if none
 	 */
 	protected ILaunchConfiguration findLaunchConfiguration(IResource script,
@@ -167,19 +169,17 @@ public abstract class AbstractScriptLaunchShortcut implements ILaunchShortcut {
 		try {
 			ILaunchConfiguration[] configs = DebugPlugin.getDefault()
 					.getLaunchManager().getLaunchConfigurations(configType);
-			candidateConfigs = new ArrayList<ILaunchConfiguration>(
+			candidateConfigs = new ArrayList<>(
 					configs.length);
 			for (int i = 0; i < configs.length; i++) {
 				ILaunchConfiguration config = configs[i];
-				if (config
-						.getAttribute(
-								ScriptLaunchConfigurationConstants.ATTR_MAIN_SCRIPT_NAME,
-								Util.EMPTY_STRING)
+				if (config.getAttribute(
+						ScriptLaunchConfigurationConstants.ATTR_MAIN_SCRIPT_NAME,
+						Util.EMPTY_STRING)
 						.equals(script.getProjectRelativePath().toString())
-						&& config
-								.getAttribute(
-										ScriptLaunchConfigurationConstants.ATTR_PROJECT_NAME,
-										Util.EMPTY_STRING)
+						&& config.getAttribute(
+								ScriptLaunchConfigurationConstants.ATTR_PROJECT_NAME,
+								Util.EMPTY_STRING)
 								.equals(script.getProject().getName())) {
 					candidateConfigs.add(config);
 				}
@@ -284,14 +284,14 @@ public abstract class AbstractScriptLaunchShortcut implements ILaunchShortcut {
 
 	/**
 	 * Returns the model elements corresponding to the given objects.
-	 * 
+	 *
 	 * @param objects
 	 *            selected objects
 	 * @return corresponding Script elements
 	 */
 	private IResource[] getScriptResources(Object[] objects,
 			IProgressMonitor pm) {
-		List<IResource> list = new ArrayList<IResource>(objects.length);
+		List<IResource> list = new ArrayList<>(objects.length);
 		for (int i = 0; i < objects.length; i++) {
 			Object object = objects[i];
 			try {
@@ -340,7 +340,7 @@ public abstract class AbstractScriptLaunchShortcut implements ILaunchShortcut {
 	/**
 	 * Finds and returns the launchable scripts in the given selection of
 	 * elements.
-	 * 
+	 *
 	 * @param elements
 	 *            scope to search for launchable types
 	 * @param context
@@ -357,15 +357,12 @@ public abstract class AbstractScriptLaunchShortcut implements ILaunchShortcut {
 		try {
 			final IResource[][] res = new IResource[1][];
 
-			IRunnableWithProgress runnable = new IRunnableWithProgress() {
-				public void run(IProgressMonitor pm)
-						throws InvocationTargetException {
-					pm.beginTask(
-							LaunchingMessages.LaunchShortcut_searchingForScripts,
-							1);
-					res[0] = getScriptResources(elements, pm);
-					pm.done();
-				}
+			IRunnableWithProgress runnable = pm -> {
+				pm.beginTask(
+						LaunchingMessages.LaunchShortcut_searchingForScripts,
+						1);
+				res[0] = getScriptResources(elements, pm);
+				pm.done();
 			};
 			context.run(true, true, runnable);
 
@@ -377,7 +374,7 @@ public abstract class AbstractScriptLaunchShortcut implements ILaunchShortcut {
 
 	/**
 	 * Returns the title for type selection dialog for this launch shortcut.
-	 * 
+	 *
 	 * @return type selection dialog title
 	 */
 	protected String getScriptSelectionTitle() {
@@ -387,7 +384,7 @@ public abstract class AbstractScriptLaunchShortcut implements ILaunchShortcut {
 	/**
 	 * Returns an error message to use when the selection does not contain a
 	 * launchable type.
-	 * 
+	 *
 	 * @return error message
 	 */
 	protected String getSelectionEmptyMessage() {

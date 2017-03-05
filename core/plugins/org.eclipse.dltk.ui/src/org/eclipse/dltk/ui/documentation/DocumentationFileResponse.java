@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 xored software, Inc.
+ * Copyright (c) 2009, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -47,6 +47,7 @@ public class DocumentationFileResponse extends AbstractDocumentationResponse {
 		this.encoding = encoding;
 	}
 
+	@Override
 	public Reader getReader() throws FileNotFoundException,
 			UnsupportedEncodingException {
 		final InputStream stream = new FileInputStream(file);

@@ -21,6 +21,7 @@ public abstract class AbstractScriptDebugHandler extends AbstractHandler
 
 	private String natureId;
 
+	@Override
 	public final Object execute(ExecutionEvent event)
 			throws ExecutionException {
 		Object result = handleEvent(event);
@@ -32,12 +33,14 @@ public abstract class AbstractScriptDebugHandler extends AbstractHandler
 		return result;
 	}
 
+	@Override
 	public final void setInitializationData(IConfigurationElement config,
 			String propertyName, Object data) {
 		natureId = DLTKExecuteExtensionHelper.getNatureId(config, propertyName,
 				data);
 	}
 
+	@Override
 	public void updateElement(UIElement element, Map parameters) {
 		// default does nothing
 	}

@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.formatter;
 
@@ -31,14 +30,17 @@ public class ScriptFormatterManager extends DLTKContributionExtensionManager {
 	public static final String EXTPOINT = DLTKUIPlugin.PLUGIN_ID
 			+ ".formatterFactory"; //$NON-NLS-1$
 
+	@Override
 	protected String getContributionElementName() {
 		return "formatterFactory"; //$NON-NLS-1$
 	}
 
+	@Override
 	protected String getExtensionPoint() {
 		return EXTPOINT;
 	}
 
+	@Override
 	protected boolean isValidContribution(Object object) {
 		return object instanceof IScriptFormatterFactory
 				&& ((IScriptFormatterFactory) object).isValid();

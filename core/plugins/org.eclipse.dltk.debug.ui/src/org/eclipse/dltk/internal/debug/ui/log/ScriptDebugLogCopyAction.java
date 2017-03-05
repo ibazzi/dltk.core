@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -28,6 +28,7 @@ public class ScriptDebugLogCopyAction extends Action {
 		this.viewer = viewer;
 	}
 
+	@Override
 	public void run() {
 		final ISelection selection = viewer.getSelection();
 		if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
@@ -46,8 +47,8 @@ public class ScriptDebugLogCopyAction extends Action {
 	}
 
 	private void setClipboardText(final StringBuffer sb) {
-		final Clipboard clipboard = new Clipboard(viewer.getTable()
-				.getDisplay());
+		final Clipboard clipboard = new Clipboard(
+				viewer.getTable().getDisplay());
 		try {
 			clipboard.setContents(new Object[] { sb.toString() },
 					new Transfer[] { TextTransfer.getInstance() });

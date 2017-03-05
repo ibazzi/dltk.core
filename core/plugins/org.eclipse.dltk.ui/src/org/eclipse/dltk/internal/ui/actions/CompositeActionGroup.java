@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.actions;
 
@@ -17,24 +16,24 @@ import org.eclipse.ui.actions.ActionGroup;
 public class CompositeActionGroup extends ActionGroup {
 
 	private ActionGroup[] fGroups;
-	
+
 	public CompositeActionGroup() {
 	}
-	
+
 	public CompositeActionGroup(ActionGroup[] groups) {
 		setGroups(groups);
 	}
 
-	protected void setGroups(ActionGroup[] groups) {		
-		fGroups= groups;		
+	protected void setGroups(ActionGroup[] groups) {
+		fGroups= groups;
 	}
-		
+
 	public ActionGroup get(int index) {
 		if (fGroups == null)
 			return null;
 		return fGroups[index];
 	}
-	
+
 	public void addGroup(ActionGroup group) {
 		if (fGroups == null) {
 			fGroups= new ActionGroup[] { group };
@@ -45,7 +44,8 @@ public class CompositeActionGroup extends ActionGroup {
 			fGroups= newGroups;
 		}
 	}
-	
+
+	@Override
 	public void dispose() {
 		super.dispose();
 		if (fGroups == null)
@@ -55,6 +55,7 @@ public class CompositeActionGroup extends ActionGroup {
 		}
 	}
 
+	@Override
 	public void fillActionBars(IActionBars actionBars) {
 		super.fillActionBars(actionBars);
 		if (fGroups == null)
@@ -64,6 +65,7 @@ public class CompositeActionGroup extends ActionGroup {
 		}
 	}
 
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		super.fillContextMenu(menu);
 		if (fGroups == null)
@@ -73,6 +75,7 @@ public class CompositeActionGroup extends ActionGroup {
 		}
 	}
 
+	@Override
 	public void setContext(ActionContext context) {
 		super.setContext(context);
 		if (fGroups == null)
@@ -82,6 +85,7 @@ public class CompositeActionGroup extends ActionGroup {
 		}
 	}
 
+	@Override
 	public void updateActionBars() {
 		super.updateActionBars();
 		if (fGroups == null)

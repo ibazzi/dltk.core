@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.typehierarchy;
 
@@ -33,69 +32,69 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
 public class HistoryListAction extends Action {
-	
+
 	private class HistoryListDialog extends StatusDialog {
-		
+
 		private ListDialogField fHistoryList;
 		private IStatus fHistoryStatus;
 		private IModelElement fResult;
-		
+
 		private HistoryListDialog(Shell shell, IModelElement[] elements) {
 			super(shell);
-			setTitle(TypeHierarchyMessages.HistoryListDialog_title); 
-			
-			String[] buttonLabels= new String[] { 
-				TypeHierarchyMessages.HistoryListDialog_remove_button, 
+			setTitle(TypeHierarchyMessages.HistoryListDialog_title);
+
+			String[] buttonLabels= new String[] {
+				TypeHierarchyMessages.HistoryListDialog_remove_button,
 			};
-					
+
 			IListAdapter adapter= new IListAdapter() {
+				@Override
 				public void customButtonPressed(ListDialogField field, int index) {
 					doCustomButtonPressed();
 				}
+				@Override
 				public void selectionChanged(ListDialogField field) {
 					doSelectionChanged();
 				}
-				
+
+				@Override
 				public void doubleClicked(ListDialogField field) {
 					doDoubleClicked();
-				}				
+				}
 			};
-		
+
 			ModelElementLabelProvider labelProvider= new ModelElementLabelProvider(ModelElementLabelProvider.SHOW_QUALIFIED | ModelElementLabelProvider.SHOW_ROOT);
-			
+
 			fHistoryList= new ListDialogField(adapter, buttonLabels, labelProvider);
-			fHistoryList.setLabelText(TypeHierarchyMessages.HistoryListDialog_label); 
+			fHistoryList.setLabelText(TypeHierarchyMessages.HistoryListDialog_label);
 			fHistoryList.setElements(Arrays.asList(elements));
-			
+
 			ISelection sel;
 			if (elements.length > 0) {
 				sel= new StructuredSelection(elements[0]);
 			} else {
 				sel= new StructuredSelection();
 			}
-			
+
 			fHistoryList.selectElements(sel);
 		}
 
-			
-		/*
-		 * @see Dialog#createDialogArea(Composite)
-		 */
+		@Override
 		protected Control createDialogArea(Composite parent) {
 			initializeDialogUnits(parent);
-			
+
 			Composite composite= (Composite) super.createDialogArea(parent);
-			
+
 			Composite inner= new Composite(composite, SWT.NONE);
 			inner.setFont(parent.getFont());
-			
+
 			inner.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 			LayoutUtil.doDefaultLayout(inner, new DialogField[] { fHistoryList }, true, 0, 0);
 			LayoutUtil.setHeightHint(fHistoryList.getListControl(null), convertHeightInCharsToPixels(12));
 			LayoutUtil.setHorizontalGrabbing(fHistoryList.getListControl(null));
 
-			applyDialogFont(composite);		
+			applyDialogFont(composite);
 			return composite;
 		}
 
@@ -105,14 +104,14 @@ public class HistoryListAction extends Action {
 		private void doCustomButtonPressed() {
 			fHistoryList.removeElements(fHistoryList.getSelectedElements());
 		}
-		
+
 		private void doDoubleClicked() {
 			if (fHistoryStatus.isOK()) {
 				okPressed();
 			}
 		}
-		
-		
+
+
 		private void doSelectionChanged() {
 			StatusInfo status= new StatusInfo();
 			List selected= fHistoryList.getSelectedElements();
@@ -122,49 +121,43 @@ public class HistoryListAction extends Action {
 			} else {
 				fResult= (IModelElement) selected.get(0);
 			}
-			fHistoryList.enableButton(0, fHistoryList.getSize() > selected.size() && selected.size() != 0);			
+			fHistoryList.enableButton(0, fHistoryList.getSize() > selected.size() && selected.size() != 0);
 			fHistoryStatus= status;
-			updateStatus(status);	
+			updateStatus(status);
 		}
-				
+
 		public IModelElement getResult() {
 			return fResult;
 		}
-		
+
 		public IModelElement[] getRemaining() {
 			List elems= fHistoryList.getElements();
 			return (IModelElement[]) elems.toArray(new IModelElement[elems.size()]);
-		}	
-		
-		/*
-		 * @see org.eclipse.jface.window.Window#configureShell(Shell)
-		 */
+		}
+
+		@Override
 		protected void configureShell(Shell newShell) {
 			super.configureShell(newShell);
 			//PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, IJavaHelpContextIds.HISTORY_LIST_DIALOG);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.window.Window#create()
-		 */
+		@Override
 		public void create() {
 			setShellStyle(getShellStyle() | SWT.RESIZE);
 			super.create();
 		}
 
 	}
-	
+
 	private TypeHierarchyViewPart fView;
-	
+
 	public HistoryListAction(TypeHierarchyViewPart view) {
 		fView= view;
-		setText(TypeHierarchyMessages.HistoryListAction_label); 
+		setText(TypeHierarchyMessages.HistoryListAction_label);
 		//PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IJavaHelpContextIds.HISTORY_LIST_ACTION);
 	}
-		
-	/*
-	 * @see IAction#run()
-	 */
+
+	@Override
 	public void run() {
 		IModelElement[] historyEntries= fView.getHistoryEntries();
 		HistoryListDialog dialog= new HistoryListDialog(DLTKUIPlugin.getActiveWorkbenchShell(), historyEntries);

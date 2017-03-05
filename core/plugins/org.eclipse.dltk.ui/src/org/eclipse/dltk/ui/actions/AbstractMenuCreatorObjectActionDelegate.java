@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -42,10 +42,12 @@ public abstract class AbstractMenuCreatorObjectActionDelegate implements
 			this.menu = menu;
 		}
 
+		@Override
 		public void addAction(IAction action) {
 			new ActionContributionItem(action).fill(menu, -1);
 		}
 
+		@Override
 		public void addSeparator() {
 			new MenuItem(menu, SWT.SEPARATOR);
 		}
@@ -61,14 +63,17 @@ public abstract class AbstractMenuCreatorObjectActionDelegate implements
 	// current selection
 	private IStructuredSelection currentSelection;
 
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		// We don't have a need for the active part.
 	}
 
+	@Override
 	public void run(IAction action) {
 		// Never called because we become a menu.
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection newSelection) {
 		// if the selection is an IResource, save it and enable our action
 		if (newSelection instanceof IStructuredSelection) {
@@ -86,15 +91,18 @@ public abstract class AbstractMenuCreatorObjectActionDelegate implements
 		currentSelection = null;
 	}
 
+	@Override
 	public void dispose() {
 		// nothing to do
 	}
 
+	@Override
 	public Menu getMenu(Control parent) {
 		// never called
 		return null;
 	}
 
+	@Override
 	public Menu getMenu(Menu parent) {
 		/*
 		 * Create the new menu. The menu will get filled when it is about to be
@@ -107,6 +115,7 @@ public abstract class AbstractMenuCreatorObjectActionDelegate implements
 		 * ActionContribution items for each popup menu.
 		 */
 		menu.addMenuListener(new MenuAdapter() {
+			@Override
 			public void menuShown(MenuEvent e) {
 				if (fFillMenu) {
 					final Menu m = (Menu) e.widget;

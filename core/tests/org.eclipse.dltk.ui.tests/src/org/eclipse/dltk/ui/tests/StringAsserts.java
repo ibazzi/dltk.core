@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.tests;
 
@@ -15,7 +14,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 /**
  *
@@ -106,8 +105,8 @@ public class StringAsserts {
 	}	
 	
 	public static void assertEqualStringsIgnoreOrder(String[] actuals, String[] expecteds) {
-		ArrayList list1= new ArrayList(Arrays.asList(actuals));
-		ArrayList list2= new ArrayList(Arrays.asList(expecteds));
+		ArrayList<String> list1= new ArrayList<>(Arrays.asList(actuals));
+		ArrayList<String> list2= new ArrayList<>(Arrays.asList(expecteds));
 		
 		for (int i= list1.size() - 1; i >= 0; i--) {
 			if (list2.remove(list1.get(i))) {
@@ -120,12 +119,12 @@ public class StringAsserts {
 		
 		if (n1 + n2 > 0) {
 			if (n1 == 1 && n2 == 1) {
-				assertEqualString((String) list1.get(0), (String) list2.get(0));
+				assertEqualString(list1.get(0), list2.get(0));
 			}
 			
 			StringBuffer buf= new StringBuffer();
 			for (int i= 0; i < n1; i++) {
-				String s1= (String) list1.get(i);
+				String s1= list1.get(i);
 				if (s1 != null) {
 					buf.append(s1);
 					buf.append("\n");
@@ -135,7 +134,7 @@ public class StringAsserts {
 			
 			buf= new StringBuffer();
 			for (int i= 0; i < n2; i++) {
-				String s2= (String) list2.get(i);
+				String s2= list2.get(i);
 				if (s2 != null) {
 					buf.append(s2);
 					buf.append("\n");
@@ -149,8 +148,8 @@ public class StringAsserts {
 	}
 	
 	public static void assertExpectedExistInProposals(String[] actuals, String[] expecteds) {
-		ArrayList list1= new ArrayList(Arrays.asList(actuals));
-		ArrayList list2= new ArrayList(Arrays.asList(expecteds));
+		ArrayList<String> list1= new ArrayList<>(Arrays.asList(actuals));
+		ArrayList<String> list2= new ArrayList<>(Arrays.asList(expecteds));
 		
 		for (int i= list1.size() - 1; i >= 0; i--) {
 			if (list2.remove(list1.get(i))) {
@@ -163,12 +162,12 @@ public class StringAsserts {
 		
 		if (n2 > 0) {
 			if (n1 == 1 && n2 == 1) {
-				assertEqualString((String) list1.get(0), (String) list2.get(0));
+				assertEqualString(list1.get(0), list2.get(0));
 			}
 			
 			StringBuffer buf= new StringBuffer();
 			for (int i= 0; i < n1; i++) {
-				String s1= (String) list1.get(i);
+				String s1= list1.get(i);
 				if (s1 != null) {
 					buf.append(s1);
 					buf.append("\n");
@@ -178,7 +177,7 @@ public class StringAsserts {
 			
 			buf= new StringBuffer();
 			for (int i= 0; i < n2; i++) {
-				String s2= (String) list2.get(i);
+				String s2= list2.get(i);
 				if (s2 != null) {
 					buf.append(s2);
 					buf.append("\n");

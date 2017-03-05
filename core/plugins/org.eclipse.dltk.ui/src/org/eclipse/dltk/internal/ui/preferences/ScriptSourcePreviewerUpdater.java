@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     		IBM Corporation - initial API and implementation
  * 			Alex Panchenko <alex@xored.com>
  *******************************************************************************/
-
 package org.eclipse.dltk.internal.ui.preferences;
 
 import org.eclipse.core.runtime.Assert;
@@ -18,9 +17,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Font;
 
 /**
@@ -31,7 +27,7 @@ public class ScriptSourcePreviewerUpdater {
 	/**
 	 * Creates a script source preview updater for the given viewer,
 	 * configuration and preference store.
-	 * 
+	 *
 	 * @param viewer
 	 *            the viewer
 	 * @param configuration
@@ -45,32 +41,26 @@ public class ScriptSourcePreviewerUpdater {
 		Assert.isNotNull(viewer);
 		Assert.isNotNull(configuration);
 		Assert.isNotNull(preferenceStore);
-		final IPropertyChangeListener fontChangeListener = new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				final String fontKey = configuration.getFontPropertyPreferenceKey();
-				if (fontKey.equals(event.getProperty())) {
-					final Font font = JFaceResources.getFont(fontKey);
-					viewer.getTextWidget().setFont(font);
-				}
+		final IPropertyChangeListener fontChangeListener = event -> {
+			final String fontKey = configuration.getFontPropertyPreferenceKey();
+			if (fontKey.equals(event.getProperty())) {
+				final Font font = JFaceResources.getFont(fontKey);
+				viewer.getTextWidget().setFont(font);
 			}
 		};
-		final IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				if (configuration.affectsTextPresentation(event)) {
-					configuration.handlePropertyChangeEvent(event);
-					viewer.invalidateTextPresentation();
-				}
+		final IPropertyChangeListener propertyChangeListener = event -> {
+			if (configuration.affectsTextPresentation(event)) {
+				configuration.handlePropertyChangeEvent(event);
+				viewer.invalidateTextPresentation();
 			}
 		};
-		viewer.getTextWidget().addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				preferenceStore
-						.removePropertyChangeListener(propertyChangeListener);
-				JFaceResources.getFontRegistry().removeListener(
-						fontChangeListener);
-			}
+		viewer.getTextWidget().addDisposeListener(e -> {
+			preferenceStore
+					.removePropertyChangeListener(propertyChangeListener);
+			JFaceResources.getFontRegistry().removeListener(
+					fontChangeListener);
 		});
-		
+
 		JFaceResources.getFontRegistry().addListener(fontChangeListener);
 		preferenceStore.addPropertyChangeListener(propertyChangeListener);
 	}

@@ -16,6 +16,7 @@ class SendPacketOperation implements ISocketOperation {
 		this.packet = packet;
 	}
 
+	@Override
 	public void execute(Socket socket) throws IOException {
 		ClientPackets.send(socket, packet);
 	}

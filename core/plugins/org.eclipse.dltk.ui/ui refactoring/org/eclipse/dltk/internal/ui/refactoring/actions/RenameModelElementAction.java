@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.refactoring.actions;
 
@@ -39,11 +38,11 @@ import org.eclipse.ui.IWorkbenchSite;
 public class RenameModelElementAction extends SelectionDispatchAction {
 
 	private ScriptEditor fEditor;
-	
+
 	public RenameModelElementAction(IWorkbenchSite site) {
 		super(site);
 	}
-	
+
 	public RenameModelElementAction(ScriptEditor editor) {
 		this(editor.getEditorSite());
 		fEditor= editor;
@@ -52,6 +51,7 @@ public class RenameModelElementAction extends SelectionDispatchAction {
 
 	//---- Structured selection ------------------------------------------------
 
+	@Override
 	public void selectionChanged(IStructuredSelection selection) {
 		try {
 			if (selection.size() == 1) {
@@ -68,13 +68,13 @@ public class RenameModelElementAction extends SelectionDispatchAction {
 		}
 		setEnabled(false);
 	}
-	
+
 	private static boolean canEnable(IStructuredSelection selection) throws CoreException {
 		IModelElement element= getModelElement(selection);
 		if (element == null)
 			return false;
 		return isRenameAvailable(element);
-	} 
+	}
 
 	private static IModelElement getModelElement(IStructuredSelection selection) {
 		if (selection.size() != 1)
@@ -84,20 +84,22 @@ public class RenameModelElementAction extends SelectionDispatchAction {
 			return null;
 		return (IModelElement)first;
 	}
-	
+
+	@Override
 	public void run(IStructuredSelection selection) {
 		IModelElement element= getModelElement(selection);
 		if (element == null)
 			return;
 		try {
-			run(element);	
+			run(element);
 		} catch (CoreException e){
-			ExceptionHandler.handle(e, RefactoringMessages.RenameScriptElementAction_name, RefactoringMessages.RenameScriptElementAction_exception);  
-		}	
+			ExceptionHandler.handle(e, RefactoringMessages.RenameScriptElementAction_name, RefactoringMessages.RenameScriptElementAction_exception);
+		}
 	}
-	
+
 	//---- text selection ------------------------------------------------------------
 
+	@Override
 	public void selectionChanged(ITextSelection selection) {
 		if (selection instanceof ModelTextSelection) {
 			try {
@@ -115,6 +117,7 @@ public class RenameModelElementAction extends SelectionDispatchAction {
 		}
 	}
 
+	@Override
 	public void run(ITextSelection selection) {
 		try {
 			IModelElement element= getScriptElement();
@@ -127,7 +130,7 @@ public class RenameModelElementAction extends SelectionDispatchAction {
 		}
 		MessageDialog.openInformation(getShell(), RefactoringMessages.RenameScriptElementAction_name, RefactoringMessages.RenameScriptElementAction_not_available);
 	}
-	
+
 	public boolean canRun() {
 		try {
 			IModelElement element= getScriptElement();
@@ -143,18 +146,18 @@ public class RenameModelElementAction extends SelectionDispatchAction {
 		}
 		return false;
 	}
-	
+
 	private IModelElement getScriptElement() throws ModelException {
-		IModelElement[] elements= SelectionConverter.codeResolve(fEditor); 
+		IModelElement[] elements= SelectionConverter.codeResolve(fEditor);
 		if (elements == null || elements.length != 1)
 			return null;
 		return elements[0];
 	}
-	
+
 	//---- helper methods -------------------------------------------------------------------
 
 	private void run(IModelElement element) throws CoreException {
-		// Work around for http://dev.eclipse.org/bugs/show_bug.cgi?id=19104		
+		// Work around for http://dev.eclipse.org/bugs/show_bug.cgi?id=19104
 		if (!ActionUtil.isProcessable(getShell(), element))
 			return;
 		//XXX workaround bug 31998

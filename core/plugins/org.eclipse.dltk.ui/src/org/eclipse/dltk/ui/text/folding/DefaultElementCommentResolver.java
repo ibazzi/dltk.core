@@ -31,7 +31,7 @@ public class DefaultElementCommentResolver implements IElementCommentResolver {
 
 	/**
 	 * Determines the element that contains the clicked comment
-	 * 
+	 *
 	 * @throws ModelException
 	 */
 	protected IModelElement getContainingElement(IModelElement el, int offset,
@@ -44,6 +44,7 @@ public class DefaultElementCommentResolver implements IElementCommentResolver {
 	/**
 	 * Returns the model element that the comment corresponds to
 	 */
+	@Override
 	public IModelElement getElementByCommentPosition(int offset, int length) {
 		try {
 			return getElementByCommentPositionImpl(offset, length);
@@ -169,6 +170,7 @@ public class DefaultElementCommentResolver implements IElementCommentResolver {
 			this.length = length;
 		}
 
+		@Override
 		public boolean visit(IModelElement element) {
 			if (element instanceof ISourceReference) {
 				final ISourceRange range;

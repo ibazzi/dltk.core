@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -11,18 +11,23 @@
  *******************************************************************************/
 package org.eclipse.dltk.validators.core.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.dltk.validators.core.CommandLine;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+public class CommandLineTests {
 
-public class CommandLineTests extends TestCase {
-
+	@Test
 	public void testConstructor() {
 		assertEquals("", new CommandLine().toString());
 		CommandLine commandLine = new CommandLine("A B");
 		assertEquals("A B", commandLine.toString());
 	}
 
+	@Test
 	public void testAdd() {
 		CommandLine commandLine = new CommandLine();
 		commandLine.add("A");
@@ -30,12 +35,14 @@ public class CommandLineTests extends TestCase {
 		assertEquals("A B", commandLine.toString());
 	}
 
+	@Test
 	public void testAddArray() {
 		CommandLine commandLine = new CommandLine();
 		commandLine.add(new String[] { "A", "B" });
 		assertEquals("A B", commandLine.toString());
 	}
 
+	@Test
 	public void testToArray() {
 		CommandLine commandLine = new CommandLine();
 		commandLine.add(new String[] { "A", "B" });
@@ -45,6 +52,7 @@ public class CommandLineTests extends TestCase {
 		assertEquals("B", args[1]);
 	}
 
+	@Test
 	public void testContains() {
 		CommandLine commandLine = new CommandLine();
 		commandLine.add(new String[] { "A", "B" });
@@ -52,12 +60,14 @@ public class CommandLineTests extends TestCase {
 		assertFalse(commandLine.contains("AA"));
 	}
 
+	@Test
 	public void testAddCommandLine() {
 		CommandLine commandLine = new CommandLine("A B");
 		commandLine.add(new CommandLine("C D"));
 		assertEquals("A B C D", commandLine.toString());
 	}
 
+	@Test
 	public void testClear() {
 		CommandLine commandLine = new CommandLine();
 		commandLine.add("A");
@@ -67,6 +77,7 @@ public class CommandLineTests extends TestCase {
 		assertEquals("", commandLine.toString());
 	}
 
+	@Test
 	public void testReplace() {
 		CommandLine commandLine = new CommandLine("A B %c");
 		commandLine.replaceSequence('x', "XX");

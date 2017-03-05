@@ -53,10 +53,8 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
-/**
- */
-public abstract class ScriptLaunchConfigurationTab extends
-		AbstractLaunchConfigurationTab {
+public abstract class ScriptLaunchConfigurationTab
+		extends AbstractLaunchConfigurationTab {
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	private final String fMode;
@@ -73,9 +71,7 @@ public abstract class ScriptLaunchConfigurationTab extends
 		this.fMode = mode;
 	}
 
-	/*
-	 * @see ILaunchConfigurationTab#createControl(Composite)
-	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
@@ -106,7 +102,7 @@ public abstract class ScriptLaunchConfigurationTab extends
 
 	/**
 	 * Creates the widgets for specifying a main type.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 */
@@ -117,7 +113,8 @@ public abstract class ScriptLaunchConfigurationTab extends
 			group.setText(text);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			if (parent.getLayout() instanceof GridLayout) {
-				gd.horizontalSpan = ((GridLayout) parent.getLayout()).numColumns;
+				gd.horizontalSpan = ((GridLayout) parent
+						.getLayout()).numColumns;
 			}
 			group.setLayoutData(gd);
 			GridLayout layout = new GridLayout();
@@ -135,9 +132,7 @@ public abstract class ScriptLaunchConfigurationTab extends
 
 	private boolean initializing = false;
 
-	/*
-	 * @see ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
-	 */
+	@Override
 	public final void initializeFrom(ILaunchConfiguration config) {
 		initializing = true;
 		try {
@@ -173,7 +168,7 @@ public abstract class ScriptLaunchConfigurationTab extends
 	/**
 	 * Validates the page. This method should be overridden when more checks are
 	 * needed.
-	 * 
+	 *
 	 * @return <code>true</code> if input is correct and <code>false</code>
 	 *         otherwise
 	 */
@@ -185,10 +180,7 @@ public abstract class ScriptLaunchConfigurationTab extends
 		return getErrorMessage() != null;
 	}
 
-	/*
-	 * @see
-	 * ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
-	 */
+	@Override
 	public final void performApply(ILaunchConfigurationWorkingCopy config) {
 		String project = fProjText.getText().trim();
 		config.setAttribute(
@@ -196,10 +188,9 @@ public abstract class ScriptLaunchConfigurationTab extends
 
 		if (ILaunchManager.DEBUG_MODE.equals(fMode)) {
 			if (breakOnFirstLine != null)
-				config
-						.setAttribute(
-								ScriptLaunchConfigurationConstants.ENABLE_BREAK_ON_FIRST_LINE,
-								breakOnFirstLine.getSelection());
+				config.setAttribute(
+						ScriptLaunchConfigurationConstants.ENABLE_BREAK_ON_FIRST_LINE,
+						breakOnFirstLine.getSelection());
 			if (enableLogging != null)
 				config.setAttribute(
 						ScriptLaunchConfigurationConstants.ENABLE_DBGP_LOGGING,
@@ -233,7 +224,7 @@ public abstract class ScriptLaunchConfigurationTab extends
 	/**
 	 * Returns a resource mapping for the given launch configuration, or
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @param config
 	 *            working copy
 	 * @throws CoreException
@@ -256,9 +247,7 @@ public abstract class ScriptLaunchConfigurationTab extends
 		return null;
 	}
 
-	/*
-	 * @see ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
-	 */
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		IModelElement element = getContextModelElement();
 		setDefaults(configuration, element);
@@ -305,7 +294,8 @@ public abstract class ScriptLaunchConfigurationTab extends
 	 * Returns the current preference value for the 'Dbgp logging enabled'
 	 * setting
 	 */
-	protected boolean dbpgLoggingPrefEnabled(PreferencesLookupDelegate delegate) {
+	protected boolean dbpgLoggingPrefEnabled(
+			PreferencesLookupDelegate delegate) {
 		return false;
 	}
 
@@ -320,25 +310,25 @@ public abstract class ScriptLaunchConfigurationTab extends
 
 	/**
 	 * Creates the sub-class specific control.
-	 * 
+	 *
 	 * <p>
 	 * Sub-classes can widgets directly to the <code>composite</code> object
 	 * that is passed to them.
 	 * </p>
-	 * 
+	 *
 	 * @param composite
 	 *            control composite
-	 * 
+	 *
 	 * @see #createControl(Composite)
 	 */
 	protected abstract void doCreateControl(Composite composite);
 
 	/**
 	 * Performs the sub-class specific configuration tab initialization.
-	 * 
+	 *
 	 * @param config
 	 *            launch configuration
-	 * 
+	 *
 	 * @see #initializeFrom(ILaunchConfiguration)
 	 */
 	protected abstract void doInitializeForm(ILaunchConfiguration config);
@@ -350,10 +340,10 @@ public abstract class ScriptLaunchConfigurationTab extends
 
 	/**
 	 * Validate the specified toolkit is valid for the launch configuration
-	 * 
+	 *
 	 * @param toolkit
 	 *            language toolkit
-	 * 
+	 *
 	 * @return <code>true</code> if the toolkit is valid for the launch
 	 *         configuration, <code>false</code> otherwise
 	 */
@@ -368,12 +358,12 @@ public abstract class ScriptLaunchConfigurationTab extends
 
 	/**
 	 * Add the 'break on first line' option to a group composite.
-	 * 
+	 *
 	 * <p>
 	 * Sub-classes are responsible for adding this option to a group composite
 	 * of their choosing.
 	 * </p>
-	 * 
+	 *
 	 * @param group
 	 *            group composite
 	 */
@@ -386,12 +376,12 @@ public abstract class ScriptLaunchConfigurationTab extends
 
 	/**
 	 * Add the 'Dbgp logging enabled' option to a group composite.
-	 * 
+	 *
 	 * <p>
 	 * Sub-classes are responsible for adding this option to a group composite
 	 * of their choosing.
 	 * </p>
-	 * 
+	 *
 	 * @param group
 	 *            group composite
 	 */
@@ -404,7 +394,7 @@ public abstract class ScriptLaunchConfigurationTab extends
 
 	/**
 	 * chooses a project for the type of launch config that it is
-	 * 
+	 *
 	 * @return
 	 */
 	protected IScriptProject chooseProject() {
@@ -412,15 +402,15 @@ public abstract class ScriptLaunchConfigurationTab extends
 				.createLabelProvider(getNatureID());
 		final ElementListSelectionDialog dialog = new ElementListSelectionDialog(
 				getShell(), labelProvider);
-		dialog
-				.setTitle(DLTKLaunchConfigurationsMessages.mainTab_chooseProject_title);
-		dialog
-				.setMessage(DLTKLaunchConfigurationsMessages.mainTab_chooseProject_message);
+		dialog.setTitle(
+				DLTKLaunchConfigurationsMessages.mainTab_chooseProject_title);
+		dialog.setMessage(
+				DLTKLaunchConfigurationsMessages.mainTab_chooseProject_message);
 
 		try {
 			final IScriptProject[] projects = ScriptModelHelper
-					.getOpenedScriptProjects(DLTKCore
-							.create(getWorkspaceRoot()), getNatureID());
+					.getOpenedScriptProjects(
+							DLTKCore.create(getWorkspaceRoot()), getNatureID());
 			dialog.setElements(projects);
 		} catch (ModelException e) {
 			DLTKLaunchingPlugin.log(e);
@@ -466,12 +456,12 @@ public abstract class ScriptLaunchConfigurationTab extends
 
 	/**
 	 * Creates a project editor
-	 * 
+	 *
 	 * <p>
 	 * Creates a group containing an input text field and 'Browse' button to
 	 * select a project from the workspace.
 	 * </p>
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 */
@@ -479,8 +469,8 @@ public abstract class ScriptLaunchConfigurationTab extends
 		final Composite editParent;
 		if (needGroupForField(FIELD_PROJECT)) {
 			Group group = new Group(parent, SWT.NONE);
-			group
-					.setText(DLTKLaunchConfigurationsMessages.mainTab_projectGroup);
+			group.setText(
+					DLTKLaunchConfigurationsMessages.mainTab_projectGroup);
 
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			group.setLayoutData(gd);
@@ -543,7 +533,7 @@ public abstract class ScriptLaunchConfigurationTab extends
 
 	/**
 	 * Attempts to guess the current project and script being launched.
-	 * 
+	 *
 	 * @return model element - the script or the project.
 	 */
 	protected IModelElement getContextModelElement() {
@@ -639,20 +629,15 @@ public abstract class ScriptLaunchConfigurationTab extends
 		}
 
 		if (!validateProject(project)) {
-			String msg = Messages
-					.format(
-							DLTKLaunchConfigurationsMessages.mainTab_errorDlg_notALangProject,
-							new String[] { getLanguageName() });
-			String reason = Messages
-					.format(
-							DLTKLaunchConfigurationsMessages.mainTab_errorDlg_reasonNotALangProject,
-							new String[] { getLanguageName() });
-			ErrorDialog
-					.openError(
-							getShell(),
-							DLTKLaunchConfigurationsMessages.mainTab_errorDlg_invalidProject,
-							msg, DLTKUIStatus.createError(IStatus.ERROR,
-									reason, null));
+			String msg = Messages.format(
+					DLTKLaunchConfigurationsMessages.mainTab_errorDlg_notALangProject,
+					new String[] { getLanguageName() });
+			String reason = Messages.format(
+					DLTKLaunchConfigurationsMessages.mainTab_errorDlg_reasonNotALangProject,
+					new String[] { getLanguageName() });
+			ErrorDialog.openError(getShell(),
+					DLTKLaunchConfigurationsMessages.mainTab_errorDlg_invalidProject,
+					msg, DLTKUIStatus.createError(IStatus.ERROR, reason, null));
 			return;
 		}
 
@@ -662,16 +647,17 @@ public abstract class ScriptLaunchConfigurationTab extends
 
 	/**
 	 * Sets the name of the project associated with the launch configuration
-	 * 
+	 *
 	 * @param name
 	 *            project name
 	 */
 	protected final void setProjectName(String name) {
-		setProjectName(name, new PreferencesLookupDelegate(getScriptModel()
-				.getScriptProject(name)));
+		setProjectName(name, new PreferencesLookupDelegate(
+				getScriptModel().getScriptProject(name)));
 	}
 
-	private void setProjectName(String name, PreferencesLookupDelegate delegate) {
+	private void setProjectName(String name,
+			PreferencesLookupDelegate delegate) {
 		fProjText.setText(name);
 		if (delegate != null && ILaunchManager.DEBUG_MODE.equals(fMode)) {
 			if (breakOnFirstLine != null)
@@ -684,7 +670,7 @@ public abstract class ScriptLaunchConfigurationTab extends
 
 	/**
 	 * updates the project text field form the configuration
-	 * 
+	 *
 	 * @param config
 	 *            the configuration we are editing
 	 */
@@ -695,8 +681,8 @@ public abstract class ScriptLaunchConfigurationTab extends
 
 			if (ILaunchManager.DEBUG_MODE.equals(fMode)
 					&& Path.EMPTY.isValidSegment(projectName)) {
-				final IProject project = getWorkspaceRoot().getProject(
-						projectName);
+				final IProject project = getWorkspaceRoot()
+						.getProject(projectName);
 				if (project.isAccessible()) {
 					final PreferencesLookupDelegate delegate = new PreferencesLookupDelegate(
 							project);
@@ -719,13 +705,15 @@ public abstract class ScriptLaunchConfigurationTab extends
 	protected boolean validateProject() {
 		String projectName = getProjectName();
 		if (projectName.length() == 0) {
-			setErrorMessage(DLTKLaunchConfigurationsMessages.error_selectProject);
+			setErrorMessage(
+					DLTKLaunchConfigurationsMessages.error_selectProject);
 			return false;
 		}
 
 		IScriptProject proj = getScriptModel().getScriptProject(projectName);
 		if (proj == null || !validateProject(proj)) {
-			setErrorMessage(DLTKLaunchConfigurationsMessages.error_notAValidProject);
+			setErrorMessage(
+					DLTKLaunchConfigurationsMessages.error_notAValidProject);
 			return false;
 		}
 
@@ -735,7 +723,7 @@ public abstract class ScriptLaunchConfigurationTab extends
 	/**
 	 * Tests if the project field is valid. Returns <code>true</code> if valid
 	 * project is selected or <code>false</code> otherwise.
-	 * 
+	 *
 	 * @return
 	 */
 	protected boolean isValidProject() {
@@ -750,7 +738,7 @@ public abstract class ScriptLaunchConfigurationTab extends
 	/**
 	 * Tests if the specified project is valid for this launch configuration
 	 * type.
-	 * 
+	 *
 	 * @param project
 	 * @return
 	 */
@@ -775,6 +763,7 @@ public abstract class ScriptLaunchConfigurationTab extends
 	 * tab.
 	 */
 	class WidgetListener implements ModifyListener, SelectionListener {
+		@Override
 		public void modifyText(ModifyEvent e) {
 			if (initializing) {
 				return;
@@ -799,10 +788,12 @@ public abstract class ScriptLaunchConfigurationTab extends
 			updateLaunchConfigurationDialog();
 		}
 
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 			/* do nothing */
 		}
 
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			updateLaunchConfigurationDialog();
 		}

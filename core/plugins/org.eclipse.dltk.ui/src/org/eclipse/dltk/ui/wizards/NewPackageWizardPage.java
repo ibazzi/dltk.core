@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.wizards;
 
@@ -25,7 +24,6 @@ import org.eclipse.dltk.core.IScriptFolder;
 import org.eclipse.dltk.internal.ui.dialogs.TextFieldNavigationHandler;
 import org.eclipse.dltk.internal.ui.wizards.NewWizardMessages;
 import org.eclipse.dltk.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.dltk.internal.ui.wizards.dialogfields.IDialogFieldListener;
 import org.eclipse.dltk.internal.ui.wizards.dialogfields.LayoutUtil;
 import org.eclipse.dltk.internal.ui.wizards.dialogfields.StringDialogField;
 import org.eclipse.dltk.ui.DLTKUIPlugin;
@@ -42,7 +40,7 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * Wizard page to create a new package.
- * 
+ *
  * <p>
  * Note: This class is not intended to be subclassed, but clients can
  * instantiate. To implement a different kind of a new package wizard page,
@@ -70,12 +68,10 @@ public abstract class NewPackageWizardPage extends NewContainerWizardPage {
 		fCreatedScriptFolder = null;
 
 		fPackageDialogField = new StringDialogField();
-		fPackageDialogField.setDialogFieldListener(new IDialogFieldListener() {
-			public void dialogFieldChanged(DialogField field) {
-				fPackageStatus = packageChanged();
-				// tell all others
-				handleFieldChanged(PACKAGE);
-			}
+		fPackageDialogField.setDialogFieldListener(field -> {
+			fPackageStatus = packageChanged();
+			// tell all others
+			handleFieldChanged(PACKAGE);
 		});
 		fPackageDialogField
 				.setLabelText(NewWizardMessages.NewPackageWizardPage_package_label);
@@ -87,7 +83,7 @@ public abstract class NewPackageWizardPage extends NewContainerWizardPage {
 	 * The wizard owning this page is responsible for calling this method with
 	 * the current selection. The selection is used to initialize the fields of
 	 * the wizard page.
-	 * 
+	 *
 	 * @param selection
 	 *            used to initialize the fields
 	 */
@@ -106,14 +102,12 @@ public abstract class NewPackageWizardPage extends NewContainerWizardPage {
 		updateStatus(new IStatus[] { containerStatus, fPackageStatus });
 	}
 
-	/*
-	 * @see WizardPage#createControl
-	 */
+	@Override
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
 
 		final int nColumns = 3;
-		
+
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setFont(parent.getFont());
 
@@ -122,8 +116,8 @@ public abstract class NewPackageWizardPage extends NewContainerWizardPage {
 		composite.setLayout(layout);
 
 		Label label = new Label(composite, SWT.WRAP);
-		label.setText(NewWizardMessages.NewPackageWizardPage_info);		
-		GridData gd = new GridData();		
+		label.setText(NewWizardMessages.NewPackageWizardPage_info);
+		GridData gd = new GridData();
 		gd.widthHint = convertWidthInCharsToPixels(60);
 		gd.horizontalSpan = 3;
 		label.setLayoutData(gd);
@@ -132,17 +126,15 @@ public abstract class NewPackageWizardPage extends NewContainerWizardPage {
 		createPackageControls(composite, nColumns);
 
 		setControl(composite);
-		
+
 		Dialog.applyDialogFont(composite);
-		
+
 		//TODO: Add help support here
 		// PlatformUI.getWorkbench().getHelpSystem().setHelp(composite,
 		// IScriptHelpContextIds.NEW_PACKAGE_WIZARD_PAGE);
 	}
 
-	/**
-	 * @see org.eclipse.jface.dialogs.IDialogPage#setVisible(boolean)
-	 */
+	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {
@@ -166,7 +158,8 @@ public abstract class NewPackageWizardPage extends NewContainerWizardPage {
 
 		TextFieldNavigationHandler.install(text);
 	}
-	
+
+	@Override
 	protected void handleFieldChanged(String fieldName) {
 		super.handleFieldChanged(fieldName);
 		if (fieldName == CONTAINER) {
@@ -239,7 +232,7 @@ public abstract class NewPackageWizardPage extends NewContainerWizardPage {
 
 	/**
 	 * Returns the content of the package input field.
-	 * 
+	 *
 	 * @return the content of the package input field
 	 */
 	public String getPackageText() {
@@ -248,7 +241,7 @@ public abstract class NewPackageWizardPage extends NewContainerWizardPage {
 
 	/**
 	 * Sets the content of the package input field to the given value.
-	 * 
+	 *
 	 * @param str
 	 *            the new package input field text
 	 * @param canBeModified
@@ -264,7 +257,7 @@ public abstract class NewPackageWizardPage extends NewContainerWizardPage {
 	/**
 	 * Returns the resource handle that corresponds to the element to was
 	 * created or will be created.
-	 * 
+	 *
 	 * @return A resource or null if the page contains illegal values.
 	 *
 	 */
@@ -280,7 +273,7 @@ public abstract class NewPackageWizardPage extends NewContainerWizardPage {
 
 	/**
 	 * Returns a runnable that creates a package using the current settings.
-	 * 
+	 *
 	 * @return the runnable that creates the new package
 	 */
 //	public IRunnableWithProgress getRunnable() {
@@ -300,7 +293,7 @@ public abstract class NewPackageWizardPage extends NewContainerWizardPage {
 	 * Returns the created package fragment. This method only returns a valid
 	 * value after <code>getRunnable</code> or <code>createPackage</code>
 	 * have been executed.
-	 * 
+	 *
 	 * @return the created package fragment
 	 */
 	public IScriptFolder getNewScriptFolder() {
@@ -309,7 +302,7 @@ public abstract class NewPackageWizardPage extends NewContainerWizardPage {
 
 	/**
 	 * Creates the new package using the entered field values.
-	 * 
+	 *
 	 * @param monitor
 	 *            a progress monitor to report progress. The progress monitor
 	 *            must not be <code>null</code>
@@ -325,7 +318,7 @@ public abstract class NewPackageWizardPage extends NewContainerWizardPage {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		
+
 		IProjectFragment root = getProjectFragment();
 		String packName = getPackageText();
 		fCreatedScriptFolder = root.createScriptFolder(packName, true,

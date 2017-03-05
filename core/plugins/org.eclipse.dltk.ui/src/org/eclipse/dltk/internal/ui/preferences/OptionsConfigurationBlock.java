@@ -42,7 +42,7 @@ import org.osgi.service.prefs.BackingStoreException;
 /**
  * Direct port from the jdt ui, this class should not be extended by anyone but
  * the internal dltk ui.
- * 
+ *
  * @see org.eclipse.dltk.ui.preferences.AbstractOptionsBlock
  */
 public abstract class OptionsConfigurationBlock {
@@ -369,12 +369,12 @@ public abstract class OptionsConfigurationBlock {
 	/**
 	 * Returns the prompt that should be used in the popup box that indicates a
 	 * project build needs to occur.
-	 * 
+	 *
 	 * <p>
 	 * Default implementation returns <code>null</code>. Clients should override
 	 * to return context appropriate message.
 	 * </p>
-	 * 
+	 *
 	 * @param workspaceSettings
 	 *            <code>true</code> if workspace settings were changed,
 	 *            <code>false</code> if project settings were changed
@@ -416,6 +416,7 @@ public abstract class OptionsConfigurationBlock {
 		excomposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
 				true, false, nColumns, 1));
 		excomposite.addExpansionListener(new ExpansionAdapter() {
+			@Override
 			public void expansionStateChanged(ExpansionEvent e) {
 				expandedStateChanged((ExpandableComposite) e.getSource());
 			}

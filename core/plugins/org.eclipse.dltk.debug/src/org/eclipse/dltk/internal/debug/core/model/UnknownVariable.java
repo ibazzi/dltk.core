@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -20,83 +20,99 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.dltk.debug.core.DLTKDebugPlugin;
 import org.eclipse.dltk.debug.core.model.IScriptStackFrame;
 
-public class UnknownVariable extends ScriptDebugElement implements IVariable,
-		IValue {
+public class UnknownVariable extends ScriptDebugElement
+		implements IVariable, IValue {
 
 	private final IScriptStackFrame frame;
 	private final ScriptValue owner;
 	private final int index;
 
-	public UnknownVariable(IScriptStackFrame frame, ScriptValue owner, int index) {
+	public UnknownVariable(IScriptStackFrame frame, ScriptValue owner,
+			int index) {
 		this.frame = frame;
 		this.owner = owner;
 		this.index = index;
 	}
 
+	@Override
 	public String getName() throws DebugException {
 		return "(" + index + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	@Override
 	public String getReferenceTypeName() throws DebugException {
 		return owner.getType().getName();
 	}
 
+	@Override
 	public IValue getValue() throws DebugException {
 		return this;
 	}
 
+	@Override
 	public boolean hasValueChanged() throws DebugException {
 		return false;
 	}
 
+	@Override
 	public IDebugTarget getDebugTarget() {
 		return frame.getDebugTarget();
 	}
 
+	@Override
 	public void setValue(String expression) throws DebugException {
-		throw new DebugException(new Status(IStatus.ERROR,
-				DLTKDebugPlugin.PLUGIN_ID, DebugException.NOT_SUPPORTED,
-				"setValue", null)); //$NON-NLS-1$
+		throw new DebugException(
+				new Status(IStatus.ERROR, DLTKDebugPlugin.PLUGIN_ID,
+						DebugException.NOT_SUPPORTED, "setValue", null)); //$NON-NLS-1$
 	}
 
+	@Override
 	public void setValue(IValue value) throws DebugException {
-		throw new DebugException(new Status(IStatus.ERROR,
-				DLTKDebugPlugin.PLUGIN_ID, DebugException.NOT_SUPPORTED,
-				"setValue", null)); //$NON-NLS-1$
+		throw new DebugException(
+				new Status(IStatus.ERROR, DLTKDebugPlugin.PLUGIN_ID,
+						DebugException.NOT_SUPPORTED, "setValue", null)); //$NON-NLS-1$
 	}
 
+	@Override
 	public boolean supportsValueModification() {
 		return false;
 	}
 
+	@Override
 	public boolean verifyValue(String expression) throws DebugException {
-		throw new DebugException(new Status(IStatus.ERROR,
-				DLTKDebugPlugin.PLUGIN_ID, DebugException.NOT_SUPPORTED,
-				"verifyValue", null)); //$NON-NLS-1$
+		throw new DebugException(
+				new Status(IStatus.ERROR, DLTKDebugPlugin.PLUGIN_ID,
+						DebugException.NOT_SUPPORTED, "verifyValue", null)); //$NON-NLS-1$
 	}
 
+	@Override
 	public boolean verifyValue(IValue value) throws DebugException {
-		throw new DebugException(new Status(IStatus.ERROR,
-				DLTKDebugPlugin.PLUGIN_ID, DebugException.NOT_SUPPORTED,
-				"verifyValue", null)); //$NON-NLS-1$
+		throw new DebugException(
+				new Status(IStatus.ERROR, DLTKDebugPlugin.PLUGIN_ID,
+						DebugException.NOT_SUPPORTED, "verifyValue", null)); //$NON-NLS-1$
 	}
 
+	@Override
 	public String getValueString() {
 		return ""; //$NON-NLS-1$
 	}
 
+	@Override
 	public IVariable[] getVariables() throws DebugException {
 		return ScriptValue.NO_VARIABLES;
 	}
 
+	@Override
 	public boolean hasVariables() throws DebugException {
 		return false;
 	}
 
+	@Override
 	public boolean isAllocated() throws DebugException {
 		return false;
 	}
 
+	@Override
 	public String toString() {
 		return getValueString();
 	}

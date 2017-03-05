@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,7 +57,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.dltk.compiler.problem.IProblem;
@@ -1279,22 +1278,14 @@ public class ModelManager implements ISaveParticipant {
 			// Initialize eclipse preferences
 			initializePreferences();
 			// Listen to preference changes
-			this.propertyListener = new IEclipsePreferences.IPreferenceChangeListener() {
-				@Override
-				public void preferenceChange(PreferenceChangeEvent event) {
-					ModelManager.this.optionsCache = null;
-				}
-			};
+			this.propertyListener = event -> ModelManager.this.optionsCache = null;
 			installPreferenceChangeListener(DLTKCore.PLUGIN_ID,
 					this.propertyListener);
 			// listen for encoding changes (see
 			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=255501 )
-			this.resourcesPropertyListener = new IEclipsePreferences.IPreferenceChangeListener() {
-				@Override
-				public void preferenceChange(PreferenceChangeEvent event) {
-					if (ResourcesPlugin.PREF_ENCODING.equals(event.getKey())) {
-						ModelManager.this.optionsCache = null;
-					}
+			this.resourcesPropertyListener = event -> {
+				if (ResourcesPlugin.PREF_ENCODING.equals(event.getKey())) {
+					ModelManager.this.optionsCache = null;
 				}
 			};
 			installPreferenceChangeListener(ResourcesPlugin.getPlugin()
@@ -1327,24 +1318,19 @@ public class ModelManager implements ISaveParticipant {
 						// add save participant and process delta atomically
 						// see
 						// https://bugs.eclipse.org/bugs/show_bug.cgi?id=59937
-						workspace.run(new IWorkspaceRunnable() {
-							@Override
-							public void run(IProgressMonitor progress)
-									throws CoreException {
-								ISavedState savedState = workspace
-										.addSaveParticipant(
-												DLTKCore.getPlugin(),
-												ModelManager.this);
-								if (savedState != null) {
-									// the event type coming from the saved
-									// state is always POST_AUTO_BUILD
-									// force it to be POST_CHANGE so that the
-									// delta processor can handle it
-									ModelManager.this.deltaState
-											.getDeltaProcessor().overridenEventType = IResourceChangeEvent.POST_CHANGE;
-									savedState
-											.processResourceChangeEvents(ModelManager.this.deltaState);
-								}
+						workspace.run(progress -> {
+							ISavedState savedState = workspace
+									.addSaveParticipant(DLTKCore.getPlugin(),
+											ModelManager.this);
+							if (savedState != null) {
+								// the event type coming from the saved
+								// state is always POST_AUTO_BUILD
+								// force it to be POST_CHANGE so that the
+								// delta processor can handle it
+								ModelManager.this.deltaState
+										.getDeltaProcessor().overridenEventType = IResourceChangeEvent.POST_CHANGE;
+								savedState.processResourceChangeEvents(
+										ModelManager.this.deltaState);
 							}
 						}, monitor);
 					} catch (CoreException e) {
@@ -1921,34 +1907,32 @@ public class ModelManager implements ISaveParticipant {
 			// if possible run inside an IWokspaceRunnable with AVOID_UPATE to
 			// avoid unwanted builds
 			// (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=118507)
-			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) throws CoreException {
-					Set keys = allContainerPaths.keySet();
-					int length = keys.size();
-					IScriptProject[] scriptProjects = new IScriptProject[length]; // clone
-					// as
-					// the
-					// following
-					// will
-					// have
-					// a
-					// side
-					// effect
-					keys.toArray(scriptProjects);
-					for (int i = 0; i < length; i++) {
-						IScriptProject scriptProject = scriptProjects[i];
-						HashSet pathSet = (HashSet) allContainerPaths
-								.get(scriptProject);
-						if (pathSet == null)
-							continue;
-						int length2 = pathSet.size();
-						IPath[] paths = new IPath[length2];
-						pathSet.toArray(paths); // clone as the following will
-						// have a side effect
-						for (int j = 0; j < length2; j++) {
-							IPath path = paths[j];
-							initializeContainer(scriptProject, path);
-						}
+			IWorkspaceRunnable runnable = monitor -> {
+				Set keys = allContainerPaths.keySet();
+				int length = keys.size();
+				IScriptProject[] scriptProjects = new IScriptProject[length]; // clone
+				// as
+				// the
+				// following
+				// will
+				// have
+				// a
+				// side
+				// effect
+				keys.toArray(scriptProjects);
+				for (int i = 0; i < length; i++) {
+					IScriptProject scriptProject = scriptProjects[i];
+					HashSet pathSet = (HashSet) allContainerPaths
+							.get(scriptProject);
+					if (pathSet == null)
+						continue;
+					int length2 = pathSet.size();
+					IPath[] paths = new IPath[length2];
+					pathSet.toArray(paths); // clone as the following will
+					// have a side effect
+					for (int j = 0; j < length2; j++) {
+						IPath path = paths[j];
+						initializeContainer(scriptProject, path);
 					}
 				}
 			};
@@ -2203,16 +2187,14 @@ public class ModelManager implements ISaveParticipant {
 				"	project: " + project.getElementName() + '\n' + //$NON-NLS-1$
 				"	container path: " + containerPath + '\n' + //$NON-NLS-1$
 				"	classpath entries: {\n" + //$NON-NLS-1$
-				Util.toString(classpathEntries, new Util.Displayable() {
-					public String displayString(Object o) {
-						StringBuffer buffer = new StringBuffer("		"); //$NON-NLS-1$
-						if (o == null) {
-							buffer.append("<null>"); //$NON-NLS-1$
-							return buffer.toString();
-						}
-						buffer.append(o);
+						Util.toString(classpathEntries, o -> {
+							StringBuffer buffer = new StringBuffer("		"); //$NON-NLS-1$
+							if (o == null) {
+								buffer.append("<null>"); //$NON-NLS-1$
 						return buffer.toString();
 					}
+							buffer.append(o);
+							return buffer.toString();
 				}) + "\n	}" //$NON-NLS-1$
 		);
 	}
@@ -2275,55 +2257,47 @@ public class ModelManager implements ISaveParticipant {
 							+ containerPath
 							+ '\n'
 							+ "	projects: {" //$NON-NLS-1$
-							+ Util.toString(projects, new Util.Displayable() {
-								public String displayString(Object o) {
-									return ((IScriptProject) o)
-											.getElementName();
-								}
-							})
+							+ Util.toString(projects,
+									o -> ((IScriptProject) o).getElementName())
 							+ "}\n	values on previous session: {\n" + //$NON-NLS-1$
 							Util.toString(respectiveContainers,
-									new Util.Displayable() {
-										public String displayString(Object o) {
-											StringBuffer buffer = new StringBuffer(
-													"		"); //$NON-NLS-1$
-											if (o == null) {
-												buffer.append("<null>"); //$NON-NLS-1$
-												return buffer.toString();
-											}
-											buffer.append(container
-													.getDescription());
-											buffer.append(" {\n"); //$NON-NLS-1$
-											for (int j = 0; j < oldEntries.length; j++) {
-												buffer.append(" 			"); //$NON-NLS-1$
-												buffer.append(oldEntries[j]);
-												buffer.append('\n');
-											}
-											buffer.append(" 		}"); //$NON-NLS-1$
+									o -> {
+										StringBuffer buffer = new StringBuffer(
+												"		"); //$NON-NLS-1$
+										if (o == null) {
+											buffer.append("<null>"); //$NON-NLS-1$
 											return buffer.toString();
 										}
+										buffer.append(
+												container.getDescription());
+										buffer.append(" {\n"); //$NON-NLS-1$
+										for (int j = 0; j < oldEntries.length; j++) {
+											buffer.append(" 			"); //$NON-NLS-1$
+											buffer.append(oldEntries[j]);
+											buffer.append('\n');
+										}
+										buffer.append(" 		}"); //$NON-NLS-1$
+										return buffer.toString();
 									})
 							+ "}\n	new values: {\n" + //$NON-NLS-1$
 							Util.toString(respectiveContainers,
-									new Util.Displayable() {
-										public String displayString(Object o) {
-											StringBuffer buffer = new StringBuffer(
-													"		"); //$NON-NLS-1$
-											if (o == null) {
-												buffer.append("<null>"); //$NON-NLS-1$
-												return buffer.toString();
-											}
-											buffer.append(container
-													.getDescription());
-											buffer.append(" {\n"); //$NON-NLS-1$
-											for (int j = 0; j < newEntries.length; j++) {
-												buffer.append(" 			"); //$NON-NLS-1$
-												buffer.append(newEntries[j]);
-												buffer.append('\n');
-											}
-											buffer.append(" 		}"); //$NON-NLS-1$
+									o -> {
+										StringBuffer buffer = new StringBuffer(
+												"		"); //$NON-NLS-1$
+										if (o == null) {
+											buffer.append("<null>"); //$NON-NLS-1$
 											return buffer.toString();
 										}
+										buffer.append(
+												container.getDescription());
+										buffer.append(" {\n"); //$NON-NLS-1$
+										for (int j = 0; j < newEntries.length; j++) {
+											buffer.append(" 			"); //$NON-NLS-1$
+											buffer.append(newEntries[j]);
+											buffer.append('\n');
+										}
+										buffer.append(" 		}"); //$NON-NLS-1$
+										return buffer.toString();
 									}) + "\n	}"); //$NON-NLS-1$
 				}
 				return false;

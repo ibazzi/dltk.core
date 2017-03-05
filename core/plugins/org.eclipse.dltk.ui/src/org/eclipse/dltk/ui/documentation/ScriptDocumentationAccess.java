@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.documentation;
 
@@ -27,7 +26,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * Helper needed to get access to script documentation.
- * 
+ *
  * <p>
  * This class is not intended to be subclassed or instantiated by clients.
  * </p>
@@ -50,6 +49,7 @@ public class ScriptDocumentationAccess {
 					}
 				}
 
+				@Override
 				public int compare(Object o1, Object o2) {
 					return priority((IConfigurationElement) o2)
 							- priority((IConfigurationElement) o1);
@@ -130,7 +130,7 @@ public class ScriptDocumentationAccess {
 	 * The content does contain HTML code describing member. It may be for ex.
 	 * header comment or a man page. (if <code>allowExternal</code> is
 	 * <code>true</code>)
-	 * 
+	 *
 	 * @param member
 	 *            The member to get documentation for.
 	 * @param allowInherited
@@ -147,19 +147,17 @@ public class ScriptDocumentationAccess {
 	public static Reader getHTMLContentReader(String nature,
 			final Object member, final boolean allowInherited,
 			final boolean allowExternal) {
-		return merge(nature, new Operation() {
-			public Reader getInfo(IScriptDocumentationProvider provider) {
-				if (provider instanceof IScriptDocumentationProviderExtension2) {
-					final IScriptDocumentationProviderExtension2 ext = (IScriptDocumentationProviderExtension2) provider;
-					final IDocumentationResponse response = ext
-							.getDocumentationFor(member);
-					return DocumentationUtils.getReader(response);
-				} else if (member instanceof IMember) {
-					return provider.getInfo((IMember) member, allowInherited,
-							allowExternal);
-				} else {
-					return null;
-				}
+		return merge(nature, (Operation) provider -> {
+			if (provider instanceof IScriptDocumentationProviderExtension2) {
+				final IScriptDocumentationProviderExtension2 ext = (IScriptDocumentationProviderExtension2) provider;
+				final IDocumentationResponse response = ext
+						.getDocumentationFor(member);
+				return DocumentationUtils.getReader(response);
+			} else if (member instanceof IMember) {
+				return provider.getInfo((IMember) member, allowInherited,
+						allowExternal);
+			} else {
+				return null;
 			}
 		});
 	}
@@ -169,66 +167,63 @@ public class ScriptDocumentationAccess {
 	 */
 	public static IDocumentationResponse getDocumentation(String nature,
 			final Object member, final IAdaptable context) {
-		return merge(nature, new Operation2() {
-			public IDocumentationResponse getInfo(
-					IScriptDocumentationProvider provider) {
-				if (provider instanceof IScriptDocumentationProviderExtension2) {
-					final IScriptDocumentationProviderExtension2 ext = (IScriptDocumentationProviderExtension2) provider;
-					final IDocumentationResponse response = ext
-							.getDocumentationFor(member);
-					if (response != null && response.getTitle() == null) {
-						final IScriptDocumentationTitleAdapter titleAdapter = AdaptUtils
-								.getAdapter(context,
-										IScriptDocumentationTitleAdapter.class);
-						if (titleAdapter != null) {
-							final String title = titleAdapter.getTitle(member);
-							// TODO (alex) image
-							if (title != null && title.length() != 0) {
-								return new DocumentationResponseDelegate(
-										response) {
-									@Override
-									public String getTitle() {
-										return title;
-									}
-
-									private boolean imageEvaluated;
-									private ImageDescriptor image;
-
-									@Override
-									public ImageDescriptor getImage() {
-										final ImageDescriptor result = super
-												.getImage();
-										if (result != null) {
-											return result;
-										}
-										if (!imageEvaluated) {
-											image = titleAdapter
-													.getImage(member);
-											imageEvaluated = true;
-										}
-										return image;
-									}
-								};
-							}
+		return merge(nature, (Operation2) provider -> {
+if (provider instanceof IScriptDocumentationProviderExtension2) {
+		final IScriptDocumentationProviderExtension2 ext = (IScriptDocumentationProviderExtension2) provider;
+		final IDocumentationResponse response = ext
+				.getDocumentationFor(member);
+		if (response != null && response.getTitle() == null) {
+			final IScriptDocumentationTitleAdapter titleAdapter = AdaptUtils
+					.getAdapter(context,
+							IScriptDocumentationTitleAdapter.class);
+			if (titleAdapter != null) {
+				final String title = titleAdapter.getTitle(member);
+				// TODO (alex) image
+				if (title != null && title.length() != 0) {
+					return new DocumentationResponseDelegate(
+							response) {
+						@Override
+						public String getTitle() {
+							return title;
 						}
-					}
-					return response;
-				} else if (member instanceof IMember) {
-					final IMember m = (IMember) member;
-					return DocumentationUtils.wrap(member, context,
-							provider.getInfo(m, true, true));
-				} else {
-					return null;
+
+						private boolean imageEvaluated;
+						private ImageDescriptor image;
+
+						@Override
+						public ImageDescriptor getImage() {
+							final ImageDescriptor result = super
+									.getImage();
+							if (result != null) {
+								return result;
+							}
+							if (!imageEvaluated) {
+								image = titleAdapter
+										.getImage(member);
+								imageEvaluated = true;
+							}
+							return image;
+						}
+					};
 				}
 			}
-		});
+		}
+		return response;
+} else if (member instanceof IMember) {
+		final IMember m = (IMember) member;
+		return DocumentationUtils.wrap(member, context,
+				provider.getInfo(m, true, true));
+} else {
+		return null;
+}
+});
 	}
 
 	/**
 	 * Gets a reader for an keyword documentation. Content are found using ALL
 	 * documentation documentationProviders, contributed via extension point.
 	 * The content does contain HTML code describing member.
-	 * 
+	 *
 	 * @param content
 	 *            The keyword to find.
 	 * @return Reader for a content, or <code>null</code> if no documentation is
@@ -239,16 +234,12 @@ public class ScriptDocumentationAccess {
 	@Deprecated
 	public static Reader getHTMLContentReader(String nature,
 			final String content) throws ModelException {
-		return merge(nature, new Operation() {
-			public Reader getInfo(IScriptDocumentationProvider provider) {
-				return provider.getInfo(content);
-			}
-		});
+		return merge(nature, (Operation) provider -> provider.getInfo(content));
 	}
 
 	/**
 	 * Returns the documentation for the specified keyword
-	 * 
+	 *
 	 * @param nature
 	 * @param context
 	 * @param keyword
@@ -257,16 +248,14 @@ public class ScriptDocumentationAccess {
 	public static Reader getKeywordDocumentation(String nature,
 			final IModelElement context, final String keyword)
 			throws ModelException {
-		return merge(nature, new Operation() {
-			public Reader getInfo(IScriptDocumentationProvider provider) {
-				if (provider instanceof IScriptDocumentationProviderExtension) {
-					final IScriptDocumentationProviderExtension ext = (IScriptDocumentationProviderExtension) provider;
-					final IDocumentationResponse response = ext
-							.describeKeyword(keyword, context);
-					return DocumentationUtils.getReader(response);
-				} else {
-					return provider.getInfo(keyword);
-				}
+		return merge(nature, (Operation) provider -> {
+			if (provider instanceof IScriptDocumentationProviderExtension) {
+				final IScriptDocumentationProviderExtension ext = (IScriptDocumentationProviderExtension) provider;
+				final IDocumentationResponse response = ext
+						.describeKeyword(keyword, context);
+				return DocumentationUtils.getReader(response);
+			} else {
+				return provider.getInfo(keyword);
 			}
 		});
 	}

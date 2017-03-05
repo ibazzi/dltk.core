@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,10 +61,12 @@ public class AddToBuildpathChange extends DLTKChange {
 		this(project, createNewBuildpathEntry(entryKind, path));
 	}
 
+	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
 		return super.isValid(pm, READ_ONLY | DIRTY);
 	}
 
+	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		pm.beginTask(getName(), 1);
 		try {
@@ -120,12 +122,14 @@ public class AddToBuildpathChange extends DLTKChange {
 		return fProjectHandle;
 	}
 
+	@Override
 	public String getName() {
 		return NLS.bind(RefactoringCoreMessages.AddToClasspathChange_add,
 				getScriptProject().getElementName());
 
 	}
 
+	@Override
 	public Object getModifiedElement() {
 		return getScriptProject();
 	}

@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.typehierarchy;
 
@@ -57,15 +56,11 @@ public abstract class TypeHierarchyContentProvider implements
 		fMemberFilter = null;
 		fWorkingSetFilter = null;
 		fMethodOverrideTester = null;
-		fTypeHierarchyLifeCycleListener = new ITypeHierarchyLifeCycleListener() {
-			public void typeHierarchyChanged(
-					TypeHierarchyLifeCycle typeHierarchyProvider,
-					IType[] changedTypes) {
-				if (changedTypes == null) {
-					fMethodOverrideTester = null;
-				}
-			}
-		};
+		fTypeHierarchyLifeCycleListener = (typeHierarchyProvider, changedTypes) -> {
+if (changedTypes == null) {
+		fMethodOverrideTester = null;
+}
+};
 		lifecycle.addChangedListener(fTypeHierarchyLifeCycleListener);
 	}
 
@@ -153,20 +148,17 @@ public abstract class TypeHierarchyContentProvider implements
 		return fTypeHierarchy.getHierarchy();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see IReconciled#providesWorkingCopies()
-	 */
+	@Override
 	public boolean providesWorkingCopies() {
 		return true;
 	}
 
 	/*
 	 * Called for the root element
-	 * 
+	 *
 	 * @see IStructuredContentProvider#getElements
 	 */
+	@Override
 	public Object[] getElements(Object parent) {
 		ArrayList types = new ArrayList();
 		getRootTypes(types);
@@ -268,9 +260,10 @@ public abstract class TypeHierarchyContentProvider implements
 
 	/*
 	 * Called for the tree children.
-	 * 
+	 *
 	 * @see ITreeContentProvider#getChildren
 	 */
+	@Override
 	public Object[] getChildren(Object element) {
 		if (element instanceof IType) {
 			try {
@@ -311,9 +304,7 @@ public abstract class TypeHierarchyContentProvider implements
 		return NO_ELEMENTS;
 	}
 
-	/*
-	 * @see ITreeContentProvider#hasChildren
-	 */
+	@Override
 	public boolean hasChildren(Object element) {
 		if (element instanceof IType) {
 			try {
@@ -394,9 +385,7 @@ public abstract class TypeHierarchyContentProvider implements
 		return false;
 	}
 
-	/*
-	 * @see IContentProvider#inputChanged
-	 */
+	@Override
 	public void inputChanged(Viewer part, Object oldInput, Object newInput) {
 		Assert.isTrue(part instanceof TreeViewer);
 		fViewer = (TreeViewer) part;
@@ -405,17 +394,13 @@ public abstract class TypeHierarchyContentProvider implements
 	public void resetState() {
 	}
 
-	/*
-	 * @see IContentProvider#dispose
-	 */
+	@Override
 	public void dispose() {
 		fTypeHierarchy.removeChangedListener(fTypeHierarchyLifeCycleListener);
 
 	}
 
-	/*
-	 * @see ITreeContentProvider#getParent
-	 */
+	@Override
 	public Object getParent(Object element) {
 		if (element instanceof IMember) {
 			IMember member = (IMember) element;

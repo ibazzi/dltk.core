@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ public class HTMLPrinter {
 	 * @return
 	 * @deprecated
 	 */
+	@Deprecated
 	public static String convertToHTMLContent(String content) {
 		return TextUtils.escapeHTML(content);
 	}
@@ -205,7 +206,7 @@ public class HTMLPrinter {
 
 	/**
 	 * Checks if the <code>buffer</code> content ends with "</HTML>"
-	 * 
+	 *
 	 * @param buffer
 	 * @return
 	 */
@@ -224,7 +225,7 @@ public class HTMLPrinter {
 	/**
 	 * Checks if the <code>buffer</code> content at the specified
 	 * <code>pos</code> contains the <code>prefix</code>
-	 * 
+	 *
 	 * @param buffer
 	 * @param pos
 	 * @param prefix
@@ -261,7 +262,7 @@ public class HTMLPrinter {
 	 * If the listed font attributes are not contained in the passed style list,
 	 * nothing happens.
 	 * </p>
-	 * 
+	 *
 	 * @param styles
 	 *            CSS style definitions
 	 * @param fontData

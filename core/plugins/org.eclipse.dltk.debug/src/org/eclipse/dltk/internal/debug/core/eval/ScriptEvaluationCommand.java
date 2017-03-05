@@ -19,18 +19,22 @@ public class ScriptEvaluationCommand implements IScriptEvaluationCommand {
 		this.frame = frame;
 	}
 
+	@Override
 	public IScriptDebugTarget getScriptDebugTarget() {
 		return engine.getScriptDebugTarget();
 	}
 
+	@Override
 	public IScriptEvaluationResult syncEvaluate() {
 		return engine.syncEvaluate(snippet, frame);
 	}
 
+	@Override
 	public void asyncEvaluate(IScriptEvaluationListener listener) {
 		engine.asyncEvaluate(snippet, frame, listener);
 	}
 
+	@Override
 	public void dispose() {
 		engine.dispose();
 	}

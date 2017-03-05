@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.text;
 
@@ -20,7 +19,7 @@ import com.ibm.icu.text.BreakIterator;
  * Breaksscripttext into word starts, also stops at line start and end. No
  * direction dependency.
  *
-	 *
+ *
  */
 public class DLTKWordIterator extends BreakIterator {
 
@@ -40,25 +39,19 @@ public class DLTKWordIterator extends BreakIterator {
 		first();
 	}
 
-	/*
-	 * @see java.text.BreakIterator#first()
-	 */
+	@Override
 	public int first() {
 		fIndex= fIterator.first();
 		return fIndex;
 	}
 
-	/*
-	 * @see java.text.BreakIterator#last()
-	 */
+	@Override
 	public int last() {
 		fIndex= fIterator.last();
 		return fIndex;
 	}
 
-	/*
-	 * @see java.text.BreakIterator#next(int)
-	 */
+	@Override
 	public int next(int n) {
 		int next= 0;
 		while (--n > 0 && next != DONE) {
@@ -67,26 +60,20 @@ public class DLTKWordIterator extends BreakIterator {
 		return next;
 	}
 
-	/*
-	 * @see java.text.BreakIterator#next()
-	 */
+	@Override
 	public int next() {
 		fIndex= following(fIndex);
 		return fIndex;
 	}
 
-	/*
-	 * @see java.text.BreakIterator#previous()
-	 */
+	@Override
 	public int previous() {
 		fIndex= preceding(fIndex);
 		return fIndex;
 	}
 
 
-	/*
-	 * @see java.text.BreakIterator#preceding(int)
-	 */
+	@Override
 	public int preceding(int offset) {
 		int first= fIterator.preceding(offset);
 		if (isWhitespace(first, offset)) {
@@ -97,9 +84,7 @@ public class DLTKWordIterator extends BreakIterator {
 		return first;
 	}
 
-	/*
-	 * @see java.text.BreakIterator#following(int)
-	 */
+	@Override
 	public int following(int offset) {
 		int first= fIterator.following(offset);
 		if (eatFollowingWhitespace(offset, first)) {
@@ -180,16 +165,12 @@ public class DLTKWordIterator extends BreakIterator {
 		return true;
 	}
 
-	/*
-	 * @see java.text.BreakIterator#current()
-	 */
+	@Override
 	public int current() {
 		return fIndex;
 	}
 
-	/*
-	 * @see java.text.BreakIterator#getText()
-	 */
+	@Override
 	public CharacterIterator getText() {
 		return fIterator.getText();
 	}
@@ -203,17 +184,13 @@ public class DLTKWordIterator extends BreakIterator {
 		first();
 	}
 
-	/*
-	 * @see java.text.BreakIterator#setText(java.text.CharacterIterator)
-	 */
+	@Override
 	public void setText(CharacterIterator newText) {
 		fIterator.setText(newText);
 		first();
 	}
 
-	/*
-	 * @see java.text.BreakIterator#setText(java.lang.String)
-	 */
+	@Override
 	public void setText(String newText) {
 		setText((CharSequence) newText);
 	}

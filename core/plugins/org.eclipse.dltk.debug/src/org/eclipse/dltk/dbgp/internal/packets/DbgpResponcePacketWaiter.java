@@ -3,7 +3,6 @@ package org.eclipse.dltk.dbgp.internal.packets;
 import java.util.HashMap;
 
 public final class DbgpResponcePacketWaiter {
-	private static final int MIN_TIMEOUT = 5;
 	private final HashMap map;
 	private boolean terminated;
 

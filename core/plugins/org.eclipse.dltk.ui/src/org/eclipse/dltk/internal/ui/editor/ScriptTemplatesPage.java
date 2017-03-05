@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 Dakshinamurthy Karra, IBM Corporation and others.
+ * Copyright (c) 2007, 2017 Dakshinamurthy Karra, IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,7 +54,7 @@ import org.eclipse.ui.texteditor.templates.AbstractTemplatesPage;
 
 /**
  * The templates page for the Script editor.
- * 
+ *
  * @since 3.0
  */
 public class ScriptTemplatesPage extends AbstractTemplatesPage {
@@ -65,7 +65,7 @@ public class ScriptTemplatesPage extends AbstractTemplatesPage {
 
 	/**
 	 * Create a new AbstractTemplatesPage for the JavaEditor
-	 * 
+	 *
 	 * @param scriptEditor
 	 *            the java editor
 	 */
@@ -77,6 +77,7 @@ public class ScriptTemplatesPage extends AbstractTemplatesPage {
 		fTemplateAccess = templateAccess;
 	}
 
+	@Override
 	protected void insertTemplate(Template template, IDocument document) {
 		if (!fScriptEditor.validateEditorInputState())
 			return;
@@ -148,18 +149,22 @@ public class ScriptTemplatesPage extends AbstractTemplatesPage {
 		endCompoundChange(contextViewer);
 	}
 
+	@Override
 	protected ContextTypeRegistry getContextTypeRegistry() {
 		return fTemplateAccess.getContextTypeRegistry();
 	}
 
+	@Override
 	protected IPreferenceStore getTemplatePreferenceStore() {
 		return fTemplateAccess.getTemplatePreferenceStore();
 	}
 
+	@Override
 	public TemplateStore getTemplateStore() {
 		return fTemplateAccess.getTemplateStore();
 	}
 
+	@Override
 	protected boolean isValidTemplate(IDocument document, Template template,
 			int offset, int length) {
 		String[] contextIds = getContextTypeIds(document, offset);
@@ -174,6 +179,7 @@ public class ScriptTemplatesPage extends AbstractTemplatesPage {
 		return false;
 	}
 
+	@Override
 	protected SourceViewer createPatternViewer(Composite parent) {
 		IDocument document = new Document();
 		ScriptTextTools tools = fScriptEditor.getTextTools();
@@ -201,10 +207,12 @@ public class ScriptTemplatesPage extends AbstractTemplatesPage {
 		return viewer;
 	}
 
+	@Override
 	protected Image getImage(Template template) {
 		return DLTKPluginImages.get(DLTKPluginImages.IMG_OBJS_TEMPLATE);
 	}
 
+	@Override
 	protected Template editTemplate(Template template, boolean edit,
 			boolean isNameModifiable) {
 		EditTemplateDialog dialog = new EditTemplateDialog(uiToolkit(),
@@ -220,6 +228,7 @@ public class ScriptTemplatesPage extends AbstractTemplatesPage {
 				.getLanguageToolkit());
 	}
 
+	@Override
 	protected void updatePatternViewer(Template template) {
 		if (template == null) {
 			getPatternViewer().getDocument().set(""); //$NON-NLS-1$
@@ -244,13 +253,14 @@ public class ScriptTemplatesPage extends AbstractTemplatesPage {
 				doc.getLength() - startLen);
 	}
 
+	@Override
 	protected String getPreferencePageId() {
 		return uiToolkit().getEditorTemplatesPreferencePageId();
 	}
 
 	/**
 	 * Undomanager - end compound change
-	 * 
+	 *
 	 * @param viewer
 	 *            the viewer
 	 */
@@ -262,7 +272,7 @@ public class ScriptTemplatesPage extends AbstractTemplatesPage {
 
 	/**
 	 * Undomanager - begin a compound change
-	 * 
+	 *
 	 * @param viewer
 	 *            the viewer
 	 */
@@ -276,7 +286,7 @@ public class ScriptTemplatesPage extends AbstractTemplatesPage {
 	 * Check whether the template is allowed even though the context can't
 	 * evaluate it. This is needed because the Dropping of a template is more
 	 * lenient than Ctrl-space invoked code assist.
-	 * 
+	 *
 	 * @param context
 	 *            the template context
 	 * @param template
@@ -302,7 +312,7 @@ public class ScriptTemplatesPage extends AbstractTemplatesPage {
 
 	/**
 	 * Checks whether the character is a valid character in Java template names
-	 * 
+	 *
 	 * @param ch
 	 *            the character
 	 * @return <code>true</code> if the character is part of a template name
@@ -314,7 +324,7 @@ public class ScriptTemplatesPage extends AbstractTemplatesPage {
 
 	/**
 	 * Get context
-	 * 
+	 *
 	 * @param document
 	 *            the document
 	 * @param template
@@ -339,13 +349,14 @@ public class ScriptTemplatesPage extends AbstractTemplatesPage {
 	 * <p>
 	 * FIXME: should trigger code assist to get the context.
 	 * </p>
-	 * 
+	 *
 	 * @param document
 	 *            the document
 	 * @param offset
 	 *            the offset
 	 * @return an array of valid context id
 	 */
+	@Override
 	protected String[] getContextTypeIds(IDocument document, int offset) {
 		final Set<String> ids = new HashSet<String>();
 		@SuppressWarnings("unchecked")
@@ -372,7 +383,7 @@ public class ScriptTemplatesPage extends AbstractTemplatesPage {
 
 	/**
 	 * Get the Java identifier terminated at the given offset
-	 * 
+	 *
 	 * @param document
 	 *            the document
 	 * @param template

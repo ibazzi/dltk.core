@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -202,11 +202,12 @@ public class EditorConfigurationBlock extends AbstractConfigurationBlock {
 
 	/**
 	 * Creates page for appearance preferences.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 * @return the control for the preference page
 	 */
+	@Override
 	public Control createControl(Composite parent) {
 		initializeDialogUnits(parent);
 
@@ -359,6 +360,7 @@ public class EditorConfigurationBlock extends AbstractConfigurationBlock {
 		foregroundColorButton.setLayoutData(gd);
 
 		SelectionListener colorDefaultSelectionListener = new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean systemDefault = colorDefault.getSelection();
 				colorEditor.getButton().setEnabled(!systemDefault);
@@ -372,6 +374,7 @@ public class EditorConfigurationBlock extends AbstractConfigurationBlock {
 					getPreferenceStore().setValue(key, systemDefault);
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		};
@@ -387,19 +390,23 @@ public class EditorConfigurationBlock extends AbstractConfigurationBlock {
 		colorDefault.addSelectionListener(colorDefaultSelectionListener);
 
 		colorList.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleAppearanceColorListSelection();
 			}
 		});
 		foregroundColorButton.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				int i = colorList.getSelectionIndex();
 				if (i == -1)
@@ -449,12 +456,10 @@ public class EditorConfigurationBlock extends AbstractConfigurationBlock {
 			for (int i = 0; i < fColorListModel.length; i++)
 				colorList.add(fColorListModel[i].name);
 
-			colorList.getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					if (colorList != null && !colorList.isDisposed()) {
-						colorList.select(0);
-						handleAppearanceColorListSelection();
-					}
+			colorList.getDisplay().asyncExec(() -> {
+				if (colorList != null && !colorList.isDisposed()) {
+					colorList.select(0);
+					handleAppearanceColorListSelection();
 				}
 			});
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 xored software, Inc.
+ * Copyright (c) 2010, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -53,6 +53,7 @@ public class ColoringConfigurationModelCollector extends
 
 	private final List<Item> entries = new ArrayList<Item>();
 
+	@Override
 	public void addPreference(IColoringPreferenceKey key, String name,
 			RGB color, EnablementStyle enablementStyle, FontStyle... fontStyles) {
 		entries.add(new Item(name, key.getColorKey(), category, enablementStyle));

@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.debug.ui;
 
@@ -17,7 +16,6 @@ import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointsListener;
@@ -43,9 +41,9 @@ import org.eclipse.dltk.ui.DLTKUIPlugin;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 
-public class ScriptDebugOptionsManager implements IDebugEventSetListener,
-		IPropertyChangeListener, IScriptBreakpointListener, ILaunchListener,
-		IBreakpointsListener {
+public class ScriptDebugOptionsManager
+		implements IDebugEventSetListener, IPropertyChangeListener,
+		IScriptBreakpointListener, ILaunchListener, IBreakpointsListener {
 
 	private static ScriptDebugOptionsManager instance;
 
@@ -58,16 +56,14 @@ public class ScriptDebugOptionsManager implements IDebugEventSetListener,
 
 	protected void updateBreakpoints(final IBreakpoint[] breakpoints,
 			final IBreakpointUpdater updater) {
-		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				for (int i = 0; i < breakpoints.length; i++) {
-					IBreakpoint breakpoint = breakpoints[i];
-					if (breakpoint instanceof IScriptBreakpoint) {
-						try {
-							updater.update((IScriptBreakpoint) breakpoint);
-						} catch (CoreException e) {
-							DLTKDebugUIPlugin.log(e);
-						}
+		IWorkspaceRunnable runnable = monitor -> {
+			for (int i = 0; i < breakpoints.length; i++) {
+				IBreakpoint breakpoint = breakpoints[i];
+				if (breakpoint instanceof IScriptBreakpoint) {
+					try {
+						updater.update((IScriptBreakpoint) breakpoint);
+					} catch (CoreException e) {
+						DLTKDebugUIPlugin.log(e);
 					}
 				}
 			}
@@ -81,61 +77,51 @@ public class ScriptDebugOptionsManager implements IDebugEventSetListener,
 	}
 
 	private void updateBreakpointMessages(final IBreakpoint[] breakpoints) {
-		updateBreakpoints(breakpoints, new IBreakpointUpdater() {
-			public void update(IScriptBreakpoint breakpoint)
-					throws CoreException {
-				final String message = fLabelProvider.getText(breakpoint);
-				breakpoint.setMessage(message);
-			}
+		updateBreakpoints(breakpoints, breakpoint -> {
+			final String message = fLabelProvider.getText(breakpoint);
+			breakpoint.setMessage(message);
 		});
 	}
 
 	protected void updateBreakpointHitCounts(final IBreakpoint[] breakpoints,
 			final IScriptThread thread) {
-		updateBreakpoints(breakpoints, new IBreakpointUpdater() {
-			public void update(IScriptBreakpoint breakpoint)
-					throws CoreException {
+		updateBreakpoints(breakpoints, breakpoint -> {
 
-				IDbgpBreakpoint br = null;
+			IDbgpBreakpoint br = null;
 
-				if (breakpoint instanceof IScriptMethodEntryBreakpoint) {
-					IScriptMethodEntryBreakpoint entryBreakpoint = (IScriptMethodEntryBreakpoint) breakpoint;
+			if (breakpoint instanceof IScriptMethodEntryBreakpoint) {
+				IScriptMethodEntryBreakpoint entryBreakpoint = (IScriptMethodEntryBreakpoint) breakpoint;
 
-					final String entryId = entryBreakpoint
-							.getEntryBreakpointId();
-					if (entryId != null) {
-						br = thread.getDbgpBreakpoint(entryId);
-					}
-
-					final String exitId = entryBreakpoint.getExitBreakpointId();
-					if (exitId != null) {
-						br = thread.getDbgpBreakpoint(exitId);
-					}
-				} else if (breakpoint instanceof IScriptSpawnpoint) {
-					// NOP
-				} else {
-					String id = breakpoint.getId(thread.getDbgpSession());
-					if (id != null && id.length() != 0) {
-						br = thread.getDbgpBreakpoint(id);
-					}
+				final String entryId = entryBreakpoint.getEntryBreakpointId();
+				if (entryId != null) {
+					br = thread.getDbgpBreakpoint(entryId);
 				}
-				if (br != null) {
-					breakpoint.setHitCount(thread.getDbgpSession(), br
-							.getHitCount());
+
+				final String exitId = entryBreakpoint.getExitBreakpointId();
+				if (exitId != null) {
+					br = thread.getDbgpBreakpoint(exitId);
 				}
+			} else if (breakpoint instanceof IScriptSpawnpoint) {
+				// NOP
+			} else {
+				String id = breakpoint.getId(thread.getDbgpSession());
+				if (id != null && id.length() != 0) {
+					br = thread.getDbgpBreakpoint(id);
+				}
+			}
+			if (br != null) {
+				breakpoint.setHitCount(thread.getDbgpSession(),
+						br.getHitCount());
 			}
 		});
 	}
 
 	protected void updateBreakpoinInfoToDefault(IBreakpoint[] breakpoints) {
-		updateBreakpoints(breakpoints, new IBreakpointUpdater() {
-			public void update(IScriptBreakpoint breakpoint)
-					throws CoreException {
-				breakpoint.clearSessionInfo();
-			}
-		});
+		updateBreakpoints(breakpoints,
+				breakpoint -> breakpoint.clearSessionInfo());
 	}
 
+	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (int i = 0; i < events.length; ++i) {
 			DebugEvent event = events[i];
@@ -189,25 +175,30 @@ public class ScriptDebugOptionsManager implements IDebugEventSetListener,
 		}
 	}
 
+	@Override
 	public void launchAdded(ILaunch launch) {
 		// TODO Auto-generated method stub
 	}
 
+	@Override
 	public void launchChanged(ILaunch launch) {
 		// TODO Auto-generated method stub
 	}
 
+	@Override
 	public void launchRemoved(ILaunch launch) {
 		// TODO Auto-generated method stub
 	}
 
+	@Override
 	public void breakpointsAdded(IBreakpoint[] breakpoints) {
 		List list = new ArrayList();
 		for (int i = 0; i < breakpoints.length; i++) {
 			try {
 				IBreakpoint breakpoint = breakpoints[i];
 				if (breakpoint instanceof IScriptBreakpoint
-						&& ((IScriptBreakpoint) breakpoint).getMessage() == null) {
+						&& ((IScriptBreakpoint) breakpoint)
+								.getMessage() == null) {
 					list.add(breakpoint);
 				}
 			} catch (CoreException e) {
@@ -216,16 +207,18 @@ public class ScriptDebugOptionsManager implements IDebugEventSetListener,
 		}
 
 		if (!list.isEmpty()) {
-			updateBreakpointMessages((IBreakpoint[]) list
-					.toArray(new IBreakpoint[list.size()]));
+			updateBreakpointMessages(
+					(IBreakpoint[]) list.toArray(new IBreakpoint[list.size()]));
 		}
 	}
 
+	@Override
 	public void breakpointsChanged(IBreakpoint[] breakpoints,
 			IMarkerDelta[] deltas) {
 		updateBreakpointMessages(breakpoints);
 	}
 
+	@Override
 	public void breakpointsRemoved(IBreakpoint[] breakpoints,
 			IMarkerDelta[] deltas) {
 	}
@@ -263,7 +256,9 @@ public class ScriptDebugOptionsManager implements IDebugEventSetListener,
 				DLTKDebugUIPlugin.getUniqueIdentifier() + ".debuggerActive"); //$NON-NLS-1$
 	}
 
-	public void propertyChange(org.eclipse.jface.util.PropertyChangeEvent event) {
+	@Override
+	public void propertyChange(
+			org.eclipse.jface.util.PropertyChangeEvent event) {
 		// TODO:
 	}
 

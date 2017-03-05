@@ -1,11 +1,10 @@
 package org.eclipse.dltk.debug.ui.tests.core;
 
-import junit.framework.Assert;
-
 import org.eclipse.dltk.core.tests.model.AbstractModelTests;
 import org.eclipse.dltk.core.tests.model.TestConstants;
 import org.eclipse.dltk.debug.ui.DLTKDebugUILanguageManager;
 import org.eclipse.dltk.debug.ui.IDLTKDebugUILanguageToolkit;
+import org.junit.Assert;
 
 public class DLTKDebugUILanguageManagerTests extends AbstractModelTests {
 

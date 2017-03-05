@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ import org.eclipse.jface.text.rules.Token;
  * matchers. Its up to the word matchers to decide if a word matches and, in
  * this a case, which token is associated with that word.
  * </p>
- * 
+ *
  * @see IWordDetector
  */
 public class CombinedWordRule implements IRule {
@@ -50,7 +50,7 @@ public class CombinedWordRule implements IRule {
 
 		/**
 		 * Adds a word and the token to be returned if it is detected.
-		 * 
+		 *
 		 * @param word
 		 *            the word this rule will search for, may not be
 		 *            <code>null</code>
@@ -67,7 +67,7 @@ public class CombinedWordRule implements IRule {
 
 		/**
 		 * Returns the token associated to the given word and the scanner state.
-		 * 
+		 *
 		 * @param scanner
 		 *            the scanner
 		 * @param word
@@ -107,7 +107,7 @@ public class CombinedWordRule implements IRule {
 
 		/**
 		 * Initialize with the given capacity.
-		 * 
+		 *
 		 * @param capacity
 		 *            the initial capacity
 		 */
@@ -117,7 +117,7 @@ public class CombinedWordRule implements IRule {
 
 		/**
 		 * Initialize with the given content.
-		 * 
+		 *
 		 * @param content
 		 *            the initial content
 		 */
@@ -136,7 +136,7 @@ public class CombinedWordRule implements IRule {
 
 		/**
 		 * Appends the given character to the buffer.
-		 * 
+		 *
 		 * @param c
 		 *            the character
 		 */
@@ -152,7 +152,7 @@ public class CombinedWordRule implements IRule {
 
 		/**
 		 * Returns the length of the content.
-		 * 
+		 *
 		 * @return the length
 		 */
 		public int length() {
@@ -161,7 +161,7 @@ public class CombinedWordRule implements IRule {
 
 		/**
 		 * Returns the content as string.
-		 * 
+		 *
 		 * @return the content
 		 */
 		@Override
@@ -171,7 +171,7 @@ public class CombinedWordRule implements IRule {
 
 		/**
 		 * Returns the character at the given position.
-		 * 
+		 *
 		 * @param i
 		 *            the position
 		 * @return the character at position <code>i</code>
@@ -211,7 +211,7 @@ public class CombinedWordRule implements IRule {
 
 		/**
 		 * Is the content equal to the given string?
-		 * 
+		 *
 		 * @param string
 		 *            the string
 		 * @return <code>true</code> iff the content is the same character
@@ -251,11 +251,11 @@ public class CombinedWordRule implements IRule {
 	 * token associated with the detected word. If no token has been associated,
 	 * the scanner will be rolled back and an undefined token will be returned
 	 * in order to allow any subsequent rules to analyze the characters.
-	 * 
+	 *
 	 * @param detector
 	 *            the word detector to be used by this rule, may not be
 	 *            <code>null</code>
-	 * 
+	 *
 	 * @see WordMatcher#addWord(String, IToken)
 	 */
 	public CombinedWordRule(IWordDetector detector) {
@@ -266,14 +266,14 @@ public class CombinedWordRule implements IRule {
 	 * Creates a rule which, with the help of an word detector, will return the
 	 * token associated with the detected word. If no token has been associated,
 	 * the specified default token will be returned.
-	 * 
+	 *
 	 * @param detector
 	 *            the word detector to be used by this rule, may not be
 	 *            <code>null</code>
 	 * @param defaultToken
 	 *            the default token to be returned on success if nothing else is
 	 *            specified, may not be <code>null</code>
-	 * 
+	 *
 	 * @see WordMatcher#addWord(String, IToken)
 	 */
 	public CombinedWordRule(IWordDetector detector, IToken defaultToken) {
@@ -285,13 +285,13 @@ public class CombinedWordRule implements IRule {
 	 * token associated with the detected word. If no token has been associated,
 	 * the scanner will be rolled back and an undefined token will be returned
 	 * in order to allow any subsequent rules to analyze the characters.
-	 * 
+	 *
 	 * @param detector
 	 *            the word detector to be used by this rule, may not be
 	 *            <code>null</code>
 	 * @param matcher
 	 *            the initial word matcher
-	 * 
+	 *
 	 * @see WordMatcher#addWord(String, IToken)
 	 */
 	public CombinedWordRule(IWordDetector detector, WordMatcher matcher) {
@@ -302,7 +302,7 @@ public class CombinedWordRule implements IRule {
 	 * Creates a rule which, with the help of an word detector, will return the
 	 * token associated with the detected word. If no token has been associated,
 	 * the specified default token will be returned.
-	 * 
+	 *
 	 * @param detector
 	 *            the word detector to be used by this rule, may not be
 	 *            <code>null</code>
@@ -311,7 +311,7 @@ public class CombinedWordRule implements IRule {
 	 * @param defaultToken
 	 *            the default token to be returned on success if nothing else is
 	 *            specified, may not be <code>null</code>
-	 * 
+	 *
 	 * @see WordMatcher#addWord(String, IToken)
 	 */
 	public CombinedWordRule(IWordDetector detector, WordMatcher matcher,
@@ -328,7 +328,7 @@ public class CombinedWordRule implements IRule {
 
 	/**
 	 * Adds the given matcher.
-	 * 
+	 *
 	 * @param matcher
 	 *            the matcher
 	 */
@@ -341,7 +341,7 @@ public class CombinedWordRule implements IRule {
 	 * only be returned if the pattern is detected starting at the specified
 	 * column. If the column is smaller then 0, the column constraint is
 	 * considered removed.
-	 * 
+	 *
 	 * @param column
 	 *            the column in which the pattern starts
 	 */
@@ -351,9 +351,7 @@ public class CombinedWordRule implements IRule {
 		fColumn = column;
 	}
 
-	/*
-	 * @see IRule#evaluate(ICharacterScanner)
-	 */
+	@Override
 	public IToken evaluate(ICharacterScanner scanner) {
 		int c = scanner.read();
 		if (fDetector.isWordStart((char) c)) {
@@ -386,7 +384,7 @@ public class CombinedWordRule implements IRule {
 
 	/**
 	 * Returns the characters in the buffer to the scanner.
-	 * 
+	 *
 	 * @param scanner
 	 *            the scanner to be used
 	 */

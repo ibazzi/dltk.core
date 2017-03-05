@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -94,22 +94,19 @@ public abstract class ScriptToggleBreakpointAdapter
 	}
 
 	protected void report(final String message, final IWorkbenchPart part) {
-		DLTKDebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-			public void run() {
-				IEditorStatusLine statusLine = part
-						.getAdapter(IEditorStatusLine.class);
-				if (statusLine != null) {
-					if (message != null) {
-						statusLine.setMessage(true, message, null);
-					} else {
-						statusLine.setMessage(true, null, null);
-					}
+		DLTKDebugUIPlugin.getStandardDisplay().asyncExec(() -> {
+			IEditorStatusLine statusLine = part
+					.getAdapter(IEditorStatusLine.class);
+			if (statusLine != null) {
+				if (message != null) {
+					statusLine.setMessage(true, message, null);
+				} else {
+					statusLine.setMessage(true, null, null);
 				}
-				if (message != null && DLTKDebugUIPlugin
-						.getActiveWorkbenchShell() != null) {
-					DLTKDebugUIPlugin.getActiveWorkbenchShell().getDisplay()
-							.beep();
-				}
+			}
+			if (message != null
+					&& DLTKDebugUIPlugin.getActiveWorkbenchShell() != null) {
+				DLTKDebugUIPlugin.getActiveWorkbenchShell().getDisplay().beep();
 			}
 		});
 	}
@@ -155,6 +152,7 @@ public abstract class ScriptToggleBreakpointAdapter
 
 	}
 
+	@Override
 	public boolean canToggleLineBreakpoints(IWorkbenchPart part,
 			ISelection selection) {
 		if (isRemote(part, selection)) {
@@ -167,7 +165,7 @@ public abstract class ScriptToggleBreakpointAdapter
 	/**
 	 * Returns a selection of the member in the given text selection, or the
 	 * original selection if none.
-	 * 
+	 *
 	 * @param part
 	 * @param selection
 	 * @return a structured selection of the member in the given text selection,
@@ -223,10 +221,12 @@ public abstract class ScriptToggleBreakpointAdapter
 		return selection;
 	}
 
+	@Override
 	public void toggleLineBreakpoints(final IWorkbenchPart part,
 			final ISelection selection) throws CoreException {
 
 		Job job = new Job("Script Toggle Line Breakpoint") { //$NON-NLS-1$
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				final ITextEditor editor = getTextEditor(part);
 				if (editor != null && selection instanceof ITextSelection) {
@@ -293,7 +293,7 @@ public abstract class ScriptToggleBreakpointAdapter
 
 	/**
 	 * gets the <code>IJavaElement</code> from the editor input
-	 * 
+	 *
 	 * @param input
 	 *            the current editor input
 	 * @return the corresponding <code>IJavaElement</code>
@@ -310,7 +310,7 @@ public abstract class ScriptToggleBreakpointAdapter
 
 	/**
 	 * Returns if the text selection is a field selection or not
-	 * 
+	 *
 	 * @param selection
 	 *            the text selection
 	 * @param part
@@ -341,7 +341,7 @@ public abstract class ScriptToggleBreakpointAdapter
 
 	/**
 	 * Determines if the selection is a field or not
-	 * 
+	 *
 	 * @param selection
 	 *            the current selection
 	 * @return true if the selection is a field false otherwise
@@ -365,7 +365,7 @@ public abstract class ScriptToggleBreakpointAdapter
 	 * in the given selection. When an <code>IField</code> can be resolved for
 	 * an <code>IJavaFieldVariable</code>, it is returned in favour of the
 	 * variable.
-	 * 
+	 *
 	 * @param selection
 	 * @return list of <code>IField</code> and <code>IJavaFieldVariable</code>,
 	 *         possibly empty
@@ -376,7 +376,7 @@ public abstract class ScriptToggleBreakpointAdapter
 		if (selection.isEmpty()) {
 			return Collections.EMPTY_LIST;
 		}
-		List<Object> fields = new ArrayList<Object>(selection.size());
+		List<Object> fields = new ArrayList<>(selection.size());
 		Iterator<?> iterator = selection.iterator();
 		while (iterator.hasNext()) {
 			Object thing = iterator.next();

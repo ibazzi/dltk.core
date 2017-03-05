@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -40,10 +40,12 @@ public class ScriptCommentScanner extends AbstractScriptScanner {
 
 	private static class ScriptIdentifierDetector implements IWordDetector {
 
+		@Override
 		public boolean isWordStart(char c) {
 			return Character.isJavaIdentifierStart(c);
 		}
 
+		@Override
 		public boolean isWordPart(char c) {
 			return Character.isJavaIdentifierPart(c);
 		}
@@ -116,7 +118,7 @@ public class ScriptCommentScanner extends AbstractScriptScanner {
 
 		/**
 		 * Is task tag detection case-sensitive?
-		 * 
+		 *
 		 * @return <code>true</code> iff task tag detection is case-sensitive
 		 * @since 3.0
 		 */
@@ -127,7 +129,7 @@ public class ScriptCommentScanner extends AbstractScriptScanner {
 
 		/**
 		 * Enables/disables the case-sensitivity of the task tag detection.
-		 * 
+		 *
 		 * @param caseSensitive
 		 *            <code>true</code> iff case-sensitivity should be enabled
 		 * @since 3.0
@@ -220,7 +222,7 @@ public class ScriptCommentScanner extends AbstractScriptScanner {
 
 	/**
 	 * Creates a list of word matchers.
-	 * 
+	 *
 	 * @return the list of word matchers
 	 */
 	protected List<CombinedWordRule.WordMatcher> createMatchers() {
@@ -237,7 +239,7 @@ public class ScriptCommentScanner extends AbstractScriptScanner {
 
 	/**
 	 * Returns the character used to identify a comment.
-	 * 
+	 *
 	 * <p>
 	 * Default implementation returns <code>#</code>. Clients may override if
 	 * their language uses a different identifier.
@@ -302,7 +304,7 @@ public class ScriptCommentScanner extends AbstractScriptScanner {
 	/**
 	 * Skip possible comment characters. Returns the number of characters
 	 * skipped, zero if none.
-	 * 
+	 *
 	 * @return
 	 * @since 2.0
 	 */

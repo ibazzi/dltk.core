@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -145,10 +145,12 @@ public class ScriptValue extends ScriptDebugElement
 		return offset / pageSize;
 	}
 
+	@Override
 	public String getReferenceTypeName() {
 		return getType().getName();
 	}
 
+	@Override
 	public String getValueString() {
 		if (value == null || value.length() == 0) {
 			value = type.formatValue(this);
@@ -156,6 +158,7 @@ public class ScriptValue extends ScriptDebugElement
 		return value;
 	}
 
+	@Override
 	public String getDetailsString() {
 		if (details == null || details.length() == 0) {
 			details = type.formatDetails(this);
@@ -164,38 +167,47 @@ public class ScriptValue extends ScriptDebugElement
 		return details;
 	}
 
+	@Override
 	public String getRawValue() {
 		return rawValue;
 	}
 
+	@Override
 	public String getEvalName() {
 		return fullname;
 	}
 
+	@Override
 	public boolean hasVariables() {
 		return hasChildren;
 	}
 
+	@Override
 	public boolean isAllocated() {
 		return true;
 	}
 
+	@Override
 	public String toString() {
 		return getValueString();
 	}
 
+	@Override
 	public IDebugTarget getDebugTarget() {
 		return frame.getDebugTarget();
 	}
 
+	@Override
 	public String getInstanceId() {
 		return key;
 	}
 
+	@Override
 	public IScriptType getType() {
 		return type;
 	}
 
+	@Override
 	public IScriptEvaluationCommand createEvaluationCommand(
 			String messageTemplate, IScriptThread thread) {
 		IScriptEvaluationEngine engine = thread.getEvaluationEngine();
@@ -223,14 +235,17 @@ public class ScriptValue extends ScriptDebugElement
 		return result;
 	}
 
+	@Override
 	public int getInitialOffset() {
 		return 0;
 	}
 
+	@Override
 	public int getSize() {
 		return variables.length;
 	}
 
+	@Override
 	public IVariable getVariable(int offset) throws DebugException {
 		try {
 			if (variables[offset] == null) {
@@ -244,10 +259,12 @@ public class ScriptValue extends ScriptDebugElement
 		}
 	}
 
+	@Override
 	public IVariable[] getVariables() throws DebugException {
 		return getVariables(0, getSize());
 	}
 
+	@Override
 	public IVariable[] getVariables(int offset, int length)
 			throws DebugException {
 		IVariable[] variables = new IVariable[length];
@@ -270,16 +287,14 @@ public class ScriptValue extends ScriptDebugElement
 		return name;
 	}
 
-	/*
-	 * @see org.eclipse.dltk.debug.core.model.IScriptValue#getMemoryAddress()
-	 */
+	@Override
 	public String getMemoryAddress() {
 		return address;
 	}
 
 	/**
 	 * Tests that some of the children are already created.
-	 * 
+	 *
 	 * @return
 	 */
 	protected boolean hasChildrenValuesLoaded() {

@@ -1,7 +1,5 @@
-package org.eclipse.dltk.ui.browsing.ext;
-
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +8,10 @@ package org.eclipse.dltk.ui.browsing.ext;
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
+package org.eclipse.dltk.ui.browsing.ext;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -47,17 +45,9 @@ public class ColumnForm extends Composite {
 			columnStyle |= SWT.BORDER;
 		if ((style & SWT.SMOOTH) != 0)
 			columnStyle |= SWT.SMOOTH;
-		sashListener = new Listener() {
-			public void handleEvent(Event e) {
-				onDragSash(e);
-			}
-		};
+		sashListener = e -> onDragSash(e);
 		layout();
-		this.addPaintListener(new PaintListener() {
-			public void paintControl(PaintEvent e) {
-				drawLines(e);
-			}
-		});
+		this.addPaintListener(e -> drawLines(e));
 	}
 
 	protected void drawLines(PaintEvent e) {
@@ -114,6 +104,7 @@ public class ColumnForm extends Composite {
 		return style & mask;
 	}
 
+	@Override
 	public int getStyle() {
 		int style = super.getStyle();
 		style |= SWT.HORIZONTAL;
@@ -186,6 +177,7 @@ public class ColumnForm extends Composite {
 		this.redraw();
 	}
 
+	@Override
 	public void setBackground(Color color) {
 		super.setBackground(color);
 		background = color;
@@ -194,6 +186,7 @@ public class ColumnForm extends Composite {
 		}
 	}
 
+	@Override
 	public void setForeground(Color color) {
 		super.setForeground(color);
 		foreground = color;
@@ -202,6 +195,7 @@ public class ColumnForm extends Composite {
 		}
 	}
 
+	@Override
 	public void setLayout(Layout layout) {
 		checkWidget();
 		return;

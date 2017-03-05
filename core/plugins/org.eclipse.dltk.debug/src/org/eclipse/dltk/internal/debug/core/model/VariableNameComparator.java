@@ -7,6 +7,7 @@ import org.eclipse.debug.core.model.IVariable;
 
 public class VariableNameComparator implements Comparator<IVariable> {
 
+	@Override
 	public int compare(IVariable v1, IVariable v2) {
 		int result = 0;
 		try {

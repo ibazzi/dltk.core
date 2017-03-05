@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.typehierarchy;
 
@@ -27,9 +26,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -41,59 +38,55 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 
 /**
- * Method viewer shows a list of methods of a input type. 
- * Offers filter actions. 
+ * Method viewer shows a list of methods of a input type.
+ * Offers filter actions.
  * No dependency to the type hierarchy view
  */
 public class MethodsViewer extends ProblemTableViewer {
-	
+
 	private static final String TAG_SHOWINHERITED= "showinherited";		 //$NON-NLS-1$
 	private static final String TAG_SORTBYDEFININGTYPE= "sortbydefiningtype";		 //$NON-NLS-1$
 	private static final String TAG_VERTICAL_SCROLL= "mv_vertical_scroll";		 //$NON-NLS-1$
-	
+
 	private MethodsLabelProvider fLabelProvider;
-	
+
 	private MemberFilterActionGroup fMemberFilterActionGroup;
-	
+
 	private OpenAction fOpen;
 	private ShowInheritedMembersAction fShowInheritedMembersAction;
 	private SortByDefiningTypeAction fSortByDefiningTypeAction;
-	
-	
-	public MethodsViewer(Composite parent, 
+
+
+	public MethodsViewer(Composite parent,
 			final TypeHierarchyLifeCycle lifeCycle, IWorkbenchPart part, IPreferenceStore store) {
-		super(new Table(parent, SWT.MULTI));		
-		
+		super(new Table(parent, SWT.MULTI));
+
 		fLabelProvider= new MethodsLabelProvider(lifeCycle, this, store);
-	
+
 		setLabelProvider(new StyledDecoratingModelLabelProvider(fLabelProvider,
 				true));
 		setContentProvider(new MethodsContentProvider(lifeCycle));
-		
+
 		HierarchyViewerSorter sorter= new HierarchyViewerSorter(lifeCycle);
 		sorter.setSortByDefiningType(false);
 		setSorter(sorter);
-		
+
 		fOpen= new OpenAction(part.getSite());
-		addOpenListener(new IOpenListener() {
-			public void open(OpenEvent event) {
-				fOpen.run();
-			}
-		});
-		
+		addOpenListener(event -> fOpen.run());
+
 		fMemberFilterActionGroup = new MemberFilterActionGroup(this, store);
-		
+
 //		fMemberFilterActionGroup.setActions(new MemberFilterAction[0]);
-		
-/*		fMemberFilterActionGroup= new MemberFilterActionGroup(this, "HierarchyMethodView", false, 
+
+/*		fMemberFilterActionGroup= new MemberFilterActionGroup(this, "HierarchyMethodView", false,
 emberFilterActionGroup.ALL_FILTERS & ~MemberFilterActionGroup.FILTER_LOCALTYPES); //$NON-NLS-1$*/
-		
+
 		fShowInheritedMembersAction= new ShowInheritedMembersAction(this, false);
 		fSortByDefiningTypeAction= new SortByDefiningTypeAction(this, false);
-		
+
 		showInheritedMethodsNoRedraw(false);
 		sortByDefiningTypeNoRedraw(false);
-		
+
 		//JavaUIHelp.setHelp(this, IJavaHelpContextIds.TYPE_HIERARCHY_VIEW);
 	}
 
@@ -112,21 +105,21 @@ emberFilterActionGroup.ALL_FILTERS & ~MemberFilterActionGroup.FILTER_LOCALTYPES)
 		fSortByDefiningTypeAction.setEnabled(!on);
 
 	}
-	
+
 	/**
 	 * Show inherited methods
 	 */
 	public void showInheritedMethods(boolean on) {
 		if (on == isShowInheritedMethods()) {
 			return;
-		}		
+		}
 		try {
 			getTable().setRedraw(false);
 			showInheritedMethodsNoRedraw(on);
 			refresh();
 		} finally {
 			getTable().setRedraw(true);
-		}		
+		}
 	}
 
 	private void sortByDefiningTypeNoRedraw(boolean on) {
@@ -148,36 +141,34 @@ emberFilterActionGroup.ALL_FILTERS & ~MemberFilterActionGroup.FILTER_LOCALTYPES)
 			refresh();
 		} finally {
 			getTable().setRedraw(true);
-		}		
-	}	
-		
-	/*
-	 * @see Viewer#inputChanged(Object, Object)
-	 */
+		}
+	}
+
+	@Override
 	protected void inputChanged(Object input, Object oldInput) {
 		super.inputChanged(input, oldInput);
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if inherited methods are shown.
-	 */	
+	 */
 	public boolean isShowInheritedMethods() {
 		return ((MethodsContentProvider) getContentProvider()).isShowInheritedMethods();
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if defining types are shown.
-	 */	
+	 */
 	public boolean isShowDefiningTypes() {
 		return fLabelProvider.isShowDefiningType();
-	}	
+	}
 
 	/**
 	 * Saves the state of the filter actions
 	 */
 	public void saveState(IMemento memento) {
 		fMemberFilterActionGroup.saveState(memento);
-		
+
 		memento.putString(TAG_SHOWINHERITED, String.valueOf(isShowInheritedMethods()));
 		memento.putString(TAG_SORTBYDEFININGTYPE, String.valueOf(isShowDefiningTypes()));
 
@@ -188,19 +179,19 @@ emberFilterActionGroup.ALL_FILTERS & ~MemberFilterActionGroup.FILTER_LOCALTYPES)
 
 	/**
 	 * Restores the state of the filter actions
-	 */	
+	 */
 	public void restoreState(IMemento memento) {
 		fMemberFilterActionGroup.restoreState(memento);
 		getControl().setRedraw(false);
 		refresh();
 		getControl().setRedraw(true);
-		
+
 		boolean showInherited= Boolean.valueOf(memento.getString(TAG_SHOWINHERITED)).booleanValue();
 		showInheritedMethods(showInherited);
-		
+
 		boolean showDefiningTypes= Boolean.valueOf(memento.getString(TAG_SORTBYDEFININGTYPE)).booleanValue();
 		sortByDefiningType(showDefiningTypes);
-		
+
 		ScrollBar bar= getTable().getVerticalBar();
 		if (bar != null) {
 			Integer vScroll= memento.getInteger(TAG_VERTICAL_SCROLL);
@@ -209,7 +200,7 @@ emberFilterActionGroup.ALL_FILTERS & ~MemberFilterActionGroup.FILTER_LOCALTYPES)
 			}
 		}
 	}
-	
+
 	/**
 	 * Attaches a contextmenu listener to the table
 	 */
@@ -220,13 +211,13 @@ emberFilterActionGroup.ALL_FILTERS & ~MemberFilterActionGroup.FILTER_LOCALTYPES)
 		Menu menu= menuMgr.createContextMenu(getTable());
 		getTable().setMenu(menu);
 		viewSite.registerContextMenu(popupId, menuMgr, this);
-	}	
-		
-	
+	}
+
+
 	/**
 	 * Fills up the context menu with items for the method viewer
 	 * Should be called by the creator of the context menu
-	 */	
+	 */
 	public void contributeToContextMenu(IMenuManager menu) {
 	}
 
@@ -240,7 +231,7 @@ emberFilterActionGroup.ALL_FILTERS & ~MemberFilterActionGroup.FILTER_LOCALTYPES)
 		tbm.add(new Separator());
 		fMemberFilterActionGroup.contributeToToolBar(tbm);
 	}
-	
+
 	public void dispose() {
 		if (fMemberFilterActionGroup != null) {
 			fMemberFilterActionGroup.dispose();
@@ -248,9 +239,7 @@ emberFilterActionGroup.ALL_FILTERS & ~MemberFilterActionGroup.FILTER_LOCALTYPES)
 		}
 	}
 
-	/*
-	 * @see StructuredViewer#handleInvalidSelection(ISelection, ISelection)
-	 */
+	@Override
 	protected void handleInvalidSelection(ISelection invalidSelection, ISelection newSelection) {
 		// on change of input, try to keep selected methods stable by selecting a method with the same
 		// signature: See #5466
@@ -284,15 +273,15 @@ emberFilterActionGroup.ALL_FILTERS & ~MemberFilterActionGroup.FILTER_LOCALTYPES)
 		setSelection(newSelection);
 		updateSelection(newSelection);
 	}
-	
+
 	private IMethod findSimilarMethod(IMethod meth, Object[] elements) throws ModelException {
 //		String name= meth.getElementName();
 //		String[] paramTypes= meth.getParameterTypes();
 //		boolean isConstructor= meth.isConstructor();
-//		
+//
 //		for (int i= 0; i < elements.length; i++) {
 //			Object curr= elements[i];
-//			if (curr instanceof IMethod && 
+//			if (curr instanceof IMethod &&
 //					JavaModelUtil.isSameMethodSignature(name, paramTypes, isConstructor, (IMethod) curr)) {
 //				return (IMethod) curr;
 //			}

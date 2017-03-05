@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
-
 package org.eclipse.dltk.ui.tests.navigator.scriptexplorer;
 
-import java.io.File;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import junit.framework.TestCase;
+import java.io.File;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -36,24 +36,17 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 
 /**
  * Tests for the PackageExplorerContentProvider.
  * 
-	 *
+ *
  */
-public class ContentProviderTests3 extends TestCase {
-
-
-//	public static Test suite() {
-//		TestSuite suite= new TestSuite("org.eclipse.dltk.ui.tests.ContentProviderTests3"); //$NON-NLS-1$
-//		//$JUnit-BEGIN$
-//	   suite.addTestSuite(ContentProviderTests3.class);
-//		//$JUnit-END$
-//		return suite;
-//	}
-
+public class ContentProviderTests3 {
 
 	private IScriptProject fJProject1;
 	private IScriptProject fJProject2;
@@ -94,50 +87,47 @@ public class ContentProviderTests3 extends TestCase {
 	private IWorkbenchPage page;
 	private boolean fEnableAutoBuildAfterTesting;
 	
-	public ContentProviderTests3(String name) {
-		super(name);
-	}
 	
 	//---------Test for getChildren-------------------
-
+	@Test
 	public void testGetChildrenProjectWithSourceFolders() throws Exception{
 		Object[] expectedChildren= new Object[]{fRoot1, fFile1, fFile2};
 		Object[] children= fProvider.getChildren(fJProject2);
 		assertTrue("Wrong children found for project with folding", compareArrays(children, expectedChildren));//$NON-NLS-1$
 	}
 	
-	
+	@Test
 	public void testGetChildrentMidLevelFragment() throws Exception{
 		Object[] expectedChildren= new Object[]{fPack4, fPack6};
 		Object[] children= fProvider.getChildren(fPack3);
 		assertTrue("Wrong children found for ScriptFolder with folding",compareArrays(children, expectedChildren));//$NON-NLS-1$
 	}
-	
+	@Test
 	public void testGetChildrenBottomLevelFragment() throws Exception{
 		Object[] expectedChildren= new Object[]{};
 		Object[] children= fProvider.getChildren(fPack1);
 		assertTrue("Wrong children found for ScriptFolder with folding",compareArrays(children, expectedChildren));//$NON-NLS-1$
 		
 	}
-	
+	@Test
 	public void testGetChildrenBottomLevelFragmentWithCU() throws Exception{
 		Object[] expectedChildren= new Object[]{fCU1};
 		Object[] children= fProvider.getChildren(fPack2);
 		assertTrue("Wrong children found for ScriptFolder with folding",compareArrays(children, expectedChildren));	//$NON-NLS-1$
 	}
-
+	@Test
 	public void testGetChildrenBottomLevelFragmentInArchive() throws Exception{
 		Object[] expectedChildren= new Object[]{fCUIMoney, fCUMoney, fCUMoneyBag, fCUMoneyTest};
 		Object[] children= fProvider.getChildren(fPackJunitSamplesMoney);
 		assertTrue("wrong children found for a bottom ScriptFolder in ProjectFragment Archive with folding", compareArrays(children, expectedChildren));	//$NON-NLS-1$
 	}
-	
+	@Test
 	public void testGetChildrenSource() throws Exception{
 		Object[] expectedChildren= new Object[]{fPack1,fPack2,fPack3};//$NON-NLS-1$
 		Object[] children= fProvider.getChildren(fRoot1);
 		assertTrue("Wrong children found for ProjectFragment with folding", compareArrays(children, expectedChildren));	//$NON-NLS-1$
 	}
-	
+	@Test
 	public void testGetChildrenArchive(){
 		Object[] expectedChildren= new Object[]{fPackJunit};//$NON-NLS-1$
 		Object[] children= fProvider.getChildren(fArchiveFragmentRoot);
@@ -146,37 +136,37 @@ public class ContentProviderTests3 extends TestCase {
 	}
 	
 	//---------------Get Parent Tests-----------------------------
-	
+	@Test
 	public void testGetParentArchive() throws Exception{
 		Object parent= fProvider.getParent(fArchiveFragmentRoot);
 		assertTrue("Wrong parent found for ProjectFragment Archive with folding", parent==fJProject1);//$NON-NLS-1$
 	}	
-	
+	@Test
 	public void testGetParentTopLevelFragmentInArchive() throws Exception{
 		Object expectedParent= fPackJunit;
 		Object parent= fProvider.getParent(fPackJunitSamples);
 		assertTrue("Wrong parent found for a top level ScriptFolder in an Archive with folding", expectedParent.equals(parent));	//$NON-NLS-1$
 	}
-	
+	@Test
 	public void testGetParentTopLevelFragment() throws Exception{
 		Object expectedParent= fRoot1;
 		Object parent= fProvider.getParent(fPack3);
 		assertTrue("Wrong parent found for a top level ScriptFolder with folding", expectedParent.equals(parent)); //$NON-NLS-1$
 	}
-	
+	@Test
 	public void testGetParentFoldedBottomFragment() throws Exception{
 		Object expectedParent= fRoot1;
 		Object parent= fProvider.getParent(fPack3);
 		assertTrue("Wrong parent found for a top level ScriptFolder with folding", expectedParent.equals(parent));//$NON-NLS-1$
 		
 	}
-	
+	@Test
 	public void testGetParentMidLevelFragment() throws Exception{
 		Object expectedParent= fPack3;
 		Object parent= fProvider.getParent(fPack4);
 		assertTrue("Wrong parent found for a NON top level ScriptFolder with folding", expectedParent.equals(parent));//$NON-NLS-1$
 	}
-	
+	@Test
 	public void testDeleteBottomLevelFragmentFolding() throws Exception {
 
 		//send a delta indicating fragment deleted
@@ -191,7 +181,7 @@ public class ContentProviderTests3 extends TestCase {
 		assertTrue("Correct Refresh", fMyPart.wasObjectRefreshed(fRoot1)); //$NON-NLS-1$
 		assertTrue("Single refresh", fMyPart.getRefreshedObject().size() == 1); //$NON-NLS-1$
 	}
-
+	@Test
 	public void testAddBottomLevelFragmentFolding() throws Exception {
 		IScriptFolder test= fRoot1.createScriptFolder("test", true, null); //$NON-NLS-1$
 
@@ -208,7 +198,7 @@ public class ContentProviderTests3 extends TestCase {
 //		assertTrue("Correct Refresh", fMyPart.wasObjectRefreshed(fRoot1)); //$NON-NLS-1$
 //		assertTrue("Single refreshe", fMyPart.getRefreshedObject().size() == 1); //$NON-NLS-1$
 	}
-
+	@Test
 	public void testChangedTopLevelScriptFolderFolding() throws Exception {
 		//send a delta indicating fragment deleted
 		IElementChangedListener listener= (IElementChangedListener) fProvider;
@@ -221,7 +211,7 @@ public class ContentProviderTests3 extends TestCase {
 		
 		assertEquals("No refreshs", 0, fMyPart.getRefreshedObject().size()); //$NON-NLS-1$
 	}
-
+	@Test
 	public void testChangeBottomLevelScriptFolderFolding() throws Exception {
 		//send a delta indicating fragment deleted
 		IElementChangedListener listener= (IElementChangedListener) fProvider;
@@ -234,7 +224,7 @@ public class ContentProviderTests3 extends TestCase {
 		
 		assertEquals("No refreshs",0,  fMyPart.getRefreshedObject().size()); //$NON-NLS-1$
 	}
-	
+	@Test
 	public void testRemoveCUsFromScriptFolder() throws Exception{
 
 		//send a delta indicating fragment deleted
@@ -249,7 +239,7 @@ public class ContentProviderTests3 extends TestCase {
 		// removing more than one CU now results in a refresh.
 		assertEquals("One refresh", 1, fMyPart.getRefreshedObject().size()); //$NON-NLS-1$
 	}
-
+	@Test
 	public void testRemoveCUFromScriptFolder() throws Exception {
 
 		//send a delta indicating fragment deleted
@@ -266,13 +256,8 @@ public class ContentProviderTests3 extends TestCase {
 		assertEquals("No refreshes", 0, fMyPart.getRefreshedObject().size()); //$NON-NLS-1$
 	}
 	
-
-	/*
-	 * @see TestCase#setUp()
-	 */
-	protected void setUp() throws Exception {
-		super.setUp();
-		
+	@Before
+	public void setUp() throws Exception {
 		fWorkspace= ResourcesPlugin.getWorkspace();
 		assertNotNull(fWorkspace);
 		IWorkspaceDescription workspaceDesc= fWorkspace.getDescription();
@@ -385,10 +370,8 @@ public class ContentProviderTests3 extends TestCase {
 		assertNotNull(fProvider);
 	}
 
-	/**
-	 * @see TestCase#tearDown()
-	 */
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		fArchiveFragmentRoot.close();
 		ScriptProjectHelper.delete(fJProject1);
 		ScriptProjectHelper.delete(fJProject2);
@@ -396,8 +379,6 @@ public class ContentProviderTests3 extends TestCase {
 		
 		if (fEnableAutoBuildAfterTesting)
 			ScriptProjectHelper.setAutoBuilding(true);
-		
-		super.tearDown();
 	}
 	
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,12 +55,12 @@ import org.eclipse.ui.views.contentoutline.ContentOutline;
  * Wizard page that acts as a base class for wizard pages that create new Script
  * elements. The class provides a input field for source folders (called
  * container in this class) and API to validate the enter source folder name.
- * 
+ *
  * <p>
  * Clients may subclass.
  * </p>
- * 
- * 
+ *
+ *
  */
 public abstract class NewContainerWizardPage extends NewElementWizardPage {
 	/** Id of the container field */
@@ -111,10 +111,12 @@ public abstract class NewContainerWizardPage extends NewElementWizardPage {
 
 	private class ContainerFieldAdapter implements IStringButtonAdapter,
 			IDialogFieldListener {
+		@Override
 		public void changeControlPressed(DialogField field) {
 			containerChangeControlPressed(field);
 		}
 
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 			containerDialogFieldChanged(field);
 		}
@@ -122,7 +124,7 @@ public abstract class NewContainerWizardPage extends NewElementWizardPage {
 
 	/**
 	 * Create a new <code>NewContainerWizardPage</code>
-	 * 
+	 *
 	 * @param name
 	 *            the wizard page's name
 	 */
@@ -141,9 +143,9 @@ public abstract class NewContainerWizardPage extends NewElementWizardPage {
 
 	/**
 	 * Returns the label that is used for the container input field.
-	 * 
+	 *
 	 * @return the label that is used for the container input field.
-	 * 
+	 *
 	 */
 	protected String getContainerLabel() {
 		return NewWizardMessages.NewContainerWizardPage_container_label;
@@ -152,7 +154,7 @@ public abstract class NewContainerWizardPage extends NewElementWizardPage {
 	/**
 	 * Initializes the source folder field with a valid package fragment root.
 	 * The package fragment root is computed from the given Script element.
-	 * 
+	 *
 	 * @param elem
 	 *            the Script element used to compute the initial package
 	 *            fragment root used as the source folder
@@ -206,7 +208,7 @@ public abstract class NewContainerWizardPage extends NewElementWizardPage {
 
 	/**
 	 * Utility method to inspect a selection to find a Script element.
-	 * 
+	 *
 	 * @param selection
 	 *            the selection to be inspected
 	 * @return a Script element to be used as the initial selection, or
@@ -285,7 +287,7 @@ public abstract class NewContainerWizardPage extends NewElementWizardPage {
 	 * method requires that createContent has been called before this method is
 	 * call. Subclasses may override to change the maximum width for text
 	 * fields.
-	 * 
+	 *
 	 * @return the recommended maximum width for text fields.
 	 */
 	protected int getMaxFieldWidth() {
@@ -297,7 +299,7 @@ public abstract class NewContainerWizardPage extends NewElementWizardPage {
 	 * edit the source folder location. The method expects that the parent
 	 * composite uses a <code>GridLayout</code> as its layout manager and that
 	 * the grid layout has at least 3 columns.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 * @param nColumns
@@ -343,7 +345,7 @@ public abstract class NewContainerWizardPage extends NewElementWizardPage {
 	 * input field has changed. This default implementation updates the model
 	 * and returns an error status. The underlying model is only valid if the
 	 * returned status is OK.
-	 * 
+	 *
 	 * @return the model's error status
 	 */
 	protected IStatus containerChanged() {
@@ -452,7 +454,7 @@ public abstract class NewContainerWizardPage extends NewElementWizardPage {
 	 * verification when a own field has a dependency to an other field. For
 	 * example the class name input must be verified again when the package
 	 * field changes (check for duplicated class names).
-	 * 
+	 *
 	 * @param fieldName
 	 *            The name of the field that has changed (field id). For the
 	 *            source folder the field id is <code>CONTAINER</code>
@@ -463,7 +465,7 @@ public abstract class NewContainerWizardPage extends NewElementWizardPage {
 	// ---- get ----------------
 	/**
 	 * Returns the workspace root.
-	 * 
+	 *
 	 * @return the workspace root
 	 */
 	protected IWorkspaceRoot getWorkspaceRoot() {
@@ -473,10 +475,10 @@ public abstract class NewContainerWizardPage extends NewElementWizardPage {
 	/**
 	 * Returns the <code>IProjectFragment</code> that corresponds to the current
 	 * value of the source folder field.
-	 * 
+	 *
 	 * @return the IProjectFragment or <code>null</code> if the current source
 	 *         folder value is not a valid package fragment root
-	 * 
+	 *
 	 */
 	public IProjectFragment getProjectFragment() {
 		if (currRoot == null)
@@ -506,7 +508,7 @@ public abstract class NewContainerWizardPage extends NewElementWizardPage {
 
 	/**
 	 * Returns the current text of source folder text field.
-	 * 
+	 *
 	 * @return the text of the source folder text field
 	 */
 	public String getScriptFolderText() {
@@ -516,7 +518,7 @@ public abstract class NewContainerWizardPage extends NewElementWizardPage {
 	/**
 	 * Sets the current source folder (model and text field) to the given
 	 * package fragment root.
-	 * 
+	 *
 	 * @param root
 	 *            The new root.
 	 * @param canBeModified
@@ -534,7 +536,7 @@ public abstract class NewContainerWizardPage extends NewElementWizardPage {
 	// ------------- choose source container dialog
 	/**
 	 * Opens a selection dialog that allows to select a source container.
-	 * 
+	 *
 	 * @return returns the selected package fragment root or <code>null</code>
 	 *         if the dialog has been canceled. The caller typically sets the
 	 *         result to the container input field.
@@ -542,8 +544,8 @@ public abstract class NewContainerWizardPage extends NewElementWizardPage {
 	 *         Clients can override this method if they want to offer a
 	 *         different dialog.
 	 *         </p>
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	protected IScriptFolder chooseContainer() {
 		IModelElement initElement = getProjectFragment();
@@ -556,7 +558,7 @@ public abstract class NewContainerWizardPage extends NewElementWizardPage {
 	/**
 	 * Called by {@link #chooseContainer()} with initial element and viewer
 	 * filter.
-	 * 
+	 *
 	 * @param initElement
 	 *            initially selected element
 	 * @param filter
@@ -587,7 +589,7 @@ public abstract class NewContainerWizardPage extends NewElementWizardPage {
 			if (element instanceof IScriptProject) {
 				IScriptProject jproject = (IScriptProject) element;
 				return jproject.getProjectFragment(jproject.getResource())
-						.getScriptFolder(""); //$NON-NLS-1$				
+						.getScriptFolder(""); //$NON-NLS-1$
 			} else if (element instanceof IScriptFolder) {
 				return (IScriptFolder) element;
 			} else if (element instanceof IProjectFragment) {

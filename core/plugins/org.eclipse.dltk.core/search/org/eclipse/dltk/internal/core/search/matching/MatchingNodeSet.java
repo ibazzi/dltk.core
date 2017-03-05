@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -134,13 +134,8 @@ public class MatchingNodeSet {
 		ASTNode[] result = new ASTNode[nodes.size()];
 		nodes.toArray(result);
 		// sort nodes by source starts
-		Util.Comparer comparer = new Util.Comparer() {
-			@Override
-			public int compare(Object o1, Object o2) {
-				return ((ASTNode) o1).sourceStart()
-						- ((ASTNode) o2).sourceStart();
-			}
-		};
+		Util.Comparer comparer = (o1, o2) -> ((ASTNode) o1).sourceStart()
+				- ((ASTNode) o2).sourceStart();
 		Util.sort(result, comparer);
 		return result;
 	}

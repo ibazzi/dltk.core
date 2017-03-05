@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 xored software, Inc.
+ * Copyright (c) 2010, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -31,10 +31,10 @@ import org.eclipse.jface.text.rules.FastPartitioner;
 /**
  * Abstract implementation of {@link IFoldingBlockProvider} to fold
  * comments/documentation based on document partitioning.
- * 
+ *
  * Extend it and in the body of computeFoldableBlocks() make a few calls to
  * {@link #computeBlocksForPartitionType(IFoldingContent, String, IFoldingBlockKind, boolean)}
- * 
+ *
  * @since 2.0
  */
 public abstract class PartitioningFoldingBlockProvider implements
@@ -55,6 +55,7 @@ public abstract class PartitioningFoldingBlockProvider implements
 	private boolean fInitCollapseDocs;
 	private boolean fInitCollapseHeaderComments;
 
+	@Override
 	public void initializePreferences(IPreferenceStore preferenceStore) {
 		fBlockLinesMin = preferenceStore
 				.getInt(PreferenceConstants.EDITOR_FOLDING_LINES_LIMIT);
@@ -120,6 +121,7 @@ public abstract class PartitioningFoldingBlockProvider implements
 		this.fInitCollapseDocs = value;
 	}
 
+	@Override
 	public int getMinimalLineCount() {
 		return fBlockLinesMin;
 	}
@@ -130,6 +132,7 @@ public abstract class PartitioningFoldingBlockProvider implements
 
 	protected IFoldingBlockRequestor requestor;
 
+	@Override
 	public void setRequestor(IFoldingBlockRequestor requestor) {
 		this.requestor = requestor;
 	}
@@ -225,7 +228,7 @@ public abstract class PartitioningFoldingBlockProvider implements
 
 	/**
 	 * Tests if the specified region contains only space or tab characters.
-	 * 
+	 *
 	 * @param document
 	 * @param region
 	 * @return
@@ -266,7 +269,7 @@ public abstract class PartitioningFoldingBlockProvider implements
 
 	/**
 	 * Installs a partitioner with <code>document</code>.
-	 * 
+	 *
 	 * @param document
 	 *            the document
 	 */
@@ -281,7 +284,7 @@ public abstract class PartitioningFoldingBlockProvider implements
 
 	/**
 	 * Removes partitioner with <code>document</code>.
-	 * 
+	 *
 	 * @param document
 	 *            the document
 	 */

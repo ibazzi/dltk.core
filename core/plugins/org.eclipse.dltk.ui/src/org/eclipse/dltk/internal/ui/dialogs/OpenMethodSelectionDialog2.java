@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.dialogs;
 
@@ -43,12 +42,14 @@ public class OpenMethodSelectionDialog2 extends MethodSelectionDialog2 {
 		}
 	}
 
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		// TODO : set help context
 		// PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, IJavaHelpContextIds.OPEN_TYPE_DIALOG);
 	}
 
+	@Override
 	protected Point getInitialSize() {
 		Point result = super.getInitialSize();
 		if (fSize != null) {
@@ -61,6 +62,7 @@ public class OpenMethodSelectionDialog2 extends MethodSelectionDialog2 {
 		return result;
 	}
 
+	@Override
 	protected Point getInitialLocation(Point initialSize) {
 		Point result = super.getInitialLocation(initialSize);
 		if (fLocation != null) {
@@ -79,11 +81,13 @@ public class OpenMethodSelectionDialog2 extends MethodSelectionDialog2 {
 		return result;
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		readSettings();
 		return super.createDialogArea(parent);
 	}
 
+	@Override
 	public boolean close() {
 		writeSettings();
 		return super.close();

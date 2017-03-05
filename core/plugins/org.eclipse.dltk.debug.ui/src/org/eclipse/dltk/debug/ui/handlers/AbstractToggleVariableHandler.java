@@ -22,10 +22,7 @@ import org.eclipse.ui.menus.UIElement;
 abstract class AbstractToggleVariableHandler extends AbstractHandler
 		implements IElementUpdater {
 
-	/*
-	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.
-	 * commands.ExecutionEvent)
-	 */
+	@Override
 	public final Object execute(ExecutionEvent event)
 			throws ExecutionException {
 		toggleVariableDisplay();
@@ -40,11 +37,7 @@ abstract class AbstractToggleVariableHandler extends AbstractHandler
 		return null;
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.ui.commands.IElementUpdater#updateElement(org.eclipse.ui.
-	 * menus.UIElement, java.util.Map)
-	 */
+	@Override
 	public void updateElement(UIElement element, Map parameters) {
 		element.setChecked(isVariableDisplayEnabled());
 	}
@@ -68,7 +61,7 @@ abstract class AbstractToggleVariableHandler extends AbstractHandler
 	/**
 	 * Toggle the variable display value the subclass is responsible for
 	 * handling.
-	 * 
+	 *
 	 * @param target
 	 *            script debug target
 	 * @param enabled

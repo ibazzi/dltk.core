@@ -1,18 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
-
 package org.eclipse.dltk.ui.tests.navigator.scriptexplorer;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
@@ -30,6 +24,10 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 
 public class PackageExplorerShowInTests extends TestCase {
 
@@ -38,14 +36,7 @@ public class PackageExplorerShowInTests extends TestCase {
 	}
 	
 	public static Test suite() {
-		if (true) {
-			return setUpTest(new TestSuite(PackageExplorerShowInTests.class));
-		} else {
-//			System.err.println("*** Running only parts of " + clazz.getName() + "!");
-			TestSuite suite= new TestSuite();
-			suite.addTest(new PackageExplorerShowInTests("testXXX"));
-			return setUpTest(suite);
-		}
+		return setUpTest(new TestSuite(PackageExplorerShowInTests.class));
 	}
 	
 	private static Test setUpTest(Test someTest) {
@@ -92,9 +83,11 @@ public class PackageExplorerShowInTests extends TestCase {
 		final ISourceModule cu= pack.createSourceModule("A.txt", "package p;\nclass A {\n\n}", true, null);
 		
 		IAdaptable adaptable= new IAdaptable() {
-			public Object getAdapter(Class adapter) {
+			@SuppressWarnings("unchecked")
+			@Override
+			public <T> T getAdapter(Class<T> adapter) {
 				if (adapter == IModelElement.class)
-					return cu;
+					return (T) cu;
 				else
 					return null;
 			}
@@ -112,9 +105,10 @@ public class PackageExplorerShowInTests extends TestCase {
 		final ISourceModule cu= pack.createSourceModule("A.txt", "package p;\nclass A {\n\n}", true, null);
 		
 		IAdaptable adaptable= new IAdaptable() {
-			public Object getAdapter(Class adapter) {
+			@Override
+			public <T> T getAdapter(Class<T> adapter) {
 				if (adapter == IResource.class)
-					return cu.getResource();
+					return (T) cu.getResource();
 				else
 					return null;
 			}

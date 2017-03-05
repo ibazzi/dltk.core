@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 xored software, Inc.
+ * Copyright (c) 2009, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -52,10 +52,12 @@ public class ProjectTemplateStore {
 				 * Make sure we keep the id of added code templates - add
 				 * removes it in the usual add() method
 				 */
+				@Override
 				public void add(TemplatePersistenceData data) {
 					internalAdd(data);
 				}
 
+				@Override
 				public void save() throws IOException {
 
 					TemplatePersistenceData[] templateData = ProjectTemplateStore.this

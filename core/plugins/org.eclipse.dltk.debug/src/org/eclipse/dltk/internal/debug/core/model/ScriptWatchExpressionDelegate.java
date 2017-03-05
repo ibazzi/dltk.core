@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.debug.core.model;
 
@@ -21,16 +20,18 @@ import org.eclipse.dltk.debug.core.model.IScriptStackFrame;
 import org.eclipse.dltk.debug.core.model.IScriptThread;
 
 public class ScriptWatchExpressionDelegate implements IWatchExpressionDelegate {
-	protected static class ListenerAdpater implements IScriptEvaluationListener {
+	protected static class ListenerAdpater
+			implements IScriptEvaluationListener {
 		protected final IWatchExpressionListener listener;
 
 		public ListenerAdpater(IWatchExpressionListener listener) {
 			this.listener = listener;
 		}
 
+		@Override
 		public void evaluationComplete(IScriptEvaluationResult result) {
-			listener.watchEvaluationFinished(new ScriptWatchExpressionResult(
-					result));
+			listener.watchEvaluationFinished(
+					new ScriptWatchExpressionResult(result));
 		}
 	}
 
@@ -60,6 +61,7 @@ public class ScriptWatchExpressionDelegate implements IWatchExpressionDelegate {
 		return null;
 	}
 
+	@Override
 	public void evaluateExpression(String expression, IDebugElement context,
 			IWatchExpressionListener listener) {
 
@@ -73,8 +75,8 @@ public class ScriptWatchExpressionDelegate implements IWatchExpressionDelegate {
 				return;
 			}
 		}
-		listener
-				.watchEvaluationFinished(new NoWatchExpressionResult(expression));
+		listener.watchEvaluationFinished(
+				new NoWatchExpressionResult(expression));
 	}
 
 	protected String prepareExpression(String expression) {

@@ -10,10 +10,12 @@ import org.eclipse.swt.widgets.Shell;
 
 public class LocalEnvironmentUI implements IEnvironmentUI {
 
+	@Override
 	public String selectFolder(Shell shell) {
 		return selectFolder(shell, null);
 	}
 
+	@Override
 	public String selectFolder(Shell shell, String initialFolder) {
 		DirectoryDialog dialog = new DirectoryDialog(shell);
 		if (initialFolder != null) {
@@ -22,10 +24,12 @@ public class LocalEnvironmentUI implements IEnvironmentUI {
 		return dialog.open();
 	}
 
+	@Override
 	public String selectFile(Shell shell, int fileType) {
 		return selectFile(shell, fileType, null);
 	}
 
+	@Override
 	public String selectFile(Shell shell, int fileType, String initialSelection) {
 		FileDialog dialog = new FileDialog(shell);
 		if (initialSelection != null && initialSelection.length() != 0) {

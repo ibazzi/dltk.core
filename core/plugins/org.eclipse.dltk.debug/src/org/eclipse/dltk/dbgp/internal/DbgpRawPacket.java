@@ -1,17 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.dbgp.internal;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 import org.eclipse.dltk.dbgp.IDbgpRawPacket;
 import org.eclipse.dltk.dbgp.exceptions.DbgpException;
@@ -98,15 +97,13 @@ public class DbgpRawPacket implements IDbgpRawPacket {
 		return DbgpXmlParser.parseXml(xml);
 	}
 
+	@Override
 	public String toString() {
 		return "DbgpPacket (" + size + " bytes) " + xml; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	@Override
 	public String getPacketAsString() {
-		try {
-			return new String(xml, "ASCII"); //$NON-NLS-1$
-		} catch (UnsupportedEncodingException e) {
-			return new String(xml);
-		}
+		return new String(xml, StandardCharsets.US_ASCII);
 	}
 }

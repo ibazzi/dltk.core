@@ -3,9 +3,8 @@ package org.eclipse.dltk.validators.internal.externalchecker.ui;
 import org.eclipse.dltk.validators.core.IValidatorProblem;
 import org.eclipse.ui.console.TextConsole;
 
-public class ExternalCheckerSyntaxHyperlink extends
-		ExternalCheckerGenericHyperlink {
-	
+public class ExternalCheckerSyntaxHyperlink extends ExternalCheckerGenericHyperlink {
+
 	private IValidatorProblem problem;
 
 	public ExternalCheckerSyntaxHyperlink(TextConsole console, IValidatorProblem problem) {
@@ -13,13 +12,13 @@ public class ExternalCheckerSyntaxHyperlink extends
 		this.problem = problem;
 	}
 
-	protected String getFileName(){
+	@Override
+	protected String getFileName() {
 		return problem.getFileName();
 	}
 
+	@Override
 	protected int getLineNumber() {
 		return problem.getLineNumber();
 	}
 }
-
-

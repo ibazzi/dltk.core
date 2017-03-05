@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.wizards.buildpath.newsourcepage;
 
@@ -59,88 +58,82 @@ import org.eclipse.ui.ide.dialogs.PathVariableSelectionDialog;
 public class LinkFolderDialog extends StatusDialog {
     private final class FolderNameField extends Observable implements IDialogFieldListener {
         private StringDialogField fNameDialogField;
-        
+
         public FolderNameField(Composite parent, int numOfColumns) {
             createControls(parent, numOfColumns);
         }
-        
+
         private void createControls(Composite parent, int numColumns) {
             fNameDialogField= new StringDialogField();
-            fNameDialogField.setLabelText(NewWizardMessages.LinkFolderDialog_folderNameGroup_label); 
+            fNameDialogField.setLabelText(NewWizardMessages.LinkFolderDialog_folderNameGroup_label);
             fNameDialogField.doFillIntoGrid(parent, 2);
             LayoutUtil.setHorizontalGrabbing(fNameDialogField.getTextControl(null));
 			LayoutUtil.setHorizontalSpan(fNameDialogField.getLabelControl(null), numColumns);
 			DialogField.createEmptySpace(parent, numColumns - 1);
-            
+
             fNameDialogField.setDialogFieldListener(this);
         }
-        
-        public StringDialogField getNameDialogField() {
-            return fNameDialogField;
-        }
-        
+
         public void setText(String text) {
             fNameDialogField.setText(text);
             fNameDialogField.setFocus();
         }
-        
+
         public String getText() {
             return fNameDialogField.getText();
         }
-        
+
         protected void fireEvent() {
             setChanged();
             notifyObservers();
         }
 
-        public void dialogFieldChanged(DialogField field) {
+        @Override
+		public void dialogFieldChanged(DialogField field) {
             fireEvent();
         }
     }
-    
+
     private final class LinkFields extends Observable implements IStringButtonAdapter, IDialogFieldListener{
         private StringButtonDialogField fLinkLocation;
-        
+
         private static final String DIALOGSTORE_LAST_EXTERNAL_LOC= DLTKUIPlugin.PLUGIN_ID + ".last.external.project"; //$NON-NLS-1$
-        
+
         public LinkFields(Composite parent, int numColumns) {
             createControls(parent, numColumns);
         }
-        
+
         private void createControls(Composite parent, int numColumns) {
             fLinkLocation= new StringButtonDialogField(this);
-            
-            fLinkLocation.setLabelText(NewWizardMessages.LinkFolderDialog_dependenciesGroup_locationLabel_desc); 
-            fLinkLocation.setButtonLabel(NewWizardMessages.LinkFolderDialog_dependenciesGroup_browseButton_desc); 
+
+            fLinkLocation.setLabelText(NewWizardMessages.LinkFolderDialog_dependenciesGroup_locationLabel_desc);
+            fLinkLocation.setButtonLabel(NewWizardMessages.LinkFolderDialog_dependenciesGroup_browseButton_desc);
             fLinkLocation.setDialogFieldListener(this);
-            
+
             SelectionButtonDialogField variables= new SelectionButtonDialogField(SWT.PUSH);
-            variables.setLabelText(NewWizardMessages.LinkFolderDialog_dependenciesGroup_variables_desc); 
-            variables.setDialogFieldListener(new IDialogFieldListener() {
-                public void dialogFieldChanged(DialogField field) {
-                    handleVariablesButtonPressed();
-                }
-            });
-            
+            variables.setLabelText(NewWizardMessages.LinkFolderDialog_dependenciesGroup_variables_desc);
+            variables.setDialogFieldListener(field -> handleVariablesButtonPressed());
+
             fLinkLocation.doFillIntoGrid(parent, numColumns);
 
 			LayoutUtil.setHorizontalSpan(fLinkLocation.getLabelControl(null), numColumns);
             LayoutUtil.setHorizontalGrabbing(fLinkLocation.getTextControl(null));
-            
+
             variables.doFillIntoGrid(parent, 1);
         }
-        
+
         public String getLinkTarget() {
             return fLinkLocation.getText();
         }
-        
+
 		public void setLinkTarget(String text) {
 			fLinkLocation.setText(text);
 		}
-        
-        public void changeControlPressed(DialogField field) {
+
+        @Override
+		public void changeControlPressed(DialogField field) {
             final DirectoryDialog dialog= new DirectoryDialog(getShell());
-            dialog.setMessage(NewWizardMessages.ScriptProjectWizardFirstPage_directory_message); 
+            dialog.setMessage(NewWizardMessages.ScriptProjectWizardFirstPage_directory_message);
             String directoryName = getLinkTarget().trim();
             if (directoryName.length() == 0) {
                 String prevLocation= DLTKUIPlugin.getDefault().getDialogSettings().get(DIALOGSTORE_LAST_EXTERNAL_LOC);
@@ -148,7 +141,7 @@ public class LinkFolderDialog extends StatusDialog {
                     directoryName= prevLocation;
                 }
             }
-        
+
             if (directoryName.length() > 0) {
                 final File path = new File(directoryName);
                 if (path.exists())
@@ -163,14 +156,14 @@ public class LinkFolderDialog extends StatusDialog {
                 DLTKUIPlugin.getDefault().getDialogSettings().put(DIALOGSTORE_LAST_EXTERNAL_LOC, selectedDirectory);
             }
         }
-        
+
         /**
          * Opens a path variable selection dialog
          */
         private void handleVariablesButtonPressed() {
             int variableTypes = IResource.FOLDER;
 
-            // allow selecting file and folder variables when creating a 
+            // allow selecting file and folder variables when creating a
             // linked file
             /*if (type == IResource.FILE)
                 variableTypes |= IResource.FILE;*/
@@ -181,28 +174,30 @@ public class LinkFolderDialog extends StatusDialog {
                 if (variableNames != null && variableNames.length == 1) {
                     fLinkLocation.setText(variableNames[0]);
                     if (fName == null) {
-                        fFolderNameField.setText(variableNames[0]);	
+                        fFolderNameField.setText(variableNames[0]);
                     }
                 }
             }
         }
-        
-        public void dialogFieldChanged(DialogField field) {
+
+        @Override
+		public void dialogFieldChanged(DialogField field) {
             fireEvent();
         }
-        
+
 		private void fireEvent() {
             setChanged();
             notifyObservers();
         }
     }
-    
+
     /**
      * Validate this page and show appropriate warnings and error NewWizardMessages.
      */
     private final class Validator implements Observer {
 
-        public void update(Observable o, Object arg) {
+        @Override
+		public void update(Observable o, Object arg) {
             String name= fFolderNameField.getText();
             IStatus nameStatus= validateFolderName(name);
             if (nameStatus.matches(IStatus.ERROR)) {
@@ -212,11 +207,11 @@ public class LinkFolderDialog extends StatusDialog {
 	            updateStatus(StatusUtil.getMoreSevere(nameStatus, dependencyStatus));
             }
         }
-        
+
         /**
 		 * Validates this page's controls.
 		 *
-		 * @return IStatus indicating the validation result. IStatus.OK if the 
+		 * @return IStatus indicating the validation result. IStatus.OK if the
 		 *  specified link target is valid given the linkHandle.
 		 */
 		private IStatus validateLinkLocation(String name) {
@@ -238,30 +233,30 @@ public class LinkFolderDialog extends StatusDialog {
 			} else
 				if (locationStatus.isOK()) {
 					// locationStatus takes precedence over missing location warning.
-					return new StatusInfo(IStatus.ERROR, NewWizardMessages.NewFolderDialog_linkTargetNonExistent); 
+					return new StatusInfo(IStatus.ERROR, NewWizardMessages.NewFolderDialog_linkTargetNonExistent);
 				}
 			if (locationStatus.isOK()) {
 				return new StatusInfo();
 			}
 			return new StatusInfo(locationStatus.getSeverity(), locationStatus.getMessage());
 		}
-        
+
         /**
          * Validates the type of the given file against the link type specified
          * in the constructor.
-         * 
+         *
          * @param linkTargetFile file to validate
-         * @return IStatus indicating the validation result. IStatus.OK if the 
+         * @return IStatus indicating the validation result. IStatus.OK if the
          *  given file is valid.
          */
         private IStatus validateFileType(File linkTargetFile) {
             if (!linkTargetFile.isDirectory())
-                return new StatusInfo(IStatus.ERROR, NewWizardMessages.NewFolderDialog_linkTargetNotFolder); 
+                return new StatusInfo(IStatus.ERROR, NewWizardMessages.NewFolderDialog_linkTargetNotFolder);
             return new StatusInfo();
         }
-        
+
         /**
-         * Tries to resolve the value entered in the link target field as 
+         * Tries to resolve the value entered in the link target field as
          * a variable, if the value is a relative path.
          * Displays the resolved value if the entered value is a variable.
          */
@@ -271,7 +266,7 @@ public class LinkFolderDialog extends StatusDialog {
             IPath resolvedPath= pathVariableManager.resolvePath(path);
             return resolvedPath.toOSString();
         }
-                
+
         /**
          * Checks if the folder name is valid.
          *
@@ -279,23 +274,23 @@ public class LinkFolderDialog extends StatusDialog {
          * correct, <code>false</code> otherwise
          */
         private IStatus validateFolderName(String name) {
-            if (name.length() == 0) { 
-            	return new StatusInfo(IStatus.ERROR, NewWizardMessages.NewFolderDialog_folderNameEmpty); 
+            if (name.length() == 0) {
+            	return new StatusInfo(IStatus.ERROR, NewWizardMessages.NewFolderDialog_folderNameEmpty);
             }
-            
+
             IStatus nameStatus = fContainer.getWorkspace().validateName(name, IResource.FOLDER);
             if (!nameStatus.matches(IStatus.ERROR)) {
                 return nameStatus;
             }
-            
+
             IPath path = new Path(name);
             if (fContainer.findMember(path) != null) {
-            	return new StatusInfo(IStatus.ERROR, Messages.format(NewWizardMessages.NewFolderDialog_folderNameEmpty_alreadyExists, name)); 
+            	return new StatusInfo(IStatus.ERROR, Messages.format(NewWizardMessages.NewFolderDialog_folderNameEmpty_alreadyExists, name));
             }
             return nameStatus;
         }
     }
-    
+
     private FolderNameField fFolderNameField;
     private LinkFields fDependenciesGroup;
     private IContainer fContainer;
@@ -306,10 +301,10 @@ public class LinkFolderDialog extends StatusDialog {
 
     /**
      * Creates a NewFolderDialog
-     * 
+     *
      * @param parentShell parent of the new dialog
      * @param container parent of the new folder
-     * 
+     *
      * @see HintTextGroup
      */
     public LinkFolderDialog(Shell parentShell, IContainer container) {
@@ -320,35 +315,31 @@ public class LinkFolderDialog extends StatusDialog {
     	super(parentShell);
     	fContainer = container;
 		fCreateLink= createLink;
-        setTitle(NewWizardMessages.LinkFolderDialog_title); 
+        setTitle(NewWizardMessages.LinkFolderDialog_title);
         setShellStyle(getShellStyle() | SWT.RESIZE);
         setStatusLineAboveButtons(true);
 	}
 
-	/* (non-Javadoc)
-     * Method declared in Window.
-     */
-    protected void configureShell(Shell shell) {
+    @Override
+	protected void configureShell(Shell shell) {
         super.configureShell(shell);
     }
 
-    /**
-     * @see org.eclipse.jface.window.Window#create()
-     */
-    public void create() {
+    @Override
+	public void create() {
         super.create();
         // initially disable the ok button since we don't preset the
         // folder name field
         getButton(IDialogConstants.OK_ID).setEnabled(false);
     }
-    
+
     public void setName(String name) {
 		if (fFolderNameField != null) {
     		fFolderNameField.setText(name);
     	}
     	fName= name;
     }
-    
+
     public void setLinkTarget(String target) {
 		if (fDependenciesGroup != null) {
     		fDependenciesGroup.setLinkTarget(target);
@@ -356,16 +347,14 @@ public class LinkFolderDialog extends StatusDialog {
     	fTarget= target;
     }
 
-    /* (non-Javadoc)
-     * Method declared on Dialog.
-     */
-    protected Control createDialogArea(Composite parent) {
+    @Override
+	protected Control createDialogArea(Composite parent) {
 		initializeDialogUnits(parent);
-		
+
         int numOfColumns= 3;
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setFont(parent.getFont());
-        
+
         GridLayout layout = new GridLayout(numOfColumns, false);
 		layout.marginHeight= convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
 		layout.marginWidth= convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
@@ -373,12 +362,12 @@ public class LinkFolderDialog extends StatusDialog {
         GridData gridData= new GridData(SWT.FILL, SWT.FILL, true, true);
         gridData.minimumWidth= convertWidthInCharsToPixels(80);
         composite.setLayoutData(gridData);
-        
+
         Label label= new Label(composite, SWT.NONE);
         label.setFont(composite.getFont());
-        label.setText(Messages.format(NewWizardMessages.LinkFolderDialog_createIn, fContainer.getFullPath().makeRelative().toString())); 
+        label.setText(Messages.format(NewWizardMessages.LinkFolderDialog_createIn, fContainer.getFullPath().makeRelative().toString()));
 		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, numOfColumns, 1));
-        
+
         fDependenciesGroup= new LinkFields(composite, numOfColumns);
         if (fTarget != null) {
         	fDependenciesGroup.setLinkTarget(fTarget);
@@ -387,7 +376,7 @@ public class LinkFolderDialog extends StatusDialog {
         if (fName != null) {
         	fFolderNameField.setText(fName);
         }
-        
+
         Validator validator= new Validator();
         fDependenciesGroup.addObserver(validator);
         fFolderNameField.addObserver(validator);
@@ -397,8 +386,8 @@ public class LinkFolderDialog extends StatusDialog {
 
     /**
      * Creates a folder resource handle for the folder with the given name.
-     * The folder handle is created relative to the container specified during 
-     * object creation. 
+     * The folder handle is created relative to the container specified during
+     * object creation.
      *
      * @param folderName the name of the folder resource to create a handle for
      * @return the new folder resource handle
@@ -414,24 +403,25 @@ public class LinkFolderDialog extends StatusDialog {
     /**
      * Creates a new folder with the given name and optionally linking to
      * the specified link target.
-     * 
+     *
      * @param folderName name of the new folder
      * @param linkTargetName name of the link target folder. may be null.
      * @return IFolder the new folder
      */
     private IFolder createNewFolder(final String folderName, final String linkTargetName) {
         final IFolder folderHandle = createFolderHandle(folderName);
-        
+
         WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
-            public void execute(IProgressMonitor monitor) throws CoreException {
+            @Override
+			public void execute(IProgressMonitor monitor) throws CoreException {
                 try {
-                    monitor.beginTask(NewWizardMessages.NewFolderDialog_progress, 2000); 
+                    monitor.beginTask(NewWizardMessages.NewFolderDialog_progress, 2000);
                     if (monitor.isCanceled())
                         throw new OperationCanceledException();
-                    
+
                         // create link to folder
                     folderHandle.createLink(Path.fromOSString(fDependenciesGroup.getLinkTarget()), IResource.ALLOW_MISSING_LOCAL, monitor);
-                    
+
                     if (monitor.isCanceled())
                         throw new OperationCanceledException();
                 } catch (StringIndexOutOfBoundsException e) {
@@ -442,7 +432,7 @@ public class LinkFolderDialog extends StatusDialog {
                 }
             }
         };
-        
+
         try {
             new ProgressMonitorDialog(getShell())
                     .run(true, true, operation);
@@ -450,7 +440,7 @@ public class LinkFolderDialog extends StatusDialog {
             return null;
         } catch (InvocationTargetException exception) {
             if (exception.getTargetException() instanceof CoreException) {
-                ErrorDialog.openError(getShell(), NewWizardMessages.NewFolderDialog_errorTitle, 
+                ErrorDialog.openError(getShell(), NewWizardMessages.NewFolderDialog_errorTitle,
                         null, // no special message
                         ((CoreException) exception.getTargetException())
                                 .getStatus());
@@ -460,15 +450,15 @@ public class LinkFolderDialog extends StatusDialog {
                         "Exception in {0}.createNewFolder(): {1}", //$NON-NLS-1$
                         new Object[] { getClass().getName(),
                                 exception.getTargetException() })));
-                MessageDialog.openError(getShell(), NewWizardMessages.NewFolderDialog_errorTitle, 
+                MessageDialog.openError(getShell(), NewWizardMessages.NewFolderDialog_errorTitle,
                         Messages.format(
-                                NewWizardMessages.NewFolderDialog_internalError, 
+                                NewWizardMessages.NewFolderDialog_internalError,
                                 new Object[] { exception.getTargetException()
                                         .getMessage() }));
             }
             return null;
         }
-        
+
         return folderHandle;
     }
 
@@ -476,14 +466,13 @@ public class LinkFolderDialog extends StatusDialog {
      * Update the dialog's status line to reflect the given status. It is safe to call
      * this method before the dialog has been opened.
      */
-    protected void updateStatus(IStatus status) {
+    @Override
+	protected void updateStatus(IStatus status) {
         super.updateStatus(status);
     }
-   
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.dialogs.SelectionStatusDialog#okPressed()
-     */
-    protected void okPressed() {
+
+    @Override
+	protected void okPressed() {
     	if (fCreateLink) {
 	        String linkTarget = fDependenciesGroup.getLinkTarget();
 	        linkTarget= linkTarget.length() == 0 ? null : linkTarget;
@@ -493,11 +482,11 @@ public class LinkFolderDialog extends StatusDialog {
     	}
         super.okPressed();
     }
-    
+
     /**
      * Returns the created folder or <code>null</code>
      * if there is none.
-     * 
+     *
      * @return created folder or <code>null</code>
      */
     public IFolder getCreatedFolder() {
@@ -507,5 +496,5 @@ public class LinkFolderDialog extends StatusDialog {
 	public IPath getLinkTarget() {
 		return Path.fromOSString(fDependenciesGroup.getLinkTarget());
 	}
-    
+
 }

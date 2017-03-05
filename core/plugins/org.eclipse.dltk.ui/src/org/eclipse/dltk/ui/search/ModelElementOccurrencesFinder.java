@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 xored software, Inc.
+ * Copyright (c) 2010, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -33,6 +33,7 @@ public class ModelElementOccurrencesFinder implements IOccurrencesFinder {
 	private SearchPattern pattern;
 	private String occurrenceLocationDescription;
 
+	@Override
 	public String initialize(ISourceModule module, IModuleDeclaration root,
 			int offset, int length) {
 		this.module = module;
@@ -61,6 +62,7 @@ public class ModelElementOccurrencesFinder implements IOccurrencesFinder {
 		return null;
 	}
 
+	@Override
 	public OccurrenceLocation[] getOccurrences() {
 		try {
 			final List<OccurrenceLocation> result = new ArrayList<IOccurrencesFinder.OccurrenceLocation>();

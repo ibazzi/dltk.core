@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,7 @@ import org.eclipse.ui.keys.IBindingService;
 
 /**
  * A quick menu actions provides support to assign short cuts to sub menus.
- * 
+ *
  * @since 3.0
  */
 public abstract class QuickMenuAction extends Action {
@@ -41,7 +41,7 @@ public abstract class QuickMenuAction extends Action {
 
 	/**
 	 * Creates a new quick menu action with the given command id.
-	 * 
+	 *
 	 * @param commandId
 	 *            the command id of the short cut used to open the sub menu
 	 */
@@ -49,9 +49,7 @@ public abstract class QuickMenuAction extends Action {
 		setActionDefinitionId(commandId);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void run() {
 		Display display = Display.getCurrent();
 		if (display == null)
@@ -79,7 +77,7 @@ public abstract class QuickMenuAction extends Action {
 
 	/**
 	 * Hook to fill a menu manager with the items of the sub menu.
-	 * 
+	 *
 	 * @param menu
 	 *            the sub menu to fill
 	 */
@@ -87,7 +85,7 @@ public abstract class QuickMenuAction extends Action {
 
 	/**
 	 * Adds the shortcut to the given menu text and returns it.
-	 * 
+	 *
 	 * @param menuText
 	 *            the menu text
 	 * @return the menu text with the shortcut
@@ -104,7 +102,7 @@ public abstract class QuickMenuAction extends Action {
 	/**
 	 * Returns the shortcut assigned to the sub menu or <code>null</code> if
 	 * no short cut is assigned.
-	 * 
+	 *
 	 * @return the shortcut as a human readable string or <code>null</code>
 	 */
 	private String getShortcutString() {
@@ -152,10 +150,10 @@ public abstract class QuickMenuAction extends Action {
 	/**
 	 * Hook to compute the menu location if the focus widget is a styled text
 	 * widget.
-	 * 
+	 *
 	 * @param text
 	 *            the styled text widget that has the focus
-	 * 
+	 *
 	 * @return a widget relative position of the menu to pop up or
 	 *         <code>null</code> if now position inside the widget can be
 	 *         computed
@@ -171,10 +169,10 @@ public abstract class QuickMenuAction extends Action {
 
 	/**
 	 * Hook to compute the menu location if the focus widget is a tree widget.
-	 * 
+	 *
 	 * @param tree
 	 *            the tree widget that has the focus
-	 * 
+	 *
 	 * @return a widget relative position of the menu to pop up or
 	 *         <code>null</code> if now position inside the widget can be
 	 *         computed
@@ -211,10 +209,10 @@ public abstract class QuickMenuAction extends Action {
 
 	/**
 	 * Hook to compute the menu location if the focus widget is a table widget.
-	 * 
+	 *
 	 * @param table
 	 *            the table widget that has the focus
-	 * 
+	 *
 	 * @return a widget relative position of the menu to pop up or
 	 *         <code>null</code> if now position inside the widget can be
 	 *         computed

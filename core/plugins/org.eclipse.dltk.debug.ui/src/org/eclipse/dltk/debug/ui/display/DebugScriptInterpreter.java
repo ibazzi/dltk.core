@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -40,14 +40,17 @@ public class DebugScriptInterpreter implements IScriptInterpreter {
 		this.part = part;
 	}
 
+	@Override
 	public void addInitialListenerOperation(Runnable runnable) {
 		// NOP
 	}
 
+	@Override
 	public InputStream getInitialOutputStream() {
 		return new ByteArrayInputStream(new byte[0]);
 	}
 
+	@Override
 	public boolean isValid() {
 		return true;
 	}
@@ -55,24 +58,29 @@ public class DebugScriptInterpreter implements IScriptInterpreter {
 	/*
 	 * @see org.eclipse.dltk.console.IScriptConsoleShell#close()
 	 */
+	@Override
 	public void close() throws IOException {
 		// NOP
 	}
 
+	@Override
 	public List getCompletions(String commandLine, int position)
 			throws IOException {
 		return null;
 	}
 
+	@Override
 	public String getDescription(String commandLine, int position)
 			throws IOException {
 		return null;
 	}
 
+	@Override
 	public String[] getNames(String type) throws IOException {
 		return null;
 	}
 
+	@Override
 	public IScriptExecResult exec(String command) throws IOException {
 		if (command == null || command.length() == 0) {
 			return null;
@@ -103,10 +111,8 @@ public class DebugScriptInterpreter implements IScriptInterpreter {
 							boolean datatypes = thread.getDbgpSession()
 									.getDebugOptions()
 									.get(DebugOption.ENGINE_SUPPORT_DATATYPES);
-							if (!datatypes
-									&& output.length() > 2
-									&& output.charAt(0) == '"'
-									&& output.charAt(
+							if (!datatypes && output.length() > 2
+									&& output.charAt(0) == '"' && output.charAt(
 											output.length() - 1) == '"') {
 								output = output.substring(1,
 										output.length() - 1);
@@ -124,8 +130,8 @@ public class DebugScriptInterpreter implements IScriptInterpreter {
 						buffer.append(Util.LINE_SEPARATOR);
 					}
 					if (errors.length == 0) {
-						buffer
-								.append(Messages.DebugScriptInterpreter_unknownEvaluationError);
+						buffer.append(
+								Messages.DebugScriptInterpreter_unknownEvaluationError);
 						buffer.append(Util.LINE_SEPARATOR);
 					}
 					return new ScriptExecResult(buffer.toString(), true);
@@ -136,10 +142,12 @@ public class DebugScriptInterpreter implements IScriptInterpreter {
 				+ Util.LINE_SEPARATOR, true);
 	}
 
+	@Override
 	public int getState() {
 		return WAIT_NEW_COMMAND;
 	}
 
+	@Override
 	public void consoleConnected(IScriptConsoleIO protocol) {
 		// NOP
 	}

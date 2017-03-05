@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -75,7 +74,7 @@ public class OpenStorageWithMenu extends ContributionItem {
 	 * item in the menu. At that point the menu will attempt to open an editor
 	 * with the file as its input.
 	 * </p>
-	 * 
+	 *
 	 * @param page
 	 *            the page where the editor is opened if an item within the menu
 	 *            is selected
@@ -86,7 +85,7 @@ public class OpenStorageWithMenu extends ContributionItem {
 
 	/**
 	 * Constructs a new instance of <code>OpenWithMenu</code>.
-	 * 
+	 *
 	 * @param page
 	 *            the page where the editor is opened if an item within the menu
 	 *            is selected
@@ -101,7 +100,7 @@ public class OpenStorageWithMenu extends ContributionItem {
 
 	/**
 	 * Returns an image to show for the corresponding editor descriptor.
-	 * 
+	 *
 	 * @param editorDesc
 	 *            the editor descriptor, or null for the system editor
 	 * @return the image or null
@@ -145,7 +144,7 @@ public class OpenStorageWithMenu extends ContributionItem {
 
 	/**
 	 * Creates the menu item for the editor descriptor.
-	 * 
+	 *
 	 * @param menu
 	 *            the menu to add the item to
 	 * @param descriptor
@@ -165,15 +164,13 @@ public class OpenStorageWithMenu extends ContributionItem {
 		if (image != null) {
 			menuItem.setImage(image);
 		}
-		Listener listener = new Listener() {
-			public void handleEvent(Event event) {
-				switch (event.type) {
-				case SWT.Selection:
-					if (menuItem.getSelection()) {
-						openEditor(descriptor);
-					}
-					break;
+		Listener listener = event -> {
+			switch (event.type) {
+			case SWT.Selection:
+				if (menuItem.getSelection()) {
+					openEditor(descriptor);
 				}
+				break;
 			}
 		};
 		menuItem.addListener(SWT.Selection, listener);
@@ -209,9 +206,7 @@ public class OpenStorageWithMenu extends ContributionItem {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc) Fills the menu with perspective items.
-	 */
+	@Override
 	public void fill(Menu menu, int index) {
 		IStorage storage = getStorage();
 		if (storage == null) {
@@ -289,13 +284,14 @@ public class OpenStorageWithMenu extends ContributionItem {
 	/*
 	 * (non-Javadoc) Returns whether this menu is dynamic.
 	 */
+	@Override
 	public boolean isDynamic() {
 		return true;
 	}
 
 	/**
 	 * Opens the given editor on the selected file.
-	 * 
+	 *
 	 * @param editor
 	 *            the editor descriptor, or null for the system editor
 	 */
@@ -318,7 +314,7 @@ public class OpenStorageWithMenu extends ContributionItem {
 
 	/**
 	 * Creates the menu item for clearing the current selection.
-	 * 
+	 *
 	 * @param menu
 	 *            the menu to add the item to
 	 * @param storage
@@ -333,21 +329,19 @@ public class OpenStorageWithMenu extends ContributionItem {
 		menuItem.setSelection(desc == null);
 		menuItem.setText(ActionMessages.DefaultEditorDescription_name);
 
-		Listener listener = new Listener() {
-			public void handleEvent(Event event) {
-				switch (event.type) {
-				case SWT.Selection:
-					if (menuItem.getSelection()) {
-						// registry.setDefaultEditor(storage.getName(), null);
-						try {
-							page.openEditor(new ExternalStorageEditorInput(
-									storage), desc.getId(), true, MATCH_BOTH);
-						} catch (PartInitException e) {
-							DLTKUIPlugin.log(e);
-						}
+		Listener listener = event -> {
+			switch (event.type) {
+			case SWT.Selection:
+				if (menuItem.getSelection()) {
+					// registry.setDefaultEditor(storage.getName(), null);
+					try {
+						page.openEditor(new ExternalStorageEditorInput(storage),
+								desc.getId(), true, MATCH_BOTH);
+					} catch (PartInitException e) {
+						DLTKUIPlugin.log(e);
 					}
-					break;
 				}
+				break;
 			}
 		};
 

@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.eclipse.dltk.ui.browsing.ext;
 
 import java.lang.reflect.InvocationTargetException;
@@ -10,15 +7,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.core.IDLTKLanguageToolkit;
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.IScriptModel;
 import org.eclipse.dltk.core.IType;
 import org.eclipse.dltk.core.ModelException;
-import org.eclipse.dltk.core.index2.search.ModelAccess;
 import org.eclipse.dltk.core.index2.search.ISearchEngine.MatchRule;
+import org.eclipse.dltk.core.index2.search.ModelAccess;
 import org.eclipse.dltk.core.search.IDLTKSearchConstants;
 import org.eclipse.dltk.core.search.IDLTKSearchScope;
 import org.eclipse.dltk.core.search.SearchEngine;
@@ -32,9 +28,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
 
 class ExtendedClasesContentProvider implements ITreeContentProvider {
-	/**
-	 * 
-	 */
 	private final ExtendedClassesView contentProvider;
 	Object input;
 	private IDLTKSearchScope scope;
@@ -51,6 +44,7 @@ class ExtendedClasesContentProvider implements ITreeContentProvider {
 		this.toolkit = toolkit;
 	}
 
+	@Override
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof IScriptModel) {
 			return getElements(parentElement);
@@ -78,61 +72,62 @@ class ExtendedClasesContentProvider implements ITreeContentProvider {
 		return new Object[0];
 	}
 
+	@Override
 	public Object getParent(Object element) {
 		return null;
 	}
 
+	@Override
 	public boolean hasChildren(Object element) {
 		return false;
 	}
 
+	@Override
 	public Object[] getElements(Object inputElement) {
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(this.parent
 				.getShell());
 		dialog.setCancelable(false);
 		final List elements = new ArrayList();
-		IRunnableWithProgress runnable = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor)
-					throws InvocationTargetException, InterruptedException {
+		IRunnableWithProgress runnable = monitor -> {
 
-				IType[] types = new ModelAccess().findTypes(null,
-						MatchRule.PREFIX, 0, 0, scope, monitor);
-				if (types == null) {
-					try {
-						(new SearchEngine()).searchAllTypeNames(
-								null,
-								SearchPattern.R_EXACT_MATCH,
-								"*".toCharArray(), //$NON-NLS-1$
-								SearchPattern.R_PATTERN_MATCH
-										| SearchPattern.R_CASE_SENSITIVE,
-								IDLTKSearchConstants.TYPE,
-								scope,
-								new TypeNameMatchRequestor() {
-									public void acceptTypeNameMatch(
-											TypeNameMatch match) {
-										try {
-											IType type = match.getType();
-											if (type.exists()
-													&& type.getParent()
-															.getElementType() != IModelElement.TYPE) {
-												elements.add(type);
-											}
-										} catch (Exception e) {
+IType[] types = new ModelAccess().findTypes(null,
+			MatchRule.PREFIX, 0, 0, scope, monitor);
+if (types == null) {
+		try {
+			(new SearchEngine()).searchAllTypeNames(
+					null,
+					SearchPattern.R_EXACT_MATCH,
+					"*".toCharArray(), //$NON-NLS-1$
+					SearchPattern.R_PATTERN_MATCH
+							| SearchPattern.R_CASE_SENSITIVE,
+					IDLTKSearchConstants.TYPE,
+					scope,
+					new TypeNameMatchRequestor() {
+						@Override
+						public void acceptTypeNameMatch(
+								TypeNameMatch match) {
+							try {
+								IType type = match.getType();
+								if (type.exists()
+										&& type.getParent()
+												.getElementType() != IModelElement.TYPE) {
+									elements.add(type);
+								}
+							} catch (Exception e) {
 
-										}
-									}
-								},
-
-								IDLTKSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,
-								monitor);
-					} catch (ModelException e) {
-						if (DLTKCore.DEBUG) {
-							e.printStackTrace();
+							}
 						}
-					}
-				}
+					},
+
+					IDLTKSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,
+					monitor);
+		} catch (ModelException e) {
+			if (DLTKCore.DEBUG) {
+				e.printStackTrace();
 			}
-		};
+		}
+}
+};
 		try {
 			dialog.run(false, false, runnable);
 		} catch (InvocationTargetException e) {
@@ -168,9 +163,11 @@ class ExtendedClasesContentProvider implements ITreeContentProvider {
 		return els.values().toArray();
 	}
 
+	@Override
 	public void dispose() {
 	}
 
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		this.input = newInput;
 		updateInput();

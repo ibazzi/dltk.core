@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@ package org.eclipse.dltk.internal.debug.ui.interpreters;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.dltk.compiler.util.Util;
@@ -21,9 +20,6 @@ import org.eclipse.dltk.core.environment.IFileHandle;
 import org.eclipse.dltk.core.internal.environment.LazyFileHandle;
 import org.eclipse.dltk.debug.ui.DLTKDebugUIPlugin;
 import org.eclipse.dltk.internal.ui.wizards.dialogfields.ComboDialogField;
-import org.eclipse.dltk.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.dltk.internal.ui.wizards.dialogfields.IDialogFieldListener;
-import org.eclipse.dltk.internal.ui.wizards.dialogfields.IStringButtonAdapter;
 import org.eclipse.dltk.internal.ui.wizards.dialogfields.StringButtonDialogField;
 import org.eclipse.dltk.internal.ui.wizards.dialogfields.StringDialogField;
 import org.eclipse.dltk.launching.EnvironmentVariable;
@@ -38,7 +34,6 @@ import org.eclipse.dltk.utils.PlatformFileUtils;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.StatusDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -117,6 +112,7 @@ public abstract class AddScriptInterpreterDialog extends StatusDialog
 	/**
 	 * @see Windows#configureShell
 	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		// PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell,
@@ -134,11 +130,7 @@ public abstract class AddScriptInterpreterDialog extends StatusDialog
 				InterpretersMessages.addInterpreterDialog_InterpreterEnvironmentName);
 
 		fInterpreterPath = new StringButtonDialogField(
-				new IStringButtonAdapter() {
-					public void changeControlPressed(DialogField field) {
-						browseForInstallation();
-					}
-				});
+				field -> browseForInstallation());
 		fInterpreterPath.setLabelText(
 				InterpretersMessages.addInterpreterDialog_InterpreterExecutableName);
 		fInterpreterPath.setButtonLabel(
@@ -154,25 +146,17 @@ public abstract class AddScriptInterpreterDialog extends StatusDialog
 	protected void createFieldListeners() {
 
 		fInterpreterTypeCombo
-				.setDialogFieldListener(new IDialogFieldListener() {
-					public void dialogFieldChanged(DialogField field) {
-						updateInterpreterType();
-					}
-				});
+				.setDialogFieldListener(field -> updateInterpreterType());
 
-		fInterpreterName.setDialogFieldListener(new IDialogFieldListener() {
-			public void dialogFieldChanged(DialogField field) {
-				setInterpreterNameStatus(validateInterpreterName());
-				updateStatusLine();
-			}
+		fInterpreterName.setDialogFieldListener(field -> {
+			setInterpreterNameStatus(validateInterpreterName());
+			updateStatusLine();
 		});
 
-		fInterpreterPath.setDialogFieldListener(new IDialogFieldListener() {
-			public void dialogFieldChanged(DialogField field) {
-				updateValidateInterpreterLocation();
-				fLibraryBlock.restoreDefaultLibraries();
-				updateStatusLine();
-			}
+		fInterpreterPath.setDialogFieldListener(field -> {
+			updateValidateInterpreterLocation();
+			fLibraryBlock.restoreDefaultLibraries();
+			updateStatusLine();
 		});
 
 	}
@@ -337,6 +321,7 @@ public abstract class AddScriptInterpreterDialog extends StatusDialog
 		setInterpreterLocationStatus(validateInterpreterLocation());
 	}
 
+	@Override
 	public void create() {
 		super.create();
 		fInterpreterPath.setFocus();
@@ -447,19 +432,16 @@ public abstract class AddScriptInterpreterDialog extends StatusDialog
 		TimeTriggeredProgressMonitorDialog progressDialog = new TimeTriggeredProgressMonitorDialog(
 				this.getShell(), 200);
 		try {
-			progressDialog.run(false, false, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor)
-						throws InvocationTargetException, InterruptedException {
-					EnvironmentVariable[] environmentVariables = null;
-					if (fEnvironmentVariablesBlock != null) {
-						environmentVariables = fEnvironmentVariablesBlock
-								.getEnvironmentVariables();
-					}
-					LibraryLocation[] locations = fLibraryBlock
-							.getLibraryLocations();
-					temp[0] = getInterpreterType().validateInstallLocation(file,
-							environmentVariables, locations, monitor);
+			progressDialog.run(false, false, monitor -> {
+				EnvironmentVariable[] environmentVariables = null;
+				if (fEnvironmentVariablesBlock != null) {
+					environmentVariables = fEnvironmentVariablesBlock
+							.getEnvironmentVariables();
 				}
+				LibraryLocation[] locations = fLibraryBlock
+						.getLibraryLocations();
+				temp[0] = getInterpreterType().validateInstallLocation(file,
+						environmentVariables, locations, monitor);
 			});
 		} catch (InvocationTargetException e) {
 			DLTKCore.error(e);
@@ -471,7 +453,7 @@ public abstract class AddScriptInterpreterDialog extends StatusDialog
 
 	/**
 	 * Generates unique interpreter name based on the file selected
-	 * 
+	 *
 	 * @param file
 	 * @return generated name or <code>null</code> if it was not possible to
 	 *         generate the suitable name
@@ -499,7 +481,7 @@ public abstract class AddScriptInterpreterDialog extends StatusDialog
 
 	/**
 	 * Validates the automatically generated interpreter name
-	 * 
+	 *
 	 * @param name
 	 * @return <code>true</code> if specified name is unique and
 	 *         <code>false</code> otherwise
@@ -540,6 +522,7 @@ public abstract class AddScriptInterpreterDialog extends StatusDialog
 		return status;
 	}
 
+	@Override
 	public void updateStatusLine() {
 		IStatus max = null;
 		for (int i = 0; i < fStati.length; i++) {
@@ -569,6 +552,7 @@ public abstract class AddScriptInterpreterDialog extends StatusDialog
 		}
 	}
 
+	@Override
 	protected void okPressed() {
 		doOkPressed();
 		super.okPressed();
@@ -656,10 +640,11 @@ public abstract class AddScriptInterpreterDialog extends StatusDialog
 	/**
 	 * Updates the status of the ok button to reflect the given status.
 	 * Subclasses may override this method to update additional buttons.
-	 * 
+	 *
 	 * @param status
 	 *            the status.
 	 */
+	@Override
 	protected void updateButtonsEnableState(IStatus status) {
 		Button ok = getButton(IDialogConstants.OK_ID);
 		if (ok != null && !ok.isDisposed())
@@ -669,6 +654,7 @@ public abstract class AddScriptInterpreterDialog extends StatusDialog
 	/**
 	 * @see org.eclipse.jface.dialogs.Dialog#setButtonLayoutData(org.eclipse.swt.widgets.Button)
 	 */
+	@Override
 	public void setButtonLayoutData(Button button) {
 		super.setButtonLayoutData(button);
 		((GridData) button.getLayoutData()).grabExcessHorizontalSpace = true;
@@ -676,18 +662,14 @@ public abstract class AddScriptInterpreterDialog extends StatusDialog
 
 	/**
 	 * Returns the name of the section that this dialog stores its settings in
-	 * 
+	 *
 	 * @return String
 	 */
 	protected String getDialogSettingsSectionName() {
 		return "ADD_INTERPRETER_DIALOG_SECTION"; //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
-	 */
+	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
 		IDialogSettings settings = DLTKDebugUIPlugin.getDefault()
 				.getDialogSettings();
@@ -713,7 +695,7 @@ public abstract class AddScriptInterpreterDialog extends StatusDialog
 
 	/**
 	 * Re discover libraries if environment variables are changed.
-	 * 
+	 *
 	 * @param environmentVariables
 	 */
 	public void updateLibraries(EnvironmentVariable[] newVars,
@@ -732,6 +714,7 @@ public abstract class AddScriptInterpreterDialog extends StatusDialog
 		return this.lastInstall;
 	}
 
+	@Override
 	public boolean execute() {
 		return open() == Window.OK;
 	}

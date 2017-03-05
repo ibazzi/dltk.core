@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.validators.internal.externalchecker.ui;
 
@@ -20,8 +19,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-public class ExternalCheckerRulesPreferencePage extends PreferencePage
-		implements IWorkbenchPreferencePage {
+public class ExternalCheckerRulesPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	// private static final String EXTERNALCHECKER_PREFERENCE_PAGE =
 	// ValidatorsUI.PLUGIN_ID + ".ExternalCheckerPreferencePage";
@@ -34,9 +32,11 @@ public class ExternalCheckerRulesPreferencePage extends PreferencePage
 		setDescription(Messages.ExternalCheckerRulesPreferencePage_externalCheckerRules);
 	}
 
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 
+	@Override
 	protected Control createContents(Composite ancestor) {
 		initializeDialogUnits(ancestor);
 
@@ -61,6 +61,7 @@ public class ExternalCheckerRulesPreferencePage extends PreferencePage
 		return new ExternalCheckerRulesBlock();
 	}
 
+	@Override
 	public boolean performOk() {
 
 		CustomWildcardsList wlist = fRulesBlock.getWlist();
@@ -70,14 +71,15 @@ public class ExternalCheckerRulesPreferencePage extends PreferencePage
 		return true;
 	}
 
+	@Override
 	protected void performDefaults() {
 		// System.out.println("Defaults");
 		String xmlString = ExternalCheckerWildcardManager.getDefaultWildcards();
 		// ValidatorsCore.getDefault().getPluginPreferences().setDefault(
 		// "wildcards",
 		// xmlString);
-		ExternalCheckerPlugin.getDefault().getPluginPreferences().setValue(
-				ExternalCheckerWildcardManager.WILDCARDS, xmlString);
+		ExternalCheckerPlugin.getDefault().getPluginPreferences().setValue(ExternalCheckerWildcardManager.WILDCARDS,
+				xmlString);
 		ExternalCheckerPlugin.getDefault().savePluginPreferences();
 		fRulesBlock.removeAll();
 		fRulesBlock.loadWildcards();

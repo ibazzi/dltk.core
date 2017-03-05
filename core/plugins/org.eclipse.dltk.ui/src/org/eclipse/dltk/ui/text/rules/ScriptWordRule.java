@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,14 +22,14 @@ import org.eclipse.jface.text.rules.WordRule;
 
 /**
  * An implementation of <code>IRule</code> capable of detecting script words.
- * 
+ *
  * <p>
  * This class is a direct copy of {@link WordRule} capable of tracking the 'last
  * seen' word and returning a token that differs from the default token for this
  * rule when the next word is encountered. For instance, this could be used to
  * provide syntax hightlighting for method declarations.
  * </p>
- * 
+ *
  * <p>
  * If an <code>IScriptWordDetector</code> implementation is used, the rule
  * will also check that character prior to the word start character is valid for
@@ -37,7 +37,7 @@ import org.eclipse.jface.text.rules.WordRule;
  * method names that also match builtin keywords from being hightlighted as
  * such.
  * </p>
- * 
+ *
  * @see IWordDetector
  * @see IScriptWordDetector
  */
@@ -71,7 +71,7 @@ public class ScriptWordRule implements IRule {
 	 * token associated with the detected word. If no token has been associated,
 	 * the scanner will be rolled back and an undefined token will be returned
 	 * in order to allow any subsequent rules to analyze the characters.
-	 * 
+	 *
 	 * @param detector
 	 *            the word detector to be used by this rule, may not be
 	 *            <code>null</code>
@@ -85,7 +85,7 @@ public class ScriptWordRule implements IRule {
 	 * Creates a rule which, with the help of a word detector, will return the
 	 * token associated with the detected word. If no token has been associated,
 	 * the specified default token will be returned.
-	 * 
+	 *
 	 * @param detector
 	 *            the word detector to be used by this rule, may not be
 	 *            <code>null</code>
@@ -102,7 +102,7 @@ public class ScriptWordRule implements IRule {
 	 * Creates a rule which, with the help of a word detector, will return the
 	 * token associated with the detected word. If no token has been associated,
 	 * the specified default token will be returned.
-	 * 
+	 *
 	 * @param detector
 	 *            the word detector to be used by this rule, may not be
 	 *            <code>null</code>
@@ -125,7 +125,7 @@ public class ScriptWordRule implements IRule {
 
 	/**
 	 * Adds a word and the token to be returned if it is detected.
-	 * 
+	 *
 	 * @param word
 	 *            the word this rule will search for, may not be
 	 *            <code>null</code>
@@ -142,17 +142,17 @@ public class ScriptWordRule implements IRule {
 
 	/**
 	 * Add a word to be treated in a 'last seen' context.
-	 * 
+	 *
 	 * <p>
 	 * If the specified word was the 'last seen', the specified token will be
 	 * returned as the token for the next detected word.
 	 * </p>
-	 * 
+	 *
 	 * @param word
 	 *            'last seen' word look for, may not be <code>null</code>
 	 * @param token
 	 *            the token to be returned if the 'last seen' word is detected
-	 * 
+	 *
 	 */
 	public void addNextTokenAfterSeen(String word, IToken token) {
 		Assert.isNotNull(word);
@@ -166,7 +166,7 @@ public class ScriptWordRule implements IRule {
 	 * only be returned if the pattern is detected starting at the specified
 	 * column. If the column is smaller then 0, the column constraint is
 	 * considered removed.
-	 * 
+	 *
 	 * @param column
 	 *            the column in which the pattern starts
 	 */
@@ -176,6 +176,7 @@ public class ScriptWordRule implements IRule {
 		fColumn = column;
 	}
 
+	@Override
 	public IToken evaluate(ICharacterScanner scanner) {
 		// don't unwind the scanner if we're at the beginning
 		if (fDetector instanceof IScriptWordDetector && scanner.getColumn() > 0) {
@@ -248,7 +249,7 @@ public class ScriptWordRule implements IRule {
 
 	/**
 	 * Returns the characters in the buffer to the scanner.
-	 * 
+	 *
 	 * @param scanner
 	 *            the scanner to be used
 	 */

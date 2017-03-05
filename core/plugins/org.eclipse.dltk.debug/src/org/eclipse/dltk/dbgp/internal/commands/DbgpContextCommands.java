@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.dbgp.internal.commands;
 
@@ -25,8 +24,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class DbgpContextCommands extends DbgpBaseCommands implements
-		IDbgpContextCommands {
+public class DbgpContextCommands extends DbgpBaseCommands
+		implements IDbgpContextCommands {
 	private static final String CONTEXT_NAMES_COMMAND = "context_names"; //$NON-NLS-1$
 
 	private static final String CONTEXT_GET = "context_get"; //$NON-NLS-1$
@@ -65,7 +64,8 @@ public class DbgpContextCommands extends DbgpBaseCommands implements
 
 			Node item = properties.item(i);
 			if (item instanceof Element) {
-				if (item.getNodeName().equals(DbgpXmlEntityParser.TAG_PROPERTY)) {
+				if (item.getNodeName()
+						.equals(DbgpXmlEntityParser.TAG_PROPERTY)) {
 					list.add(DbgpXmlEntityParser.parseProperty((Element) item));
 				}
 			}
@@ -74,12 +74,14 @@ public class DbgpContextCommands extends DbgpBaseCommands implements
 		return (IDbgpProperty[]) list.toArray(new IDbgpProperty[list.size()]);
 	}
 
+	@Override
 	public Map getContextNames(int stackDepth) throws DbgpException {
 		DbgpRequest request = createRequest(CONTEXT_NAMES_COMMAND);
 		request.addOption("-d", stackDepth); //$NON-NLS-1$
 		return parseContextNamesResponse(communicate(request));
 	}
 
+	@Override
 	public IDbgpProperty[] getContextProperties(int stackDepth)
 			throws DbgpException {
 		DbgpRequest request = createRequest(CONTEXT_GET);
@@ -87,6 +89,7 @@ public class DbgpContextCommands extends DbgpBaseCommands implements
 		return parseContextPropertiesResponse(communicate(request));
 	}
 
+	@Override
 	public IDbgpProperty[] getContextProperties(int stackDepth, int contextId)
 			throws DbgpException {
 		DbgpRequest request = createRequest(CONTEXT_GET);

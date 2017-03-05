@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.refactoring.reorg;
 
@@ -43,10 +42,10 @@ abstract class RenameInputWizardPage extends TextInputWizardPage {
 	private Button fLeaveDelegateCheckBox;
 	private Button fDeprecateDelegateCheckBox;
 	private QualifiedNameComponent fQualifiedNameComponent;
-	
+
 	private static final String UPDATE_TEXTUAL_MATCHES= "updateTextualMatches"; //$NON-NLS-1$
 	private static final String UPDATE_QUALIFIED_NAMES= "updateQualifiedNames"; //$NON-NLS-1$
-	
+
 	/**
 	 * Creates a new text input page.
 	 * @param isLastUserPage <code>true</code> if this page is the wizard's last
@@ -58,14 +57,15 @@ abstract class RenameInputWizardPage extends TextInputWizardPage {
 		fHelpContextID= contextHelpId;
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		Composite superComposite= new Composite(parent, SWT.NONE);
 		setControl(superComposite);
 		initializeDialogUnits(superComposite);
 		superComposite.setLayout(new GridLayout());
 		Composite composite= new Composite(superComposite, SWT.NONE);
-		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));	
-		
+		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 2;
 		layout.marginHeight= 0;
@@ -73,10 +73,10 @@ abstract class RenameInputWizardPage extends TextInputWizardPage {
 
 		composite.setLayout(layout);
 		RowLayouter layouter= new RowLayouter(2);
-		
+
 		Label label= new Label(composite, SWT.NONE);
 		label.setText(getLabelText());
-		
+
 		Text text= createTextInputField(composite);
 		text.selectAll();
 		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
@@ -89,10 +89,10 @@ abstract class RenameInputWizardPage extends TextInputWizardPage {
 		GridData gridData= new GridData(SWT.FILL, SWT.FILL, false, false);
 		gridData.heightHint= 2;
 		separator.setLayoutData(gridData);
-		
-		
+
+
 		int indent= convertWidthInCharsToPixels(2);
-		
+
 		addOptionalUpdateReferencesCheckbox(composite, layouter);
 		addAdditionalOptions(composite, layouter);
 		addOptionalUpdateTextualMatches(composite, layouter);
@@ -100,14 +100,14 @@ abstract class RenameInputWizardPage extends TextInputWizardPage {
 		addOptionalLeaveDelegateCheckbox(composite, layouter);
 		addOptionalDeprecateDelegateCheckbox(composite, layouter, indent);
 		updateForcePreview();
-		
+
 		Dialog.applyDialogFont(superComposite);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), fHelpContextID);
 	}
-	
+
 	/**
 	 * Clients can override this method to provide more UI elements. By default, does nothing
-	 * 
+	 *
 	 * @param composite the parent composite
 	 * @param layouter the row layouter to use
 	 */
@@ -115,6 +115,7 @@ abstract class RenameInputWizardPage extends TextInputWizardPage {
 		// none by default
 	}
 
+	@Override
 	public void setVisible(boolean visible) {
 		if (visible) {
 			INameUpdating nameUpdating= (INameUpdating)getRefactoring().getAdapter(INameUpdating.class);
@@ -133,19 +134,20 @@ abstract class RenameInputWizardPage extends TextInputWizardPage {
 	/**
 	 * Returns the new name for the Script element or <code>null</code>
 	 * if no new name is provided
-	 * 
+	 *
 	 * @return the new name or <code>null</code>
 	 */
 	protected String getNewName(INameUpdating nameUpdating) {
 		return nameUpdating.getNewElementName();
 	}
-	
+
 	protected boolean saveSettings() {
 		if (getContainer() instanceof Dialog)
 			return ((Dialog)getContainer()).getReturnCode() == IDialogConstants.OK_ID;
 		return true;
 	}
-	
+
+	@Override
 	public void dispose() {
 		if (saveSettings()) {
 			saveBooleanSetting(UPDATE_TEXTUAL_MATCHES, fUpdateTextualMatches);
@@ -157,36 +159,38 @@ abstract class RenameInputWizardPage extends TextInputWizardPage {
 		}
 		super.dispose();
 	}
-	
+
 	private void addOptionalUpdateReferencesCheckbox(Composite result, RowLayouter layouter) {
 		final IReferenceUpdating ref= (IReferenceUpdating)getRefactoring().getAdapter(IReferenceUpdating.class);
-		if (ref == null || !ref.canEnableUpdateReferences())	
+		if (ref == null || !ref.canEnableUpdateReferences())
 			return;
-		String title= RefactoringMessages.RenameInputWizardPage_update_references; 
+		String title= RefactoringMessages.RenameInputWizardPage_update_references;
 		boolean defaultValue= true; //bug 77901
 		fUpdateReferences= createCheckbox(result, title, defaultValue, layouter);
 		ref.setUpdateReferences(fUpdateReferences.getSelection());
 		fUpdateReferences.addSelectionListener(new SelectionAdapter(){
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				ref.setUpdateReferences(fUpdateReferences.getSelection());
 			}
-		});		
+		});
 	}
-		
+
 	private void addOptionalUpdateTextualMatches(Composite result, RowLayouter layouter) {
 		final ITextUpdating refactoring= (ITextUpdating) getRefactoring().getAdapter(ITextUpdating.class);
 		if (refactoring == null || !refactoring.canEnableTextUpdating())
 			return;
-		String title= RefactoringMessages.RenameInputWizardPage_update_textual_matches; 
+		String title= RefactoringMessages.RenameInputWizardPage_update_textual_matches;
 		boolean defaultValue= getBooleanSetting(UPDATE_TEXTUAL_MATCHES, refactoring.getUpdateTextualMatches());
 		fUpdateTextualMatches= createCheckbox(result, title, defaultValue, layouter);
 		refactoring.setUpdateTextualMatches(fUpdateTextualMatches.getSelection());
 		fUpdateTextualMatches.addSelectionListener(new SelectionAdapter(){
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				refactoring.setUpdateTextualMatches(fUpdateTextualMatches.getSelection());
 				updateForcePreview();
 			}
-		});		
+		});
 	}
 
 	private void addOptionalUpdateQualifiedNameComponent(Composite parent, RowLayouter layouter, int marginWidth) {
@@ -195,33 +199,34 @@ abstract class RenameInputWizardPage extends TextInputWizardPage {
 			return;
 		fUpdateQualifiedNames= new Button(parent, SWT.CHECK);
 		int indent= marginWidth + fUpdateQualifiedNames.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
-		fUpdateQualifiedNames.setText(RefactoringMessages.RenameInputWizardPage_update_qualified_names); 
+		fUpdateQualifiedNames.setText(RefactoringMessages.RenameInputWizardPage_update_qualified_names);
 		layouter.perform(fUpdateQualifiedNames);
-		
+
 		fQualifiedNameComponent= new QualifiedNameComponent(parent, SWT.NONE, ref, getRefactoringSettings());
 		layouter.perform(fQualifiedNameComponent);
 		GridData gd= (GridData)fQualifiedNameComponent.getLayoutData();
 		gd.horizontalAlignment= GridData.FILL;
 		gd.horizontalIndent= indent;
-		
+
 		boolean defaultSelection= getBooleanSetting(UPDATE_QUALIFIED_NAMES, ref.getUpdateQualifiedNames());
 		fUpdateQualifiedNames.setSelection(defaultSelection);
 		updateQulifiedNameUpdating(ref, defaultSelection);
 
 		fUpdateQualifiedNames.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean enabled= ((Button)e.widget).getSelection();
 				updateQulifiedNameUpdating(ref, enabled);
 			}
 		});
 	}
-	
+
 	private void updateQulifiedNameUpdating(final IQualifiedNameUpdating ref, boolean enabled) {
 		fQualifiedNameComponent.setEnabled(enabled);
 		ref.setUpdateQualifiedNames(enabled);
 		updateForcePreview();
 	}
-	
+
 	private void addOptionalLeaveDelegateCheckbox(Composite result, RowLayouter layouter) {
 		final IDelegateUpdating refactoring= (IDelegateUpdating) getRefactoring().getAdapter(IDelegateUpdating.class);
 		if (refactoring == null || !refactoring.canEnableDelegateUpdating())
@@ -229,6 +234,7 @@ abstract class RenameInputWizardPage extends TextInputWizardPage {
 		fLeaveDelegateCheckBox= createCheckbox(result, refactoring.getDelegateUpdatingTitle(false), DelegateUIHelper.loadLeaveDelegateSetting(refactoring), layouter);
 		refactoring.setDelegateUpdating(fLeaveDelegateCheckBox.getSelection());
 		fLeaveDelegateCheckBox.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				refactoring.setDelegateUpdating(fLeaveDelegateCheckBox.getSelection());
 			}
@@ -249,6 +255,7 @@ abstract class RenameInputWizardPage extends TextInputWizardPage {
 		layouter.perform(fDeprecateDelegateCheckBox);
 		refactoring.setDeprecateDelegates(fDeprecateDelegateCheckBox.getSelection());
 		fDeprecateDelegateCheckBox.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				refactoring.setDeprecateDelegates(fDeprecateDelegateCheckBox.getSelection());
 			}
@@ -256,6 +263,7 @@ abstract class RenameInputWizardPage extends TextInputWizardPage {
 		if (fLeaveDelegateCheckBox != null) {
 			fDeprecateDelegateCheckBox.setEnabled(fLeaveDelegateCheckBox.getSelection());
 			fLeaveDelegateCheckBox.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					fDeprecateDelegateCheckBox.setEnabled(fLeaveDelegateCheckBox.getSelection());
 				}
@@ -274,9 +282,9 @@ abstract class RenameInputWizardPage extends TextInputWizardPage {
 			refactoring.setDelegateUpdating(false);
 		}
 	}
-	
+
 	protected String getLabelText() {
-		return RefactoringMessages.RenameInputWizardPage_new_name; 
+		return RefactoringMessages.RenameInputWizardPage_new_name;
 	}
 
 	protected boolean getBooleanSetting(String key, boolean defaultValue) {
@@ -286,7 +294,7 @@ abstract class RenameInputWizardPage extends TextInputWizardPage {
 		else
 			return defaultValue;
 	}
-	
+
 	protected void saveBooleanSetting(String key, Button checkBox) {
 		if (checkBox != null)
 			getRefactoringSettings().put(key, checkBox.getSelection());
@@ -297,9 +305,9 @@ abstract class RenameInputWizardPage extends TextInputWizardPage {
 		checkBox.setText(title);
 		checkBox.setSelection(value);
 		layouter.perform(checkBox);
-		return checkBox;		
+		return checkBox;
 	}
-	
+
 	private void updateForcePreview() {
 		boolean forcePreview= false;
 		Refactoring refactoring= getRefactoring();

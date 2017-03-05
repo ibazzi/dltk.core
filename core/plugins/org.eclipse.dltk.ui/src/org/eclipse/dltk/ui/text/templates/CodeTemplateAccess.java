@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 xored software, Inc.
+ * Copyright (c) 2009, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -46,9 +46,7 @@ public abstract class CodeTemplateAccess implements ICodeTemplateAccess,
 	 */
 	private TemplateStore fCodeTemplateStore;
 
-	/*
-	 * @see ICodeTemplateAccess#getInstanceStore()
-	 */
+	@Override
 	public TemplateStore getTemplateStore() {
 		if (fCodeTemplateStore == null) {
 			fCodeTemplateStore = new ContributionTemplateStore(
@@ -63,20 +61,17 @@ public abstract class CodeTemplateAccess implements ICodeTemplateAccess,
 		return fCodeTemplateStore;
 	}
 
+	@Override
 	public IPreferenceStore getTemplatePreferenceStore() {
 		return preferenceStore;
 	}
 
-	/*
-	 * @see ICodeTemplateAccess#getPreferenceQualifier()
-	 */
+	@Override
 	public String getPreferenceQualifier() {
 		return preferenceQualifier;
 	}
 
-	/*
-	 * @see ICodeTemplateAccess#getPreferenceKey()
-	 */
+	@Override
 	public String getPreferenceKey() {
 		return preferenceKey;
 	}
@@ -84,10 +79,11 @@ public abstract class CodeTemplateAccess implements ICodeTemplateAccess,
 	/**
 	 * Returns the template context type registry for the code generation
 	 * templates.
-	 * 
+	 *
 	 * @return the template context type registry for the code generation
 	 *         templates
 	 */
+	@Override
 	public ContextTypeRegistry getContextTypeRegistry() {
 		if (fCodeTemplateContextTypeRegistry == null) {
 			fCodeTemplateContextTypeRegistry = createContextTypeRegistry();
@@ -97,9 +93,7 @@ public abstract class CodeTemplateAccess implements ICodeTemplateAccess,
 
 	protected abstract ContextTypeRegistry createContextTypeRegistry();
 
-	/*
-	 * @see ICodeTemplateAccess.Internal#dispose()
-	 */
+	@Override
 	public void dispose() {
 		if (fCodeTemplateStore != null) {
 			fCodeTemplateStore.stopListeningForPreferenceChanges();

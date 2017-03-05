@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.util;
 
@@ -51,7 +50,7 @@ public class CoreUtility {
 	/**
 	 * Creates an extension. If the extension plugin has not been loaded a busy
 	 * cursor will be activated during the duration of the load.
-	 * 
+	 *
 	 * @param element
 	 *            the config element defining the extension
 	 * @param classAttribute
@@ -69,14 +68,12 @@ public class CoreUtility {
 		} else {
 			final Object[] ret = new Object[1];
 			final CoreException[] exc = new CoreException[1];
-			BusyIndicator.showWhile(null, new Runnable() {
-				public void run() {
-					try {
-						ret[0] = element
-								.createExecutableExtension(classAttribute);
-					} catch (CoreException e) {
-						exc[0] = e;
-					}
+			BusyIndicator.showWhile(null, () -> {
+				try {
+					ret[0] = element
+							.createExecutableExtension(classAttribute);
+				} catch (CoreException e) {
+					exc[0] = e;
 				}
 			});
 			if (exc[0] != null)
@@ -88,7 +85,7 @@ public class CoreUtility {
 
 	/**
 	 * Set the autobuild to the value of the parameter and return the old one.
-	 * 
+	 *
 	 * @param state
 	 *            the value to be set for autobuilding.
 	 * @return the old value of the autobuild state
@@ -173,7 +170,7 @@ public class CoreUtility {
 
 	/**
 	 * Returns a build job
-	 * 
+	 *
 	 * @param project
 	 *            The project to build or <code>null</code> to build the
 	 *            workspace.

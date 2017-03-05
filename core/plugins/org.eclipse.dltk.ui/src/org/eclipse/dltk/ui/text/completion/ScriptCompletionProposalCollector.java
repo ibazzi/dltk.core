@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.text.completion;
 
@@ -47,19 +46,19 @@ import org.eclipse.swt.graphics.Image;
  * <p>
  * The lifecycle of a <code>CompletionProposalCollector</code> instance is very
  * simple:
- * 
+ *
  * <pre>
  *    ISourceModule unit= ...
  *    int offset= ...
- *    
+ *
  *    CompletionProposalCollector collector= new CompletionProposalCollector(cu);
  *    unit.codeComplete(offset, collector);
  *    IScriptCompletionProposal[] proposals= collector.getScriptCompletionProposals();
  *    String errorMessage= collector.getErrorMessage();
- *    
+ *
  *     / / display  / process proposals
  * </pre>
- * 
+ *
  * Note that after a code completion operation, the collector will store any
  * received proposals, which may require a considerable amount of memory, so the
  * collector should not be kept as a reference after a completion operation.
@@ -67,15 +66,15 @@ import org.eclipse.swt.graphics.Image;
  * <p>
  * Clients may instantiate or subclass.
  * </p>
- * 
- * 
+ *
+ *
  */
 public abstract class ScriptCompletionProposalCollector extends
 		CompletionRequestor implements ICompletionRequestorExtension {
 	/**
 	 * Intermediate attribute of {@link CompletionProposal} used to limit the
 	 * number of displayed method parameters.
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public static final String ATTR_PARAM_LIMIT = DLTKUIPlugin.PLUGIN_ID
@@ -114,8 +113,8 @@ public abstract class ScriptCompletionProposalCollector extends
 
 	/**
 	 * The UI invocation context or <code>null</code>.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	private ScriptContentAssistInvocationContext fInvocationContext;
 
@@ -125,7 +124,7 @@ public abstract class ScriptCompletionProposalCollector extends
 	 * no javadoc will be available as
 	 * {@link org.eclipse.jface.text.contentassist.ICompletionProposal#getAdditionalProposalInfo()
 	 * additional info} on the created proposals.
-	 * 
+	 *
 	 * @param cu
 	 *            the compilation unit that the result collector will operate on
 	 */
@@ -146,7 +145,7 @@ public abstract class ScriptCompletionProposalCollector extends
 	 * {@link org.eclipse.jface.text.contentassist.ICompletionProposal#getAdditionalProposalInfo()
 	 * additional info} on the created (e.g. method and type) proposals.
 	 * </p>
-	 * 
+	 *
 	 * @param project
 	 *            the project that the result collector will operate on, or
 	 *            <code>null</code>
@@ -167,11 +166,11 @@ public abstract class ScriptCompletionProposalCollector extends
 	 * <p>
 	 * Subclasses may extend.
 	 * </p>
-	 * 
+	 *
 	 * @param context
 	 *            the invocation context
 	 * @see #getInvocationContext()
-	 * 
+	 *
 	 */
 	public void setInvocationContext(
 			ScriptContentAssistInvocationContext context) {
@@ -183,9 +182,9 @@ public abstract class ScriptCompletionProposalCollector extends
 	 * Returns the invocation context. If none has been set via
 	 * {@link #setInvocationContext(JavaContentAssistInvocationContext)}, a new
 	 * one is created.
-	 * 
+	 *
 	 * @return invocationContext the invocation context
-	 * 
+	 *
 	 */
 	public final ScriptContentAssistInvocationContext getInvocationContext() {
 		if (fInvocationContext == null) {
@@ -228,7 +227,7 @@ public abstract class ScriptCompletionProposalCollector extends
 	 * <p>
 	 * Subclasses may extend, but usually should not need to.
 	 * </p>
-	 * 
+	 *
 	 * @see #getContext()
 	 */
 	@Override
@@ -251,7 +250,7 @@ public abstract class ScriptCompletionProposalCollector extends
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * Subclasses may extend, but must call the super implementation.
 	 */
 	@Override
@@ -265,7 +264,7 @@ public abstract class ScriptCompletionProposalCollector extends
 	 * <p>
 	 * Subclasses may replace or extend.
 	 * </p>
-	 * 
+	 *
 	 * @return an error message or the empty string
 	 */
 	public String getErrorMessage() {
@@ -276,7 +275,7 @@ public abstract class ScriptCompletionProposalCollector extends
 
 	/**
 	 * Returns the unsorted list of received proposals.
-	 * 
+	 *
 	 * @return the unsorted list of received proposals
 	 */
 	public final IScriptCompletionProposal[] getScriptCompletionProposals() {
@@ -356,7 +355,7 @@ public abstract class ScriptCompletionProposalCollector extends
 
 	/**
 	 * Returns the unsorted list of received keyword proposals.
-	 * 
+	 *
 	 * @return the unsorted list of received keyword proposals
 	 */
 	public final IScriptCompletionProposal[] getKeywordCompletionProposals() {
@@ -369,7 +368,7 @@ public abstract class ScriptCompletionProposalCollector extends
 	 * If the replacement length is set, it overrides the length returned from
 	 * the content assist infrastructure. Use this setting if code assist is
 	 * called with a none empty selection.
-	 * 
+	 *
 	 * @param length
 	 *            the new replacement length, relative to the code assist
 	 *            offset. Must be equal to or greater than zero.
@@ -383,7 +382,7 @@ public abstract class ScriptCompletionProposalCollector extends
 	 * <p>
 	 * Subclasses may replace, but usually should not need to.
 	 * </p>
-	 * 
+	 *
 	 * @param proposal
 	 *            the proposal to compute the relevance for
 	 * @return the relevance for <code>proposal</code>
@@ -432,7 +431,7 @@ public abstract class ScriptCompletionProposalCollector extends
 	 * <p>
 	 * Subclasses may extend or replace this method.
 	 * </p>
-	 * 
+	 *
 	 * @param proposal
 	 *            the core completion proposal to create a UI proposal for
 	 * @return the created script completion proposal, or <code>null</code> if
@@ -495,7 +494,7 @@ public abstract class ScriptCompletionProposalCollector extends
 	 * Creates the context information for a given method reference proposal.
 	 * The passed proposal must be of kind {@link CompletionProposal#METHOD_REF}
 	 * .
-	 * 
+	 *
 	 * @param methodProposal
 	 *            the method proposal for which to create context information
 	 * @return the context information for <code>methodProposal</code>
@@ -510,7 +509,7 @@ public abstract class ScriptCompletionProposalCollector extends
 	 * Returns the compilation unit that the receiver operates on, or
 	 * <code>null</code> if the <code>IScriptProject</code> constructor was used
 	 * to create the receiver.
-	 * 
+	 *
 	 * @return the compilation unit that the receiver operates on, or
 	 *         <code>null</code>
 	 */
@@ -520,7 +519,7 @@ public abstract class ScriptCompletionProposalCollector extends
 
 	/**
 	 * Returns the <code>CompletionContext</code> for this completion operation.
-	 * 
+	 *
 	 * @return the <code>CompletionContext</code> for this completion operation
 	 * @see CompletionRequestor#acceptContext(CompletionContext)
 	 */
@@ -530,7 +529,7 @@ public abstract class ScriptCompletionProposalCollector extends
 
 	/**
 	 * Returns a cached image for the given descriptor.
-	 * 
+	 *
 	 * @param descriptor
 	 *            the image descriptor to get an image for, may be
 	 *            <code>null</code>
@@ -546,7 +545,7 @@ public abstract class ScriptCompletionProposalCollector extends
 	 * <code>proposal.getReplaceEnd</code> and
 	 * <code>proposal.getReplaceStart</code>, but this behavior may be
 	 * overridden by calling {@link #setReplacementLength(int)}.
-	 * 
+	 *
 	 * @param proposal
 	 *            the completion proposal to get the replacement length for
 	 * @return the replacement length for <code>proposal</code>
@@ -577,7 +576,7 @@ public abstract class ScriptCompletionProposalCollector extends
 	 * {@linkplain CompletionRequestor#setIgnored(int, boolean) setIgnored} and
 	 * types set to be ignored in the preferences.
 	 * </p>
-	 * 
+	 *
 	 * @param proposal
 	 *            the proposal to filter
 	 * @return <code>true</code> to filter <code>proposal</code>,
@@ -768,7 +767,7 @@ public abstract class ScriptCompletionProposalCollector extends
 		int relevance = computeRelevance(proposal);
 
 		ScriptCompletionProposal scriptProposal;
-		
+
 		CompletionProposalLabelProvider labelProvider = getLabelProvider();
 		Image image = getImage(getLabelProvider().createImageDescriptor(
 				proposal));
@@ -784,7 +783,7 @@ public abstract class ScriptCompletionProposalCollector extends
 			scriptProposal = createScriptCompletionProposal(completion, start,
 					length, image, label, relevance, false);
 		}
-		
+
 		return scriptProposal;
 	}
 
@@ -794,9 +793,9 @@ public abstract class ScriptCompletionProposalCollector extends
 		int start = proposal.getReplaceStart();
 		int length = getLength(proposal);
 		int relevance = computeRelevance(proposal);
-		
+
 		ScriptCompletionProposal scriptProposal;
-		
+
 		CompletionProposalLabelProvider labelProvider = getLabelProvider();
 
 		if (labelProvider instanceof ICompletionProposalLabelProviderExtension) {
@@ -955,9 +954,7 @@ public abstract class ScriptCompletionProposalCollector extends
 				&& fInvocationContext.isContextInformationMode();
 	}
 
-	/*
-	 * Implements {@link ICompletionRequestorExtension#reset}
-	 */
+	@Override
 	public void reset() {
 		synchronized (fUnprocessedCompletionProposals) {
 			fUnprocessedCompletionProposals.clear();

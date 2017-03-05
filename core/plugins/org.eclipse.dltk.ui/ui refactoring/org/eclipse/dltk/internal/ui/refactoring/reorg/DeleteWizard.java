@@ -1,21 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.refactoring.reorg;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.dltk.core.ScriptModelUtil;
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.IProjectFragment;
 import org.eclipse.dltk.core.IScriptFolder;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.ModelException;
+import org.eclipse.dltk.core.ScriptModelUtil;
 import org.eclipse.dltk.internal.corext.refactoring.reorg.ReorgUtils;
 import org.eclipse.dltk.internal.corext.refactoring.reorg.ScriptDeleteProcessor;
 import org.eclipse.dltk.internal.corext.refactoring.util.ModelElementUtil;
@@ -42,21 +41,21 @@ public class DeleteWizard extends RefactoringWizard {
 
 	public DeleteWizard(Refactoring refactoring) {
 		super(refactoring, DIALOG_BASED_USER_INTERFACE | YES_NO_BUTTON_STYLE | NO_PREVIEW_PAGE | NO_BACK_BUTTON_ON_STATUS_DIALOG);
-		setDefaultPageTitle(RefactoringMessages.DeleteWizard_1); 
+		setDefaultPageTitle(RefactoringMessages.DeleteWizard_1);
 		((ScriptDeleteProcessor)((DeleteRefactoring)getRefactoring()).getProcessor()).setQueries(new ReorgQueries(this));
 	}
-		
+
+	@Override
 	protected void addUserInputPages() {
 		addPage(new DeleteInputPage());
 	}
-	
+
+	@Override
 	public int getMessageLineWidthInChars() {
 		return 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#needsProgressMonitor()
-	 */
+	@Override
 	public boolean needsProgressMonitor() {
 		DeleteRefactoring refactoring= (DeleteRefactoring)getRefactoring();
 		RefactoringProcessor processor= refactoring.getProcessor();
@@ -65,7 +64,7 @@ public class DeleteWizard extends RefactoringWizard {
 		}
 		return super.needsProgressMonitor();
 	}
-	
+
 	private static class DeleteInputPage extends MessageWizardPage {
 		private static final String PAGE_NAME= "DeleteInputPage"; //$NON-NLS-1$
 		private static final String DIALOG_SETTINGS_DELETE_SUB_PACKAGES= "deleteSubPackages"; //$NON-NLS-1$
@@ -75,6 +74,7 @@ public class DeleteWizard extends RefactoringWizard {
 			super(PAGE_NAME, true, MessageWizardPage.STYLE_QUESTION);
 		}
 
+		@Override
 		protected String getMessageString() {
 			try {
 				if (1 == numberOfSelectedElements()) {
@@ -91,11 +91,12 @@ public class DeleteWizard extends RefactoringWizard {
 					DLTKUIPlugin.log(e);
 				setPageComplete(false);
 				if (e.isDoesNotExist())
-					return RefactoringMessages.DeleteWizard_12; 
-				return RefactoringMessages.DeleteWizard_2; 
+					return RefactoringMessages.DeleteWizard_12;
+				return RefactoringMessages.DeleteWizard_2;
 			}
 		}
 
+		@Override
 		public void createControl(Composite parent) {
 			super.createControl(parent);
 
@@ -107,7 +108,7 @@ public class DeleteWizard extends RefactoringWizard {
 		 * Adds the "delete subpackages" checkbox to the composite. Note that
 		 * this code assumes that the control of the parent is a Composite with
 		 * GridLayout and a horizontal span of 2.
-		 * 
+		 *
 		 * @see MessageWizardPage#createControl(Composite)
 		 */
 		private void addDeleteSubPackagesCheckBox() {
@@ -129,6 +130,7 @@ public class DeleteWizard extends RefactoringWizard {
 
 			fDeleteSubPackagesCheckBox.addSelectionListener(new SelectionAdapter() {
 
+				@Override
 				public void widgetSelected(SelectionEvent event) {
 					getDeleteProcessor().setDeleteSubPackages(fDeleteSubPackagesCheckBox.getSelection());
 				}
@@ -157,17 +159,19 @@ public class DeleteWizard extends RefactoringWizard {
 		private int numberOfSelectedElements() {
 			return getSelectedScriptElements().length + getSelectedResources().length;
 		}
-		
+
+		@Override
 		protected boolean performFinish() {
 			return super.performFinish() || getDeleteProcessor().wasCanceled(); //close the dialog if canceled
 		}
-		
+
 		protected boolean saveSettings() {
 			if (getContainer() instanceof Dialog)
 				return ((Dialog) getContainer()).getReturnCode() == IDialogConstants.OK_ID;
 			return true;
 		}
 
+		@Override
 		public void dispose() {
 			if (fDeleteSubPackagesCheckBox != null && saveSettings())
 				getRefactoringSettings().put(DIALOG_SETTINGS_DELETE_SUB_PACKAGES, fDeleteSubPackagesCheckBox.getSelection());
@@ -179,21 +183,21 @@ public class DeleteWizard extends RefactoringWizard {
 			if (elements.length == 1) {
 				IModelElement element= elements[0];
 				if (isDefaultPackageWithLinkedFiles(element))
-					return RefactoringMessages.DeleteWizard_3; 
+					return RefactoringMessages.DeleteWizard_3;
 
 				if (!isLinkedResource(element))
-					return RefactoringMessages.DeleteWizard_4; 
+					return RefactoringMessages.DeleteWizard_4;
 
 				if (isLinkedPackageOrProjectFragment(element))
 					//XXX workaround for jcore bugs 31998 and 31456 - linked packages or source folders cannot be deleted properly
-					return RefactoringMessages.DeleteWizard_6; 
-					
-				return RefactoringMessages.DeleteWizard_5; 
+					return RefactoringMessages.DeleteWizard_6;
+
+				return RefactoringMessages.DeleteWizard_5;
 			} else {
 				if (isLinked(getSelectedResources()[0])) //checked before that this will work
-					return RefactoringMessages.DeleteWizard_7; 
+					return RefactoringMessages.DeleteWizard_7;
 				else
-					return RefactoringMessages.DeleteWizard_8; 
+					return RefactoringMessages.DeleteWizard_8;
 			}
 		}
 
@@ -201,13 +205,13 @@ public class DeleteWizard extends RefactoringWizard {
 			IResource[] resources= getSelectedResources();
 			IModelElement[] modelElements= getSelectedScriptElements();
 			if (!containsLinkedResources(resources, modelElements))
-				return RefactoringMessages.DeleteWizard_9; 
+				return RefactoringMessages.DeleteWizard_9;
 
 			if (!containsLinkedPackagesOrProjectFragments(modelElements))
-				return RefactoringMessages.DeleteWizard_10; 
+				return RefactoringMessages.DeleteWizard_10;
 
 			//XXX workaround for jcore bugs - linked packages or source folders cannot be deleted properly
-			return RefactoringMessages.DeleteWizard_11; 
+			return RefactoringMessages.DeleteWizard_11;
 		}
 
 		private static boolean isLinkedPackageOrProjectFragment(IModelElement element) {
@@ -269,10 +273,10 @@ public class DeleteWizard extends RefactoringWizard {
 		private IResource[] getSelectedResources() {
 			return getDeleteProcessor().getResourcesToDelete();
 		}
-		
+
 		private ScriptDeleteProcessor getDeleteProcessor() {
 			return (ScriptDeleteProcessor) ((DeleteRefactoring) getRefactoring()).getProcessor();
 		}
-		
+
 	}
 }

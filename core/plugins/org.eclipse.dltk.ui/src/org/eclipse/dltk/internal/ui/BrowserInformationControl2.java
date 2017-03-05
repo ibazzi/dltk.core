@@ -9,7 +9,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
 /*
- * TODO (alex) to be removed 
+ * TODO (alex) to be removed
  */
 public class BrowserInformationControl2 extends BrowserInformationControl
 		implements IInformationControlExtension4, IInformationControlExtension5 {
@@ -18,10 +18,12 @@ public class BrowserInformationControl2 extends BrowserInformationControl
 		super(parent, JFaceResources.DIALOG_FONT, statusFieldText);
 	}
 
+	@Override
 	public Point computeSizeConstraints(int widthInChars, int heightInChars) {
 		return null;
 	}
 
+	@Override
 	public boolean containsControl(Control control) {
 		do {
 			if (control == getShell())
@@ -33,10 +35,12 @@ public class BrowserInformationControl2 extends BrowserInformationControl
 		return false;
 	}
 
+	@Override
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		return null;
 	}
 
+	@Override
 	public boolean isVisible() {
 		return getShell() != null && !getShell().isDisposed()
 				&& getShell().isVisible();

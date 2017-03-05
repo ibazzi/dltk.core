@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.wizards;
 
@@ -19,11 +18,11 @@ import org.eclipse.jface.wizard.WizardPage;
  * Base class for wizard page responsible to create model elements. The class
  * provides API to update the wizard's status line and OK button according to
  * the value of a <code>IStatus</code> object.
- * 
+ *
  * <p>
  * Clients may subclass.
  * </p>
- * 
+ *
  *
  */
 public abstract class NewElementWizardPage extends WizardPage {
@@ -34,7 +33,7 @@ public abstract class NewElementWizardPage extends WizardPage {
 
 	/**
 	 * Creates a <code>NewElementWizardPage</code>.
-	 * 
+	 *
 	 * @param name
 	 *            the wizard page's name
 	 */
@@ -44,6 +43,7 @@ public abstract class NewElementWizardPage extends WizardPage {
 		currStatus = new StatusInfo();
 	}
 
+	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		pageVisible = visible;
@@ -58,15 +58,15 @@ public abstract class NewElementWizardPage extends WizardPage {
 
 	/**
 	 * Updates the status line and the OK button according to the given status
-	 * 
+	 *
 	 * @param status
 	 *            status to apply
 	 */
 	protected void updateStatus(IStatus status) {
 		currStatus = status;
-		
+
 		setPageComplete(!status.matches(IStatus.ERROR));
-		
+
 		if (pageVisible) {
 			StatusUtil.applyToStatusLine(this, status);
 		}
@@ -77,7 +77,7 @@ public abstract class NewElementWizardPage extends WizardPage {
 	 * evaluate from an array of status. The most severe error is taken. In case
 	 * that two status with the same severity exists, the status with lower
 	 * index is taken.
-	 * 
+	 *
 	 * @param status
 	 *            the array of status
 	 */

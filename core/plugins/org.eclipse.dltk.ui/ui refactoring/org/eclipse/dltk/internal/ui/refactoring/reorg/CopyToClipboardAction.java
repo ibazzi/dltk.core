@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,6 +86,7 @@ public class CopyToClipboardAction extends SelectionDispatchAction {
 		return DLTKUIPlugin.getDefault().getWorkbench().getSharedImages();
 	}
 
+	@Override
 	public void selectionChanged(IStructuredSelection selection) {
 		try {
 			List elements = selection.toList();
@@ -105,6 +106,7 @@ public class CopyToClipboardAction extends SelectionDispatchAction {
 		}
 	}
 
+	@Override
 	public void run(IStructuredSelection selection) {
 		try {
 			List elements = selection.toList();
@@ -355,6 +357,7 @@ public class CopyToClipboardAction extends SelectionDispatchAction {
 			fScriptElements = modelElements;
 		}
 
+		@Override
 		public boolean canEnable() throws ModelException {
 			if (fResources.length + fScriptElements.length == 0)
 				return false;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 xored software, Inc.
+ * Copyright (c) 2009, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -39,7 +39,7 @@ public class TemplateVariableProposal implements ICompletionProposal {
 
 	/**
 	 * Creates a template variable proposal.
-	 * 
+	 *
 	 * @param variable
 	 *            the template variable
 	 * @param offset
@@ -60,9 +60,7 @@ public class TemplateVariableProposal implements ICompletionProposal {
 		fIncludeBrace = includeBrace;
 	}
 
-	/*
-	 * @see ICompletionProposal#apply(IDocument)
-	 */
+	@Override
 	public void apply(IDocument document) {
 
 		try {
@@ -87,37 +85,27 @@ public class TemplateVariableProposal implements ICompletionProposal {
 		}
 	}
 
-	/*
-	 * @see ICompletionProposal#getSelection(IDocument)
-	 */
+	@Override
 	public Point getSelection(IDocument document) {
 		return fSelection;
 	}
 
-	/*
-	 * @see ICompletionProposal#getAdditionalProposalInfo()
-	 */
+	@Override
 	public String getAdditionalProposalInfo() {
 		return fResolver.getDescription();
 	}
 
-	/*
-	 * @see ICompletionProposal#getDisplayString()
-	 */
+	@Override
 	public String getDisplayString() {
 		return fResolver.getType();
 	}
 
-	/*
-	 * @see ICompletionProposal#getImage()
-	 */
+	@Override
 	public Image getImage() {
 		return null;
 	}
 
-	/*
-	 * @see ICompletionProposal#getContextInformation()
-	 */
+	@Override
 	public IContextInformation getContextInformation() {
 		return null;
 	}

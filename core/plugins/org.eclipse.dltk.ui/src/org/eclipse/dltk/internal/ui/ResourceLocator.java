@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui;
 
@@ -19,7 +18,8 @@ import org.eclipse.dltk.core.ModelException;
  * which are related to an object
  */
 public class ResourceLocator implements IResourceLocator {
-	
+
+	@Override
 	public IResource getUnderlyingResource(Object element) throws ModelException {
 		if (element instanceof IModelElement)
 			return ((IModelElement) element).getUnderlyingResource();
@@ -27,6 +27,7 @@ public class ResourceLocator implements IResourceLocator {
 			return null;
 	}
 
+	@Override
 	public IResource getCorrespondingResource(Object element) throws ModelException {
 		if (element instanceof IModelElement)
 			return ((IModelElement) element).getCorrespondingResource();
@@ -34,6 +35,7 @@ public class ResourceLocator implements IResourceLocator {
 			return null;
 	}
 
+	@Override
 	public IResource getContainingResource(Object element) throws ModelException {
 		IResource resource= null;
 		if (element instanceof IResource)

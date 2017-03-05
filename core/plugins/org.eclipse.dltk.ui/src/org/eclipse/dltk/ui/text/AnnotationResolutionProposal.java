@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -34,10 +34,12 @@ public class AnnotationResolutionProposal implements ICompletionProposal {
 		this.annotation = annotation;
 	}
 
+	@Override
 	public void apply(IDocument document) {
 		resolution.run(annotation, document);
 	}
 
+	@Override
 	public String getAdditionalProposalInfo() {
 		if (resolution instanceof IAnnotationResolution2) {
 			return ((IAnnotationResolution2) resolution).getDescription();
@@ -45,14 +47,17 @@ public class AnnotationResolutionProposal implements ICompletionProposal {
 		return annotation.getText();
 	}
 
+	@Override
 	public IContextInformation getContextInformation() {
 		return null;
 	}
 
+	@Override
 	public String getDisplayString() {
 		return resolution.getLabel();
 	}
 
+	@Override
 	public Image getImage() {
 		if (resolution instanceof IMarkerResolution2) {
 			return ((IMarkerResolution2) resolution).getImage();
@@ -60,6 +65,7 @@ public class AnnotationResolutionProposal implements ICompletionProposal {
 		return null;
 	}
 
+	@Override
 	public Point getSelection(IDocument document) {
 		return null;
 	}

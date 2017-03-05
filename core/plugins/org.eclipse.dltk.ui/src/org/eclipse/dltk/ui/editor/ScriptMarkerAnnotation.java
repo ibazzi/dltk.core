@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
-
 package org.eclipse.dltk.ui.editor;
 
 
@@ -37,9 +35,7 @@ public class ScriptMarkerAnnotation extends MarkerAnnotation implements IScriptA
 		super(marker);
 	}
 
-	/*
-	 * @see IJavaAnnotation#getArguments()
-	 */
+	@Override
 	public String[] getArguments() {
 		IMarker marker= getMarker();
 		if (marker != null && marker.exists() && isProblem())
@@ -47,9 +43,7 @@ public class ScriptMarkerAnnotation extends MarkerAnnotation implements IScriptA
 		return null;
 	}
 
-	/*
-	 * @see IJavaAnnotation#getId()
-	 */
+	@Override
 	public IProblemIdentifier getId() {
 		IMarker marker= getMarker();
 		if (marker == null  || !marker.exists())
@@ -71,9 +65,7 @@ public class ScriptMarkerAnnotation extends MarkerAnnotation implements IScriptA
 		return null;
 	}
 
-	/*
-	 * @see IJavaAnnotation#isProblem()
-	 */
+	@Override
 	public boolean isProblem() {
 		String type= getType();
 		return WARNING_ANNOTATION_TYPE.equals(type) || ERROR_ANNOTATION_TYPE.equals(type);
@@ -96,45 +88,33 @@ public class ScriptMarkerAnnotation extends MarkerAnnotation implements IScriptA
 			fOverlay.addOverlaid(this);
 	}
 
-	/*
-	 * @see IJavaAnnotation#hasOverlay()
-	 */
+	@Override
 	public boolean hasOverlay() {
 		return fOverlay != null;
 	}
 
-	/*
-	 * @see org.eclipse.jdt.internal.ui.javaeditor.IJavaAnnotation#getOverlay()
-	 */
+	@Override
 	public IScriptAnnotation getOverlay() {
 		return fOverlay;
 	}
 
-	/*
-	 * @see IJavaAnnotation#addOverlaid(IJavaAnnotation)
-	 */
+	@Override
 	public void addOverlaid(IScriptAnnotation annotation) {
 		// not supported
 	}
 
-	/*
-	 * @see IJavaAnnotation#removeOverlaid(IJavaAnnotation)
-	 */
+	@Override
 	public void removeOverlaid(IScriptAnnotation annotation) {
 		// not supported
 	}
 
-	/*
-	 * @see IJavaAnnotation#getOverlaidIterator()
-	 */
+	@Override
 	public Iterator getOverlaidIterator() {
 		// not supported
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.ui.javaeditor.IJavaAnnotation#getCompilationUnit()
-	 */
+	@Override
 	public ISourceModule getSourceModule() {
 		IModelElement element= DLTKCore.create(getMarker().getResource());
 		if (element instanceof ISourceModule) {
@@ -143,21 +123,21 @@ public class ScriptMarkerAnnotation extends MarkerAnnotation implements IScriptA
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.ui.javaeditor.IJavaAnnotation#getMarkerType()
-	 */
+	@Override
 	public String getMarkerType() {
 		IMarker marker= getMarker();
 		if (marker == null  || !marker.exists())
 			return null;
-		
+
 		return  MarkerUtilities.getMarkerType(getMarker());
 	}
 
+	@Override
 	public int getSourceStart() {
 		return MarkerUtilities.getCharStart(getMarker());
 	}
 
+	@Override
 	public int getSourceEnd() {
 		return MarkerUtilities.getCharEnd(getMarker());
 	}

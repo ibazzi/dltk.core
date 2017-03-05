@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.actions;
 
@@ -32,7 +31,7 @@ import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 /**
  * Finds references of the selected element in its hierarchy. The action is
  * applicable to selections representing a Script element.
- * 
+ *
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
@@ -43,7 +42,7 @@ public class FindReferencesInHierarchyAction extends FindReferencesAction {
 	 * Creates a new <code>FindReferencesInHierarchyAction</code>. The action
 	 * requires that the selection provided by the site's selection provider is
 	 * of type <code>org.eclipse.jface.viewers.IStructuredSelection</code>.
-	 * 
+	 *
 	 * @param site
 	 *            the site providing context information for this action
 	 */
@@ -51,11 +50,11 @@ public class FindReferencesInHierarchyAction extends FindReferencesAction {
 			IWorkbenchSite site) {
 		super(toolkit, site);
 	}
-	
+
 	/**
 	 * Note: This constructor is for internal use only. Clients should not call
 	 * this constructor.
-	 * 
+	 *
 	 * @param editor the Script editor
 	 */
 	public FindReferencesInHierarchyAction(IDLTKLanguageToolkit toolkit,
@@ -66,7 +65,7 @@ public class FindReferencesInHierarchyAction extends FindReferencesAction {
 	/**
 	 * Note: This constructor is for internal use only. Clients should not call
 	 * this constructor.
-	 * 
+	 *
 	 * @param editor the Script editor
 	 * @since 5.3
 	 */
@@ -75,10 +74,12 @@ public class FindReferencesInHierarchyAction extends FindReferencesAction {
 		super(toolkit, editor);
 	}
 
+	@Override
 	Class[] getValidTypes() {
 		return new Class[] { ISourceModule.class, IType.class, IMethod.class, IField.class };
 	}
 
+	@Override
 	void init() {
 		setText(SearchMessages.Search_FindHierarchyReferencesAction_label);
 		setToolTipText(SearchMessages.Search_FindHierarchyReferencesAction_tooltip);
@@ -89,6 +90,7 @@ public class FindReferencesInHierarchyAction extends FindReferencesAction {
 		}
 	}
 
+	@Override
 	QuerySpecification createQuery(IModelElement element) throws ModelException {
 		IType type = getType(element);
 		if (type == null) {

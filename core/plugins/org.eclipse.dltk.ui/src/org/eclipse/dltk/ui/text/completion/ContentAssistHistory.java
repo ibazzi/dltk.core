@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.text.completion;
 
@@ -50,10 +49,9 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-
 /**
  * An LRU cache for code assist.
- * 
+ *
  */
 public final class ContentAssistHistory {
 	/**
@@ -71,20 +69,20 @@ public final class ContentAssistHistory {
 		public void store(ContentAssistHistory history, StreamResult result) throws CoreException {
 			try {
 				DocumentBuilderFactory factory= DocumentBuilderFactory.newInstance();
-				DocumentBuilder builder= factory.newDocumentBuilder();		
+				DocumentBuilder builder= factory.newDocumentBuilder();
 				Document document= builder.newDocument();
-				
+
 				Element rootElement = document.createElement(NODE_ROOT);
 				rootElement.setAttribute(ATTRIBUTE_MAX_LHS, Integer.toString(history.fMaxLHS));
 				rootElement.setAttribute(ATTRIBUTE_MAX_RHS, Integer.toString(history.fMaxRHS));
 				document.appendChild(rootElement);
-		
+
 				for (Iterator leftHandSides= history.fLHSCache.keySet().iterator(); leftHandSides.hasNext();) {
 					String lhs= (String) leftHandSides.next();
 					Element lhsElement= document.createElement(NODE_LHS);
 					lhsElement.setAttribute(ATTRIBUTE_NAME, lhs);
 					rootElement.appendChild(lhsElement);
-					
+
 					Set rightHandSides= (Set) history.fLHSCache.get(lhs);
 					for (Iterator rhsIterator= rightHandSides.iterator(); rhsIterator.hasNext();) {
 						String rhs= (String) rhsIterator.next();
@@ -93,7 +91,7 @@ public final class ContentAssistHistory {
 						lhsElement.appendChild(rhsElement);
 					}
 				}
-				
+
 				Transformer transformer=TransformerFactory.newInstance().newTransformer();
 				transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 				transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
@@ -107,28 +105,28 @@ public final class ContentAssistHistory {
 				throw createException(e, ScriptTextMessages.ContentAssistHistory_serialize_error);
 			}
 		}
-		
+
 		public ContentAssistHistory load(InputSource source) throws CoreException {
 			Element root;
 			try {
 				DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 				root = parser.parse(source).getDocumentElement();
 			} catch (SAXException e) {
-				throw createException(e, ScriptTextMessages.ContentAssistHistory_deserialize_error);  
+				throw createException(e, ScriptTextMessages.ContentAssistHistory_deserialize_error);
 			} catch (ParserConfigurationException e) {
-				throw createException(e, ScriptTextMessages.ContentAssistHistory_deserialize_error); 
+				throw createException(e, ScriptTextMessages.ContentAssistHistory_deserialize_error);
 			} catch (IOException e) {
-				throw createException(e, ScriptTextMessages.ContentAssistHistory_deserialize_error); 
+				throw createException(e, ScriptTextMessages.ContentAssistHistory_deserialize_error);
 			}
-			
+
 			if (root == null || !root.getNodeName().equalsIgnoreCase(NODE_ROOT))
 				return null;
-			
+
 			int maxLHS= parseNaturalInt(root.getAttribute(ATTRIBUTE_MAX_LHS), DEFAULT_TRACKED_LHS);
 			int maxRHS= parseNaturalInt(root.getAttribute(ATTRIBUTE_MAX_RHS), DEFAULT_TRACKED_RHS);
-			
+
 			ContentAssistHistory history= new ContentAssistHistory(maxLHS, maxRHS);
-			
+
 			NodeList list= root.getChildNodes();
 			int length= list.getLength();
 			for (int i= 0; i < length; ++i) {
@@ -157,7 +155,7 @@ public final class ContentAssistHistory {
 					}
 				}
 			}
-			
+
 			return history;
 		}
 
@@ -181,92 +179,86 @@ public final class ContentAssistHistory {
 	 * Most recently used variant with capped size that only counts
 	 * {@linkplain #put(Object, Object) put} as access. This is implemented by always removing an
 	 * element before it gets put back.
-	 * 
+	 *
 	 *
 	 */
 	private static final class MRUMap extends LinkedHashMap {
 		private static final long serialVersionUID= 1L;
 		private final int fMaxSize;
-		
+
 		/**
 		 * Creates a new <code>MRUMap</code> with the given size.
-		 * 
+		 *
 		 * @param maxSize the maximum size of the cache, must be &gt; 0
 		 */
 		public MRUMap(int maxSize) {
 			Assert.isLegal(maxSize > 0);
 			fMaxSize= maxSize;
 		}
-		
-		/*
-		 * @see java.util.HashMap#put(java.lang.Object, java.lang.Object)
-		 */
+
+		@Override
 		public Object put(Object key, Object value) {
 			Object object= remove(key);
 			super.put(key, value);
 			return object;
 		}
-		
-		/*
-		 * @see java.util.LinkedHashMap#removeEldestEntry(java.util.Map.Entry)
-		 */
+
+		@Override
 		protected boolean removeEldestEntry(Entry eldest) {
 			return size() > fMaxSize;
 		}
 	}
-	
+
 	/**
 	 * Most recently used variant with capped size that orders the elements by addition.
 	 * This is implemented by always removing an element before it gets added back.
-	 * 
+	 *
 	 *
 	 */
 	private static final class MRUSet extends LinkedHashSet {
 		private static final long serialVersionUID= 1L;
 		private final int fMaxSize;
-		
+
 		/**
 		 * Creates a new <code>MRUSet</code> with the given size.
-		 * 
+		 *
 		 * @param maxSize the maximum size of the cache, must be &gt; 0
 		 */
 		public MRUSet(int maxSize) {
 			Assert.isLegal(maxSize > 0);
 			fMaxSize= maxSize;
 		}
-		
-		/*
-		 * @see java.util.HashSet#add(java.lang.Object)
-		 */
+
+		@Override
 		public boolean add(Object o) {
 			if (remove(o)) {
 				super.add(o);
 				return false;
 			}
-				
+
 			if (size() >= fMaxSize)
 				remove(this.iterator().next());
-			
+
 			super.add(o);
 			return true;
 		}
 	}
-	
+
 	/**
 	 * A ranking of the most recently selected types.
 	 */
 	public static final class RHSHistory {
 		private final LinkedHashMap fHistory;
 		private List fList;
-		
+
 		RHSHistory(LinkedHashMap history) {
 			fHistory= history;
 		}
-		
+
 		/**
 		 * Returns the rank of a type in the history in [0.0,&nbsp;1.0]. The rank of the most
 		 * recently selected type is 1.0, the rank of any type that is not remembered is zero.
-		 * 
+		 *
 		 * @param type the fully qualified type name to get the rank for
 		 * @return the rank of <code>type</code>
 		 */
@@ -276,20 +268,20 @@ public final class ContentAssistHistory {
 			Integer integer= (Integer) fHistory.get(type);
 			return integer == null ? 0.0F : integer.floatValue() / fHistory.size();
 		}
-		
+
 		/**
 		 * Returns the size of the history.
-		 * 
+		 *
 		 * @return the size of the history
 		 */
 		public int size() {
 			return fHistory == null ? 0 : fHistory.size();
 		}
-		
+
 		/**
 		 * Returns the list of remembered types ordered by recency. The first element is the
 		 * <i>least</i>, the last element the <i>most</i> recently remembered type.
-		 * 
+		 *
 		 * @return the list of remembered types as fully qualified type names (element type:
 		 *         {@link String})
 		 */
@@ -302,11 +294,11 @@ public final class ContentAssistHistory {
 			return fList;
 		}
 	}
-	
+
 	private static final RHSHistory EMPTY_HISTORY= new RHSHistory(null);
 	private static final int DEFAULT_TRACKED_LHS= 100;
 	private static final int DEFAULT_TRACKED_RHS= 10;
-	
+
 //	private static final Set UNCACHEABLE;
 	static {
 //		Set uncacheable= new HashSet();
@@ -316,14 +308,14 @@ public final class ContentAssistHistory {
 //		uncacheable.add("java.io.Externalizable"); //$NON-NLS-1$
 //		UNCACHEABLE= Collections.unmodifiableSet(uncacheable);
 	}
-	
+
 	private final LinkedHashMap/*<IType, MRUSet<IType>>*/ fLHSCache;
 	private final int fMaxLHS;
 	private final int fMaxRHS;
-	
+
 	/**
 	 * Creates a new history.
-	 * 
+	 *
 	 * @param maxLHS the maximum number of tracked left hand sides (&gt; 0)
 	 * @param maxRHS the maximum number of tracked right hand sides per left hand side(&gt; 0)
 	 */
@@ -334,7 +326,7 @@ public final class ContentAssistHistory {
 		fMaxRHS= maxRHS;
 		fLHSCache= new MRUMap(fMaxLHS);
 	}
-	
+
 	/**
 	 * Creates a new history, equivalent to
 	 * <code>ContentAssistHistory({@value #DEFAULT_TRACKED_LHS}, {@value #DEFAULT_TRACKED_RHS})</code>.
@@ -342,18 +334,18 @@ public final class ContentAssistHistory {
 	public ContentAssistHistory() {
 		this(DEFAULT_TRACKED_LHS, DEFAULT_TRACKED_RHS);
 	}
-	
+
 	/**
 	 * Remembers the selection of a right hand side type (proposal type) for a certain left hand side (expected
 	 * type) in content assist.
-	 * 
+	 *
 	 * @param lhs the left hand side / expected type
 	 * @param rhs the selected right hand side
 	 */
 	public void remember(IType lhs, IType rhs) {
 		Assert.isLegal(lhs != null);
 		Assert.isLegal(rhs != null);
-		
+
 		try {
 			if (!isCacheableRHS(rhs))
 				return;
@@ -369,11 +361,11 @@ public final class ContentAssistHistory {
 			DLTKUIPlugin.log(x);
 		}
 	}
-	
+
 	/**
 	 * Returns the {@link RHSHistory history} of the types that have been selected most recently as
 	 * right hand sides for the given type.
-	 * 
+	 *
 	 * @param lhs the fully qualified type name of an expected type for which right hand sides are
 	 *        requested, or <code>null</code>
 	 * @return the right hand side history for the given type
@@ -392,11 +384,11 @@ public final class ContentAssistHistory {
 		}
 		return EMPTY_HISTORY;
 	}
-	
+
 	/**
 	 * Returns a read-only map from {@link IType} to {@link RHSHistory}, where each value is the
 	 * history for the key type (see {@link #getHistory(String)}.
-	 * 
+	 *
 	 * @return the set of remembered right hand sides ordered by least recent selection
 	 */
 	public Map getEntireHistory() {
@@ -408,7 +400,7 @@ public final class ContentAssistHistory {
 		}
 		return Collections.unmodifiableMap(map);
 	}
-	
+
 //	private void rememberInternal(IType lhs, IType rhs) throws ModelException {
 //		if (isCacheableLHS(lhs))
 //			getCache(lhs.getFullyQualifiedName()).add(rhs.getFullyQualifiedName());
@@ -417,7 +409,7 @@ public final class ContentAssistHistory {
 //	private boolean isCacheableLHS(IType type) throws ModelException {
 //		return !UNCACHEABLE.contains(type.getFullyQualifiedName());
 //	}
-	
+
 	private boolean isCacheableRHS(IType type) throws ModelException {
 		if (DLTKCore.DEBUG) {
 			System.err.println("isCachableRHS always return true..."); //$NON-NLS-1$
@@ -431,13 +423,13 @@ public final class ContentAssistHistory {
 			rhsCache= new MRUSet(fMaxRHS);
 			fLHSCache.put(lhs, rhsCache);
 		}
-		
+
 		return rhsCache;
 	}
-	
+
 	/**
 	 * Stores the history as XML document into the given preferences.
-	 * 
+	 *
 	 * @param history the history to store
 	 * @param preferences the preferences to store the history into
 	 * @param key the key under which to store the history
@@ -449,10 +441,10 @@ public final class ContentAssistHistory {
 		new ReaderWriter().store(history, new StreamResult(writer));
 		preferences.setValue(key, writer.toString());
 	}
-	
+
 	/**
 	 * Loads a history from an XML encoded preference value.
-	 * 
+	 *
 	 * @param preferences the preferences to retrieve the history from
 	 * @param key the key under which the history is stored
 	 * @return the deserialized history, or <code>null</code> if there is nothing stored under the

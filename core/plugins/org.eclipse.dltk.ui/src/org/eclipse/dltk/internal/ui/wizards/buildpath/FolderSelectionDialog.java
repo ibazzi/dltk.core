@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.wizards.buildpath;
 
@@ -31,9 +30,6 @@ import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.NewFolderDialog;
 import org.eclipse.ui.views.navigator.ResourceComparator;
 
-
-/**
-  */
 public class FolderSelectionDialog extends ElementTreeSelectionDialog implements ISelectionChangedListener {
 
 	private Button fNewFolderButton;
@@ -44,30 +40,29 @@ public class FolderSelectionDialog extends ElementTreeSelectionDialog implements
 		setComparator(new ResourceComparator(ResourceComparator.NAME));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite result= (Composite)super.createDialogArea(parent);
-		
+
 		getTreeViewer().addSelectionChangedListener(this);
-		
+
 		Button button = new Button(result, SWT.PUSH);
-		button.setText(NewWizardMessages.FolderSelectionDialog_button); 
+		button.setText(NewWizardMessages.FolderSelectionDialog_button);
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				newFolderButtonPressed();
 			}
 		});
 		button.setFont(parent.getFont());
 		fNewFolderButton= button;
-		
+
 		applyDialogFont(result);
 		if (DLTKCore.DEBUG) {
 			System.err.println("FolderSelectionDialog: Add help support"); //$NON-NLS-1$
 		}
 //		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDLTKHelpContextIds.BP_SELECT_DEFAULT_OUTPUT_FOLDER_DIALOG);
-		
+
 		return result;
 	}
 
@@ -81,12 +76,13 @@ public class FolderSelectionDialog extends ElementTreeSelectionDialog implements
 			}
 		}
 		fNewFolderButton.setEnabled(fSelectedContainer != null);
-	}	
-	
+	}
+
 	protected void newFolderButtonPressed() {
 		NewFolderDialog dialog= new NewFolderDialog(getShell(), fSelectedContainer) {
+			@Override
 			protected Control createContents(Composite parent) {
-				//PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDLTKHelpContextIds.BP_CREATE_NEW_FOLDER);				
+				//PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDLTKHelpContextIds.BP_CREATE_NEW_FOLDER);
 				if (DLTKCore.DEBUG) {
 					System.err.println("FolderSelectionDialog: Add help support"); //$NON-NLS-1$
 				}
@@ -101,14 +97,10 @@ public class FolderSelectionDialog extends ElementTreeSelectionDialog implements
 			treeViewer.setSelection(new StructuredSelection(createdFolder));
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-	 */
+
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		updateNewFolderButtonState();
 	}
-	
-
 
 }

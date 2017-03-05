@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.wizards;
 
@@ -134,21 +133,19 @@ public abstract class NewSourceModuleWizard extends NewElementWizard implements
 	}
 
 	protected void openSourceModule(final ISourceModule module) {
-		Display.getDefault().asyncExec(new Runnable() {
-			public void run() {
-				try {
-					EditorUtility.openInEditor(module);
-				} catch (PartInitException e) {
-					final String msg = NLS.bind(
-							Messages.NewSourceModuleWizard_errorInOpenInEditor,
-							module.getElementName());
-					DLTKUIPlugin.logErrorMessage(msg, e);
-				} catch (ModelException e) {
-					final String msg = NLS.bind(
-							Messages.NewSourceModuleWizard_errorInOpenInEditor,
-							module.getElementName());
-					DLTKUIPlugin.logErrorMessage(msg, e);
-				}
+		Display.getDefault().asyncExec(() -> {
+			try {
+				EditorUtility.openInEditor(module);
+			} catch (PartInitException e1) {
+				final String msg1 = NLS.bind(
+						Messages.NewSourceModuleWizard_errorInOpenInEditor,
+						module.getElementName());
+				DLTKUIPlugin.logErrorMessage(msg1, e1);
+			} catch (ModelException e2) {
+				final String msg2 = NLS.bind(
+						Messages.NewSourceModuleWizard_errorInOpenInEditor,
+						module.getElementName());
+				DLTKUIPlugin.logErrorMessage(msg2, e2);
 			}
 		});
 	}
@@ -156,6 +153,7 @@ public abstract class NewSourceModuleWizard extends NewElementWizard implements
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public IEnvironment getEnvironment() {
 		return EnvironmentManager.getEnvironment(getProject());
 	}
@@ -163,6 +161,7 @@ public abstract class NewSourceModuleWizard extends NewElementWizard implements
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public IProject getProject() {
 		return getFolder().getScriptProject().getProject();
 	}
@@ -170,6 +169,7 @@ public abstract class NewSourceModuleWizard extends NewElementWizard implements
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public IScriptFolder getFolder() {
 		return page.getScriptFolder();
 	}
@@ -177,6 +177,7 @@ public abstract class NewSourceModuleWizard extends NewElementWizard implements
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public String getFileName() {
 		return page.getFileName();
 	}
@@ -184,6 +185,7 @@ public abstract class NewSourceModuleWizard extends NewElementWizard implements
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public void validate() {
 		page.handleFieldChanged(NewSourceModulePage.EXTENSIONS);
 	}
@@ -195,6 +197,7 @@ public abstract class NewSourceModuleWizard extends NewElementWizard implements
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public String getMode() {
 		if (!created) {
 			return mode;
@@ -206,6 +209,7 @@ public abstract class NewSourceModuleWizard extends NewElementWizard implements
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public void setMode(String mode) {
 		if (!created) {
 			this.mode = mode;
@@ -217,6 +221,7 @@ public abstract class NewSourceModuleWizard extends NewElementWizard implements
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public void enableMode(String mode, boolean enable) {
 		if (!created) {
 			if (enable) {
@@ -246,6 +251,7 @@ public abstract class NewSourceModuleWizard extends NewElementWizard implements
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public void addFieldChangeListener(String field,
 			IFieldChangeListener listener) {
 		if (listeners == null) {
@@ -262,6 +268,7 @@ public abstract class NewSourceModuleWizard extends NewElementWizard implements
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public void removeFieldChangeListener(String field,
 			IFieldChangeListener listener) {
 		if (listeners != null) {

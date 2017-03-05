@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.eclipse.dltk.ui.preferences.ImprovedAbstractConfigurationBlock;
 import org.eclipse.dltk.ui.preferences.OverlayPreferenceStore;
-import org.eclipse.dltk.ui.preferences.PreferencesMessages;
 import org.eclipse.dltk.ui.preferences.OverlayPreferenceStore.OverlayKey;
+import org.eclipse.dltk.ui.preferences.PreferencesMessages;
 import org.eclipse.dltk.ui.util.SWTFactory;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.layout.GridData;
@@ -27,6 +27,7 @@ public abstract class AbstractContributedFoldingPreferenceBlock extends
 		super(store, page);
 	}
 
+	@Override
 	public Control createControl(Composite parent) {
 		Composite composite = SWTFactory.createComposite(parent, parent
 				.getFont(), 1, 1, GridData.FILL);
@@ -46,7 +47,7 @@ public abstract class AbstractContributedFoldingPreferenceBlock extends
 
 	/**
 	 * Create language specific folding options
-	 * 
+	 *
 	 * @param composite
 	 *            composite the option controls should be added to
 	 */
@@ -55,7 +56,7 @@ public abstract class AbstractContributedFoldingPreferenceBlock extends
 	/**
 	 * Adds the checkboxes that will be used to control 'initially fold'
 	 * options.
-	 * 
+	 *
 	 * @param group
 	 *            composite the checkboxes will be added to
 	 */
@@ -66,6 +67,7 @@ public abstract class AbstractContributedFoldingPreferenceBlock extends
 	 */
 	protected abstract void addOverlayKeys(List<OverlayKey> keys);
 
+	@Override
 	protected final List<OverlayKey> createOverlayKeys() {
 		ArrayList<OverlayKey> keys = new ArrayList<OverlayKey>();
 		addOverlayKeys(keys);
@@ -74,7 +76,7 @@ public abstract class AbstractContributedFoldingPreferenceBlock extends
 
 	/**
 	 * Convienence method to create and bind a checkbox control
-	 * 
+	 *
 	 * @param parent
 	 *            parent composite
 	 * @param text
@@ -90,7 +92,7 @@ public abstract class AbstractContributedFoldingPreferenceBlock extends
 
 	/**
 	 * Convienence method to create and bind a radio button control
-	 * 
+	 *
 	 * @param parent
 	 *            parent composite
 	 * @param text

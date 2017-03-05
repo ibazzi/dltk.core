@@ -34,9 +34,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
-/**
- * 
- */
 public class ConfigureBuildPathAction extends Action implements
 		ISelectionChangedListener {
 
@@ -56,6 +53,7 @@ public class ConfigureBuildPathAction extends Action implements
 		return fSite.getShell();
 	}
 
+	@Override
 	public void run() {
 		if (fProject != null) {
 			// TODO retrieve the page id via project nature
@@ -79,9 +77,7 @@ public class ConfigureBuildPathAction extends Action implements
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void selectionChanged(final SelectionChangedEvent event) {
 		final ISelection selection = event.getSelection();
 		if (selection instanceof IStructuredSelection) {

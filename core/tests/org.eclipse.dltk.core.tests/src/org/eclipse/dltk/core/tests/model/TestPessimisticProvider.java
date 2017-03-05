@@ -1,22 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.core.tests.model;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFileModificationValidator;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.RepositoryProvider;
@@ -59,15 +56,12 @@ public class TestPessimisticProvider extends RepositoryProvider implements IFile
 		if (markWritableOnEdit) {
 			try {
 				ResourcesPlugin.getWorkspace().run(
-					new IWorkspaceRunnable() {
-						@Override
-						public void run(IProgressMonitor monitor)	{
-							for (int i = 0, length = files.length; i < length; i++) {
-								try {
-									setReadOnly(files[i], false);
-								} catch (CoreException e) {
-									e.printStackTrace();
-								}
+					monitor -> {
+						for (int i = 0, length = files.length; i < length; i++) {
+							try {
+								setReadOnly(files[i], false);
+							} catch (CoreException e) {
+								e.printStackTrace();
 							}
 						}
 					},

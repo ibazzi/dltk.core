@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,6 +70,7 @@ public class OpenMethodHistory extends History {
 	}
 
 	private class MethodHistoryDeltaListener implements IElementChangedListener {
+		@Override
 		public void elementChanged(ElementChangedEvent event) {
 			if (processDelta(event.getDelta())) {
 				markAsInconsistent();
@@ -78,10 +79,10 @@ public class OpenMethodHistory extends History {
 
 		/**
 		 * Computes whether the history needs a consistency check or not.
-		 * 
+		 *
 		 * @param delta
 		 *            the Java element delta
-		 * 
+		 *
 		 * @return <code>true</code> if consistency must be checked
 		 *         <code>false</code> otherwise.
 		 */
@@ -166,12 +167,14 @@ public class OpenMethodHistory extends History {
 			super(CorextMessages.MethodInfoHistory_consistency_check);
 		}
 
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			internalCheckConsistency(monitor);
 			return new Status(IStatus.OK, DLTKUIPlugin.getPluginId(),
 					IStatus.OK, "", null); //$NON-NLS-1$
 		}
 
+		@Override
 		public boolean belongsTo(Object family) {
 			return FAMILY.equals(family);
 		}
@@ -298,6 +301,7 @@ public class OpenMethodHistory extends History {
 
 	}
 
+	@Override
 	protected Object getKey(Object object) {
 		return object;
 	}
@@ -400,6 +404,7 @@ public class OpenMethodHistory extends History {
 		save();
 	}
 
+	@Override
 	protected Object createFromElement(Element type) {
 		String handle = type.getAttribute(NODE_HANDLE);
 		if (handle == null)
@@ -432,6 +437,7 @@ public class OpenMethodHistory extends History {
 		return info;
 	}
 
+	@Override
 	protected void setAttributes(Object object, Element typeElement) {
 		MethodNameMatch method = (MethodNameMatch) object;
 		String handleId = method.getMethod().getHandleIdentifier();

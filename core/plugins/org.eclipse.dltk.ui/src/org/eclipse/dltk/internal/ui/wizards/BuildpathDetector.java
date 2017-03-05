@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
-import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -53,6 +52,7 @@ public class BuildpathDetector implements IBuildpathDetector {
 	private static class BPSorter implements Comparator<IBuildpathEntry> {
 		private Collator fCollator = Collator.getInstance();
 
+		@Override
 		public int compare(IBuildpathEntry e1, IBuildpathEntry e2) {
 			return fCollator.compare(e1.getPath().toString(), e2.getPath()
 					.toString());
@@ -80,11 +80,12 @@ public class BuildpathDetector implements IBuildpathDetector {
 
 	/**
 	 * Method detectBuildpath.
-	 * 
+	 *
 	 * @param monitor
 	 *            The progress monitor (not null)
 	 * @throws CoreException
 	 */
+	@Override
 	public void detectBuildpath(IProgressMonitor monitor) throws CoreException {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
@@ -94,11 +95,7 @@ public class BuildpathDetector implements IBuildpathDetector {
 					120);
 			fMonitor = monitor;
 			final List<IFile> correctFiles = new ArrayList<IFile>();
-			fProject.accept(new IResourceProxyVisitor() {
-				public boolean visit(IResourceProxy proxy) throws CoreException {
-					return BuildpathDetector.this.visit(proxy, correctFiles);
-				}
-			}, IResource.NONE);
+			fProject.accept(proxy -> BuildpathDetector.this.visit(proxy, correctFiles), IResource.NONE);
 			monitor.worked(10);
 			SubProgressMonitor sub = new SubProgressMonitor(monitor, 80);
 			processSources(correctFiles, sub);
@@ -229,13 +226,6 @@ public class BuildpathDetector implements IBuildpathDetector {
 		return name.endsWith(ext) && (ext.length() != name.length());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.core.resources.IResourceProxyVisitor#visit(org.eclipse.core
-	 * .resources.IResourceProxy)
-	 */
 	public boolean visit(IResourceProxy proxy, List<IFile> files) {
 		if (fMonitor.isCanceled()) {
 			throw new OperationCanceledException();
@@ -265,6 +255,7 @@ public class BuildpathDetector implements IBuildpathDetector {
 		return false;
 	}
 
+	@Override
 	public IBuildpathEntry[] getBuildpath() {
 		return fResultBuildpath;
 	}

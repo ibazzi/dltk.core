@@ -15,8 +15,6 @@ import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.core.SimpleDLTKExtensionManager;
 import org.eclipse.dltk.core.SimpleDLTKExtensionManager.ElementInfo;
 import org.eclipse.dltk.debug.core.eval.IScriptEvaluationCommand;
-import org.eclipse.dltk.debug.core.eval.IScriptEvaluationListener;
-import org.eclipse.dltk.debug.core.eval.IScriptEvaluationResult;
 import org.eclipse.dltk.debug.core.model.IScriptStackFrame;
 import org.eclipse.dltk.debug.core.model.IScriptThread;
 import org.eclipse.dltk.debug.core.model.IScriptValue;
@@ -42,9 +40,9 @@ public class ScriptDetailFormattersManager implements IPropertyChangeListener {
 
 	/**
 	 * Return the default detail formatters manager.
-	 * 
+	 *
 	 * @param natureId
-	 * 
+	 *
 	 * @return default detail formatters manager.
 	 */
 	static public ScriptDetailFormattersManager getDefault(String natureId) {
@@ -117,24 +115,22 @@ public class ScriptDetailFormattersManager implements IPropertyChangeListener {
 			listener.detailComputed(value, getValueText(value));
 			return;
 		}
-		command.asyncEvaluate(new IScriptEvaluationListener() {
-			public void evaluationComplete(IScriptEvaluationResult result) {
-				if (result == null)
-					return;
+		command.asyncEvaluate(result -> {
+			if (result == null)
+				return;
 
-				IScriptValue resultValue = result.getValue();
-				if (resultValue != null) {
-					listener.detailComputed(value, getValueText(resultValue));
-				} else {
-					try {
-						listener.detailComputed(value,
-								value.getValueString()/* CANNOT_EVALUATE */);
-					} catch (DebugException e) {
-						if (DLTKCore.DEBUG) {
-							e.printStackTrace();
-						}
-						listener.detailComputed(value, CANNOT_EVALUATE);
+			IScriptValue resultValue = result.getValue();
+			if (resultValue != null) {
+				listener.detailComputed(value, getValueText(resultValue));
+			} else {
+				try {
+					listener.detailComputed(value,
+							value.getValueString()/* CANNOT_EVALUATE */);
+				} catch (DebugException e) {
+					if (DLTKCore.DEBUG) {
+						e.printStackTrace();
 					}
+					listener.detailComputed(value, CANNOT_EVALUATE);
 				}
 			}
 		});
@@ -164,6 +160,7 @@ public class ScriptDetailFormattersManager implements IPropertyChangeListener {
 		formatters.remove(formatter.getTypeName());
 	}
 
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		String property = event.getProperty();
 		if (handlesPropertyEvent(property)) {

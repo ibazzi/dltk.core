@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,7 @@ import org.eclipse.ui.part.ISetSelectionTarget;
 
 
 public class RenameUserInterfaceStarter extends UserInterfaceStarter {
-	
+
 	private static class SelectionState {
 		private Display fDisplay;
 		private Object fElement;
@@ -121,11 +121,8 @@ public class RenameUserInterfaceStarter extends UserInterfaceStarter {
 					}
 				}
 				if (changed) {
-					fDisplay.asyncExec(new Runnable() {
-						public void run() {
-							target.selectReveal(newSelection[0]);
-						}
-					});
+					fDisplay.asyncExec(
+							() -> target.selectReveal(newSelection[0]));
 				}
 			}
 		}
@@ -140,7 +137,8 @@ public class RenameUserInterfaceStarter extends UserInterfaceStarter {
 			return new TreePath(newObjects);
 		}
 	}
-	
+
+	@Override
 	public void activate(Refactoring refactoring, Shell parent, boolean save) throws CoreException {
 		RenameProcessor processor= (RenameProcessor)refactoring.getAdapter(RenameProcessor.class);
 		Object[] elements= processor.getElements();
@@ -151,7 +149,7 @@ public class RenameUserInterfaceStarter extends UserInterfaceStarter {
 			Object newElement= nameUpdating.getNewElement();
 			if (newElement != null) {
 				state.restore(newElement);
-			}			
+			}
 		}
 	}
 }

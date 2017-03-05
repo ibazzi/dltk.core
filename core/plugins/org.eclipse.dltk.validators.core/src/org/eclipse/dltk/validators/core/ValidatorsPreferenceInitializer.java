@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 xored software, Inc.
+ * Copyright (c) 2009, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -15,13 +15,12 @@ import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.dltk.compiler.util.Util;
 import org.eclipse.dltk.validators.internal.core.ValidatorsCore;
 
-public class ValidatorsPreferenceInitializer extends
-		AbstractPreferenceInitializer {
+public class ValidatorsPreferenceInitializer extends AbstractPreferenceInitializer {
 
 	@Override
 	public void initializeDefaultPreferences() {
-		ValidatorsCore.getDefault().getPluginPreferences().setDefault(
-				ValidatorRuntime.PREF_CONFIGURATION, Util.EMPTY_STRING);
+		ValidatorsCore.getDefault().getPluginPreferences().setDefault(ValidatorRuntime.PREF_CONFIGURATION,
+				Util.EMPTY_STRING);
 	}
 
 }

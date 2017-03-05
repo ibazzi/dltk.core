@@ -8,6 +8,8 @@ import org.eclipse.ui.IActionFilter;
 public class ModelElementActionFilterAdapter implements IActionFilter {
 	private final static String ACTION_FILTER_TESTER = "org.eclipse.dltk.ui.actionFilterTester"; //$NON-NLS-1$
 	private static IdBasedExtensionManager actionFilterTesters = new IdBasedExtensionManager(ACTION_FILTER_TESTER);
+
+	@Override
 	public boolean testAttribute(Object target, String name, String value) {
 		try {
 			IActionFilterTester tester = actionFilterTesters.getObject(name);

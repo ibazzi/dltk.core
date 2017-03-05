@@ -26,9 +26,11 @@ public abstract class ExternalCheckerGenericHyperlink implements IHyperlink {
 		this.fConsole = console;
 	}
 
+	@Override
 	public void linkEntered() {
 	}
 
+	@Override
 	public void linkExited() {
 	}
 
@@ -38,7 +40,7 @@ public abstract class ExternalCheckerGenericHyperlink implements IHyperlink {
 
 	/**
 	 * Returns this link's text
-	 * 
+	 *
 	 * @exception CoreException
 	 *                if unable to retrieve the text
 	 */
@@ -63,6 +65,7 @@ public abstract class ExternalCheckerGenericHyperlink implements IHyperlink {
 
 	protected abstract int getLineNumber();
 
+	@Override
 	public void linkActivated() {
 		try {
 			String fileName;
@@ -72,7 +75,7 @@ public abstract class ExternalCheckerGenericHyperlink implements IHyperlink {
 				fileName = getFileName();
 				lineNumber = getLineNumber();
 			} catch (CoreException e1) {
-				return;      
+				return;
 			}
 
 			// documents start at 0
@@ -82,19 +85,16 @@ public abstract class ExternalCheckerGenericHyperlink implements IHyperlink {
 			Object sourceElement = getSourceModule(fileName);
 			if (sourceElement != null) {
 				IEditorPart part = EditorUtility.openInEditor(sourceElement);
-				IEditorPart editorPart = EditorUtility
-						.openInEditor(sourceElement);
+				IEditorPart editorPart = EditorUtility.openInEditor(sourceElement);
 				if (editorPart instanceof ITextEditor && lineNumber >= 0) {
 					ITextEditor textEditor = (ITextEditor) editorPart;
-					IDocumentProvider provider = textEditor
-							.getDocumentProvider();
+					IDocumentProvider provider = textEditor.getDocumentProvider();
 					IEditorInput input = part.getEditorInput();
 					provider.connect(input);
 					IDocument document = provider.getDocument(input);
 					try {
 						IRegion line = document.getLineInformation(lineNumber);
-						textEditor.selectAndReveal(line.getOffset(), line
-								.getLength());
+						textEditor.selectAndReveal(line.getOffset(), line.getLength());
 					} catch (BadLocationException e) {
 
 					}
@@ -110,8 +110,7 @@ public abstract class ExternalCheckerGenericHyperlink implements IHyperlink {
 
 	public String getEditorId(IEditorInput input, Object inputObject) {
 		try {
-			IEditorDescriptor descriptor = IDE.getEditorDescriptor(input
-					.getName());
+			IEditorDescriptor descriptor = IDE.getEditorDescriptor(input.getName());
 			return descriptor.getId();
 		} catch (PartInitException e) {
 			return null;
@@ -119,8 +118,7 @@ public abstract class ExternalCheckerGenericHyperlink implements IHyperlink {
 	}
 
 	protected Object getSourceModule(String fileName) throws CoreException {
-		IFile f = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(
-				new Path(fileName));
+		IFile f = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(new Path(fileName));
 		return f;
 	}
 

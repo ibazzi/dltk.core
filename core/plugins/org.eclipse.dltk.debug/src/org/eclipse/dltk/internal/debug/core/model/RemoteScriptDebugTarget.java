@@ -40,6 +40,7 @@ public class RemoteScriptDebugTarget extends ScriptDebugTarget {
 		super(modelId, dbgpService, sessionId, launch, process, options);
 	}
 
+	@Override
 	protected IScriptBreakpointPathMapper createPathMapper() {
 		String remoteWorkingDir = null;
 		boolean stripSrcFolders = false;
@@ -53,9 +54,8 @@ public class RemoteScriptDebugTarget extends ScriptDebugTarget {
 		}
 
 		try {
-			stripSrcFolders = getLaunch().getLaunchConfiguration()
-					.getAttribute(LAUNCH_CONFIGURATION_ATTR_STRIP_SRC_FOLDERS,
-							false);
+			stripSrcFolders = getLaunch().getLaunchConfiguration().getAttribute(
+					LAUNCH_CONFIGURATION_ATTR_STRIP_SRC_FOLDERS, false);
 		} catch (CoreException e) {
 			DLTKDebugPlugin.log(e);
 		}

@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.corext.refactoring.rename;
 
@@ -22,8 +21,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.dltk.core.DLTKCore;
-import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.IProjectFragment;
+import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.internal.corext.refactoring.RefactoringAvailabilityTester;
 import org.eclipse.dltk.internal.corext.refactoring.RefactoringCoreMessages;
 import org.eclipse.dltk.internal.corext.refactoring.ScriptRefactoringArguments;
@@ -43,11 +42,11 @@ import org.eclipse.ltk.core.refactoring.participants.RenameArguments;
 
 
 public class RenameSourceFolderProcessor extends ScriptRenameProcessor {
-	
+
 	private static final String ID_RENAME_SOURCE_FOLDER= "org.eclipse.dltk.ui.rename.source.folder"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_PATH= "path"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_NAME= "name"; //$NON-NLS-1$
-	
+
 	private IProjectFragment fSourceFolder;
 
 	public static final String IDENTIFIER= "org.eclipse.dltk.ui.renameSourceFolderProcessor"; //$NON-NLS-1$
@@ -62,99 +61,112 @@ public class RenameSourceFolderProcessor extends ScriptRenameProcessor {
 			setNewElementName(root.getElementName());
 	}
 
+	@Override
 	public String getIdentifier() {
 		return IDENTIFIER;
 	}
-	
+
+	@Override
 	public boolean isApplicable() throws CoreException {
 		return RefactoringAvailabilityTester.isRenameAvailable(fSourceFolder);
 	}
-	
+
+	@Override
 	public String getProcessorName() {
 		return RefactoringCoreMessages.RenameSourceFolderRefactoring_rename;
 	}
-	
+
+	@Override
 	protected String[] getAffectedProjectNatures() throws CoreException {
 		return ScriptProcessors.computeAffectedNatures(fSourceFolder);
 	}
-	
+
+	@Override
 	public Object[] getElements() {
 		return new Object[] {fSourceFolder};
 	}
 
+	@Override
 	public Object getNewElement() throws CoreException {
 		IProjectFragment[] roots= fSourceFolder.getScriptProject().getProjectFragments();
 		for (int i= 0; i < roots.length; i++) {
 			if (roots[i].getElementName().equals(getNewElementName()))
-				return roots[i];	
+				return roots[i];
 		}
 		return null;
 	}
-	
+
+	@Override
 	protected RenameModifications computeRenameModifications() throws CoreException {
 		RenameModifications result= new RenameModifications();
 		result.rename(fSourceFolder, new RenameArguments(getNewElementName(), getUpdateReferences()));
 		return result;
 	}
-	
+
+	@Override
 	protected IFile[] getChangedFiles() throws CoreException {
 		return new IFile[0];
 	}
-	
+
 	//---- IRenameProcessor ----------------------------------------------
-	
+
+	@Override
 	public String getCurrentElementName() {
 		return fSourceFolder.getElementName();
 	}
-			
+
+	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException {
 		return new RefactoringStatus();
 	}
 
+	@Override
 	public RefactoringStatus checkNewElementName(String newName) throws CoreException {
 		Assert.isNotNull(newName, "new name"); //$NON-NLS-1$
 		if (! newName.trim().equals(newName))
-			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.RenameSourceFolderRefactoring_blank); 
-		
+			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.RenameSourceFolderRefactoring_blank);
+
 		IContainer c= 	fSourceFolder.getResource().getParent();
 		if (! c.getFullPath().isValidSegment(newName))
-			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.RenameSourceFolderRefactoring_invalid_name); 
-		
+			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.RenameSourceFolderRefactoring_invalid_name);
+
 		RefactoringStatus result= RefactoringStatus.create(c.getWorkspace().validateName(newName, IResource.FOLDER));
 		if (result.hasFatalError())
-			return result;		
-				
-		result.merge(RefactoringStatus.create(c.getWorkspace().validatePath(createNewPath(newName), IResource.FOLDER)));		
+			return result;
+
+		result.merge(RefactoringStatus.create(c.getWorkspace().validatePath(createNewPath(newName), IResource.FOLDER)));
 		if (result.hasFatalError())
 			return result;
-			
+
 		IScriptProject project= fSourceFolder.getScriptProject();
 		IPath p= project.getProject().getFullPath().append(newName);
 		if (project.findProjectFragment(p) != null)
-			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.RenameSourceFolderRefactoring_already_exists); 
-		
+			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.RenameSourceFolderRefactoring_already_exists);
+
 		if (project.getProject().findMember(new Path(newName)) != null)
-			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.RenameSourceFolderRefactoring_alread_exists); 
-		return result;		
+			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.RenameSourceFolderRefactoring_alread_exists);
+		return result;
 	}
-	
+
 	private String createNewPath(String newName) {
 		return fSourceFolder.getPath().removeLastSegments(1).append(newName).toString();
 	}
 
+	@Override
 	protected RefactoringStatus doCheckFinalConditions(IProgressMonitor pm, CheckConditionsContext context) throws CoreException {
 		pm.beginTask("", 1); //$NON-NLS-1$
 		try{
 			return new RefactoringStatus();
 		} finally{
 			pm.done();
-		}		
+		}
 	}
-	
+
 	public boolean getUpdateReferences() {
 		return true;
 	}
 
+	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException {
 		pm.beginTask("", 1); //$NON-NLS-1$
 		try {
@@ -174,6 +186,7 @@ public class RenameSourceFolderProcessor extends ScriptRenameProcessor {
 		}
 	}
 
+	@Override
 	public RefactoringStatus initialize(RefactoringArguments arguments) {
 		if (arguments instanceof ScriptRefactoringArguments) {
 			final ScriptRefactoringArguments generic= (ScriptRefactoringArguments) arguments;

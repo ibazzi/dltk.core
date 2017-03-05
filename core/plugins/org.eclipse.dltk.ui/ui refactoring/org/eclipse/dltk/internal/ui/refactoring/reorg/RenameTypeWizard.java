@@ -1,11 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
+
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.refactoring.reorg;
 
@@ -13,7 +13,6 @@ import org.eclipse.dltk.internal.ui.refactoring.RefactoringMessages;
 import org.eclipse.dltk.ui.DLTKPluginImages;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ltk.core.refactoring.Refactoring;
-
 
 /**
  * The type renaming wizard.
@@ -29,11 +28,7 @@ public class RenameTypeWizard extends RenameRefactoringWizard {
 		super(refactoring, defaultPageTitle, inputPageDescription, inputPageImageDescriptor, pageContextHelpId);
 	}
 
-	/*
-	 * non java-doc
-	 * 
-	 * @see RefactoringWizard#addUserInputPages
-	 */
+	@Override
 	protected void addUserInputPages() {
 		super.addUserInputPages();
 //		if (isRenameType())
@@ -41,28 +36,9 @@ public class RenameTypeWizard extends RenameRefactoringWizard {
 
 	}
 
-//	public RenameTypeProcessor getRenameTypeProcessor() {
-//		RefactoringProcessor proc= ((RenameRefactoring) getRefactoring()).getProcessor();
-//		if (proc instanceof RenameTypeProcessor)
-//			return (RenameTypeProcessor) proc;
-//		else if (proc instanceof RenameSourceModuleProcessor) {
-//			RenameSourceModuleProcessor rcu= (RenameSourceModuleProcessor) proc;
-//			return rcu.getRenameTypeProcessor();
-//		}
-//		Assert.isTrue(false); // Should never get here
-//		return null;
-//	}
 
 	protected boolean isRenameType() {
 		return true;
 	}
 
-//	protected RenameInputWizardPage createInputPage(String message, String initialSetting) {
-//		return new RenameTypeWizardInputPage(message, IScriptHelpContextIds.RENAME_TYPE_WIZARD_PAGE, true, initialSetting) {
-//
-//			protected RefactoringStatus validateTextField(String text) {
-//				return validateNewName(text);
-//			}
-//		};
-//	}
 }

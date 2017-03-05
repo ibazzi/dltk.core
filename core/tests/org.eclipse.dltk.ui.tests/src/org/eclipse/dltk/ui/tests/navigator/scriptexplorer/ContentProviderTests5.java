@@ -1,20 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
-
 package org.eclipse.dltk.ui.tests.navigator.scriptexplorer;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
-
-import junit.framework.TestCase;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -40,6 +40,9 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for the PackageExplorerContentProvider. Bugs:
@@ -53,7 +56,7 @@ import org.eclipse.ui.PlatformUI;
  * package explorer</li>
  * </ul>
  */
-public class ContentProviderTests5 extends TestCase {
+public class ContentProviderTests5 {
 	private boolean fEnableAutoBuildAfterTesting;
 	private ITreeContentProvider fProvider;
 
@@ -61,17 +64,8 @@ public class ContentProviderTests5 extends TestCase {
 	private IFile fDotBuildpath;
 	private IFile fDotProject;
 
-	public ContentProviderTests5(String name) {
-		super(name);
-	}
-
-	// public static Test suite() {
-	// return new TestSuite(ContentProviderTests5.class);
-	// }
-
-	protected void setUp() throws Exception {
-		super.setUp();
-
+	@Before
+	public void setUp() throws Exception {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		assertNotNull(workspace);
 		IWorkspaceDescription workspaceDesc = workspace.getDescription();
@@ -132,8 +126,8 @@ public class ContentProviderTests5 extends TestCase {
 						fold);
 	}
 
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@After
+	public void tearDown() throws Exception {
 		ScriptProjectHelper.delete(fJProject);
 
 		if (fEnableAutoBuildAfterTesting)
@@ -189,23 +183,23 @@ public class ContentProviderTests5 extends TestCase {
 		ISourceModule Z = zPackage.createSourceModule("Z.txt",
 				"package z;public class Z{}", true, null);
 
-		assertEqualElements(new Object[] { defaultPackage, exclInclPackage,
+		assertArrayEquals(new Object[] { defaultPackage, exclInclPackage,
 				xPackage, zPackage, ab, excl, y, fDotBuildpath, fDotProject },
 				fProvider.getChildren(fJProject));
-		assertEqualElements(new Object[0], fProvider
+		assertArrayEquals(new Object[0], fProvider
 				.getChildren(defaultPackage));
-		assertEqualElements(new Object[] { In }, fProvider
+		assertArrayEquals(new Object[] { In }, fProvider
 				.getChildren(exclInclPackage));
-		assertEqualElements(new Object[] { Ex }, fProvider.getChildren(excl));
-		assertEqualElements(new Object[] { X, xhidden }, fProvider
+		assertArrayEquals(new Object[] { Ex }, fProvider.getChildren(excl));
+		assertArrayEquals(new Object[] { X, xhidden }, fProvider
 				.getChildren(xPackage));
 		assertEquals(xPackage, fProvider.getParent(X));
 		assertEquals(xPackage, fProvider.getParent(xhidden));
-		assertEqualElements(new Object[] { Z }, fProvider.getChildren(zPackage));
-		assertEqualElements(new Object[] { description }, fProvider
+		assertArrayEquals(new Object[] { Z }, fProvider.getChildren(zPackage));
+		assertArrayEquals(new Object[] { description }, fProvider
 				.getChildren(ab));
-		assertEqualElements(new Object[] { Ex }, fProvider.getChildren(excl));
-		assertEqualElements(new Object[] { yX, yhidden }, fProvider
+		assertArrayEquals(new Object[] { Ex }, fProvider.getChildren(excl));
+		assertArrayEquals(new Object[] { yX, yhidden }, fProvider
 				.getChildren(y));
 	}
 
@@ -236,21 +230,21 @@ public class ContentProviderTests5 extends TestCase {
 		ISourceModule b = defaultAbab.createSourceModule("B.txt",
 				"public class B {}", true, null);
 
-		assertEqualElements(new Object[] { src, srcabab, fDotBuildpath,
+		assertArrayEquals(new Object[] { src, srcabab, fDotBuildpath,
 				fDotProject }, fProvider.getChildren(fJProject));
-		assertEqualElements(new Object[] { defaultSrc, p, ab }, fProvider
+		assertArrayEquals(new Object[] { defaultSrc, p, ab }, fProvider
 				.getChildren(src));
-		assertEqualElements(new Object[] {}, fProvider.getChildren(defaultSrc));
-		assertEqualElements(new Object[] { file }, fProvider.getChildren(p));
-		assertEqualElements(new Object[] { aba }, fProvider.getChildren(ab));
-		assertEqualElements(new Object[] { abaTxt }, fProvider.getChildren(aba));
+		assertArrayEquals(new Object[] {}, fProvider.getChildren(defaultSrc));
+		assertArrayEquals(new Object[] { file }, fProvider.getChildren(p));
+		assertArrayEquals(new Object[] { aba }, fProvider.getChildren(ab));
+		assertArrayEquals(new Object[] { abaTxt }, fProvider.getChildren(aba));
 
-		assertEqualElements(new Object[] { defaultAbab }, fProvider
+		assertArrayEquals(new Object[] { defaultAbab }, fProvider
 				.getChildren(srcabab));
-		assertEqualElements(new Object[] { b }, fProvider
+		assertArrayEquals(new Object[] { b }, fProvider
 				.getChildren(defaultAbab));
 	}
-
+	@Test
 	public void testInclExcl1() throws Exception { // bug 35851, 66694
 		// <BuildpathEntry including="a/b/c/" excluding="a/b/c/d/" kind="src"
 		// path="src2"/>
@@ -269,25 +263,11 @@ public class ContentProviderTests5 extends TestCase {
 		IContainer b = d.getParent().getParent();
 		IContainer a = b.getParent();
 
-		assertEqualElements(new Object[] { src, fDotBuildpath, fDotProject },
+		assertArrayEquals(new Object[] { src, fDotBuildpath, fDotProject },
 				fProvider.getChildren(fJProject));
-		assertEqualElements(new Object[] { abc, a }, fProvider.getChildren(src));
-		assertEqualElements(new Object[] { x, d }, fProvider.getChildren(abc));
-		assertEqualElements(new Object[] { dTxt }, fProvider.getChildren(d));
-		assertEqualElements(new Object[] { b }, fProvider.getChildren(a));
-	}
-
-	private void assertEqualElements(Object[] expected, Object[] actual) {
-		assertEquals("array length", expected.length, actual.length);
-		exp: for (int i = 0; i < expected.length; i++) {
-			Object e = expected[i];
-			for (int j = 0; j < actual.length; j++) {
-				Object a = actual[j];
-				if (e.equals(a))
-					continue exp;
-			}
-			fail("expected[" + i + "] not found in actual:"
-					+ Arrays.asList(actual).toString());
-		}
+		assertArrayEquals(new Object[] { abc, a }, fProvider.getChildren(src));
+		assertArrayEquals(new Object[] { x, d }, fProvider.getChildren(abc));
+		assertArrayEquals(new Object[] { dTxt }, fProvider.getChildren(d));
+		assertArrayEquals(new Object[] { b }, fProvider.getChildren(a));
 	}
 }

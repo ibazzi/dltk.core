@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -24,9 +24,10 @@ import org.eclipse.dltk.validators.core.IValidatorType;
 import org.eclipse.dltk.validators.core.ValidatorRuntime;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
-public class DLTKValidatorsModelElementAction extends
-		AbstractMenuCreatorObjectActionDelegate {
+public class DLTKValidatorsModelElementAction
+		extends AbstractMenuCreatorObjectActionDelegate {
 
+	@Override
 	protected void fillMenu(IMenuBuilder menu, IStructuredSelection selection) {
 		if (selection == null || selection.isEmpty()) {
 			return;
@@ -57,8 +58,8 @@ public class DLTKValidatorsModelElementAction extends
 			if (!isSupported(type)) {
 				continue;
 			}
-			final IValidator[] validators = type.getAllValidators(element
-					.getScriptProject().getProject());
+			final IValidator[] validators = type
+					.getAllValidators(element.getScriptProject().getProject());
 			if (validators != null && validators.length != 0) {
 				for (int j = 0; j < validators.length; ++j) {
 					final IValidator validator = validators[j];

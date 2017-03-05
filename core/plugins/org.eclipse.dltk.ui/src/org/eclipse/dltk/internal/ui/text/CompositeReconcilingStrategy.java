@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.text;
 
@@ -20,8 +19,8 @@ import org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension;
  * A reconciling strategy consisting of a sequence of internal reconciling
  * strategies. By default, all requests are passed on to the contained
  * strategies.
- * 
-	 *
+ *
+ *
  */
 public class CompositeReconcilingStrategy implements IReconcilingStrategy, IReconcilingStrategyExtension
 {
@@ -37,7 +36,7 @@ public class CompositeReconcilingStrategy implements IReconcilingStrategy, IReco
 
 	/**
 	 * Sets the reconciling strategies for this composite strategy.
-	 * 
+	 *
 	 * @param strategies
 	 *            the strategies to be set or <code>null</code>
 	 */
@@ -48,7 +47,7 @@ public class CompositeReconcilingStrategy implements IReconcilingStrategy, IReco
 
 	/**
 	 * Returns the previously set stratgies or <code>null</code>.
-	 * 
+	 *
 	 * @return the contained strategies or <code>null</code>
 	 */
 	public IReconcilingStrategy[] getReconcilingStrategies()
@@ -56,9 +55,7 @@ public class CompositeReconcilingStrategy implements IReconcilingStrategy, IReco
 		return fStrategies;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#setDocument(org.eclipse.jface.text.IDocument)
-	 */
+	@Override
 	public void setDocument(IDocument document)
 	{
 		if( fStrategies == null )
@@ -69,10 +66,7 @@ public class CompositeReconcilingStrategy implements IReconcilingStrategy, IReco
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#reconcile(org.eclipse.jface.text.reconciler.DirtyRegion,
-	 *      org.eclipse.jface.text.IRegion)
-	 */
+	@Override
 	public void reconcile(DirtyRegion dirtyRegion, IRegion subRegion)
 	{
 		if( fStrategies == null ) {
@@ -84,9 +78,7 @@ public class CompositeReconcilingStrategy implements IReconcilingStrategy, IReco
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#reconcile(org.eclipse.jface.text.IRegion)
-	 */
+	@Override
 	public void reconcile(IRegion partition)
 	{
 		if( fStrategies == null ) {
@@ -98,9 +90,7 @@ public class CompositeReconcilingStrategy implements IReconcilingStrategy, IReco
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension#setProgressMonitor(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	public void setProgressMonitor(IProgressMonitor monitor)
 	{
 		if( fStrategies == null ) {
@@ -115,9 +105,7 @@ public class CompositeReconcilingStrategy implements IReconcilingStrategy, IReco
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension#initialReconcile()
-	 */
+	@Override
 	public void initialReconcile()
 	{
 		if( fStrategies == null ) {

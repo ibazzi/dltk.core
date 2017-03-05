@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,41 +15,36 @@ import org.eclipse.dltk.internal.ui.util.StringMatcher;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
-
-
 /**
- * The NamePatternFilter selects the elements which
- * match the given string patterns.
+ * The NamePatternFilter selects the elements which match the given string
+ * patterns.
  * <p>
- * The following characters have special meaning:
- *   ? => any character
- *   * => any string
+ * The following characters have special meaning: ? => any character * => any
+ * string
  * </p>
- * 
-	 *
+ *
+ *
  */
 public class NamePatternFilter extends ViewerFilter {
 	private String[] fPatterns;
 	private StringMatcher[] fMatchers;
-	
+
 	/**
 	 * Return the currently configured StringMatchers.
 	 */
 	private StringMatcher[] getMatchers() {
 		return fMatchers;
 	}
-	
+
 	/**
 	 * Gets the patterns for the receiver.
 	 */
 	public String[] getPatterns() {
 		return fPatterns;
 	}
-	
-	
-	/* (non-Javadoc)
-	 * Method declared on ViewerFilter.
-	 */
+
+
+	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		String matchName= null;
 		if (element instanceof IModelElement) {
@@ -87,7 +82,7 @@ public class NamePatternFilter extends ViewerFilter {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Sets the patterns to filter out for the receiver.
 	 * <p>

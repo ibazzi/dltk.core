@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.util;
 
@@ -23,7 +22,7 @@ import org.eclipse.swt.graphics.Image;
  * Label provider for {@link TypeNameMatch} instances.
  */
 public class TypeNameMatchLabelProvider extends LabelProvider {
-	
+
 	public static final int SHOW_FULLYQUALIFIED=		0x01;
 	public static final int SHOW_PACKAGE_POSTFIX=		0x02;
 	public static final int SHOW_PACKAGE_ONLY=			0x04;
@@ -31,18 +30,18 @@ public class TypeNameMatchLabelProvider extends LabelProvider {
 	public static final int SHOW_TYPE_ONLY=				0x10;
 	public static final int SHOW_TYPE_CONTAINER_ONLY=	0x20;
 	public static final int SHOW_POST_QUALIFIED=		0x40;
-	
+
 	private static final Image CLASS_ICON= DLTKPluginImages.get(DLTKPluginImages.IMG_OBJS_CLASS);
 	private static final Image ANNOTATION_ICON= DLTKPluginImages.get(DLTKPluginImages.IMG_OBJS_ANNOTATION);
 //	private static final Image INTERFACE_ICON= DLTKPluginImages.get(DLTKPluginImages.IMG_OBJS_INTERFACE);
 	private static final Image PKG_ICON= DLTKPluginImages.get(DLTKPluginImages.IMG_OBJS_PACKAGE);
-	
+
 	private final int fFlags;
 	private final IDLTKUILanguageToolkit fToolkit;
-	
+
 	/**
 	 * Creates the label provider with the specified parameters.
-	 * 
+	 *
 	 * @param flags
 	 *            bitwise OR of the flags defined in this class
 	 * @param toolkit
@@ -51,26 +50,24 @@ public class TypeNameMatchLabelProvider extends LabelProvider {
 	public TypeNameMatchLabelProvider(int flags, IDLTKUILanguageToolkit toolkit) {
 		fFlags= flags;
 		this.fToolkit = toolkit;
-	}	
-	
+	}
+
 	private boolean isSet(int flag) {
 		return (fFlags & flag) != 0;
 	}
 
 	private String getPackageName(String packName) {
 		if (packName.length() == 0)
-			return DLTKUIMessages.TypeInfoLabelProvider_default_package; 
+			return DLTKUIMessages.TypeInfoLabelProvider_default_package;
 		else
 			return packName;
 	}
 
-	/* non java-doc
-	 * @see ILabelProvider#getText
-	 */
+	@Override
 	public String getText(Object element) {
-		if (! (element instanceof TypeNameMatch)) 
+		if (! (element instanceof TypeNameMatch))
 			return super.getText(element);
-		
+
 		TypeNameMatch typeRef= (TypeNameMatch) element;
 		StringBuffer buf= new StringBuffer();
 		if (isSet(SHOW_TYPE_ONLY)) {
@@ -107,15 +104,13 @@ public class TypeNameMatchLabelProvider extends LabelProvider {
 			ScriptElementLabels labels = this.fToolkit.getScriptElementLabels();
 			labels.getProjectFragmentLabel(root, ScriptElementLabels.ROOT_QUALIFIED, buf);
 		}
-		return buf.toString();				
+		return buf.toString();
 	}
-	
-	/* non java-doc
-	 * @see ILabelProvider#getImage
-	 */	
+
+	@Override
 	public Image getImage(Object element) {
-		if (! (element instanceof TypeNameMatch)) 
-			return super.getImage(element);	
+		if (! (element instanceof TypeNameMatch))
+			return super.getImage(element);
 
 		if (isSet(SHOW_TYPE_CONTAINER_ONLY)) {
 			TypeNameMatch typeRef= (TypeNameMatch) element;
@@ -137,5 +132,5 @@ public class TypeNameMatchLabelProvider extends LabelProvider {
 //			}
 			return CLASS_ICON;
 		}
-	}	
+	}
 }

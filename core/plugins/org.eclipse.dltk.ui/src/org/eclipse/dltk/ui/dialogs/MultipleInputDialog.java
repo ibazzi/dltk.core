@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.dltk.ui.dialogs;
 
 import java.io.File;
@@ -21,8 +20,6 @@ import java.util.Map;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -60,13 +57,7 @@ public class MultipleInputDialog extends Dialog {
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets
-	 * .Shell)
-	 */
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		if (title != null) {
@@ -75,26 +66,14 @@ public class MultipleInputDialog extends Dialog {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.dialogs.Dialog#createButtonBar(org.eclipse.swt.widgets
-	 * .Composite)
-	 */
+	@Override
 	protected Control createButtonBar(Composite parent) {
 		Control bar = super.createButtonBar(parent);
 		validateFields();
 		return bar;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets
-	 * .Composite)
-	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite container = (Composite) super.createDialogArea(parent);
 		container.setLayout(new GridLayout(2, false));
@@ -171,15 +150,12 @@ public class MultipleInputDialog extends Dialog {
 
 		if (!allowEmpty) {
 			validators.add(new Validator() {
+				@Override
 				public boolean validate() {
 					return !text.getText().equals(""); //$NON-NLS-1$
 				}
 			});
-			text.addModifyListener(new ModifyListener() {
-				public void modifyText(ModifyEvent e) {
-					validateFields();
-				}
-			});
+			text.addModifyListener(e -> validateFields());
 		}
 
 		controlList.add(text);
@@ -213,24 +189,22 @@ public class MultipleInputDialog extends Dialog {
 
 		if (!allowEmpty) {
 			validators.add(new Validator() {
+				@Override
 				public boolean validate() {
 					return !text.getText().equals(""); //$NON-NLS-1$
 				}
 			});
 
-			text.addModifyListener(new ModifyListener() {
-				public void modifyText(ModifyEvent e) {
-					validateFields();
-				}
-			});
+			text.addModifyListener(e -> validateFields());
 		}
 
 		Button button = createButton(comp, IDialogConstants.IGNORE_ID,
 				DialogMessages.MultipleInputDialog_ignore, false);
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				DirectoryDialog dialog = new DirectoryDialog(getShell());
-				dialog.setMessage(""); //$NON-NLS-1$  
+				dialog.setMessage(""); //$NON-NLS-1$
 				String currentWorkingDir = text.getText();
 				if (!currentWorkingDir.trim().equals("")) { //$NON-NLS-1$
 					File path = new File(currentWorkingDir);
@@ -278,16 +252,13 @@ public class MultipleInputDialog extends Dialog {
 
 		if (!allowEmpty) {
 			validators.add(new Validator() {
+				@Override
 				public boolean validate() {
 					return !text.getText().equals(""); //$NON-NLS-1$
 				}
 			});
 
-			text.addModifyListener(new ModifyListener() {
-				public void modifyText(ModifyEvent e) {
-					validateFields();
-				}
-			});
+			text.addModifyListener(e -> validateFields());
 		}
 
 		// Button button = createButton(comp, IDialogConstants.IGNORE_ID,
@@ -318,11 +289,7 @@ public class MultipleInputDialog extends Dialog {
 		label.setLayoutData(gd);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
+	@Override
 	protected void okPressed() {
 		for (Iterator<Text> i = controlList.iterator(); i.hasNext();) {
 			Control control = i.next();
@@ -335,11 +302,7 @@ public class MultipleInputDialog extends Dialog {
 		super.okPressed();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.window.Window#open()
-	 */
+	@Override
 	public int open() {
 		applyDialogFont(panel);
 		return super.open();

@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
-
 package org.eclipse.dltk.ui.preferences;
 
 import java.util.List;
@@ -45,34 +43,42 @@ public abstract class ImprovedAbstractConfigurationBlock implements
 		addOverlayKeys();
 	}
 
+	@Override
 	public void initialize() {
 		initializeFields();
 	}
 
+	@Override
 	public void performOk() {
 		// do nothing
 	}
 
+	@Override
 	public void performDefaults() {
 		initializeFields();
 	}
 
+	@Override
 	public void dispose() {
 		// do nothing
 	}
 
+	@Override
 	public boolean getBoolean(String key) {
 		return store.getBoolean(key);
 	}
 
+	@Override
 	public String getString(String key) {
 		return store.getString(key);
 	}
 
+	@Override
 	public void setBoolean(String key, boolean value) {
 		store.setValue(key, value);
 	}
 
+	@Override
 	public void setString(String key, String value) {
 		store.setValue(key, value);
 	}
@@ -80,7 +86,7 @@ public abstract class ImprovedAbstractConfigurationBlock implements
 	/**
 	 * Create the {@link OverlayPreferenceStore.OverlayKey} keys for the
 	 * preference page.
-	 * 
+	 *
 	 * <p>
 	 * Subclasses may return <code>null</code> in then event they are not
 	 * storing any preference values.
@@ -153,16 +159,13 @@ public abstract class ImprovedAbstractConfigurationBlock implements
 	}
 
 	private IStatusChangeListener getStatusListener() {
-		return new IStatusChangeListener() {
-
-			public void statusChanged(IStatus status) {
-				if (status == null) {
-					status = new StatusInfo();
-				}
-
-				page.setValid(status.getSeverity() != IStatus.ERROR);
-				StatusUtil.applyToStatusLine(page, status);
+		return status -> {
+			if (status == null) {
+				status = new StatusInfo();
 			}
+
+			page.setValid(status.getSeverity() != IStatus.ERROR);
+			StatusUtil.applyToStatusLine(page, status);
 		};
 	}
 

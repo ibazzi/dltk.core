@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.dbgp.internal;
 
@@ -76,42 +75,52 @@ public class DbgpStatus implements IDbgpStatus {
 		this.reason = reason;
 	}
 
+	@Override
 	public boolean reasonAborred() {
 		return REASON_ABORTED == reason;
 	}
 
+	@Override
 	public boolean reasonError() {
 		return REASON_ERROR == reason;
 	}
 
+	@Override
 	public boolean reasonException() {
 		return REASON_EXCEPTION == reason;
 	}
 
+	@Override
 	public boolean reasonOk() {
 		return REASON_OK == reason;
 	}
 
+	@Override
 	public boolean isRunning() {
 		return STATUS_RUNNING == status;
 	}
 
+	@Override
 	public boolean isStarting() {
 		return STATUS_STARTING == status;
 	}
 
+	@Override
 	public boolean isStopped() {
 		return STATUS_STOPPED == status;
 	}
 
+	@Override
 	public boolean isStopping() {
 		return STATUS_STOPPING == status;
 	}
 
+	@Override
 	public boolean isBreak() {
 		return STATUS_BREAK == status;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof DbgpStatus) {
 			DbgpStatus s = (DbgpStatus) obj;
@@ -120,10 +129,12 @@ public class DbgpStatus implements IDbgpStatus {
 		return false;
 	}
 
+	@Override
 	public int hashCode() {
 		return (status.hashCode() << 8) | reason.hashCode();
 	}
 
+	@Override
 	public String toString() {
 		return "Status: " + status.toString() + "; Reason: " //$NON-NLS-1$ //$NON-NLS-2$
 				+ reason.toString();

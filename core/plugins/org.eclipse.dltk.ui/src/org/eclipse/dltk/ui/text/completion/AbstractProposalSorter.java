@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.text.completion;
 
@@ -45,7 +44,7 @@ public abstract class AbstractProposalSorter implements
 	 * <p>
 	 * Clients may override, the default implementation does nothing.
 	 * </p>
-	 * 
+	 *
 	 * @param context
 	 *            the context of the content assist invocation
 	 */
@@ -57,7 +56,7 @@ public abstract class AbstractProposalSorter implements
 	 * <p>
 	 * Clients may override, the default implementation does nothing.
 	 * </p>
-	 * 
+	 *
 	 * @param context
 	 *            the context of the content assist invocation
 	 * @param proposals
@@ -78,7 +77,7 @@ public abstract class AbstractProposalSorter implements
 	 * The orderings imposed by an implementation need not be consistent with
 	 * equals.
 	 * </p>
-	 * 
+	 *
 	 * @param p1
 	 *            the first proposal to be compared
 	 * @param p2
@@ -87,6 +86,7 @@ public abstract class AbstractProposalSorter implements
 	 *         argument is less than, equal to, or greater than the second.
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public abstract int compare(ICompletionProposal p1, ICompletionProposal p2);
 
 	/**

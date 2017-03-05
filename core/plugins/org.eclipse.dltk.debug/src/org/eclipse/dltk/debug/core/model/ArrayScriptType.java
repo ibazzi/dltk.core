@@ -14,9 +14,7 @@ public class ArrayScriptType extends CollectionScriptType {
 		super(ARRAY);
 	}
 
-	/**
-	 * @see org.eclipse.dltk.debug.core.model.CollectionScriptType#buildDetailString(org.eclipse.debug.core.model.IVariable)
-	 */
+	@Override
 	protected String buildDetailString(IVariable variable)
 			throws DebugException {
 		String name = variable.getName();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *     		IBM Corporation - initial API and implementation
  * 			Alex Panchenko <alex@xored.com>
  *******************************************************************************/
-
 package org.eclipse.dltk.internal.ui.editor;
 
 import java.util.ArrayList;
@@ -110,7 +109,7 @@ public class ScriptSourceViewer extends ProjectionViewer implements
 	 * <p>
 	 * Added for performance optimization.
 	 * </p>
-	 * 
+	 *
 	 * @see #prepareDelayedProjection()
 	 */
 	private boolean fIsSetVisibleDocumentDelayed = false;
@@ -123,9 +122,7 @@ public class ScriptSourceViewer extends ProjectionViewer implements
 		setPreferenceStore(store);
 	}
 
-	/*
-	 * @see ITextOperationTarget#doOperation(int)
-	 */
+	@Override
 	public void doOperation(int operation) {
 		if (getTextWidget() == null)
 			return;
@@ -148,9 +145,7 @@ public class ScriptSourceViewer extends ProjectionViewer implements
 		super.doOperation(operation);
 	}
 
-	/*
-	 * @see ITextOperationTarget#canDoOperation(int)
-	 */
+	@Override
 	public boolean canDoOperation(int operation) {
 		if (operation == SHOW_OUTLINE)
 			return fOutlinePresenter != null;
@@ -162,9 +157,7 @@ public class ScriptSourceViewer extends ProjectionViewer implements
 		return super.canDoOperation(operation);
 	}
 
-	/*
-	 * @see ISourceViewer#configure(SourceViewerConfiguration)
-	 */
+	@Override
 	public void configure(SourceViewerConfiguration configuration) {
 
 		/*
@@ -278,7 +271,7 @@ public class ScriptSourceViewer extends ProjectionViewer implements
 	 * Creates a color from the information stored in the given preference
 	 * store. Returns <code>null</code> if there is no such information
 	 * available.
-	 * 
+	 *
 	 * @param store
 	 *            the store to read from
 	 * @param key
@@ -307,9 +300,7 @@ public class ScriptSourceViewer extends ProjectionViewer implements
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.ISourceViewerExtension2#unconfigure()
-	 */
+	@Override
 	public void unconfigure() {
 		if (fOutlinePresenter != null) {
 			fOutlinePresenter.uninstall();
@@ -340,23 +331,17 @@ public class ScriptSourceViewer extends ProjectionViewer implements
 		fIsConfigured = false;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.SourceViewer#rememberSelection()
-	 */
+	@Override
 	public Point rememberSelection() {
 		return super.rememberSelection();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.SourceViewer#restoreSelection()
-	 */
+	@Override
 	public void restoreSelection() {
 		super.restoreSelection();
 	}
 
-	/*
-	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
-	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		String property = event.getProperty();
 		if (AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND.equals(property)
@@ -380,7 +365,7 @@ public class ScriptSourceViewer extends ProjectionViewer implements
 
 	/**
 	 * Sets the preference store on this viewer.
-	 * 
+	 *
 	 * @param store
 	 *            the preference store
 	 */
@@ -396,9 +381,7 @@ public class ScriptSourceViewer extends ProjectionViewer implements
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ITextViewer#resetVisibleRegion()
-	 */
+	@Override
 	public void resetVisibleRegion() {
 		super.resetVisibleRegion();
 		// re-enable folding if ProjectionViewer failed to due so
@@ -411,9 +394,7 @@ public class ScriptSourceViewer extends ProjectionViewer implements
 		 */
 	}
 
-	/*
-	 * @see SourceViewer#createControl(Composite, int)
-	 */
+	@Override
 	protected void createControl(Composite parent, int styles) {
 
 		// Use LEFT_TO_RIGHT unless otherwise specified.
@@ -428,19 +409,7 @@ public class ScriptSourceViewer extends ProjectionViewer implements
 		// fBackspaceManager.install(this);
 	}
 
-	// /**
-	// * Returns the backspace manager for this viewer.
-	// *
-	// * @return the backspace manager for this viewer, or <code>null</code> if
-	// * there is none
-	// */
-	// public SmartBackspaceManager getBackspaceManager() {
-	// return fBackspaceManager;
-	// }
-
-	/*
-	 * @see org.eclipse.jface.text.source.SourceViewer#handleDispose()
-	 */
+	@Override
 	protected void handleDispose() {
 		// if (fBackspaceManager != null) {
 		// fBackspaceManager.uninstall();
@@ -455,7 +424,7 @@ public class ScriptSourceViewer extends ProjectionViewer implements
 	 * list of text presentation listeners. If the listener is already
 	 * registered with the viewer this call moves the listener to the beginning
 	 * of the list.
-	 * 
+	 *
 	 * @param listener
 	 *            the text presentation listener
 	 */
@@ -473,7 +442,7 @@ public class ScriptSourceViewer extends ProjectionViewer implements
 
 	/**
 	 * Sets the given reconciler.
-	 * 
+	 *
 	 * @param reconciler
 	 *            the reconciler
 	 */
@@ -483,7 +452,7 @@ public class ScriptSourceViewer extends ProjectionViewer implements
 
 	/**
 	 * Returns the reconciler.
-	 * 
+	 *
 	 * @return the reconciler or <code>null</code> if not set
 	 */
 	IReconciler getReconciler() {
@@ -498,7 +467,7 @@ public class ScriptSourceViewer extends ProjectionViewer implements
 	 * This is a performance optimization to reduce the computation of the text
 	 * presentation triggered by <code>setVisibleDocument(IDocument)</code>.
 	 * </p>
-	 * 
+	 *
 	 * @see #setVisibleDocument(IDocument)
 	 */
 	void prepareDelayedProjection() {
@@ -512,9 +481,10 @@ public class ScriptSourceViewer extends ProjectionViewer implements
 	 * This is a performance optimization to reduce the computation of the text
 	 * presentation triggered by {@link #setVisibleDocument(IDocument)}
 	 * </p>
-	 * 
+	 *
 	 * @see #prepareDelayedProjection()
 	 */
+	@Override
 	protected void setVisibleDocument(IDocument document) {
 		if (fIsSetVisibleDocumentDelayed) {
 			fIsSetVisibleDocumentDelayed = false;
@@ -538,6 +508,7 @@ public class ScriptSourceViewer extends ProjectionViewer implements
 	 * as return value.
 	 * </p>
 	 */
+	@Override
 	protected StyleRange modelStyleRange2WidgetStyleRange(StyleRange range) {
 		IRegion region = modelRange2WidgetRange(new Region(range.start,
 				range.length));

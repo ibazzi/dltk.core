@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.text.completion;
 
@@ -49,7 +48,7 @@ public abstract class ScriptCompletionProcessor extends ContentAssistProcessor {
 	/**
 	 * Tells this processor to restrict its proposal to those element visible in
 	 * the actual invocation context.
-	 * 
+	 *
 	 * @param restrict
 	 *            <code>true</code> if proposals should be restricted
 	 */
@@ -84,7 +83,7 @@ public abstract class ScriptCompletionProcessor extends ContentAssistProcessor {
 	/**
 	 * Tells this processor to restrict is proposals to those starting with
 	 * matching cases.
-	 * 
+	 *
 	 * @param restrict
 	 *            <code>true</code> if proposals should be restricted
 	 */
@@ -106,7 +105,7 @@ public abstract class ScriptCompletionProcessor extends ContentAssistProcessor {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	protected IContextInformationValidator createContextInformationValidator() {
 		return new ScriptParameterListValidator();
@@ -157,15 +156,18 @@ public abstract class ScriptCompletionProcessor extends ContentAssistProcessor {
 
 		private int initialOffset;
 
+		@Override
 		public void install(IContextInformation info, ITextViewer viewer,
 				int offset) {
 			initialOffset = offset;
 		}
 
+		@Override
 		public boolean isContextInformationValid(int offset) {
 			return Math.abs(offset - initialOffset) < 5;
 		}
 
+		@Override
 		public boolean updatePresentation(int documentPosition,
 				TextPresentation presentation) {
 			return false;

@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.typehierarchy;
 
@@ -33,9 +32,7 @@ public class TraditionalHierarchyViewer extends TypeHierarchyViewer {
 				lifeCycle, part, store);
 	}
 
-	/*
-	 * @see TypeHierarchyViewer#getTitle
-	 */
+	@Override
 	public String getTitle() {
 		if (isMethodFiltering()) {
 			return TypeHierarchyMessages.TraditionalHierarchyViewer_filtered_title;
@@ -44,9 +41,7 @@ public class TraditionalHierarchyViewer extends TypeHierarchyViewer {
 		}
 	}
 
-	/*
-	 * @see TypeHierarchyViewer#updateContent
-	 */
+	@Override
 	public void updateContent(boolean expand) {
 		getTree().setRedraw(false);
 		refresh();
@@ -101,11 +96,7 @@ public class TraditionalHierarchyViewer extends TypeHierarchyViewer {
 			return max;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jdt.internal.ui.typehierarchy.TypeHierarchyContentProvider#getRootTypes(java.util.List)
-		 */
+		@Override
 		protected final void getRootTypes(List res) {
 			ITypeHierarchy hierarchy = getHierarchy();
 			if (hierarchy != null) {
@@ -129,9 +120,7 @@ public class TraditionalHierarchyViewer extends TypeHierarchyViewer {
 			}
 		}
 
-		/*
-		 * @see TypeHierarchyContentProvider.getTypesInHierarchy
-		 */
+		@Override
 		protected final void getTypesInHierarchy(IType type, List res) {
 			ITypeHierarchy hierarchy = getHierarchy();
 			if (hierarchy != null) {
@@ -164,6 +153,7 @@ public class TraditionalHierarchyViewer extends TypeHierarchyViewer {
 			}
 		}
 
+		@Override
 		protected IType[] getParentType(IType type) {
 			ITypeHierarchy hierarchy = getHierarchy();
 			if (hierarchy != null) {

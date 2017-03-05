@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.dltk.ui.browsing;
 
 import org.eclipse.core.resources.IResource;
@@ -61,9 +60,7 @@ class PackagesViewLabelProvider extends AppearanceAwareLabelProvider {
 		return state == FLAT_VIEW_STATE || state == HIERARCHICAL_VIEW_STATE;
 	}
 
-	/*
-	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
-	 */
+	@Override
 	public Image getImage(Object element) {
 		if (element instanceof LogicalPackage) {
 			LogicalPackage cp = (LogicalPackage) element;
@@ -103,9 +100,7 @@ class PackagesViewLabelProvider extends AppearanceAwareLabelProvider {
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-	 */
+	@Override
 	public String getText(Object element) {
 		if (element instanceof IScriptFolder)
 			return getText((IScriptFolder) element);

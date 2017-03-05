@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.wizards.buildpath;
 
@@ -17,21 +16,17 @@ import org.eclipse.dltk.core.IBuildpathEntry;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.internal.ui.wizards.BuildpathAttributeConfiguration.BuildpathAttributeAccess;
 
-
-
-/**
-  */
 public class BPListElementAttribute {
 
 	private BPListElement fParent;
 	private String fKey;
 	private Object fValue;
-	
+
 	private IStatus fStatus;
 	private final boolean fBuiltIn;
-	
+
 	private BuildpathAttributeAccess fCachedAccess;
-	
+
 	public BPListElementAttribute(BPListElement parent, String key, Object value, boolean builtIn) {
 		fKey= key;
 		fValue= value;
@@ -39,9 +34,9 @@ public class BPListElementAttribute {
 		fBuiltIn= builtIn;
 		if (!builtIn) {
 			Assert.isTrue(value instanceof String || value == null);
-		}	
+		}
 	}
-	
+
 	public IBuildpathAttribute newBuildpathAttribute() {
 		Assert.isTrue(!fBuiltIn);
 		if (fValue != null) {
@@ -49,18 +44,18 @@ public class BPListElementAttribute {
 		}
 		return null;
 	}
-	
+
 	public BPListElement getParent() {
 		return fParent;
 	}
-	
+
 	/**
 	 * @return Returns <code>true</code> if the attribute is a built in attribute.
 	 */
 	public boolean isBuiltIn() {
 		return fBuiltIn;
 	}
-	
+
 	/**
 	 * @return Returns <code>true</code> if the attribute is in a non-modifiable buildpath container
 	 */
@@ -83,15 +78,16 @@ public class BPListElementAttribute {
 	public Object getValue() {
 		return fValue;
 	}
-	
+
 	/**
 	 * Returns the value.
 	 */
 	public void setValue(Object value) {
 		fValue= value;
 	}
-	
-    public boolean equals(Object obj) {
+
+    @Override
+	public boolean equals(Object obj) {
         if (!(obj instanceof BPListElementAttribute))
             return false;
         BPListElementAttribute attrib= (BPListElementAttribute)obj;
@@ -104,12 +100,15 @@ public class BPListElementAttribute {
     public BuildpathAttributeAccess getBuildpathAttributeAccess() {
     	if (fCachedAccess == null) {
 	    	fCachedAccess= new BuildpathAttributeAccess() {
-	    		public IBuildpathAttribute getBuildpathAttribute() {
+	    		@Override
+				public IBuildpathAttribute getBuildpathAttribute() {
 	 				return BPListElementAttribute.this.getBuildpathAttribute();
 				}
+				@Override
 				public IScriptProject getScriptProject() {
 					return getParent().getScriptProject();
 				}
+				@Override
 				public IBuildpathEntry getParentBuildpathEntry() {
 					return getParent().getBuildpathEntry();
 				}

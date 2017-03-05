@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -24,18 +24,14 @@ public class HierarchyOpenAction extends OpenAction {
 		super(site);
 	}
 
-	/*
-	 * @see OpenAction#checkElement(java.lang.Object)
-	 */
+	@Override
 	protected boolean checkElement(Object element) {
 		return element instanceof CumulativeType
 				|| element instanceof CumulativeType.Part
 				|| super.checkElement(element);
 	}
 
-	/*
-	 * @see OpenAction#run(java.lang.Object[])
-	 */
+	@Override
 	public void run(Object[] elements) {
 		if (elements.length == 1 && elements[0] instanceof CumulativeType) {
 			selectAndOpen(((CumulativeType) elements[0]).getTypes());
@@ -44,9 +40,7 @@ public class HierarchyOpenAction extends OpenAction {
 		}
 	}
 
-	/*
-	 * @see OpenAction#getElementToOpen(java.lang.Object)
-	 */
+	@Override
 	public Object getElementToOpen(Object object) throws ModelException {
 		if (object instanceof CumulativeType.Part) {
 			return ((CumulativeType.Part) object).type;

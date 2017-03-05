@@ -5,9 +5,10 @@ import org.eclipse.dltk.debug.core.model.IScriptExceptionBreakpoint;
 import org.eclipse.dltk.ui.util.SWTFactory;
 import org.eclipse.swt.widgets.Composite;
 
-public class ScriptExceptionBreakpointPropertyPage extends
-		ScriptBreakpointPropertyPage {
+public class ScriptExceptionBreakpointPropertyPage
+		extends ScriptBreakpointPropertyPage {
 
+	@Override
 	protected void createLocationLabels(Composite parent) throws CoreException {
 		super.createLocationLabels(parent);
 		final IScriptExceptionBreakpoint breakpoint = (IScriptExceptionBreakpoint) getBreakpoint();
@@ -21,6 +22,7 @@ public class ScriptExceptionBreakpointPropertyPage extends
 	// private Button fSuspendOnUncaught;
 	// private Button fSuspendOnSubclasses;
 
+	@Override
 	protected void createTypeSpecificButtons(Composite parent) {
 		// fSuspendOnCaught = SWTFactory.createCheckButton(parent,
 		// "Caught Exception", null, false, 1);
@@ -32,6 +34,7 @@ public class ScriptExceptionBreakpointPropertyPage extends
 		// "Suspend on Subclasses of this Exception", null, false, 1);
 	}
 
+	@Override
 	protected void loadValues() throws CoreException {
 		super.loadValues();
 		//
@@ -40,9 +43,10 @@ public class ScriptExceptionBreakpointPropertyPage extends
 		//
 		// fSuspendOnCaught.setSelection(breakpoint.isCaught());
 		// fSuspendOnUncaught.setSelection(breakpoint.isUncaught());
-		//fSuspendOnSubclasses.setSelection(breakpoint.isSuspendOnSubclasses());
+		// fSuspendOnSubclasses.setSelection(breakpoint.isSuspendOnSubclasses());
 	}
 
+	@Override
 	protected void saveValues() throws CoreException {
 		super.saveValues();
 		//

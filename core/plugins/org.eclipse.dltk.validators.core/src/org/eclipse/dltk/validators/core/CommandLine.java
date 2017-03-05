@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -11,13 +11,12 @@
  *******************************************************************************/
 package org.eclipse.dltk.validators.core;
 
-import java.util.List;
-
 import java.util.ArrayList;
+import java.util.List;
 
 public class CommandLine {
 
-	private final List<String> args = new ArrayList<String>();
+	private final List<String> args = new ArrayList<>();
 
 	public CommandLine() {
 		// default constructor
@@ -70,8 +69,7 @@ public class CommandLine {
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0; i < arg.length(); ++i) {
 			char c = arg.charAt(i);
-			if (c == '%' && i < arg.length() - 1
-					&& arg.charAt(i + 1) == pattern) {
+			if (c == '%' && i < arg.length() - 1 && arg.charAt(i + 1) == pattern) {
 				buffer.append(value);
 				i++;
 			} else {
@@ -88,7 +86,7 @@ public class CommandLine {
 	/**
 	 * Returns the string representation of this command line. All parts are
 	 * joined together with spaces between them.
-	 * 
+	 *
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

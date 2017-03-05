@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -14,7 +14,6 @@ package org.eclipse.dltk.ui.editor.highlighting;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -26,11 +25,11 @@ import org.eclipse.jface.text.Position;
 
 /**
  * Abstract implementation of the {@link ISemanticHighlightingUpdater}.
- * 
+ *
  * Descendant classes should override
  * {@link #doHighlighting(org.eclipse.dltk.compiler.env.ISourceModule)} and call
  * {@link #addPosition(int, int, int)} to highlight specified regions.
- * 
+ *
  * Comparing old and new positions is performed in this class and calculated
  * "delta" is returned from the
  * {@link #reconcile(org.eclipse.dltk.compiler.env.ISourceModule, HighlightedPosition[])}
@@ -42,6 +41,7 @@ public abstract class AbstractSemanticHighlighter implements
 	private IHighlightedPositionFactory positionFactory;
 	private Map<String, HighlightingStyle> highlightingStyles = new HashMap<String, HighlightingStyle>();
 
+	@Override
 	public void initialize(IHighlightedPositionFactory factory,
 			HighlightingStyle[] styles) {
 		this.positionFactory = factory;
@@ -58,6 +58,7 @@ public abstract class AbstractSemanticHighlighter implements
 	private int oldPositionCount = 0;
 	private final List<HighlightedPosition> oldPositions = new ArrayList<HighlightedPosition>();
 
+	@Override
 	public UpdateResult reconcile(IModuleSource code,
 			List<HighlightedPosition> currentPositions) {
 		try {
@@ -86,7 +87,7 @@ public abstract class AbstractSemanticHighlighter implements
 	/**
 	 * This method should do all of the semantic highlighting. When something
 	 * should be highlighted
-	 * 
+	 *
 	 * @param code
 	 * @return
 	 * @throws Exception
@@ -94,6 +95,7 @@ public abstract class AbstractSemanticHighlighter implements
 	protected abstract boolean doHighlighting(IModuleSource code)
 			throws Exception;
 
+	@Override
 	public void addPosition(int start, int end, String highlightingKey) {
 		final int len = end - start;
 		if (len <= 0) {
@@ -157,11 +159,7 @@ public abstract class AbstractSemanticHighlighter implements
 	protected void checkNewPositionOrdering() {
 		if (newPositions.isEmpty())
 			return;
-		Collections.sort(newPositions, new Comparator<HighlightedPosition>() {
-			public int compare(HighlightedPosition p1, HighlightedPosition p2) {
-				return p1.getOffset() - p2.getOffset();
-			}
-		});
+		Collections.sort(newPositions, (p1, p2) -> p1.getOffset() - p2.getOffset());
 		Position previous = null;
 		for (Iterator<HighlightedPosition> i = newPositions.iterator(); i
 				.hasNext();) {

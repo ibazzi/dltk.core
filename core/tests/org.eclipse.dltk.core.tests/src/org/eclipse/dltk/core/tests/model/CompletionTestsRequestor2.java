@@ -1,16 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.core.tests.model;
 
 import java.util.Arrays;
-import java.util.Comparator;
 
 import org.eclipse.dltk.compiler.problem.IProblem;
 import org.eclipse.dltk.core.CompletionContext;
@@ -159,15 +157,12 @@ public class CompletionTestsRequestor2 extends CompletionRequestor {
 	 */
 	public String getReversedResults() {
 		if(this.proposalsPtr < 0) return "";
-		Arrays.sort(this.proposals, new Comparator<CompletionProposal>() {
-			@Override
-			public int compare(CompletionProposal p1, CompletionProposal p2) {
-				int relDif = p2.getRelevance() - p1.getRelevance();
-				if(relDif != 0)  return relDif;
-				String name1 = getElementName(p1);
-				String name2 = getElementName(p2);
-				return name1.compareTo(name2);
-			}
+		Arrays.sort(this.proposals, (p1, p2) -> {
+			int relDif = p2.getRelevance() - p1.getRelevance();
+			if(relDif != 0)  return relDif;
+			String name1 = getElementName(p1);
+			String name2 = getElementName(p2);
+			return name1.compareTo(name2);
 		});
 		return getResultsWithoutSorting();
 	}

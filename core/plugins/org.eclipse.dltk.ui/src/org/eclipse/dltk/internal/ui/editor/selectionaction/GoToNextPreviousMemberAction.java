@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,14 +61,13 @@ public class GoToNextPreviousMemberAction extends Action implements IUpdate {
 		fIsGotoNext= isSelectNext;
 	}
 
+	@Override
 	public void update() {
 		// Enable by default always.
 		setEnabled(true);
 	}
 
-	/* (non-JavaDoc)
-	 * Method declared in IAction.
-	 */
+	@Override
 	public final  void run() {
 		ITextSelection selection= getTextSelection();
 		ISourceRange newRange= getNewSelectionRange(createSourceRange(selection), null);
@@ -79,7 +78,7 @@ public class GoToNextPreviousMemberAction extends Action implements IUpdate {
 	}
 
 	private IType[] getTypes() throws ModelException {
-		IEditorInput input= fEditor.getEditorInput();		
+		IEditorInput input= fEditor.getEditorInput();
 		return DLTKUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(input).getTypes();
 	}
 

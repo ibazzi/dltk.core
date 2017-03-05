@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -24,8 +24,8 @@ import org.eclipse.swt.graphics.RGB;
 
 import com.ibm.icu.text.SimpleDateFormat;
 
-public class ScriptDebugLogLabelProvider extends LabelProvider implements
-		ITableLabelProvider, IColorProvider {
+public class ScriptDebugLogLabelProvider extends LabelProvider
+		implements ITableLabelProvider, IColorProvider {
 
 	private final IColorManager colorManager = new DLTKColorManager(false);
 
@@ -41,10 +41,12 @@ public class ScriptDebugLogLabelProvider extends LabelProvider implements
 		colorManager.dispose();
 	}
 
+	@Override
 	public Image getColumnImage(Object element, int columnIndex) {
 		return null;
 	}
 
+	@Override
 	public String getColumnText(Object element, int columnIndex) {
 		if (element instanceof ScriptDebugLogItem) {
 			final ScriptDebugLogItem item = (ScriptDebugLogItem) element;
@@ -87,6 +89,7 @@ public class ScriptDebugLogLabelProvider extends LabelProvider implements
 		return result.replaceAll("[\\p{Cntrl}]+", ""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	@Override
 	public Color getBackground(Object element) {
 		return null;
 	}
@@ -95,6 +98,7 @@ public class ScriptDebugLogLabelProvider extends LabelProvider implements
 	private final RGB inputColor = new RGB(0, 0, 255);
 	private final RGB outputColor = new RGB(0, 128, 0);
 
+	@Override
 	public Color getForeground(Object element) {
 		if (element instanceof ScriptDebugLogItem) {
 			final ScriptDebugLogItem item = (ScriptDebugLogItem) element;

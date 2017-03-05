@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
-
 package org.eclipse.dltk.internal.ui.search;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -24,25 +22,19 @@ public class TextSearchTableContentProvider implements IStructuredContentProvide
 	private AbstractTextSearchResult fSearchResult;
 	private TableViewer fTableViewer;
 
-	/*
-	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-	 */
+	@Override
 	public Object[] getElements(Object inputElement) {
 		if (inputElement instanceof AbstractTextSearchResult)
 			return ((AbstractTextSearchResult) inputElement).getElements();
 		return EMPTY_ARRAY;
 	}
 
-	/*
-	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-	 */
+	@Override
 	public void dispose() {
 		//nothing
 	}
 
-	/*
-	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-	 */
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		fTableViewer= (TableViewer) viewer;
 		fSearchResult= (AbstractTextSearchResult) newInput;
@@ -65,7 +57,7 @@ public class TextSearchTableContentProvider implements IStructuredContentProvide
 			}
 		}
 	}
-	
+
 	public void clear() {
 		//TODO: copied from JavaSearchTableContentProvider
 		fTableViewer.refresh();

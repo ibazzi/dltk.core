@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.wizards.buildpath;
 
@@ -21,7 +20,6 @@ import org.eclipse.dltk.internal.ui.wizards.NewWizardMessages;
 import org.eclipse.dltk.ui.dialogs.StatusInfo;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -54,7 +52,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 	private ILabelProvider fLabelProvider;
 	private ITreeContentProvider fContentProvider;
 	private List fFilters;
-	
+
 	private Object fInput;
 	private Button fNewFolderButton;
 	private IContainer fSelectedContainer;
@@ -65,25 +63,25 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 		super(parent);
 		fLabelProvider= labelProvider;
 		fContentProvider= contentProvider;
-		
+
 		setSelectionResult(null);
 		setStatusLineAboveButtons(true);
 
 		int shellStyle = getShellStyle();
 		setShellStyle(shellStyle | SWT.MAX | SWT.RESIZE);
-		
+
 		fExisting= null;
 		fFocusElement= null;
 		fFilters= null;
 	}
-	
+
 	public void setExisting(Object[] existing) {
 		fExisting= new HashSet();
 		for (int i= 0; i < existing.length; i++) {
 			fExisting.add(existing[i]);
 		}
 	}
-	
+
 	/**
 	 * Sets the tree input.
 	 * @param input the tree input.
@@ -91,7 +89,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 	public void setInput(Object input) {
 		fInput = input;
 	}
-	
+
 	/**
 	 * Adds a filter to the tree viewer.
 	 * @param filter a filter.
@@ -102,18 +100,17 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 
 		fFilters.add(filter);
 	}
-		
+
 	/**
 	 * Handles cancel button pressed event.
 	 */
+	@Override
 	protected void cancelPressed() {
 		setSelectionResult(null);
 		super.cancelPressed();
 	}
 
-	/*
-	 * @see SelectionStatusDialog#computeResult()
-	 */
+	@Override
 	protected void computeResult() {
 		Object[] checked= fViewer.getCheckedElements();
 		if (fExisting == null) {
@@ -136,39 +133,37 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 		}
 		setSelectionResult(checked);
 	}
-	
+
 	private void access$superCreate() {
 		super.create();
 	}
-	
+
 	/*
 	 * @see Window#create()
 	 */
+	@Override
 	public void create() {
 
-		BusyIndicator.showWhile(null, new Runnable() {
-			public void run() {
-				access$superCreate();
+		BusyIndicator.showWhile(null, () -> {
+			access$superCreate();
 
-				fViewer.setCheckedElements(
-					getInitialElementSelections().toArray());
+			fViewer.setCheckedElements(getInitialElementSelections().toArray());
 
-				fViewer.expandToLevel(2);
-				if (fExisting != null) {
-					for (Iterator iter= fExisting.iterator(); iter.hasNext();) {
-						fViewer.reveal(iter.next());
-					}
+			fViewer.expandToLevel(2);
+			if (fExisting != null) {
+				for (Iterator iter = fExisting.iterator(); iter.hasNext();) {
+					fViewer.reveal(iter.next());
 				}
-
-				updateOKStatus();
 			}
+
+			updateOKStatus();
 		});
 
 	}
 
 	/**
 	 * Creates the tree viewer.
-	 * 
+	 *
 	 * @param parent the parent composite
 	 * @return the tree viewer
 	 */
@@ -177,11 +172,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 
 		fViewer.setContentProvider(fContentProvider);
 		fViewer.setLabelProvider(fLabelProvider);
-		fViewer.addCheckStateListener(new ICheckStateListener() {
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				updateOKStatus();
-			}
-		});
+		fViewer.addCheckStateListener(event -> updateOKStatus());
 
 		fViewer.setComparator(new ResourceComparator(ResourceComparator.NAME));
 		if (fFilters != null) {
@@ -194,10 +185,10 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 		return fViewer;
 	}
 
-	
+
 
 	/**
-	 * 
+	 *
 	 */
 	protected void updateOKStatus() {
 		computeResult();
@@ -211,12 +202,13 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
 
 		createMessageArea(composite);
 		CheckboxTreeViewer treeViewer = createTreeViewer(composite);
-		
+
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.widthHint = convertWidthInCharsToPixels(60);
 		data.heightHint = convertHeightInCharsToPixels(18);
@@ -224,16 +216,17 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 		Tree treeWidget = treeViewer.getTree();
 		treeWidget.setLayoutData(data);
 		treeWidget.setFont(composite.getFont());
-		
+
 		Button button = new Button(composite, SWT.PUSH);
-		button.setText(NewWizardMessages.MultipleFolderSelectionDialog_button); 
+		button.setText(NewWizardMessages.MultipleFolderSelectionDialog_button);
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				newFolderButtonPressed();
 			}
 		});
 		button.setFont(composite.getFont());
-		
+
 		fNewFolderButton= button;
 
 		treeViewer.addSelectionChangedListener(this);
@@ -245,13 +238,9 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 		if (fFocusElement != null) {
 			treeViewer.setSelection(new StructuredSelection(fFocusElement), true);
 		}
-		treeViewer.addCheckStateListener(new ICheckStateListener() {
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				forceExistingChecked(event);
-			}
-		});
-		
-		applyDialogFont(composite);		
+		treeViewer.addCheckStateListener(event -> forceExistingChecked(event));
+
+		applyDialogFont(composite);
 		return composite;
 	}
 
@@ -274,7 +263,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 			}
 		}
 		fNewFolderButton.setEnabled(fSelectedContainer != null);
-	}	
+	}
 
 	protected void newFolderButtonPressed() {
 		Object createdFolder= createFolder(fSelectedContainer);
@@ -287,7 +276,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 			updateOKStatus();
 		}
 	}
-	
+
 	protected Object createFolder(IContainer container) {
 		NewFolderDialog dialog= new NewFolderDialog(getShell(), container);
 		if (dialog.open() == Window.OK) {
@@ -295,10 +284,11 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 		}
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		updateNewFolderButtonState();
 	}
@@ -306,7 +296,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 	public void setInitialFocus(Object focusElement) {
 		fFocusElement= focusElement;
 	}
-	
+
 
 
 }

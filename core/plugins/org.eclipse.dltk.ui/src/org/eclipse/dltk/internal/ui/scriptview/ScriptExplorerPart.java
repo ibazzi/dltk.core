@@ -73,18 +73,14 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
-import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IElementComparer;
 import org.eclipse.jface.viewers.ILabelDecorator;
-import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeSelection;
-import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
@@ -140,10 +136,9 @@ import org.eclipse.ui.views.framelist.TreeFrame;
  * view the corresponding editor is activated.
  */
 
-public class ScriptExplorerPart extends ViewPart implements
-		ISetSelectionTarget, IMenuListener, IShowInTarget,
-		IScriptExplorerViewPart, IPropertyChangeListener,
-		IViewPartInputProvider {
+public class ScriptExplorerPart extends ViewPart implements ISetSelectionTarget,
+		IMenuListener, IShowInTarget, IScriptExplorerViewPart,
+		IPropertyChangeListener, IViewPartInputProvider {
 
 	private static final String PERF_CREATE_PART_CONTROL = "org.eclipse.dltk.ui/perf/explorer/createPartControl"; //$NON-NLS-1$
 	private static final String PERF_MAKE_ACTIONS = "org.eclipse.dltk.ui/perf/explorer/makeActions"; //$NON-NLS-1$
@@ -230,17 +225,18 @@ public class ScriptExplorerPart extends ViewPart implements
 		}
 	};
 
-//	private ITreeViewerListener fExpansionListener = new ITreeViewerListener() {
-//		public void treeCollapsed(TreeExpansionEvent event) {
-//		}
-//
-//		public void treeExpanded(TreeExpansionEvent event) {
-//			Object element = event.getElement();
-//			if (element instanceof ISourceModule) {
-//				expandMainType(element);
-//			}
-//		}
-//	};
+	// private ITreeViewerListener fExpansionListener = new
+	// ITreeViewerListener() {
+	// public void treeCollapsed(TreeExpansionEvent event) {
+	// }
+	//
+	// public void treeExpanded(TreeExpansionEvent event) {
+	// Object element = event.getElement();
+	// if (element instanceof ISourceModule) {
+	// expandMainType(element);
+	// }
+	// }
+	// };
 
 	protected class PackageExplorerProblemTreeViewer extends ProblemTreeViewer {
 		// fix for 64372 Projects showing up in Package Explorer twice [package
@@ -262,7 +258,7 @@ public class ScriptExplorerPart extends ViewPart implements
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * org.eclipse.jface.viewers.AbstractTreeViewer#internalRefresh(java
 		 * .lang.Object, boolean)
@@ -329,8 +325,8 @@ public class ScriptExplorerPart extends ViewPart implements
 			IStructuredSelection is = (IStructuredSelection) invalidSelection;
 			List ns = null;
 			if (newSelection instanceof IStructuredSelection) {
-				ns = new ArrayList(((IStructuredSelection) newSelection)
-						.toList());
+				ns = new ArrayList(
+						((IStructuredSelection) newSelection).toList());
 			} else {
 				ns = new ArrayList();
 			}
@@ -387,12 +383,14 @@ public class ScriptExplorerPart extends ViewPart implements
 		}
 
 		@Override
-		protected void setSelectionToWidget(ISelection selection, boolean reveal) {
+		protected void setSelectionToWidget(ISelection selection,
+				boolean reveal) {
 			if (true) {
 				super.setSelectionToWidget(selection, reveal);
 				return;
 			}
-			if (!fInPreserveSelection || !(selection instanceof ITreeSelection)) {
+			if (!fInPreserveSelection
+					|| !(selection instanceof ITreeSelection)) {
 				super.setSelectionToWidget(selection, reveal);
 				return;
 			}
@@ -407,8 +405,8 @@ public class ScriptExplorerPart extends ViewPart implements
 			for (Iterator iter = toRestore.iterator(); iter.hasNext();) {
 				Object element = iter.next();
 				TreePath[] pathsToRestore = toRestore.getPathsFor(element);
-				CustomHashtable currentParents = createRootAccessedMap(contentProvider
-						.getTreePaths(element));
+				CustomHashtable currentParents = createRootAccessedMap(
+						contentProvider.getTreePaths(element));
 				for (int i = 0; i < pathsToRestore.length; i++) {
 					TreePath path = pathsToRestore[i];
 					Object root = path.getFirstSegment();
@@ -438,9 +436,8 @@ public class ScriptExplorerPart extends ViewPart implements
 					}
 				}
 			}
-			getTree().setSelection(
-					(TreeItem[]) toSelect
-							.toArray(new TreeItem[toSelect.size()]));
+			getTree().setSelection((TreeItem[]) toSelect
+					.toArray(new TreeItem[toSelect.size()]));
 		}
 
 		private Widget internalFindChild(Widget parent, Object element) {
@@ -469,16 +466,11 @@ public class ScriptExplorerPart extends ViewPart implements
 	}
 
 	public ScriptExplorerPart() {
-		fPostSelectionListener = new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				handlePostSelectionChanged(event);
-			}
-		};
+		fPostSelectionListener = event -> handlePostSelectionChanged(event);
 
 		// exception: initialize from preference
-		fDialogSettings = DLTKUIPlugin.getDefault().getDialogSettingsSection(
-				getClass().getName());
+		fDialogSettings = DLTKUIPlugin.getDefault()
+				.getDialogSettingsSection(getClass().getName());
 
 		// on by default
 		fShowLibrariesNode = fDialogSettings
@@ -490,8 +482,8 @@ public class ScriptExplorerPart extends ViewPart implements
 				.getBoolean(ScriptExplorerPart.TAG_LINK_EDITOR);
 
 		try {
-			fIsCurrentLayoutFlat = fDialogSettings
-					.getInt(ScriptExplorerPart.TAG_LAYOUT) == ScriptExplorerPart.FLAT_LAYOUT;
+			fIsCurrentLayoutFlat = fDialogSettings.getInt(
+					ScriptExplorerPart.TAG_LAYOUT) == ScriptExplorerPart.FLAT_LAYOUT;
 		} catch (NumberFormatException e) {
 			fIsCurrentLayoutFlat = getDefaultPackageLayout() == FLAT_LAYOUT;
 		}
@@ -510,15 +502,16 @@ public class ScriptExplorerPart extends ViewPart implements
 	}
 
 	@Override
-	public void init(IViewSite site, IMemento memento) throws PartInitException {
+	public void init(IViewSite site, IMemento memento)
+			throws PartInitException {
 		super.init(site, memento);
 		if (memento == null) {
 			String persistedMemento = fDialogSettings
 					.get(ScriptExplorerPart.TAG_MEMENTO);
 			if (persistedMemento != null) {
 				try {
-					memento = XMLMemento.createReadRoot(new StringReader(
-							persistedMemento));
+					memento = XMLMemento
+							.createReadRoot(new StringReader(persistedMemento));
 				} catch (WorkbenchException e) {
 					// don't do anything. Simply don't restore the settings
 				}
@@ -548,7 +541,8 @@ public class ScriptExplorerPart extends ViewPart implements
 	private void restoreLayoutState(IMemento memento) {
 		Integer layoutState = memento.getInteger(ScriptExplorerPart.TAG_LAYOUT);
 		if (layoutState != null) {
-			fIsCurrentLayoutFlat = layoutState.intValue() == ScriptExplorerPart.FLAT_LAYOUT;
+			fIsCurrentLayoutFlat = layoutState
+					.intValue() == ScriptExplorerPart.FLAT_LAYOUT;
 		}
 
 		// on by default
@@ -581,8 +575,8 @@ public class ScriptExplorerPart extends ViewPart implements
 	 */
 	public static ScriptExplorerPart openInActivePerspective() {
 		try {
-			return (ScriptExplorerPart) DLTKUIPlugin.getActivePage().showView(
-					DLTKUIPlugin.ID_SCRIPT_EXPLORER);
+			return (ScriptExplorerPart) DLTKUIPlugin.getActivePage()
+					.showView(DLTKUIPlugin.ID_SCRIPT_EXPLORER);
 		} catch (PartInitException pe) {
 			return null;
 		}
@@ -602,8 +596,8 @@ public class ScriptExplorerPart extends ViewPart implements
 		StringWriter writer = new StringWriter();
 		try {
 			memento.save(writer);
-			fDialogSettings.put(ScriptExplorerPart.TAG_MEMENTO, writer
-					.getBuffer().toString());
+			fDialogSettings.put(ScriptExplorerPart.TAG_MEMENTO,
+					writer.getBuffer().toString());
 		} catch (IOException e) {
 			// don't do anything. Simply don't store the settings
 		}
@@ -622,16 +616,16 @@ public class ScriptExplorerPart extends ViewPart implements
 
 		DLTKUIPlugin.getDefault().getPreferenceStore()
 				.removePropertyChangeListener(this);
-//		if (fViewer != null) {
-//			fViewer.removeTreeListener(fExpansionListener);
-//		}
+		// if (fViewer != null) {
+		// fViewer.removeTreeListener(fExpansionListener);
+		// }
 
 		if (fActionSet != null) {
 			fActionSet.dispose();
 		}
 		if (fFilterUpdater != null) {
-			ResourcesPlugin.getWorkspace().removeResourceChangeListener(
-					fFilterUpdater);
+			ResourcesPlugin.getWorkspace()
+					.removeResourceChangeListener(fFilterUpdater);
 		}
 		if (fWorkingSetModel != null) {
 			fWorkingSetModel.dispose();
@@ -641,16 +635,15 @@ public class ScriptExplorerPart extends ViewPart implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets
-	 * .Composite)
+	 *
+	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.
+	 * widgets .Composite)
 	 */
 	@Override
 	public void createPartControl(Composite parent) {
 
-		final PerformanceStats stats = PerformanceStats.getStats(
-				ScriptExplorerPart.PERF_CREATE_PART_CONTROL, this);
+		final PerformanceStats stats = PerformanceStats
+				.getStats(ScriptExplorerPart.PERF_CREATE_PART_CONTROL, this);
 		stats.startRun();
 
 		fViewer = createViewer(parent);
@@ -686,25 +679,18 @@ public class ScriptExplorerPart extends ViewPart implements
 
 		fViewer.addPostSelectionChangedListener(fPostSelectionListener);
 
-		fViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				fActionSet.handleDoubleClick(event);
-			}
-		});
+		fViewer.addDoubleClickListener(
+				event -> fActionSet.handleDoubleClick(event));
 
-		fViewer.addOpenListener(new IOpenListener() {
-			@Override
-			public void open(OpenEvent event) {
-				fActionSet.handleOpen(event);
-				fLastOpenSelection = event.getSelection();
-			}
+		fViewer.addOpenListener(event -> {
+			fActionSet.handleOpen(event);
+			fLastOpenSelection = event.getSelection();
 		});
 
 		IStatusLineManager slManager = getViewSite().getActionBars()
 				.getStatusLineManager();
 		fViewer.addSelectionChangedListener(new StatusBarUpdater(slManager));
-//		fViewer.addTreeListener(fExpansionListener);
+		// fViewer.addTreeListener(fExpansionListener);
 
 		// ScriptUIHelp.setHelp(fViewer, IScriptHelpContextIds.PACKAGES_VIEW);
 
@@ -721,8 +707,8 @@ public class ScriptExplorerPart extends ViewPart implements
 		// set yet.
 		setLinkingEnabled(isLinkingEnabled());
 
-		IContextService ctxService = getSite().getService(
-				IContextService.class);
+		IContextService ctxService = getSite()
+				.getService(IContextService.class);
 		if (ctxService != null) {
 			fContextActivation = ctxService
 					.activateContext(DLTKUIPlugin.CONTEXT_VIEWS);
@@ -739,18 +725,18 @@ public class ScriptExplorerPart extends ViewPart implements
 	/**
 	 * This viewer ensures that non-leaves in the hierarchical layout are not
 	 * removed by any filters.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	protected ProblemTreeViewer createViewer(Composite composite) {
-		return new PackageExplorerProblemTreeViewer(composite, SWT.MULTI
-				| SWT.H_SCROLL | SWT.V_SCROLL);
+		return new PackageExplorerProblemTreeViewer(composite,
+				SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 	}
 
 	/**
 	 * Answers whether this part shows the packages flat or hierarchical.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	public boolean isFlatLayout() {
 		return fIsCurrentLayoutFlat;
@@ -805,7 +791,7 @@ public class ScriptExplorerPart extends ViewPart implements
 
 	/**
 	 * This method should only be called inside this class and from test cases.
-	 * 
+	 *
 	 * @return the created content provider
 	 */
 	public ScriptExplorerContentProvider createContentProvider() {
@@ -886,13 +872,8 @@ public class ScriptExplorerPart extends ViewPart implements
 			return (T) getShowInSource();
 		}
 		if (key == IShowInTargetList.class) {
-			return (T) new IShowInTargetList() {
-				@Override
-				public String[] getShowInTargetIds() {
-					return new String[] { IPageLayout.ID_RES_NAV };
-				}
-
-			};
+			return (T) (IShowInTargetList) () -> new String[] {
+					IPageLayout.ID_RES_NAV };
 		}
 		// if (key == IContextProvider.class) {
 		// return ScriptUIHelp.getHelpContextProvider(this,
@@ -984,7 +965,7 @@ public class ScriptExplorerPart extends ViewPart implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
 	 */
 	@Override
@@ -1001,7 +982,7 @@ public class ScriptExplorerPart extends ViewPart implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see IMenuListener#menuAboutToShow(IMenuManager)
 	 */
 	@Override
@@ -1015,14 +996,14 @@ public class ScriptExplorerPart extends ViewPart implements
 
 	private void makeActions() {
 
-		final PerformanceStats stats = PerformanceStats.getStats(
-				ScriptExplorerPart.PERF_MAKE_ACTIONS, this);
+		final PerformanceStats stats = PerformanceStats
+				.getStats(ScriptExplorerPart.PERF_MAKE_ACTIONS, this);
 		stats.startRun();
 
 		fActionSet = getActionGroup();
 		if (fWorkingSetModel != null) {
-			fActionSet.getWorkingSetActionGroup().setWorkingSetModel(
-					fWorkingSetModel);
+			fActionSet.getWorkingSetActionGroup()
+					.setWorkingSetModel(fWorkingSetModel);
 		}
 
 		stats.endRun();
@@ -1055,7 +1036,7 @@ public class ScriptExplorerPart extends ViewPart implements
 
 	/**
 	 * Handles post selection changed in viewer.
-	 * 
+	 *
 	 * Links to editor (if option enabled).
 	 */
 	private void handlePostSelectionChanged(SelectionChangedEvent event) {
@@ -1070,7 +1051,7 @@ public class ScriptExplorerPart extends ViewPart implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.part.ISetSelectionTarget#selectReveal(org.eclipse.jface
 	 * .viewers.ISelection)
@@ -1135,8 +1116,7 @@ public class ScriptExplorerPart extends ViewPart implements
 
 		} else if (original instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) original;
-			IModelElement je2 = adaptable
-					.getAdapter(IModelElement.class);
+			IModelElement je2 = adaptable.getAdapter(IModelElement.class);
 			if (je2 != null && je2.exists()) {
 				return je2;
 			}
@@ -1166,7 +1146,7 @@ public class ScriptExplorerPart extends ViewPart implements
 
 	/**
 	 * Links to editor (if option enabled)
-	 * 
+	 *
 	 * @param selection
 	 *            the selection
 	 */
@@ -1234,8 +1214,8 @@ public class ScriptExplorerPart extends ViewPart implements
 				fShowLibrariesNode);
 		fDialogSettings.put(ScriptExplorerPart.TAG_LAYOUT, getLayoutAsInt());
 		fDialogSettings.put(ScriptExplorerPart.TAG_ROOT_MODE, fRootMode);
-		fDialogSettings
-				.put(ScriptExplorerPart.TAG_LINK_EDITOR, fLinkingEnabled);
+		fDialogSettings.put(ScriptExplorerPart.TAG_LINK_EDITOR,
+				fLinkingEnabled);
 	}
 
 	private int getLayoutAsInt() {
@@ -1273,7 +1253,7 @@ public class ScriptExplorerPart extends ViewPart implements
 	/**
 	 * An editor has been activated. Set the selection in this Packages Viewer
 	 * to be the editor's input, if linking is enabled.
-	 * 
+	 *
 	 * @param editor
 	 *            the activated editor
 	 */
@@ -1325,8 +1305,8 @@ public class ScriptExplorerPart extends ViewPart implements
 			return false;
 		}
 
-		IEditorInput selectionAsInput = EditorUtility.getEditorInput(selection
-				.getFirstElement());
+		IEditorInput selectionAsInput = EditorUtility
+				.getEditorInput(selection.getFirstElement());
 		return input.equals(selectionAsInput);
 	}
 
@@ -1347,11 +1327,12 @@ public class ScriptExplorerPart extends ViewPart implements
 				fViewer.reveal(element);
 			} else {
 				try {
-					fViewer
-							.removePostSelectionChangedListener(fPostSelectionListener);
+					fViewer.removePostSelectionChangedListener(
+							fPostSelectionListener);
 					fViewer.setSelection(newSelection, true);
 
-					while (element != null && fViewer.getSelection().isEmpty()) {
+					while (element != null
+							&& fViewer.getSelection().isEmpty()) {
 						// Try to select parent in case element is filtered
 						element = getParent(element);
 						if (element != null) {
@@ -1360,8 +1341,8 @@ public class ScriptExplorerPart extends ViewPart implements
 						}
 					}
 				} finally {
-					fViewer
-							.addPostSelectionChangedListener(fPostSelectionListener);
+					fViewer.addPostSelectionChangedListener(
+							fPostSelectionListener);
 				}
 			}
 			return true;
@@ -1376,7 +1357,7 @@ public class ScriptExplorerPart extends ViewPart implements
 
 	/**
 	 * Returns the element's parent.
-	 * 
+	 *
 	 * @return the parent or <code>null</code> if there's no parent
 	 */
 	private Object getParent(Object element) {
@@ -1390,38 +1371,6 @@ public class ScriptExplorerPart extends ViewPart implements
 		// }
 		return null;
 	}
-
-	// /**
-	// * A compilation unit or class was expanded, expand the main type.
-	// */
-	// void expandMainType(Object element) {
-	// try {
-	// IType type = null;
-	// if (element instanceof ISourceModule) {
-	// ISourceModule cu = (ISourceModule) element;
-	// IType[] types = cu.getTypes();
-	// if (types.length > 0) {
-	// type = types[0];
-	// }
-	// }
-	// if (type != null) {
-	// final IType type2 = type;
-	// Control ctrl = fViewer.getControl();
-	// if (ctrl != null && !ctrl.isDisposed()) {
-	// ctrl.getDisplay().asyncExec(new Runnable() {
-	// public void run() {
-	// Control ctrl2 = fViewer.getControl();
-	// if (ctrl2 != null && !ctrl2.isDisposed()) {
-	// fViewer.expandToLevel(type2, 1);
-	// }
-	// }
-	// });
-	// }
-	// }
-	// } catch (ModelException e) {
-	// // no reveal
-	// }
-	// }
 
 	protected Object getElementOfInput(IEditorInput input) {
 		if (input instanceof IFileEditorInput)
@@ -1482,7 +1431,7 @@ public class ScriptExplorerPart extends ViewPart implements
 
 	/**
 	 * Sets the decorator for the package explorer.
-	 * 
+	 *
 	 * @param decorator
 	 *            a label decorator or <code>null</code> for no decorations.
 	 * @deprecated To be removed
@@ -1502,8 +1451,8 @@ public class ScriptExplorerPart extends ViewPart implements
 
 		boolean refreshViewer = false;
 
-		if (PreferenceConstants.SHOW_SOURCE_MODULE_CHILDREN.equals(event
-				.getProperty())) {
+		if (PreferenceConstants.SHOW_SOURCE_MODULE_CHILDREN
+				.equals(event.getProperty())) {
 			fActionSet.updateActionBars(getViewSite().getActionBars());
 
 			boolean showCUChildren = DLTKUIPlugin.getDefault()
@@ -1515,8 +1464,8 @@ public class ScriptExplorerPart extends ViewPart implements
 			refreshViewer = true;
 		}
 		if (DLTKCore.DEBUG) {
-			System.err
-					.println("Add members order preference cach support here..."); //$NON-NLS-1$
+			System.err.println(
+					"Add members order preference cach support here..."); //$NON-NLS-1$
 		}
 		// } else if
 		// (MembersOrderPreferenceCache.isMemberOrderProperty(event.getProperty()
@@ -1532,7 +1481,7 @@ public class ScriptExplorerPart extends ViewPart implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see IViewPartInputProvider#getViewPartInput()
 	 */
 	@Override
@@ -1555,7 +1504,7 @@ public class ScriptExplorerPart extends ViewPart implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.part.IShowInTarget#show(org.eclipse.ui.part.ShowInContext)
 	 */
@@ -1594,13 +1543,8 @@ public class ScriptExplorerPart extends ViewPart implements
 	 * Returns the <code>IShowInSource</code> for this view.
 	 */
 	protected IShowInSource getShowInSource() {
-		return new IShowInSource() {
-			@Override
-			public ShowInContext getShowInContext() {
-				return new ShowInContext(getTreeViewer().getInput(),
-						getTreeViewer().getSelection());
-			}
-		};
+		return () -> new ShowInContext(getTreeViewer().getInput(),
+				getTreeViewer().getSelection());
 	}
 
 	@Override
@@ -1644,7 +1588,8 @@ public class ScriptExplorerPart extends ViewPart implements
 				.getWorkingSetActionGroup().getFilterGroup();
 		if (workingSetGroup != null) {
 			IWorkingSet workingSet = workingSetGroup.getWorkingSet();
-			if (workingSetGroup.isFiltered(getVisibleParent(element), element)) {
+			if (workingSetGroup.isFiltered(getVisibleParent(element),
+					element)) {
 				String message;
 				if (element instanceof IModelElement) {
 					IDLTKUILanguageToolkit toolkit = DLTKUILanguageManager
@@ -1654,14 +1599,14 @@ public class ScriptExplorerPart extends ViewPart implements
 					String elementLabel = labels.getElementLabel(
 							(IModelElement) element,
 							ScriptElementLabels.ALL_DEFAULT);
-					message = Messages
-							.format(ScriptMessages.PackageExplorer_notFound,
-									new String[] { elementLabel,
-											workingSet.getLabel() });
+					message = Messages.format(
+							ScriptMessages.PackageExplorer_notFound,
+							new String[] { elementLabel,
+									workingSet.getLabel() });
 				} else {
 					message = Messages.format(
-							ScriptMessages.PackageExplorer_notFound, workingSet
-									.getLabel());
+							ScriptMessages.PackageExplorer_notFound,
+							workingSet.getLabel());
 				}
 				if (MessageDialog.openQuestion(getSite().getShell(),
 						ScriptMessages.PackageExplorer_filteredDialog_title,
@@ -1680,8 +1625,8 @@ public class ScriptExplorerPart extends ViewPart implements
 				.getCustomFilterActionGroup();
 		String[] currentFilters = filterGroup.internalGetEnabledFilterIds();
 		String[] newFilters = filterGroup.removeFiltersFor(
-				getVisibleParent(element), element, getTreeViewer()
-						.getContentProvider());
+				getVisibleParent(element), element,
+				getTreeViewer().getContentProvider());
 		if (currentFilters.length > newFilters.length) {
 			String message;
 			if (element instanceof IModelElement) {
@@ -1712,8 +1657,8 @@ public class ScriptExplorerPart extends ViewPart implements
 		while (action.getFrameList().getCurrentIndex() > 0) {
 			// only try to go up if there is a parent frame
 			// fix for bug# 63769 Endless loop after Show in Package Explorer
-			if (action.getFrameList().getSource().getFrame(
-					IFrameSource.PARENT_FRAME, 0) == null) {
+			if (action.getFrameList().getSource()
+					.getFrame(IFrameSource.PARENT_FRAME, 0) == null) {
 				break;
 			}
 			action.run();
@@ -1786,15 +1731,15 @@ public class ScriptExplorerPart extends ViewPart implements
 				&& fWorkingSetModel == null) {
 			createWorkingSetModel();
 			if (fActionSet != null) {
-				fActionSet.getWorkingSetActionGroup().setWorkingSetModel(
-						fWorkingSetModel);
+				fActionSet.getWorkingSetActionGroup()
+						.setWorkingSetModel(fWorkingSetModel);
 			}
 		}
 		IStructuredSelection selection = new StructuredSelection(
 				((IStructuredSelection) fViewer.getSelection()).toArray());
 		Object input = fViewer.getInput();
-		boolean isRootInputChange = DLTKCore.create(
-				ResourcesPlugin.getWorkspace().getRoot()).equals(input)
+		boolean isRootInputChange = DLTKCore
+				.create(ResourcesPlugin.getWorkspace().getRoot()).equals(input)
 				|| (fWorkingSetModel != null && fWorkingSetModel.equals(input))
 				|| input instanceof IWorkingSet;
 		try {
@@ -1866,7 +1811,7 @@ public class ScriptExplorerPart extends ViewPart implements
 	/**
 	 * Returns the root mode: Either {@link #PROJECTS_AS_ROOTS} or
 	 * {@link #WORKING_SETS_AS_ROOTS}.
-	 * 
+	 *
 	 * @return returns the root mode
 	 */
 	public int getRootMode() {

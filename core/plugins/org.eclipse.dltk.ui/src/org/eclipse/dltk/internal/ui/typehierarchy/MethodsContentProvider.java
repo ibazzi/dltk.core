@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.typehierarchy;
 
@@ -26,23 +25,23 @@ import org.eclipse.jface.viewers.Viewer;
  * Allows also seeing methods inherited from base classes.
  */
 public class MethodsContentProvider implements IStructuredContentProvider, IWorkingCopyProvider {
-	
+
 	private static final Object[] NO_ELEMENTS = new Object[0];
-		
+
 	private boolean fShowInheritedMethods;
 	private TypeHierarchyLifeCycle fHierarchyLifeCycle;
 	private TableViewer fViewer;
-	
+
 	public MethodsContentProvider(TypeHierarchyLifeCycle lifecycle) {
 		fHierarchyLifeCycle= lifecycle;
 		fShowInheritedMethods= false;
 		fViewer= null;
 	}
-	
+
 	/**
 	 * Turn on / off showing of inherited methods
 	 */
-	public void showInheritedMethods(boolean show) {	
+	public void showInheritedMethods(boolean show) {
 		if (show != fShowInheritedMethods) {
 			fShowInheritedMethods= show;
 			if (fViewer != null) {
@@ -50,33 +49,29 @@ public class MethodsContentProvider implements IStructuredContentProvider, IWork
 			}
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see IStructuredContentProvider#providesWorkingCopies()
-	 */
+
+	@Override
 	public boolean providesWorkingCopies() {
 		return true;
-	}	
-	
+	}
+
 	/**
 	 * Returns true if inherited methods are shown
 	 */
 	public boolean isShowInheritedMethods() {
 		return fShowInheritedMethods;
 	}
-	
-	
+
+
 	private void addAll(Object[] arr, List res) {
 		if (arr != null) {
 			for (int j= 0; j < arr.length; j++) {
 				res.add(arr[j]);
 			}
 		}
-	}		
+	}
 
-	/*
-	 * @see IStructuredContentProvider#getElements
-	 */		
+	@Override
 	public Object[] getElements(Object element) {
 		if (element instanceof IType) {
 			IType type= (IType)element;
@@ -87,7 +82,7 @@ public class MethodsContentProvider implements IStructuredContentProvider, IWork
 				if (fShowInheritedMethods && hierarchy != null) {
 					IType[] allSupertypes= hierarchy.getAllSupertypes(type);
 					// sort in from last to first: elements with same name
-					// will show up in hierarchy order 
+					// will show up in hierarchy order
 					for (int i= allSupertypes.length - 1; i >= 0; i--) {
 						IType superType= allSupertypes[i];
 						if (superType.exists()) {
@@ -108,22 +103,18 @@ public class MethodsContentProvider implements IStructuredContentProvider, IWork
 			return res.toArray();
 		}
 		return NO_ELEMENTS;
-	}		
-	
-	
-	/*
-	 * @see IContentProvider#inputChanged
-	 */
+	}
+
+
+	@Override
 	public void inputChanged(Viewer input, Object oldInput, Object newInput) {
 		org.eclipse.core.runtime.Assert.isTrue(input instanceof TableViewer);
-	
+
 		fViewer= (TableViewer) input;
 	}
-	
-	/*
-	 * @see IContentProvider#dispose
-	 */	
+
+	@Override
 	public void dispose() {
-	}	
+	}
 
 }

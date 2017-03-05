@@ -16,6 +16,7 @@ public interface IScriptEditor extends IScriptLanguageProvider {
 	public void synchronizeOutlinePage(ISourceReference element,
 			boolean checkIfOutlinePageActive);
 
+	@Override
 	public IDLTKLanguageToolkit getLanguageToolkit();
 
 	public IAction getAction(String undo);

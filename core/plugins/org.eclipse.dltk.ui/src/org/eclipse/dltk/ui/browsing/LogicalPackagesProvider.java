@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -132,9 +132,7 @@ abstract class LogicalPackagesProvider implements IPropertyChangeListener, IElem
 		return newChildren.toArray();
 	}
 
-	/**
-	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (fCompoundState == isInCompoundState())
 			return;
@@ -167,9 +165,6 @@ abstract class LogicalPackagesProvider implements IPropertyChangeListener, IElem
 		fMapToPackageFragments= null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		if (newInput != null) {
 			DLTKCore.addElementChangedListener(this);
@@ -200,9 +195,7 @@ abstract class LogicalPackagesProvider implements IPropertyChangeListener, IElem
 			 ((flags & IModelElementDelta.F_REORDER) != 0));
 	}
 
-	/*
-	 * @see org.eclipse.jdt.core.IElementChangedListener#elementChanged(org.eclipse.jdt.core.ElementChangedEvent)
-	 */
+	@Override
 	public void elementChanged(ElementChangedEvent event) {
 		try {
 			processDelta(event.getDelta());

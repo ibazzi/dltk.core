@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.text.completion;
 
@@ -47,6 +46,7 @@ public class ScriptMethodCompletionProposal extends
 	/**
 	 * @since 3.0
 	 */
+	@Override
 	public String getName() {
 		return fProposal.getName();
 	}
@@ -102,7 +102,7 @@ public class ScriptMethodCompletionProposal extends
 	 * parameter. Note that this does not say anything about whether the
 	 * argument list should be inserted. This depends on the position in the
 	 * document and the kind of proposal; see {@link #hasArgumentList() }.
-	 * 
+	 *
 	 * @return <code>true</code> if the method has any parameters,
 	 *         <code>false</code> if it has no parameters
 	 */
@@ -123,7 +123,7 @@ public class ScriptMethodCompletionProposal extends
 	/**
 	 * Returns <code>true</code> if the argument list should be inserted by the
 	 * proposal, <code>false</code> if not.
-	 * 
+	 *
 	 * @return <code>true</code> when the proposal is not in javadoc nor within
 	 *         an import and comprises the parameter list
 	 */
@@ -212,7 +212,7 @@ public class ScriptMethodCompletionProposal extends
 	/**
 	 * Overrides the default context information position. Ignored if set to
 	 * zero.
-	 * 
+	 *
 	 * @param contextInformationPosition
 	 *            the replaced position.
 	 */

@@ -17,6 +17,7 @@ public abstract class ScriptTemplateAccess implements ITemplateAccess {
 	private ContextTypeRegistry fRegistry;
 	private TemplateStore fStore;
 
+	@Override
 	public TemplateStore getTemplateStore() {
 		if (fStore == null) {
 			fStore = new ContributionTemplateStore(getContextTypeRegistry(),
@@ -26,6 +27,7 @@ public abstract class ScriptTemplateAccess implements ITemplateAccess {
 		return fStore;
 	}
 
+	@Override
 	public ContextTypeRegistry getContextTypeRegistry() {
 		if (fRegistry == null) {
 			fRegistry = createContextTypeRegistry();
@@ -64,6 +66,7 @@ public abstract class ScriptTemplateAccess implements ITemplateAccess {
 
 	protected abstract IPreferenceStore getPreferenceStore();
 
+	@Override
 	public IPreferenceStore getTemplatePreferenceStore() {
 		return getPreferenceStore();
 	}

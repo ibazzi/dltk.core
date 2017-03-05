@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.wizards.buildpath.newsourcepage;
 
@@ -29,7 +28,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Dialog to prompt whether a linked folder should be deleted.
- * 
+ *
  * @see IRemoveLinkedFolderQuery
  */
 class RemoveLinkedFolderDialog extends MessageDialog {
@@ -45,7 +44,7 @@ class RemoveLinkedFolderDialog extends MessageDialog {
 
 	/**
 	 * Creates a new remove linked folder dialog.
-	 * 
+	 *
 	 * @param shell the parent shell to use
 	 * @param folder the linked folder to remove
 	 */
@@ -54,6 +53,7 @@ class RemoveLinkedFolderDialog extends MessageDialog {
 		Assert.isTrue(folder.isLinked());
 	}
 
+	@Override
 	protected Control createCustomArea(final Composite parent) {
 
 		final Composite composite= new Composite(parent, SWT.NONE);
@@ -79,6 +79,7 @@ class RemoveLinkedFolderDialog extends MessageDialog {
 
 	private SelectionListener selectionListener= new SelectionAdapter() {
 
+		@Override
 		public final void widgetSelected(final SelectionEvent event) {
 			final Button button= (Button) event.widget;
 			if (button.getSelection())
@@ -88,7 +89,7 @@ class RemoveLinkedFolderDialog extends MessageDialog {
 
 	/**
 	 * Returns the remove status.
-	 * 
+	 *
 	 * @return the remove status, one of IRemoveLinkedFolderQuery#REMOVE_XXX
 	 */
 	public final int getRemoveStatus() {

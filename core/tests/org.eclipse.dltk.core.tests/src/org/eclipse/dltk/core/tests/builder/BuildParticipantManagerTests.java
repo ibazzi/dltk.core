@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.dltk.core.tests.builder;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.dltk.core.IScriptProject;
@@ -21,8 +21,9 @@ import org.eclipse.dltk.core.builder.IBuildParticipantFactory;
 import org.eclipse.dltk.internal.core.builder.BuildParticipantManager;
 import org.eclipse.dltk.internal.core.builder.BuildParticipantManager.BuildParticipantFactoryValue;
 import org.eclipse.dltk.utils.TextUtils;
+import org.junit.Test;
 
-public class BuildParticipantManagerTests extends TestCase {
+public class BuildParticipantManagerTests {
 
 	private static class TestBuildParticipantFactory implements
 			IBuildParticipantFactory {
@@ -69,6 +70,7 @@ public class BuildParticipantManagerTests extends TestCase {
 		return descriptor;
 	}
 
+	@Test
 	public void testSimple() {
 		BuildParticipantFactoryValue[] descriptors = new BuildParticipantFactoryValue[] {
 				createDescriptor("A", null), createDescriptor("B", null),
@@ -81,6 +83,7 @@ public class BuildParticipantManagerTests extends TestCase {
 		assertEquals("C", ((TestBuildParticipant) participants[2]).key);
 	}
 
+	@Test
 	public void testDependency() {
 		BuildParticipantFactoryValue[] descriptors = new BuildParticipantFactoryValue[] {
 				createDescriptor("A", "B,C"), createDescriptor("B", "C"),
@@ -93,6 +96,7 @@ public class BuildParticipantManagerTests extends TestCase {
 		assertEquals("A", ((TestBuildParticipant) participants[2]).key);
 	}
 
+	@Test
 	public void testMissingDependency() {
 		BuildParticipantFactoryValue[] descriptors = new BuildParticipantFactoryValue[] {
 				createDescriptor("A", "D"), createDescriptor("B", "C"),

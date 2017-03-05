@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.wizards;
 
@@ -67,13 +66,13 @@ public abstract class CapabilityConfigurationPage extends NewElementWizardPage {
 	 * Creates a wizard page that can be used in a script project creation
 	 * wizard. It contains UI to configure a the buildpath and the output
 	 * folder.
-	 * 
+	 *
 	 * <p>
 	 * After constructing, a call to
 	 * {@link #init(IScriptProject, IPath, IBuildpathEntry[], boolean)} is
 	 * required.
 	 * </p>
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	public CapabilityConfigurationPage(String pageName) {
@@ -86,10 +85,12 @@ public abstract class CapabilityConfigurationPage extends NewElementWizardPage {
 
 	private class BuildpathBlockListener implements IStatusChangeListener,
 			IScriptLanguageProvider {
+		@Override
 		public void statusChanged(IStatus status) {
 			updateStatus(status);
 		}
 
+		@Override
 		public IDLTKLanguageToolkit getLanguageToolkit() {
 			return DLTKLanguageManager.getLanguageToolkit(getScriptNature());
 		}
@@ -113,9 +114,9 @@ public abstract class CapabilityConfigurationPage extends NewElementWizardPage {
 	 * used. The new source page requires that the project is already created as
 	 * script project. The page will directly manipulate the buildpath. By
 	 * default <code>false</code> is returned.
-	 * 
+	 *
 	 * @return Returns <code>true</code> if the new source page should be used.
-	 * 
+	 *
 	 */
 	protected boolean useNewSourcePage() {
 		return false;
@@ -136,7 +137,7 @@ public abstract class CapabilityConfigurationPage extends NewElementWizardPage {
 	 * must exist when executing the runnable obtained by
 	 * <code>getRunnable()</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param jproject
 	 *            The script project.
 	 * @param defaultOutputLocation
@@ -164,11 +165,7 @@ public abstract class CapabilityConfigurationPage extends NewElementWizardPage {
 		fScriptProject = jproject;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see WizardPage#createControl
-	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setFont(parent.getFont());
@@ -187,7 +184,7 @@ public abstract class CapabilityConfigurationPage extends NewElementWizardPage {
 	/**
 	 * Returns the currently configured buildpath. Note that the buildpath might
 	 * not be valid.
-	 * 
+	 *
 	 * @return the currently configured buildpath
 	 */
 	public IBuildpathEntry[] getRawBuildPath() {
@@ -198,7 +195,7 @@ public abstract class CapabilityConfigurationPage extends NewElementWizardPage {
 	 * Returns the DLTK project that was passed in
 	 * {@link #init(IScriptProject, IPath, IBuildpathEntry[], boolean)} or
 	 * <code>null</code> if the page has not been initialized yet.
-	 * 
+	 *
 	 * @return the managed script project or <code>null</code>
 	 */
 	public IScriptProject getScriptProject() {
@@ -213,19 +210,16 @@ public abstract class CapabilityConfigurationPage extends NewElementWizardPage {
 	 * the project's buildpath and output location to the values configured in
 	 * the page and adds the script nature if not set yet. The method requires
 	 * that the project is created and opened.
-	 * 
+	 *
 	 * @return the runnable that creates the new script project
 	 */
 	public IRunnableWithProgress getRunnable() {
 		if (getScriptProject() != null) {
-			return new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor)
-						throws InvocationTargetException, InterruptedException {
-					try {
-						configureScriptProject(monitor);
-					} catch (CoreException e) {
-						throw new InvocationTargetException(e);
-					}
+			return monitor -> {
+				try {
+					configureScriptProject(monitor);
+				} catch (CoreException e) {
+					throw new InvocationTargetException(e);
 				}
 			};
 		}
@@ -235,7 +229,7 @@ public abstract class CapabilityConfigurationPage extends NewElementWizardPage {
 	/**
 	 * Adds the script nature to the project (if not set yet) and configures the
 	 * build buildpath.
-	 * 
+	 *
 	 * @param monitor
 	 *            a progress monitor to report progress or <code>null</code> if
 	 *            progress reporting is not desired

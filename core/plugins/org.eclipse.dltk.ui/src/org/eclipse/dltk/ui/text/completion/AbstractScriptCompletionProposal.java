@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.text.completion;
 
@@ -96,10 +95,10 @@ public abstract class AbstractScriptCompletionProposal implements
 		/**
 		 * Called before document changes occur. It must be followed by a call
 		 * to postReplace().
-		 * 
+		 *
 		 * @param document
 		 *            the document on which to track the reference position.
-		 * 
+		 *
 		 */
 		public void preReplace(IDocument document, int offset)
 				throws BadLocationException {
@@ -118,7 +117,7 @@ public abstract class AbstractScriptCompletionProposal implements
 		/**
 		 * Called after the document changed occurred. It must be preceded by a
 		 * call to preReplace().
-		 * 
+		 *
 		 * @param document
 		 *            the document on which to track the reference position.
 		 */
@@ -146,6 +145,7 @@ public abstract class AbstractScriptCompletionProposal implements
 			fDocument = document;
 		}
 
+		@Override
 		public ExitFlags doExit(LinkedModeModel environment, VerifyEvent event,
 				int offset, int length) {
 
@@ -210,13 +210,14 @@ public abstract class AbstractScriptCompletionProposal implements
 	protected AbstractScriptCompletionProposal() {
 	}
 
+	@Override
 	public char[] getTriggerCharacters() {
 		return fTriggerCharacters;
 	}
 
 	/**
 	 * Sets the trigger characters.
-	 * 
+	 *
 	 * @param triggerCharacters
 	 *            The set of characters which can trigger the application of
 	 *            this completion proposal
@@ -227,7 +228,7 @@ public abstract class AbstractScriptCompletionProposal implements
 
 	/**
 	 * Sets the proposal info.
-	 * 
+	 *
 	 * @param proposalInfo
 	 *            The additional information associated with this proposal or
 	 *            <code>null</code>
@@ -239,7 +240,7 @@ public abstract class AbstractScriptCompletionProposal implements
 	/**
 	 * Returns the additional proposal info, or <code>null</code> if none
 	 * exists.
-	 * 
+	 *
 	 * @return the additional proposal info, or <code>null</code> if none exists
 	 */
 	public ICompletionProposalInfo getProposalInfo() {
@@ -250,7 +251,7 @@ public abstract class AbstractScriptCompletionProposal implements
 	 * Sets the cursor position relative to the insertion offset. By default
 	 * this is the length of the completion string (Cursor positioned after the
 	 * completion)
-	 * 
+	 *
 	 * @param cursorPosition
 	 *            The cursorPosition to set
 	 */
@@ -263,12 +264,14 @@ public abstract class AbstractScriptCompletionProposal implements
 		return fCursorPosition;
 	}
 
+	@Override
 	public final void apply(IDocument document) {
 		// not used any longer
 		apply(document, (char) 0, getReplacementOffset()
 				+ getReplacementLength());
 	}
 
+	@Override
 	public void apply(IDocument document, char trigger, int offset) {
 		try {
 			// patch replacement length
@@ -347,6 +350,7 @@ public abstract class AbstractScriptCompletionProposal implements
 			document.replace(offset, length, string);
 	}
 
+	@Override
 	public void apply(ITextViewer viewer, char trigger, int stateMask,
 			int offset) {
 
@@ -395,7 +399,7 @@ public abstract class AbstractScriptCompletionProposal implements
 	/**
 	 * Returns <code>true</code> if the proposal is within javadoc,
 	 * <code>false</code> otherwise.
-	 * 
+	 *
 	 * @return <code>true</code> if the proposal is within javadoc,
 	 *         <code>false</code> otherwise
 	 */
@@ -407,7 +411,7 @@ public abstract class AbstractScriptCompletionProposal implements
 	/**
 	 * Returns <code>true</code> if the proposal is within javadoc,
 	 * <code>false</code> otherwise.
-	 * 
+	 *
 	 * @return <code>true</code> if the proposal is within javadoc,
 	 *         <code>false</code> otherwise
 	 */
@@ -417,7 +421,7 @@ public abstract class AbstractScriptCompletionProposal implements
 
 	/**
 	 * Sets the javadoc attribute.
-	 * 
+	 *
 	 * @param isInDoc
 	 *            <code>true</code> if the proposal is within javadoc
 	 */
@@ -425,23 +429,19 @@ public abstract class AbstractScriptCompletionProposal implements
 		fIsInDoc = isInDoc;
 	}
 
-	/*
-	 * @see ICompletionProposal#getSelection
-	 */
+	@Override
 	public Point getSelection(IDocument document) {
 		return new Point(getReplacementOffset() + getCursorPosition(), 0);
 	}
 
-	/*
-	 * @see ICompletionProposal#getContextInformation()
-	 */
+	@Override
 	public IContextInformation getContextInformation() {
 		return fContextInformation;
 	}
 
 	/**
 	 * Sets the context information.
-	 * 
+	 *
 	 * @param contextInformation
 	 *            The context information associated with this proposal
 	 */
@@ -449,9 +449,7 @@ public abstract class AbstractScriptCompletionProposal implements
 		fContextInformation = contextInformation;
 	}
 
-	/*
-	 * @see ICompletionProposal#getDisplayString()
-	 */
+	@Override
 	public String getDisplayString() {
 		if (fDisplayString != null)
 			return fDisplayString.toString();
@@ -461,6 +459,7 @@ public abstract class AbstractScriptCompletionProposal implements
 	/**
 	 * @since 5.2
 	 */
+	@Override
 	public StyledString getStyledDisplayString() {
 		return fDisplayString;
 	}
@@ -472,18 +471,13 @@ public abstract class AbstractScriptCompletionProposal implements
 		fDisplayString = text;
 	}
 
-	/*
-	 * @see ICompletionProposal#getAdditionalProposalInfo()
-	 */
+	@Override
 	public String getAdditionalProposalInfo() {
 		final Object info = getAdditionalProposalInfo(new NullProgressMonitor());
 		return info != null ? info.toString() : null;
 	}
 
-	/*
-	 * @seeorg.eclipse.jface.text.contentassist.ICompletionProposalExtension5#
-	 * getAdditionalProposalInfo(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	public Object getAdditionalProposalInfo(IProgressMonitor monitor) {
 		if (getProposalInfo() != null) {
 			String info = getProposalInfo().getInfo(monitor);
@@ -501,8 +495,8 @@ public abstract class AbstractScriptCompletionProposal implements
 
 	/**
 	 * Returns the style sheet URL.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	protected String getCSSStyles() {
 		if (fgCSSStyles == null) {
@@ -535,9 +529,7 @@ public abstract class AbstractScriptCompletionProposal implements
 		return css;
 	}
 
-	/*
-	 * @see ICompletionProposalExtension#getContextInformationPosition()
-	 */
+	@Override
 	public int getContextInformationPosition() {
 		if (getContextInformation() == null)
 			return getReplacementOffset() - 1;
@@ -546,7 +538,7 @@ public abstract class AbstractScriptCompletionProposal implements
 
 	/**
 	 * Gets the replacement offset.
-	 * 
+	 *
 	 * @return Returns a int
 	 */
 	public int getReplacementOffset() {
@@ -555,7 +547,7 @@ public abstract class AbstractScriptCompletionProposal implements
 
 	/**
 	 * Sets the replacement offset.
-	 * 
+	 *
 	 * @param replacementOffset
 	 *            The replacement offset to set
 	 */
@@ -564,13 +556,14 @@ public abstract class AbstractScriptCompletionProposal implements
 		fReplacementOffset = replacementOffset;
 	}
 
+	@Override
 	public int getPrefixCompletionStart(IDocument document, int completionOffset) {
 		return getReplacementOffset();
 	}
 
 	/**
 	 * Gets the replacement length.
-	 * 
+	 *
 	 * @return Returns a int
 	 */
 	public int getReplacementLength() {
@@ -579,7 +572,7 @@ public abstract class AbstractScriptCompletionProposal implements
 
 	/**
 	 * Sets the replacement length.
-	 * 
+	 *
 	 * @param replacementLength
 	 *            The replacementLength to set
 	 */
@@ -590,7 +583,7 @@ public abstract class AbstractScriptCompletionProposal implements
 
 	/**
 	 * Gets the replacement string.
-	 * 
+	 *
 	 * @return Returns a String
 	 */
 	public String getReplacementString() {
@@ -599,7 +592,7 @@ public abstract class AbstractScriptCompletionProposal implements
 
 	/**
 	 * Sets the replacement string.
-	 * 
+	 *
 	 * @param replacementString
 	 *            The replacement string to set
 	 */
@@ -608,6 +601,7 @@ public abstract class AbstractScriptCompletionProposal implements
 		fReplacementString = replacementString;
 	}
 
+	@Override
 	public CharSequence getPrefixCompletionText(IDocument document,
 			int completionOffset) {
 		if (!isCamelCaseMatching())
@@ -617,13 +611,14 @@ public abstract class AbstractScriptCompletionProposal implements
 		return getCamelCaseCompound(prefix, getReplacementString());
 	}
 
+	@Override
 	public Image getImage() {
 		return fImage;
 	}
 
 	/**
 	 * Sets the image.
-	 * 
+	 *
 	 * @param image
 	 *            The image to set
 	 */
@@ -631,10 +626,12 @@ public abstract class AbstractScriptCompletionProposal implements
 		fImage = image;
 	}
 
+	@Override
 	public boolean isValidFor(IDocument document, int offset) {
 		return validate(document, offset, null);
 	}
 
+	@Override
 	public boolean validate(IDocument document, int offset, DocumentEvent event) {
 
 		if (offset < getReplacementOffset())
@@ -665,7 +662,7 @@ public abstract class AbstractScriptCompletionProposal implements
 	 * the proposal's {@link #getDisplayString() display string} using the
 	 * {@link #isPrefix(String, String) } method.
 	 * </p>
-	 * 
+	 *
 	 * @param prefix
 	 *            the current prefix in the document
 	 * @return <code>true</code> if <code>prefix</code> is a valid prefix of
@@ -681,16 +678,17 @@ public abstract class AbstractScriptCompletionProposal implements
 
 	/**
 	 * Gets the proposal's relevance.
-	 * 
+	 *
 	 * @return Returns a int
 	 */
+	@Override
 	public int getRelevance() {
 		return fRelevance;
 	}
 
 	/**
 	 * Sets the proposal's relevance.
-	 * 
+	 *
 	 * @param relevance
 	 *            The relevance to set
 	 */
@@ -703,8 +701,8 @@ public abstract class AbstractScriptCompletionProposal implements
 	 * {@link #getReplacementOffset()} to <code>offset</code>. Returns the empty
 	 * string if <code>offset</code> is before the replacement offset or if an
 	 * exception occurs when accessing the document.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	protected String getPrefix(IDocument document, int offset) {
 		try {
@@ -720,8 +718,8 @@ public abstract class AbstractScriptCompletionProposal implements
 	 * Case insensitive comparison of <code>prefix</code> with the start of
 	 * <code>string</code>. Returns <code>false</code> if <code>prefix</code> is
 	 * longer than <code>string</code>
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	protected boolean isPrefix(String prefix, String string) {
 		if (prefix == null || string == null
@@ -745,14 +743,14 @@ public abstract class AbstractScriptCompletionProposal implements
 	 * <li>getCamelCompound("NuPoE", "NullPointerException") -> "NuPoException"</li>
 	 * <li>getCamelCompound("hasCod", "hashCode") -> "hasCode"</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param prefix
 	 *            the prefix to match against
 	 * @param string
 	 *            the string to match
 	 * @return a compound of prefix and any postfix taken from
 	 *         <code>string</code>
-	 * 
+	 *
 	 */
 	protected final String getCamelCaseCompound(String prefix, String string) {
 		if (prefix.length() > string.length())
@@ -897,6 +895,7 @@ public abstract class AbstractScriptCompletionProposal implements
 		}
 	}
 
+	@Override
 	public void selected(ITextViewer viewer, boolean smartToggle) {
 		if (!insertCompletion() ^ smartToggle)
 			updateStyle(viewer);
@@ -906,11 +905,13 @@ public abstract class AbstractScriptCompletionProposal implements
 		}
 	}
 
+	@Override
 	public void unselected(ITextViewer viewer) {
 		repairPresentation(viewer);
 		fRememberedStyleRange = null;
 	}
 
+	@Override
 	public IInformationControlCreator getInformationControlCreator() {
 		Shell shell = DLTKUIPlugin.getActiveWorkbenchShell();
 		if (shell == null || !BrowserInformationControl.isAvailable(shell))
@@ -954,7 +955,7 @@ public abstract class AbstractScriptCompletionProposal implements
 	 * Sets up a simple linked mode at {@link #getCursorPosition()} and an exit
 	 * policy that will exit the mode when <code>closingCharacter</code> is
 	 * typed and an exit position at <code>getCursorPosition() + 1</code>.
-	 * 
+	 *
 	 * @param document
 	 *            the document
 	 * @param closingCharacter
@@ -1002,7 +1003,7 @@ public abstract class AbstractScriptCompletionProposal implements
 	/**
 	 * Returns the script element proposed by the receiver, possibly
 	 * <code>null</code>.
-	 * 
+	 *
 	 * @return the script element proposed by the receiver, possibly
 	 *         <code>null</code>
 	 */

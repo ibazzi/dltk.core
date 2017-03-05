@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 NumberFour AG
+ * Copyright (c) 2012, 2017 NumberFour AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -20,9 +20,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.IScriptFolder;
 import org.eclipse.dltk.core.ISourceModule;
@@ -109,14 +107,11 @@ public class SourceModuleInfoCacheTest extends Assert {
 		assertThat(module, IS_CACHED);
 
 		final IFile file = (IFile) module.getResource();
-		project.getWorkspace().run(new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				file.delete(true, monitor);
-				file.create(
-						new ByteArrayInputStream(("//new content\n").getBytes()),
-						IResource.NONE, monitor);
-			}
+		project.getWorkspace().run(monitor -> {
+			file.delete(true, monitor);
+			file.create(
+					new ByteArrayInputStream(("//new content\n").getBytes()),
+					IResource.NONE, monitor);
 		}, null);
 		assertEquals(0, getCache().size());
 		assertThat(module, not(IS_CACHED));
@@ -182,13 +177,10 @@ public class SourceModuleInfoCacheTest extends Assert {
 		assertNotNull(folder);
 		final int capacity = getCache().capacity();
 		final List<ISourceModule> modules = new ArrayList<ISourceModule>();
-		project.getWorkspace().run(new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				for (int i = 0; i < capacity; ++i) {
-					modules.add(folder.createSourceModule("m" + i + ".txt", "",
-							false, null));
-				}
+		project.getWorkspace().run(monitor -> {
+			for (int i = 0; i < capacity; ++i) {
+				modules.add(folder.createSourceModule("m" + i + ".txt", "",
+						false, null));
 			}
 		}, null);
 		for (ISourceModule module : modules) {

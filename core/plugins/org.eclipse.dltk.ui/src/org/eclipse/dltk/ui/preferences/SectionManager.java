@@ -19,17 +19,17 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 
 /**
  * Use as follows:
- * 
+ *
  * <pre>
  *  SectionManager manager= new SectionManager();
  *  Composite composite= manager.createSectionComposite(parent);
- *  
+ *
  *  Composite xSection= manager.createSection(&quot;section X&quot;));
  *  xSection.setLayout(new FillLayout());
  *  new Button(xSection, SWT.PUSH); // add controls to section..
- *  
+ *
  *  [...]
- *  
+ *
  *  return composite; // return main composite
  * </pre>
  */
@@ -42,6 +42,7 @@ public class SectionManager {
 	private boolean fIsBeingManaged = false;
 
 	private ExpansionAdapter fListener = new ExpansionAdapter() {
+		@Override
 		public void expansionStateChanged(ExpansionEvent e) {
 			ExpandableComposite source = (ExpandableComposite) e
 					.getSource();
@@ -78,7 +79,7 @@ public class SectionManager {
 			}
 		}
 	};
-	
+
 	 private final ExpandableComposite getParentExpandableComposite(
 			Control control) {
 		Control parent = control.getParent();
@@ -152,7 +153,7 @@ public class SectionManager {
 	 * The receiver keeps a reference to the inner body composite, so that
 	 * new sections can be added via <code>createSection</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 * @return the newly created composite
@@ -173,7 +174,7 @@ public class SectionManager {
 
 		return composite;
 	}
-	
+
 	 private void makeScrollableCompositeAware(Control control) {
 		ScrolledPageContent parentScrolledComposite = getParentScrolledComposite(control);
 		if (parentScrolledComposite != null) {
@@ -190,7 +191,7 @@ public class SectionManager {
 	 * Creates an expandable section within the parent created previously by
 	 * calling <code>createSectionComposite</code>. Controls can be added
 	 * directly to the returned composite, which has no layout initially.
-	 * 
+	 *
 	 * @param label
 	 *            the display name of the section
 	 * @return a composite within the expandable section

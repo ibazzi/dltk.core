@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.actions;
 
@@ -31,11 +30,10 @@ import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
-
 /**
  * Action group that adds the search for references actions to a context menu
  * and the global menu bar.
- * 
+ *
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
@@ -63,13 +61,13 @@ public class ReferencesSearchGroup extends ActionGroup {
 	private final IDLTKLanguageToolkit toolkit;
 
 	private ISelectionProvider fSelectionProvider;
-	
+
 	/**
 	 * Creates a new <code>ReferencesSearchGroup</code>. The group requires
 	 * that the selection provided by the site's selection provider is of type
 	 * <code>
 	 * org.eclipse.jface.viewers.IStructuredSelection</code>.
-	 * 
+	 *
 	 * @param site
 	 *            the view part that owns this action group
 	 */
@@ -103,18 +101,18 @@ public class ReferencesSearchGroup extends ActionGroup {
 	/**
 	 * Note: This constructor is for internal use only. Clients should not call
 	 * this constructor.
-	 * 
+	 *
 	 * @param editor the Script editor
 	 */
 	public ReferencesSearchGroup(ScriptEditor editor,
 			IDLTKLanguageToolkit tk) {
 		this((AbstractDecoratedTextEditor) editor, tk);
 	}
-	
+
 	/**
 	 * Note: This constructor is for internal use only. Clients should not call
 	 * this constructor.
-	 * 
+	 *
 	 * @param editor
 	 *            the Script editor
 	 * @since 5.3
@@ -155,16 +153,14 @@ public class ReferencesSearchGroup extends ActionGroup {
 	/**
 	 * Note: this method is for internal use only. Clients should not call this
 	 * method.
-	 * 
+	 *
 	 * @return the menu label
 	 */
 	protected String getName() {
 		return MENU_TEXT;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared in ActionGroup
-	 */
+	@Override
 	public void fillActionBars(IActionBars actionBars) {
 		Assert.isNotNull(actionBars);
 		super.fillActionBars(actionBars);
@@ -192,9 +188,7 @@ public class ReferencesSearchGroup extends ActionGroup {
 		addAction(action, manager);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on ActionGroup.
-	 */
+	@Override
 	public void fillContextMenu(IMenuManager manager) {
 		MenuManager javaSearchMM = new MenuManager(getName(), IContextMenuConstants.GROUP_SEARCH);
 		addAction(fFindReferencesAction, javaSearchMM);
@@ -213,9 +207,7 @@ public class ReferencesSearchGroup extends ActionGroup {
 			manager.appendToGroup(fGroupId, javaSearchMM);
 	}
 
-	/*
-	 * Overrides method declared in ActionGroup
-	 */
+	@Override
 	public void dispose() {
 		unregisterActions();
 		fSelectionProvider = null;
@@ -264,7 +256,7 @@ public class ReferencesSearchGroup extends ActionGroup {
 
 	/**
 	 * Proxy to {@link SelectionDispatchAction#setSpecialSelectionProvider(ISelectionProvider)}
-	 * 
+	 *
 	 * @since 5.3
 	 * @param provider
 	 */

@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.corext.refactoring.changes;
 
@@ -40,15 +39,14 @@ public class DeleteSourceManipulationChange extends AbstractDeleteChange {
 		fIsExecuteChange = isExecuteChange;
 	}
 
-	/*
-	 * @see IChange#getName()
-	 */
+	@Override
 	public String getName() {
 		return Messages.format(
 				RefactoringCoreMessages.DeleteSourceManipulationChange_0,
 				getElementName());
 	}
 
+	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
 		// delete changes don't provide an undo operation
 		ISourceManipulation element = getSourceModification();
@@ -75,13 +73,12 @@ public class DeleteSourceManipulationChange extends AbstractDeleteChange {
 	/*
 	 * @see IChange#getModifiedLanguageElement()
 	 */
+	@Override
 	public Object getModifiedElement() {
 		return DLTKCore.create(fHandle);
 	}
 
-	/*
-	 * @see DeleteChange#doDelete(IProgressMonitor)
-	 */
+	@Override
 	protected Change doDelete(IProgressMonitor pm) throws CoreException {
 		ISourceManipulation element = getSourceModification();
 		// we have to save dirty compilation units before deleting them.

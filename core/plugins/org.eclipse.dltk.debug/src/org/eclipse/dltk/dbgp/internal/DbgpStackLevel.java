@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.dbgp.internal;
 
@@ -39,8 +38,8 @@ public class DbgpStackLevel implements IDbgpStackLevel {
 	}
 
 	public DbgpStackLevel(URI fileUri, String where, int level, int lineNumber,
-			int methodOffset, String methodName, int beginLine,
-			int beginColumn, int endLine, int endColumn) {
+			int methodOffset, String methodName, int beginLine, int beginColumn,
+			int endLine, int endColumn) {
 		this.fileUri = fileUri;
 		this.level = level;
 		this.lineNumber = lineNumber;
@@ -63,43 +62,53 @@ public class DbgpStackLevel implements IDbgpStackLevel {
 		return methodOffset;
 	}
 
+	@Override
 	public String getWhere() {
 		return where;
 	}
 
+	@Override
 	public int getLevel() {
 		return level;
 	}
 
+	@Override
 	public int getLineNumber() {
 		return lineNumber;
 	}
 
+	@Override
 	public int getBeginLine() {
 		return beginLine;
 	}
 
+	@Override
 	public int getBeginColumn() {
 		return beginColumn;
 	}
 
+	@Override
 	public int getEndLine() {
 		return endLine;
 	}
 
+	@Override
 	public int getEndColumn() {
 		return endColumn;
 	}
 
+	@Override
 	public URI getFileURI() {
 		return fileUri;
 	}
 
+	@Override
 	public String toString() {
 		return "DbgpStackLevel(level: " + level + ", line: " + lineNumber //$NON-NLS-1$ //$NON-NLS-2$
 				+ ", begin: " + beginLine + ", end: " + endLine + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -120,6 +129,7 @@ public class DbgpStackLevel implements IDbgpStackLevel {
 		}
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -158,6 +168,7 @@ public class DbgpStackLevel implements IDbgpStackLevel {
 		return true;
 	}
 
+	@Override
 	public boolean isSameMethod(IDbgpStackLevel other) {
 		return equals(fileUri, other.getFileURI())
 				&& StrUtils.equals(where, other.getWhere());

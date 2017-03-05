@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -20,11 +20,12 @@ public class OpenInputFieldAction extends Action {
 
 	public OpenInputFieldAction(DebugConsolePage page) {
 		super(Messages.OpenInputFieldAction_openCodeField, AS_CHECK_BOX);
-		setImageDescriptor(ScriptDebugImages
-				.getImageDescriptor(ScriptDebugImages.IMG_OBJS_SHOW_SNIPPET_FIELD));
+		setImageDescriptor(ScriptDebugImages.getImageDescriptor(
+				ScriptDebugImages.IMG_OBJS_SHOW_SNIPPET_FIELD));
 		this.page = page;
 	}
 
+	@Override
 	public void run() {
 		if (isChecked()) {
 			page.openInputField();

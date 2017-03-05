@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
-
 package org.eclipse.dltk.ui.viewsupport;
 
 import java.util.ArrayList;
@@ -26,7 +24,6 @@ import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Widget;
 
-
 /**
  * Extends a TreeViewer to allow more performance when showing error ticks. A
  * <code>ProblemItemMapper</code> is contained that maps all items in the tree
@@ -37,30 +34,22 @@ public class ProblemTreeViewer extends TreeViewer implements
 
 	protected ResourceToItemsMapper fResourceToItemsMapper;
 
-	/*
-	 * @see TreeViewer#TreeViewer(Composite)
-	 */
 	public ProblemTreeViewer(Composite parent) {
 		super(parent);
 		initMapper();
 	}
 
-	/*
-	 * @see TreeViewer#TreeViewer(Composite, int)
-	 */
 	public ProblemTreeViewer(Composite parent, int style) {
 		super(parent, style);
 		initMapper();
 	}
 
-	/*
-	 * @see TreeViewer#TreeViewer(Tree)
-	 */
 	public ProblemTreeViewer(Tree tree) {
 		super(tree);
 		initMapper();
 	}
 
+	@Override
 	public void doUpdateItem(Widget item) {
 		doUpdateItem(item, item.getData(), true);
 	}
@@ -69,9 +58,7 @@ public class ProblemTreeViewer extends TreeViewer implements
 		fResourceToItemsMapper = new ResourceToItemsMapper(this);
 	}
 
-	/*
-	 * @see StructuredViewer#mapElement(Object, Widget)
-	 */
+	@Override
 	protected void mapElement(Object element, Widget item) {
 		super.mapElement(element, item);
 		if (item instanceof Item) {
@@ -79,9 +66,7 @@ public class ProblemTreeViewer extends TreeViewer implements
 		}
 	}
 
-	/*
-	 * @see StructuredViewer#unmapElement(Object, Widget)
-	 */
+	@Override
 	protected void unmapElement(Object element, Widget item) {
 		if (item instanceof Item) {
 			fResourceToItemsMapper.removeFromMap(element, (Item) item);
@@ -89,17 +74,13 @@ public class ProblemTreeViewer extends TreeViewer implements
 		super.unmapElement(element, item);
 	}
 
-	/*
-	 * @see StructuredViewer#unmapAllElements()
-	 */
+	@Override
 	protected void unmapAllElements() {
 		fResourceToItemsMapper.clearMap();
 		super.unmapAllElements();
 	}
 
-	/*
-	 * @see ContentViewer#handleLabelProviderChanged(LabelProviderChangedEvent)
-	 */
+	@Override
 	protected void handleLabelProviderChanged(LabelProviderChangedEvent event) {
 		if (event instanceof ProblemsLabelChangedEvent) {
 			ProblemsLabelChangedEvent e = (ProblemsLabelChangedEvent) event;
@@ -149,7 +130,7 @@ public class ProblemTreeViewer extends TreeViewer implements
 	 * Decides if {@link #isExpandable(Object)} should also test filters. The
 	 * default behaviour is to do this only for IMembers. Implementors can
 	 * replace this behaviour.
-	 * 
+	 *
 	 * @param parent
 	 *            the given element
 	 * @return returns if if {@link #isExpandable(Object)} should also test
@@ -159,13 +140,7 @@ public class ProblemTreeViewer extends TreeViewer implements
 		return parent instanceof IMember;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.viewers.AbstractTreeViewer#isExpandable(java.lang.Object
-	 * )
-	 */
+	@Override
 	public boolean isExpandable(Object parent) {
 		if (hasFilters() && evaluateExpandableWithFilters(parent)) {
 			// workaround for 65762
@@ -185,7 +160,7 @@ public class ProblemTreeViewer extends TreeViewer implements
 
 	/**
 	 * method to test if a element has any children that passed the filters
-	 * 
+	 *
 	 * @param parent
 	 *            the element to test
 	 * @return return <code>true</code> if the element has at least a child that
@@ -196,11 +171,7 @@ public class ProblemTreeViewer extends TreeViewer implements
 		return containsNonFiltered(rawChildren, parent);
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.jface.viewers.AbstractTreeViewer#getFilteredChildren(java
-	 * .lang.Object)
-	 */
+	@Override
 	protected Object[] getFilteredChildren(Object parent) {
 		return filter(getRawChildren(parent), parent);
 	}
@@ -237,12 +208,7 @@ public class ProblemTreeViewer extends TreeViewer implements
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.viewers.StructuredViewer#filter(java.lang.Object[])
-	 */
+	@Override
 	protected final Object[] filter(Object[] elements) {
 		return filter(elements, getRoot());
 	}
@@ -250,7 +216,7 @@ public class ProblemTreeViewer extends TreeViewer implements
 	/**
 	 * All element filter tests must go through this method. Can be overridden
 	 * by subclasses.
-	 * 
+	 *
 	 * @param object
 	 *            the object to filter
 	 * @param parent

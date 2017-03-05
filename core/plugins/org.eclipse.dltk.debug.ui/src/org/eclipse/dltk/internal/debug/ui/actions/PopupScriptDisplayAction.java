@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
-
 package org.eclipse.dltk.internal.debug.ui.actions;
 
 import org.eclipse.debug.ui.DebugPopup;
@@ -21,70 +19,60 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPart;
 
-public class PopupScriptDisplayAction  extends ScriptDisplayAction {
+public class PopupScriptDisplayAction extends ScriptDisplayAction {
 	private static class DisplayPopup extends DebugPopup {
 		private String message;
-		
-        public DisplayPopup(String message, Shell shell, Point anchor) {
-        	// TODO: add real commandId
-            super(shell, anchor, null);
-            
-            this.message = message;
-        }
 
-        protected String getActionText() {
+		public DisplayPopup(String message, Shell shell, Point anchor) {
+			// TODO: add real commandId
+			super(shell, anchor, null);
+
+			this.message = message;
+		}
+
+		@Override
+		protected String getActionText() {
 			return Messages.PopupScriptDisplayAction_moveToDisplayView;
 		}
 
-		/*protected void persist() {
-            IDataDisplay directDisplay = getDirectDataDisplay();
-            Display display = DLTKDebugUIPlugin.getStandardDisplay();
+		@Override
+		protected Control createDialogArea(Composite parent) {
+			GridData gd = new GridData(GridData.FILL_BOTH);
+			StyledText text = new StyledText(parent, SWT.MULTI | SWT.READ_ONLY
+					| SWT.WRAP | SWT.H_SCROLL | SWT.V_SCROLL);
+			text.setLayoutData(gd);
 
-            if (!display.isDisposed()) {
-                IDataDisplay dataDisplay = getDataDisplay();
-                if (dataDisplay != null) {
-                    if (directDisplay == null) {
-                        dataDisplay.displayExpression(snippet);
-                    }
-                    dataDisplay.displayExpressionValue(resultString);
-                }
-            }
-        }*/
+			text.setForeground(parent.getDisplay()
+					.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
+			text.setBackground(parent.getDisplay()
+					.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 
-        protected Control createDialogArea(Composite parent) {
-            GridData gd = new GridData(GridData.FILL_BOTH);
-            StyledText text = new StyledText(parent, SWT.MULTI | SWT.READ_ONLY | SWT.WRAP | SWT.H_SCROLL | SWT.V_SCROLL);
-            text.setLayoutData(gd);
+			text.setText(message);
+			return text;
+		}
+	}
 
-            text.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-            text.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+	public PopupScriptDisplayAction() {
+		super();
+	}
 
-            text.setText(message);
-            return text;
-        }
-    }
+	private void showPopup(StyledText textWidget, String message) {
+		DebugPopup displayPopup = new DisplayPopup(message, getShell(),
+				getPopupAnchor(textWidget));
+		displayPopup.open();
+	}
 
-    public PopupScriptDisplayAction() {
-        super();
-    }
+	@Override
+	protected void displayStringResult(String currentSnippet,
+			final String currentResultString) {
+		IWorkbenchPart part = getPart();
 
-    private void showPopup(StyledText textWidget, String message) {
-        DebugPopup displayPopup = new DisplayPopup(message, getShell(), getPopupAnchor(textWidget));
-        displayPopup.open();
-    }
+		final StyledText textWidget = getStyledText(part);
+		if (textWidget != null) {
+			Display.getDefault().asyncExec(
+					() -> showPopup(textWidget, currentResultString));
 
-    protected void displayStringResult(String currentSnippet, final String currentResultString) {
-        IWorkbenchPart part = getPart();
-
-        final StyledText textWidget = getStyledText(part);
-        if (textWidget != null) {
-            Display.getDefault().asyncExec(new Runnable() {
-                public void run() {
-                    showPopup(textWidget, currentResultString);
-                }
-            });
-            
-            evaluationCleanup();
-        }
-    }
+			evaluationCleanup();
+		}
+	}
 }

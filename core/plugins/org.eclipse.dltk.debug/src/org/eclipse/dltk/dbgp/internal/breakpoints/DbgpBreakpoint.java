@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.dbgp.internal.breakpoints;
 
@@ -15,9 +14,9 @@ public class DbgpBreakpoint implements IDbgpBreakpoint {
 	private final String id;
 
 	private final boolean enabled;
-	
+
 	// Number of breakpoint hits
-	private final int hitCount;	
+	private final int hitCount;
 
 	// Hit value for hit condition
 	private final int hitValue;
@@ -36,7 +35,8 @@ public class DbgpBreakpoint implements IDbgpBreakpoint {
 			return HIT_NOT_SET;
 		}
 
-		throw new IllegalArgumentException(Messages.DbgpBreakpoint_invalidHitConditionValue);
+		throw new IllegalArgumentException(
+				Messages.DbgpBreakpoint_invalidHitConditionValue);
 	}
 
 	public DbgpBreakpoint(String id, boolean enabled, int hitValue,
@@ -48,22 +48,27 @@ public class DbgpBreakpoint implements IDbgpBreakpoint {
 		this.hitCondition = convertHitCondition(hitCondition);
 	}
 
+	@Override
 	public int getHitCondition() {
 		return hitCondition;
 	}
 
+	@Override
 	public int getHitCount() {
 		return hitCount;
 	}
 
+	@Override
 	public int getHitValue() {
 		return hitValue;
 	}
 
+	@Override
 	public String getId() {
 		return id;
 	}
 
+	@Override
 	public boolean isEnabled() {
 		return enabled;
 	}

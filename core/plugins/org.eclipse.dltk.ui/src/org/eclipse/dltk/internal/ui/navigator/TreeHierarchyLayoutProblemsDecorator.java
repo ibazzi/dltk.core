@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.navigator;
 
@@ -21,31 +20,29 @@ import org.eclipse.dltk.ui.ScriptElementImageDescriptor;
  * It only decorates package fragments which are not covered by the
  * <code>ProblemsLabelDecorator</code>.
  * </p>
- * 
+ *
  */
 public class TreeHierarchyLayoutProblemsDecorator extends ProblemsLabelDecorator {
 
 	private boolean fIsFlatLayout;
-	
+
 	public TreeHierarchyLayoutProblemsDecorator() {
 		this(false);
 	}
-	
+
 	public TreeHierarchyLayoutProblemsDecorator(boolean isFlatLayout) {
 		super(null);
 		fIsFlatLayout= isFlatLayout;
 	}
-	
+
 	protected int computeScriptFolderAdornmentFlags(IScriptFolder fragment) {
 		if (!fIsFlatLayout && !fragment.isRootFolder()) {
 			return super.computeAdornmentFlags(fragment.getResource());
 		}
 		return super.computeAdornmentFlags(fragment);
-	}		
+	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.ui.ProblemsLabelDecorator#computeAdornmentFlags(java.lang.Object)
-	 */
+	@Override
 	protected int computeAdornmentFlags(Object element) {
 		if (element instanceof IScriptFolder) {
 			return computeScriptFolderAdornmentFlags((IScriptFolder) element);
@@ -59,7 +56,7 @@ public class TreeHierarchyLayoutProblemsDecorator extends ProblemsLabelDecorator
 				}
 				else if (flags == ScriptElementImageDescriptor.WARNING) {
 					return flags;
-				} 
+				}
 				else if (flags != 0) {
 					res= flags;
 				}
@@ -68,7 +65,7 @@ public class TreeHierarchyLayoutProblemsDecorator extends ProblemsLabelDecorator
 		}
 		return super.computeAdornmentFlags(element);
 	}
-	
+
 	public void setIsFlatLayout(boolean state) {
 		fIsFlatLayout= state;
 	}

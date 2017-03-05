@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -95,7 +95,6 @@ import org.eclipse.jface.text.source.IAnnotationModelListenerExtension;
 import org.eclipse.jface.text.source.IAnnotationPresentation;
 import org.eclipse.jface.text.source.ImageUtilities;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
@@ -139,6 +138,7 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 	/** Annotation model listener added to all created CU annotation models */
 	private GlobalAnnotationModelListener fGlobalAnnotationModelListener;
 
+	@Override
 	public boolean isModifiable(Object element) {
 		if (element instanceof FileStoreEditorInput) {
 			ISourceModule module = DLTKUIPlugin
@@ -154,8 +154,9 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 	/**
 	 * Annotation representing an <code>IProblem</code>.
 	 */
-	static public class ProblemAnnotation extends Annotation implements
-			IScriptAnnotation, IAnnotationPresentation, IQuickFixableAnnotation {
+	static public class ProblemAnnotation extends Annotation
+			implements IScriptAnnotation, IAnnotationPresentation,
+			IQuickFixableAnnotation {
 
 		public static final String SPELLING_ANNOTATION_TYPE = SpellingAnnotation.TYPE;
 
@@ -244,9 +245,7 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 			}
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.source.IAnnotationPresentation#getLayer()
-		 */
+		@Override
 		public int getLayer() {
 			return fLayer;
 		}
@@ -308,9 +307,7 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 			fgImagesInitialized = true;
 		}
 
-		/*
-		 * @see Annotation#paint
-		 */
+		@Override
 		public void paint(GC gc, Canvas canvas, Rectangle r) {
 			initializeImage();
 			if (fImage != null)
@@ -318,85 +315,62 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 						SWT.TOP);
 		}
 
-		/*
-		 * @see IJavaAnnotation#getImage(Display)
-		 */
 		public Image getImage(Display display) {
 			initializeImage();
 			return fImage;
 		}
 
-		/*
-		 * @see IJavaAnnotation#getMessage()
-		 */
+		@Override
 		public String getText() {
 			String[] arguments = getArguments();
 			if (arguments != null) {
 				for (int i = 0; i < arguments.length; i++) {
 					String ar = arguments[i];
 					if (ar.startsWith(IProblem.DESCRIPTION_ARGUMENT_PREFIX)) {
-						return fProblem.getMessage()
-								+ '\n'
-								+ ar.substring(IProblem.DESCRIPTION_ARGUMENT_PREFIX
-										.length());
+						return fProblem.getMessage() + '\n' + ar.substring(
+								IProblem.DESCRIPTION_ARGUMENT_PREFIX.length());
 					}
 				}
 			}
 			return fProblem.getMessage();
 		}
 
-		/*
-		 * @see IJavaAnnotation#getArguments()
-		 */
+		@Override
 		public String[] getArguments() {
 			return isProblem() ? fProblem.getArguments() : null;
 		}
 
-		/*
-		 * @see IJavaAnnotation#getId()
-		 */
+		@Override
 		public IProblemIdentifier getId() {
 			return fProblem.getID();
 		}
 
-		/*
-		 * @see IJavaAnnotation#isProblem()
-		 */
+		@Override
 		public boolean isProblem() {
 			String type = getType();
 			return ScriptMarkerAnnotation.WARNING_ANNOTATION_TYPE.equals(type)
-					|| ScriptMarkerAnnotation.ERROR_ANNOTATION_TYPE
-							.equals(type)
+					|| ScriptMarkerAnnotation.ERROR_ANNOTATION_TYPE.equals(type)
 					|| SPELLING_ANNOTATION_TYPE.equals(type);
 		}
 
-		/*
-		 * @see IJavaAnnotation#hasOverlay()
-		 */
+		@Override
 		public boolean hasOverlay() {
 			return false;
 		}
 
-		/*
-		 * @see
-		 * org.eclipse.jdt.internal.ui.javaeditor.IJavaAnnotation#getOverlay()
-		 */
+		@Override
 		public IScriptAnnotation getOverlay() {
 			return null;
 		}
 
-		/*
-		 * @see IJavaAnnotation#addOverlaid(IJavaAnnotation)
-		 */
+		@Override
 		public void addOverlaid(IScriptAnnotation annotation) {
 			if (fOverlaids == null)
 				fOverlaids = new ArrayList<IScriptAnnotation>(1);
 			fOverlaids.add(annotation);
 		}
 
-		/*
-		 * @see IJavaAnnotation#removeOverlaid(IJavaAnnotation)
-		 */
+		@Override
 		public void removeOverlaid(IScriptAnnotation annotation) {
 			if (fOverlaids != null) {
 				fOverlaids.remove(annotation);
@@ -405,20 +379,14 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 			}
 		}
 
-		/*
-		 * @see IJavaAnnotation#getOverlaidIterator()
-		 */
+		@Override
 		public Iterator getOverlaidIterator() {
 			if (fOverlaids != null)
 				return fOverlaids.iterator();
 			return null;
 		}
 
-		/*
-		 * @see
-		 * org.eclipse.jdt.internal.ui.javaeditor.IJavaAnnotation#getCompilationUnit
-		 * ()
-		 */
+		@Override
 		public ISourceModule getSourceModule() {
 			return fSourceModule;
 		}
@@ -427,11 +395,7 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 			return fProblem;
 		}
 
-		/*
-		 * @see
-		 * org.eclipse.jdt.internal.ui.javaeditor.IJavaAnnotation#getMarkerType
-		 * ()
-		 */
+		@Override
 		public String getMarkerType() {
 			if (fProblem.getID() instanceof IProblemIdentifierExtension) {
 				return ((IProblemIdentifierExtension) fProblem.getID())
@@ -446,9 +410,10 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 		/*
 		 * @seeorg.eclipse.jface.text.quickassist.IQuickFixableAnnotation#
 		 * setQuickFixable(boolean)
-		 * 
+		 *
 		 * @since 3.2
 		 */
+		@Override
 		public void setQuickFixable(boolean state) {
 			fIsQuickFixable = state;
 			fIsQuickFixableStateSet = true;
@@ -457,29 +422,32 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 		/*
 		 * @seeorg.eclipse.jface.text.quickassist.IQuickFixableAnnotation#
 		 * isQuickFixableStateSet()
-		 * 
+		 *
 		 * @since 3.2
 		 */
+		@Override
 		public boolean isQuickFixableStateSet() {
 			return fIsQuickFixableStateSet;
 		}
 
 		/*
-		 * @see
-		 * org.eclipse.jface.text.quickassist.IQuickFixableAnnotation#isQuickFixable
-		 * ()
-		 * 
+		 * @see org.eclipse.jface.text.quickassist.IQuickFixableAnnotation#
+		 * isQuickFixable ()
+		 *
 		 * @since 3.2
 		 */
+		@Override
 		public boolean isQuickFixable() {
 			Assert.isTrue(isQuickFixableStateSet());
 			return fIsQuickFixable;
 		}
 
+		@Override
 		public int getSourceStart() {
 			return fProblem.getSourceStart();
 		}
 
+		@Override
 		public int getSourceEnd() {
 			return fProblem.getSourceEnd();
 		}
@@ -569,9 +537,9 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 	 * problems. Also acts as problem requester for its compilation unit.
 	 * Initially inactive. Must explicitly be activated.
 	 */
-	public static class SourceModuleAnnotationModel extends
-			ResourceMarkerAnnotationModel implements IProblemRequestor,
-			IProblemRequestorExtension {
+	public static class SourceModuleAnnotationModel
+			extends ResourceMarkerAnnotationModel
+			implements IProblemRequestor, IProblemRequestorExtension {
 
 		private static class ProblemRequestorState {
 			boolean fInsideReportingSequence = false;
@@ -600,6 +568,7 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 			fSourceModule = unit;
 		}
 
+		@Override
 		protected MarkerAnnotation createMarkerAnnotation(IMarker marker) {
 			if (isScriptMarker(marker))
 				return new ScriptMarkerAnnotation(marker);
@@ -617,11 +586,7 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 			}
 		}
 
-		/*
-		 * @see
-		 * org.eclipse.jface.text.source.AnnotationModel#createAnnotationModelEvent
-		 * ()
-		 */
+		@Override
 		protected AnnotationModelEvent createAnnotationModelEvent() {
 			return new SourceModuleAnnotationModelEvent(this, getResource());
 		}
@@ -649,20 +614,14 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 			return new Position(start, length);
 		}
 
-		/*
-		 * @see IProblemRequestor#beginReporting()
-		 */
+		@Override
 		public void beginReporting() {
 			ProblemRequestorState state = fProblemRequestorState.get();
 			if (state == null)
 				internalBeginReporting(false);
 		}
 
-		/*
-		 * @see
-		 * org.eclipse.jdt.internal.ui.text.java.IProblemRequestorExtension#
-		 * beginReportingSequence()
-		 */
+		@Override
 		public void beginReportingSequence() {
 			ProblemRequestorState state = fProblemRequestorState.get();
 			if (state == null)
@@ -671,7 +630,7 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 
 		/**
 		 * Sets up the infrastructure necessary for problem reporting.
-		 * 
+		 *
 		 * @param insideReportingSequence
 		 *            <code>true</code> if this method call is issued from
 		 *            inside a reporting sequence
@@ -691,9 +650,7 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 			}
 		}
 
-		/*
-		 * @see IProblemRequestor#acceptProblem(IProblem)
-		 */
+		@Override
 		public void acceptProblem(IProblem problem) {
 			if (fIsHandlingTemporaryProblems
 					|| problem.getID() == SpellingProblems.SPELLING_PROBLEM) {
@@ -703,20 +660,14 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 			}
 		}
 
-		/*
-		 * @see IProblemRequestor#endReporting()
-		 */
+		@Override
 		public void endReporting() {
 			ProblemRequestorState state = fProblemRequestorState.get();
 			if (state != null && !state.fInsideReportingSequence)
 				internalEndReporting(state);
 		}
 
-		/*
-		 * @see
-		 * org.eclipse.jdt.internal.ui.text.java.IProblemRequestorExtension#
-		 * endReportingSequence()
-		 */
+		@Override
 		public void endReportingSequence() {
 			ProblemRequestorState state = fProblemRequestorState.get();
 			if (state != null && state.fInsideReportingSequence)
@@ -815,7 +766,7 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 
 		/**
 		 * Overlays value with problem annotation.
-		 * 
+		 *
 		 * @param problemAnnotation
 		 */
 		private void setOverlay(Object value,
@@ -863,6 +814,7 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 		/*
 		 * @see IProblemRequestor#isActive()
 		 */
+		@Override
 		public boolean isActive() {
 			return fIsActive;
 		}
@@ -870,6 +822,7 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 		/*
 		 * @see IProblemRequestorExtension#setProgressMonitor(IProgressMonitor)
 		 */
+		@Override
 		public void setProgressMonitor(IProgressMonitor monitor) {
 			fProgressMonitor = monitor;
 		}
@@ -877,6 +830,7 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 		/*
 		 * @see IProblemRequestorExtension#setIsActive(boolean)
 		 */
+		@Override
 		public void setIsActive(boolean isActive) {
 			fIsActive = isActive;
 		}
@@ -884,9 +838,10 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 		/*
 		 * @see
 		 * IProblemRequestorExtension#setIsHandlingTemporaryProblems(boolean)
-		 * 
+		 *
 		 * @since 3.1
 		 */
+		@Override
 		public void setIsHandlingTemporaryProblems(boolean enable) {
 			if (fIsHandlingTemporaryProblems != enable) {
 				fIsHandlingTemporaryProblems = enable;
@@ -904,9 +859,7 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 			}
 		}
 
-		/*
-		 * @see AnnotationModel#addAnnotation(Annotation, Position, boolean)
-		 */
+		@Override
 		protected void addAnnotation(Annotation annotation, Position position,
 				boolean fireModelChanged) throws BadLocationException {
 			super.addAnnotation(annotation, position, fireModelChanged);
@@ -931,6 +884,7 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 		/*
 		 * @see AnnotationModel#removeAllAnnotations(boolean)
 		 */
+		@Override
 		protected void removeAllAnnotations(boolean fireModelChanged) {
 			super.removeAllAnnotations(fireModelChanged);
 			synchronized (getLockObject()) {
@@ -938,9 +892,7 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 			}
 		}
 
-		/*
-		 * @see AnnotationModel#removeAnnotation(Annotation, boolean)
-		 */
+		@Override
 		protected void removeAnnotation(Annotation annotation,
 				boolean fireModelChanged) {
 			Position position = getPosition(annotation);
@@ -966,8 +918,8 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 	 * problems. Also acts as problem requester for its compilation unit.
 	 * Initially inactive. Must explicitly be activated.
 	 */
-	protected static class ExternalSourceModuleAnnotationModel extends
-			SourceModuleAnnotationModel {
+	protected static class ExternalSourceModuleAnnotationModel
+			extends SourceModuleAnnotationModel {
 		private final IPath location;
 
 		public ExternalSourceModuleAnnotationModel(IPath location) {
@@ -978,6 +930,7 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 		/*
 		 * @see AbstractMarkerAnnotationModel#retrieveMarkers()
 		 */
+		@Override
 		protected IMarker[] retrieveMarkers() throws CoreException {
 			String moduleLocation = location.toPortableString();
 			IMarker[] markers = super.retrieveMarkers();
@@ -995,10 +948,11 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 
 		/**
 		 * Updates this model to the given marker deltas.
-		 * 
+		 *
 		 * @param markerDeltas
 		 *            the array of marker deltas
 		 */
+		@Override
 		protected void update(IMarkerDelta[] markerDeltas) {
 
 			if (markerDeltas.length == 0)
@@ -1042,6 +996,7 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 		/**
 		 * @see IAnnotationModelListener#modelChanged(IAnnotationModel)
 		 */
+		@Override
 		public void modelChanged(IAnnotationModel model) {
 			Object[] listeners = fListenerList.getListeners();
 			for (int i = 0; i < listeners.length; i++) {
@@ -1052,6 +1007,7 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 		/**
 		 * @see IAnnotationModelListenerExtension#modelChanged(AnnotationModelEvent)
 		 */
+		@Override
 		public void modelChanged(AnnotationModelEvent event) {
 			Object[] listeners = fListenerList.getListeners();
 			for (int i = 0; i < listeners.length; i++) {
@@ -1075,8 +1031,8 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 	/**
 	 * Element information of all connected elements with a fake CU but no file
 	 * info.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	private final Map<Object, SourceModuleInfo> fFakeCUMapForMissingInfo = new HashMap<Object, SourceModuleInfo>();
 
@@ -1087,11 +1043,9 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 		setParentDocumentProvider(provider);
 
 		fGlobalAnnotationModelListener = new GlobalAnnotationModelListener();
-		fPropertyListener = new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				if (HANDLE_TEMPORARY_PROBLEMS.equals(event.getProperty()))
-					enableHandlingTemporaryProblems();
-			}
+		fPropertyListener = event -> {
+			if (HANDLE_TEMPORARY_PROBLEMS.equals(event.getProperty()))
+				enableHandlingTemporaryProblems();
 		};
 		DLTKUIPlugin.getDefault().getPreferenceStore()
 				.addPropertyChangeListener(fPropertyListener);
@@ -1108,11 +1062,13 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 		public ISourceModule fCopy;
 
 		public IProblemRequestor getProblemRequestor() {
-			return fModel instanceof IProblemRequestor ? (IProblemRequestor) fModel
+			return fModel instanceof IProblemRequestor
+					? (IProblemRequestor) fModel
 					: null;
 		}
 	}
 
+	@Override
 	public void shutdown() {
 		DLTKUIPlugin.getDefault().getPreferenceStore()
 				.removePropertyChangeListener(fPropertyListener);
@@ -1123,6 +1079,7 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 		}
 	}
 
+	@Override
 	public ISourceModule getWorkingCopy(Object element) {
 		FileInfo fileInfo = getFileInfo(element);
 		if (fileInfo instanceof SourceModuleInfo) {
@@ -1136,6 +1093,7 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 		return null;
 	}
 
+	@Override
 	public void saveDocumentContent(IProgressMonitor monitor, Object element,
 			IDocument document, boolean overwrite) throws CoreException {
 
@@ -1145,6 +1103,7 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 		super.saveDocument(monitor, element, document, overwrite);
 	}
 
+	@Override
 	public ILineTracker createLineTracker(Object element) {
 		return new DefaultLineTracker();
 	}
@@ -1172,27 +1131,18 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 		}
 	}
 
+	@Override
 	public void setSavePolicy(ISavePolicy savePolicy) {
 		fSavePolicy = savePolicy;
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.jdt.internal.ui.javaeditor.ICompilationUnitDocumentProvider
-	 * #addGlobalAnnotationModelListener
-	 * (org.eclipse.jface.text.source.IAnnotationModelListener)
-	 */
+	@Override
 	public void addGlobalAnnotationModelListener(
 			IAnnotationModelListener listener) {
 		fGlobalAnnotationModelListener.addListener(listener);
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.jdt.internal.ui.javaeditor.ICompilationUnitDocumentProvider
-	 * #removeGlobalAnnotationModelListener
-	 * (org.eclipse.jface.text.source.IAnnotationModelListener)
-	 */
+	@Override
 	public void removeGlobalAnnotationModelListener(
 			IAnnotationModelListener listener) {
 		fGlobalAnnotationModelListener.removeListener(listener);
@@ -1200,7 +1150,7 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 
 	/**
 	 * Creates a source module from the given file.
-	 * 
+	 *
 	 * @param file
 	 *            the file from which to create the source module
 	 */
@@ -1240,21 +1190,25 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 
 		IProblemRequestor fRequestor;
 
+		@Override
 		public void acceptProblem(IProblem problem) {
 			if (fRequestor != null)
 				fRequestor.acceptProblem(problem);
 		}
 
+		@Override
 		public void beginReporting() {
 			if (fRequestor != null)
 				fRequestor.beginReporting();
 		}
 
+		@Override
 		public void endReporting() {
 			if (fRequestor != null)
 				fRequestor.endReporting();
 		}
 
+		@Override
 		public boolean isActive() {
 			return fRequestor != null && fRequestor.isActive();
 		}
@@ -1309,8 +1263,8 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 		if (requestor instanceof IProblemRequestorExtension) {
 			IProblemRequestorExtension extension = (IProblemRequestorExtension) requestor;
 			extension.setIsActive(false);
-			extension
-					.setIsHandlingTemporaryProblems(isHandlingTemporaryProblems());
+			extension.setIsHandlingTemporaryProblems(
+					isHandlingTemporaryProblems());
 		}
 
 		if (ScriptModelUtil.isPrimary(original))
@@ -1352,7 +1306,7 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 	/**
 	 * Creates and returns a new sub-progress monitor for the given parent
 	 * monitor.
-	 * 
+	 *
 	 * @param monitor
 	 *            the parent progress monitor
 	 * @param ticks
@@ -1388,11 +1342,9 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 				// -> saveAs was executed with a target that is already open
 				// in another editor
 				// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=85519
-				System.out
-						.println("SourceModuleDocumentProvider: need to replace with messages api"); //$NON-NLS-1$
-				Status status = new Status(
-						IStatus.WARNING,
-						EditorsUI.PLUGIN_ID,
+				System.out.println(
+						"SourceModuleDocumentProvider: need to replace with messages api"); //$NON-NLS-1$
+				Status status = new Status(IStatus.WARNING, EditorsUI.PLUGIN_ID,
 						IStatus.ERROR,
 						Messages.SourceModuleDocumentProvider_saveAsTargetOpenInEditor,
 						null);
@@ -1400,22 +1352,19 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 			}
 
 			return new DocumentProviderOperation() {
-				/*
-				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.
-				 * DocumentProviderOperation
-				 * #execute(org.eclipse.core.runtime.IProgressMonitor)
-				 */
+				@Override
 				protected void execute(IProgressMonitor monitor)
 						throws CoreException {
 
-					commitWorkingCopy(monitor, element,
-							(SourceModuleInfo) info, overwrite);
+					commitWorkingCopy(monitor, element, (SourceModuleInfo) info,
+							overwrite);
 				}
 
 				/*
 				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.
 				 * DocumentProviderOperation#getSchedulingRule()
 				 */
+				@Override
 				public ISchedulingRule getSchedulingRule() {
 
 					if (info.fElement instanceof IFileEditorInput) {
@@ -1479,7 +1428,8 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 				try {
 					if (listeners.length > 0)
 						needsChangedRegions = SaveParticipantRegistry
-								.isChangedRegionsRequired(info.fCopy, listeners);
+								.isChangedRegionsRequired(info.fCopy,
+										listeners);
 				} catch (CoreException ex) {
 					changedRegionException = ex;
 				}
@@ -1607,6 +1557,7 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 	 * org.eclipse.ui.editors.text.TextFileDocumentProvider#getAnnotationModel
 	 * (java.lang.Object)
 	 */
+	@Override
 	public IAnnotationModel getAnnotationModel(Object element) {
 		IAnnotationModel model = super.getAnnotationModel(element);
 		if (model != null)
@@ -1623,11 +1574,7 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 		return null;
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.ui.editors.text.TextFileDocumentProvider#disconnect(java.
-	 * lang.Object)
-	 */
+	@Override
 	public void disconnect(Object element) {
 		SourceModuleInfo info = fFakeCUMapForMissingInfo.get(element);
 		if (info != null) {
@@ -1648,12 +1595,12 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 
 	/**
 	 * Creates a fake compilation unit.
-	 * 
+	 *
 	 * @param element
 	 *            the element
 	 * @param setContents
 	 *            tells whether to read and set the contents to the new CU
-	 * 
+	 *
 	 */
 	private ISourceModule createFakeSourceModule(Object element,
 			boolean setContents, IProblemRequestor requestor) {
@@ -1669,7 +1616,8 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 	}
 
 	private ISourceModule createFakeSourceModule(
-			NonExistingFileEditorInput editorInput, IProblemRequestor requestor) {
+			NonExistingFileEditorInput editorInput,
+			IProblemRequestor requestor) {
 		try {
 			final IPath path = editorInput.getPath(editorInput);
 			URI uri = URIUtil.toURI(path);
@@ -1680,12 +1628,12 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 
 			WorkingCopyOwner woc = new WorkingCopyOwner() {
 				/*
-				 * @see
-				 * org.eclipse.jdt.core.WorkingCopyOwner#createBuffer(org.eclipse
-				 * .jdt.core.ICompilationUnit)
-				 * 
+				 * @see org.eclipse.jdt.core.WorkingCopyOwner#createBuffer(org.
+				 * eclipse .jdt.core.ICompilationUnit)
+				 *
 				 * @since 3.2
 				 */
+				@Override
 				public IBuffer createBuffer(ISourceModule workingCopy) {
 					return new DocumentAdapter(workingCopy, fileStore, path);
 				}
@@ -1697,8 +1645,8 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 				cpEntries = jp.getResolvedBuildpath(true);
 
 			if (cpEntries == null || cpEntries.length == 0)
-				cpEntries = new IBuildpathEntry[] { ScriptRuntime
-						.getDefaultInterpreterContainerEntry() };
+				cpEntries = new IBuildpathEntry[] {
+						ScriptRuntime.getDefaultInterpreterContainerEntry() };
 
 			final ISourceModule cu = woc.newWorkingCopy(fileStore.getName(),
 					cpEntries, requestor, getProgressMonitor());
@@ -1724,12 +1672,12 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 
 			WorkingCopyOwner woc = new WorkingCopyOwner() {
 				/*
-				 * @see
-				 * org.eclipse.jdt.core.WorkingCopyOwner#createBuffer(org.eclipse
-				 * .jdt.core.ICompilationUnit)
-				 * 
+				 * @see org.eclipse.jdt.core.WorkingCopyOwner#createBuffer(org.
+				 * eclipse .jdt.core.ICompilationUnit)
+				 *
 				 * @since 3.2
 				 */
+				@Override
 				public IBuffer createBuffer(ISourceModule workingCopy) {
 					return new DocumentAdapter(workingCopy, fileStore, path);
 				}
@@ -1741,8 +1689,8 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 				cpEntries = jp.getResolvedBuildpath(true);
 
 			if (cpEntries == null || cpEntries.length == 0)
-				cpEntries = new IBuildpathEntry[] { ScriptRuntime
-						.getDefaultInterpreterContainerEntry() };
+				cpEntries = new IBuildpathEntry[] {
+						ScriptRuntime.getDefaultInterpreterContainerEntry() };
 
 			final ISourceModule cu = woc.newWorkingCopy(fileStoreName,
 					cpEntries, requestor, getProgressMonitor());
@@ -1773,6 +1721,7 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 			// documentPath = storagePath;
 
 			WorkingCopyOwner woc = new WorkingCopyOwner() {
+				@Override
 				public IBuffer createBuffer(ISourceModule workingCopy) {
 					return BufferManager.createBuffer(workingCopy);
 				}
@@ -1784,16 +1733,16 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 				cpEntries = jp.getResolvedBuildpath(true);
 
 			if (cpEntries == null || cpEntries.length == 0)
-				cpEntries = new IBuildpathEntry[] { ScriptRuntime
-						.getDefaultInterpreterContainerEntry() };
+				cpEntries = new IBuildpathEntry[] {
+						ScriptRuntime.getDefaultInterpreterContainerEntry() };
 
 			final ISourceModule cu = woc.newWorkingCopy(storage.getName(),
 					cpEntries, requestor, getProgressMonitor());
 			if (setContents) {
 				int READER_CHUNK_SIZE = 2048;
 				int BUFFER_SIZE = 8 * READER_CHUNK_SIZE;
-				Reader in = new BufferedReader(new InputStreamReader(
-						storage.getContents()));
+				Reader in = new BufferedReader(
+						new InputStreamReader(storage.getContents()));
 				StringBuffer buffer = new StringBuffer(BUFFER_SIZE);
 				char[] readBuffer = new char[READER_CHUNK_SIZE];
 				int n;
@@ -1822,19 +1771,19 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 	/**
 	 * Fuzzy search for script project in the workspace that matches the given
 	 * path.
-	 * 
+	 *
 	 * @param path
 	 *            the path to match
 	 * @return the matching script project or <code>null</code>
-	 * 
+	 *
 	 */
 	private IScriptProject findScriptProject(IPath path) {
 		if (path == null)
 			return null;
 
 		String[] pathSegments = path.segments();
-		IScriptModel model = DLTKCore.create(DLTKUIPlugin.getWorkspace()
-				.getRoot());
+		IScriptModel model = DLTKCore
+				.create(DLTKUIPlugin.getWorkspace().getRoot());
 		IScriptProject[] projects;
 		try {
 			projects = model.getScriptProjects();
@@ -1851,6 +1800,7 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 		return null;
 	}
 
+	@Override
 	public boolean isReadOnly(Object element) {
 		if (element instanceof ExternalStorageEditorInput) {
 			return true;
@@ -1872,7 +1822,7 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 	 * file and they must not assumed to be called in the UI thread i.e. if they
 	 * open a dialog they must ensure it ends up in the UI thread.
 	 * </p>
-	 * 
+	 *
 	 * @param info
 	 *            compilation unit info
 	 * @param changedRegions
@@ -1905,6 +1855,7 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 				final IPostSaveListener listener = listeners[i];
 				final String participantName = listener.getName();
 				SafeRunner.run(new ISafeRunnable() {
+					@Override
 					public void run() {
 						try {
 							long stamp = unit.getResource()
@@ -1915,15 +1866,13 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 
 							if (stamp != unit.getResource()
 									.getModificationStamp()) {
-								String msg = NLS
-										.bind(DLTKEditorMessages.CompilationUnitDocumentProvider_error_saveParticipantSavedFile,
-												participantName);
-								errorStatus
-										.add(new Status(
-												IStatus.ERROR,
-												DLTKUIPlugin.PLUGIN_ID,
-												IDLTKStatusConstants.EDITOR_POST_SAVE_NOTIFICATION,
-												msg, null));
+								String msg = NLS.bind(
+										DLTKEditorMessages.CompilationUnitDocumentProvider_error_saveParticipantSavedFile,
+										participantName);
+								errorStatus.add(new Status(IStatus.ERROR,
+										DLTKUIPlugin.PLUGIN_ID,
+										IDLTKStatusConstants.EDITOR_POST_SAVE_NOTIFICATION,
+										msg, null));
 							}
 
 							if (buffer.hasUnsavedChanges())
@@ -1937,37 +1886,34 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 						}
 					}
 
+					@Override
 					public void handleException(Throwable ex) {
-						String msg = NLS
-								.bind("The save participant ''{0}'' caused an exception: {1}", listener.getId(), ex.toString()); //$NON-NLS-1$
-						DLTKUIPlugin
-								.log(new Status(
-										IStatus.ERROR,
-										DLTKUIPlugin.PLUGIN_ID,
-										IDLTKStatusConstants.EDITOR_POST_SAVE_NOTIFICATION,
-										msg, ex));
+						String msg = NLS.bind(
+								"The save participant ''{0}'' caused an exception: {1}", //$NON-NLS-1$
+								listener.getId(), ex.toString());
+						DLTKUIPlugin.log(new Status(IStatus.ERROR,
+								DLTKUIPlugin.PLUGIN_ID,
+								IDLTKStatusConstants.EDITOR_POST_SAVE_NOTIFICATION,
+								msg, ex));
 
-						msg = NLS
-								.bind(DLTKEditorMessages.CompilationUnitDocumentProvider_error_saveParticipantFailed,
-										participantName, ex.toString());
-						errorStatus
-								.add(new Status(
-										IStatus.ERROR,
-										DLTKUIPlugin.PLUGIN_ID,
-										IDLTKStatusConstants.EDITOR_POST_SAVE_NOTIFICATION,
-										msg, null));
+						msg = NLS.bind(
+								DLTKEditorMessages.CompilationUnitDocumentProvider_error_saveParticipantFailed,
+								participantName, ex.toString());
+						errorStatus.add(new Status(IStatus.ERROR,
+								DLTKUIPlugin.PLUGIN_ID,
+								IDLTKStatusConstants.EDITOR_POST_SAVE_NOTIFICATION,
+								msg, null));
 
 						// Revert the changes
 						if (buffer.hasUnsavedChanges()) {
 							try {
-								info.fTextFileBuffer
-										.revert(getSubProgressMonitor(monitor,
-												1));
+								info.fTextFileBuffer.revert(
+										getSubProgressMonitor(monitor, 1));
 							} catch (CoreException e) {
-								msg = NLS
-										.bind("Error on revert after failure of save participant ''{0}''.", participantName); //$NON-NLS-1$
-								IStatus status = new Status(
-										IStatus.ERROR,
+								msg = NLS.bind(
+										"Error on revert after failure of save participant ''{0}''.", //$NON-NLS-1$
+										participantName);
+								IStatus status = new Status(IStatus.ERROR,
 										DLTKUIPlugin.PLUGIN_ID,
 										IDLTKStatusConstants.EDITOR_POST_SAVE_NOTIFICATION,
 										msg, ex);
@@ -1985,7 +1931,9 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 						// try {
 						// buffer.save(getSubProgressMonitor(monitor, 1), true);
 						// } catch (JavaModelException e) {
-						//								message= Messages.format("Error reverting changes after failure of save participant ''{0}''.", participantName); //$NON-NLS-1$
+						// message= Messages.format("Error reverting changes
+						// after failure of save participant ''{0}''.",
+						// participantName); //$NON-NLS-1$
 						// IStatus status= new Status(IStatus.ERROR,
 						// JavaUI.ID_PLUGIN, IStatus.OK, message, ex);
 						// JavaPlugin.getDefault().getLog().log(status);

@@ -1,12 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  *******************************************************************************/
-
 package org.eclipse.dltk.ui.preferences;
 
 import java.io.File;
@@ -33,7 +32,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -56,12 +54,13 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 
 /**
  * Configures preferences.
- * 
+ *
  */
 public abstract class AbstractConfigurationBlock implements
 		IPreferenceConfigurationBlock {
 
 	protected static class FilePathValidator implements IInputValidator {
+		@Override
 		public String isValid(String newText) {
 			IPath path = Path.fromOSString(newText);
 			File file = path.toFile();
@@ -80,17 +79,17 @@ public abstract class AbstractConfigurationBlock implements
 
 	/**
 	 * Use as follows:
-	 * 
+	 *
 	 * <pre>
 	 *  SectionManager manager= new SectionManager();
 	 *  Composite composite= manager.createSectionComposite(parent);
-	 *  
+	 *
 	 *  Composite xSection= manager.createSection(&quot;section X&quot;));
 	 *  xSection.setLayout(new FillLayout());
 	 *  new Button(xSection, SWT.PUSH); // add controls to section..
-	 *  
+	 *
 	 *  [...]
-	 *  
+	 *
 	 *  return composite; // return main composite
 	 * </pre>
 	 */
@@ -103,6 +102,7 @@ public abstract class AbstractConfigurationBlock implements
 		private boolean fIsBeingManaged = false;
 
 		private ExpansionAdapter fListener = new ExpansionAdapter() {
+			@Override
 			public void expansionStateChanged(ExpansionEvent e) {
 				ExpandableComposite source = (ExpandableComposite) e
 						.getSource();
@@ -183,7 +183,7 @@ public abstract class AbstractConfigurationBlock implements
 		 * The receiver keeps a reference to the inner body composite, so that
 		 * new sections can be added via <code>createSection</code>.
 		 * </p>
-		 * 
+		 *
 		 * @param parent
 		 *            the parent composite
 		 * @return the newly created composite
@@ -209,7 +209,7 @@ public abstract class AbstractConfigurationBlock implements
 		 * Creates an expandable section within the parent created previously by
 		 * calling <code>createSectionComposite</code>. Controls can be added
 		 * directly to the returned composite, which has no layout initially.
-		 * 
+		 *
 		 * @param label
 		 *            the display name of the section
 		 * @return a composite within the expandable section
@@ -259,9 +259,11 @@ public abstract class AbstractConfigurationBlock implements
 	private Map fComboBoxes = new HashMap();
 
 	private SelectionListener fCheckBoxListener = new SelectionListener() {
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
 
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Button button = (Button) e.widget;
 			fStore.setValue(fCheckBoxes.get(button), button.getSelection());
@@ -269,9 +271,11 @@ public abstract class AbstractConfigurationBlock implements
 	};
 
 	private SelectionListener fComboBoxListener = new SelectionListener() {
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
 
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Combo combo = (Combo) e.widget;
 			Map data = (Map) fComboBoxes.get(combo);
@@ -282,9 +286,11 @@ public abstract class AbstractConfigurationBlock implements
 	};
 
 	private SelectionListener fRadioButtonListener = new SelectionListener() {
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
 
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			// Button button= (Button) e.widget;
 			for (int i = 0; i < fRadioButtons.size(); i++) {
@@ -299,26 +305,20 @@ public abstract class AbstractConfigurationBlock implements
 
 	private Map<Text, String> fTextFields = new HashMap<Text, String>();
 
-	private ModifyListener fTextFieldListener = new ModifyListener() {
-		public void modifyText(ModifyEvent e) {
-			Text text = (Text) e.widget;
-			fStore.setValue(fTextFields.get(text), text.getText());
-		}
+	private ModifyListener fTextFieldListener = e -> {
+		Text text = (Text) e.widget;
+		fStore.setValue(fTextFields.get(text), text.getText());
 	};
 
 	private ArrayList fNumberFields = new ArrayList();
 
-	private ModifyListener fNumberFieldListener = new ModifyListener() {
-		public void modifyText(ModifyEvent e) {
-			numberFieldChanged((Text) e.widget);
-		}
-	};
+	private ModifyListener fNumberFieldListener = e -> numberFieldChanged((Text) e.widget);
 
 	/**
 	 * List of master/slave listeners when there's a dependency.
-	 * 
+	 *
 	 * @see #createDependency(Button, Control)
-	 * 
+	 *
 	 */
 	private ArrayList fMasterSlaveListeners = new ArrayList();
 
@@ -470,7 +470,7 @@ public abstract class AbstractConfigurationBlock implements
 	 * - second element is of type <code>Text</code> Use
 	 * <code>getLabelControl</code> and <code>getTextControl</code> to get the 2
 	 * controls.
-	 * 
+	 *
 	 * @param composite
 	 *            the parent composite
 	 * @param label
@@ -530,6 +530,7 @@ public abstract class AbstractConfigurationBlock implements
 		Assert.isTrue(slaves.length > 0);
 		indent(slaves[0]);
 		SelectionListener listener = new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean state = master.getSelection();
 				for (int i = 0; i < slaves.length; i++) {
@@ -537,6 +538,7 @@ public abstract class AbstractConfigurationBlock implements
 				}
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		};
@@ -548,6 +550,7 @@ public abstract class AbstractConfigurationBlock implements
 		((GridData) control.getLayoutData()).horizontalIndent += INDENT;
 	}
 
+	@Override
 	public void initialize() {
 		initializeFields();
 	}
@@ -601,9 +604,11 @@ public abstract class AbstractConfigurationBlock implements
 		updateStatus(new StatusInfo());
 	}
 
+	@Override
 	public void performOk() {
 	}
 
+	@Override
 	public void performDefaults() {
 		initializeFields();
 	}
@@ -614,6 +619,7 @@ public abstract class AbstractConfigurationBlock implements
 		return fStatus;
 	}
 
+	@Override
 	public void dispose() {
 	}
 
@@ -689,7 +695,7 @@ public abstract class AbstractConfigurationBlock implements
 	 * This method must be called before any of the dialog unit based conversion
 	 * methods are called.
 	 * </p>
-	 * 
+	 *
 	 * @param testControl
 	 *            a control from which to obtain the current font
 	 */
@@ -711,7 +717,7 @@ public abstract class AbstractConfigurationBlock implements
 	 * <p>
 	 * Clients may call this framework method, but should not override it.
 	 * </p>
-	 * 
+	 *
 	 * @param chars
 	 *            the number of characters
 	 * @return the number of pixels
@@ -733,7 +739,7 @@ public abstract class AbstractConfigurationBlock implements
 	 * <p>
 	 * Clients may call this framework method, but should not override it.
 	 * </p>
-	 * 
+	 *
 	 * @param chars
 	 *            the number of characters
 	 * @return the number of pixels

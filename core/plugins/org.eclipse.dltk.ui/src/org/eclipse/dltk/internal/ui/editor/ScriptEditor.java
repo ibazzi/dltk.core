@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     xored software, Inc. - initial API and implementation
- *     xored software, Inc. - fix tab handling (Bug# 200024) (Alex Panchenko) 
+ *     xored software, Inc. - fix tab handling (Bug# 200024) (Alex Panchenko)
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.editor;
 
@@ -102,7 +102,6 @@ import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.DocumentCommand;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IPositionUpdater;
 import org.eclipse.jface.text.IRegion;
@@ -246,6 +245,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 		 * #doExit(org.eclipse.jdt.internal.ui.text.link.LinkedPositionManager,
 		 * org.eclipse.swt.events.VerifyEvent, int, int)
 		 */
+		@Override
 		public ExitFlags doExit(LinkedModeModel model, VerifyEvent event,
 				int offset, int length) {
 
@@ -298,7 +298,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 
 		/**
 		 * Creates a new updater for the given <code>category</code>.
-		 * 
+		 *
 		 * @param category
 		 *            the new category.
 		 */
@@ -311,6 +311,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 		 * org.eclipse.jface.text.IPositionUpdater#update(org.eclipse.jface.
 		 * text.DocumentEvent)
 		 */
+		@Override
 		public void update(DocumentEvent event) {
 
 			int eventOffset = event.getOffset();
@@ -371,7 +372,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 
 		/**
 		 * Returns the position category.
-		 * 
+		 *
 		 * @return the position category
 		 */
 		public String getCategory() {
@@ -409,6 +410,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 					showAnnotationsOverview, styles, store);
 		}
 
+		@Override
 		public void configure(SourceViewerConfiguration configuration) {
 			super.configure(configuration);
 
@@ -418,6 +420,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 			}
 		}
 
+		@Override
 		public void unconfigure() {
 			final IContentAssistant ca = getContentAssistant();
 			if (ca instanceof IContentAssistantExtension2) {
@@ -431,6 +434,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 		/*
 		 * @see ITextOperationTarget#doOperation(int)
 		 */
+		@Override
 		public void doOperation(int operation) {
 
 			if (getTextWidget() == null)
@@ -514,14 +518,17 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 			return super.requestWidgetToken(requester, priority);
 		}
 
+		@Override
 		public void assistSessionEnded(ContentAssistEvent event) {
 			fInCompletionSession = false;
 		}
 
+		@Override
 		public void assistSessionStarted(ContentAssistEvent event) {
 			fInCompletionSession = true;
 		}
 
+		@Override
 		public void selectionChanged(ICompletionProposal proposal,
 				boolean smartToggle) {
 		}
@@ -573,8 +580,8 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 
 	/**
 	 * Internal implementation class for a change listener.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	protected abstract class AbstractSelectionChangedListener implements
 			ISelectionChangedListener {
@@ -583,7 +590,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 		 * provider. If the selection provider is a post selection provider,
 		 * post selection changed events are the preferred choice, otherwise
 		 * normal selection changed events are requested.
-		 * 
+		 *
 		 * @param selectionProvider
 		 */
 		public void install(ISelectionProvider selectionProvider) {
@@ -600,7 +607,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 		/**
 		 * Removes this selection changed listener from the given selection
 		 * provider.
-		 * 
+		 *
 		 * @param selectionProvider
 		 *            the selection provider
 		 */
@@ -622,6 +629,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 	 */
 	class OutlineSelectionChangedListener extends
 			AbstractSelectionChangedListener {
+		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			doSelectionChanged(event);
 		}
@@ -655,8 +663,8 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 	/**
 	 * Updates the script outline page selection and this editor's range
 	 * indicator.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	private class EditorSelectionChangedListener extends
 			AbstractSelectionChangedListener {
@@ -665,6 +673,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 		 * org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged
 		 * (org.eclipse.jface.viewers.SelectionChangedEvent)
 		 */
+		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			// XXX: see https://bugs.eclipse.org/bugs/show_bug.cgi?id=56161
 			ScriptEditor.this.selectionChanged();
@@ -686,6 +695,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 	/**
 	 * @see org.eclipse.ui.texteditor.StatusTextEditor#handleElementContentReplaced()
 	 */
+	@Override
 	protected void handleElementContentReplaced() {
 		super.handleElementContentReplaced();
 
@@ -701,6 +711,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 		}
 	}
 
+	@Override
 	public void dispose() {
 
 		if (fProjectionModelUpdater != null) {
@@ -748,7 +759,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 	/**
 	 * Creates and returns the preference store for this editor with the given
 	 * input.
-	 * 
+	 *
 	 * @param input
 	 *            The editor input for which to create the preference store
 	 * @return the preference store for this editor
@@ -852,13 +863,14 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 				PreferenceConstants.EDITOR_FOLDING_ENABLED);
 	}
 
+	@Override
 	public boolean isSaveAsAllowed() {
 		return true;
 	}
 
 	/**
 	 * Returns the standard action group of this editor.
-	 * 
+	 *
 	 * @return returns this editor's standard action group
 	 */
 	ActionGroup getActionGroup() {
@@ -868,6 +880,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 	/*
 	 * @see AbstractTextEditor#editorContextMenuAboutToShow
 	 */
+	@Override
 	public void editorContextMenuAboutToShow(IMenuManager menu) {
 		super.editorContextMenuAboutToShow(menu);
 
@@ -1042,7 +1055,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 
 	/**
 	 * Creates action group for folding.
-	 * 
+	 *
 	 * @return
 	 * @since 3.0
 	 */
@@ -1063,6 +1076,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 		column.setHover(new ScriptExpandHover(ruler, getAnnotationAccess(),
 				new IDoubleClickListener() {
 
+					@Override
 					public void doubleClick(DoubleClickEvent event) {
 						// for now: just invoke ruler double click action
 						triggerAction(ITextEditorActionConstants.RULER_DOUBLE_CLICK);
@@ -1090,9 +1104,9 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 
 	/**
 	 * Returns the folding action group, or <code>null</code> if there is none.
-	 * 
+	 *
 	 * @return the folding action group, or <code>null</code> if there is none
-	 * 
+	 *
 	 */
 	ActionGroup getFoldingActionGroup() {
 		return fFoldingGroup;
@@ -1102,6 +1116,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 		return getSourceViewer();
 	}
 
+	@Override
 	protected void doSetInput(IEditorInput input) throws CoreException {
 		ISourceViewer sourceViewer = getSourceViewer();
 		if (!(sourceViewer instanceof ISourceViewerExtension2)) {
@@ -1134,6 +1149,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 					.updateEditorImage(getInputModelElement());
 	}
 
+	@Override
 	protected void setPreferenceStore(IPreferenceStore store) {
 		super.setPreferenceStore(store);
 		final SourceViewerConfiguration svConfiguration = getSourceViewerConfiguration();
@@ -1162,7 +1178,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 
 	/**
 	 * Creates the outline page used with this editor.
-	 * 
+	 *
 	 * @return the created script outline page
 	 */
 	protected ScriptOutlinePage doCreateOutlinePage() {
@@ -1172,7 +1188,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 	/**
 	 * String identifiying concrete language editor. Used for ex. for fetching
 	 * available filters
-	 * 
+	 *
 	 * @return
 	 */
 	public abstract String getEditorId();
@@ -1180,6 +1196,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 	/**
 	 * Informs the editor that its outliner has been closed.
 	 */
+	@Override
 	public void outlinePageClosed() {
 		if (fOutlinePage != null) {
 			fOutlineSelectionChangedListener.uninstall(fOutlinePage);
@@ -1202,14 +1219,14 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 
 	/**
 	 * The templates page.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private ScriptTemplatesPage fTemplatesPage;
 
 	/**
 	 * Creates the templates page used with this editor.
-	 * 
+	 *
 	 * @return the created script templates page
 	 * @since 3.0
 	 */
@@ -1242,12 +1259,8 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 			return fOutlinePage;
 		}
 		if (required == IShowInTargetList.class) {
-			return new IShowInTargetList() {
-				public String[] getShowInTargetIds() {
-					return new String[] { DLTKUIPlugin.ID_SCRIPT_EXPLORER,
-							IPageLayout.ID_OUTLINE };
-				}
-			};
+			return (IShowInTargetList) () -> new String[] {
+					DLTKUIPlugin.ID_SCRIPT_EXPLORER, IPageLayout.ID_OUTLINE };
 		}
 		if (required == OccurrencesFinder.class) {
 			return occurrencesFinder;
@@ -1275,7 +1288,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 	 * XXX remove once the underlying problem
 	 * (https://bugs.eclipse.org/bugs/show_bug.cgi?id=66176) is solved.
 	 * </p>
-	 * 
+	 *
 	 * @return the lock reconcilers may use to synchronize on
 	 */
 	public Object getReconcilerLock() {
@@ -1388,11 +1401,13 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 		}
 	}
 
+	@Override
 	protected void doSetSelection(ISelection selection) {
 		super.doSetSelection(selection);
 		synchronizeOutlinePageSelection();
 	}
 
+	@Override
 	public void setSelection(IModelElement element) {
 
 		if (element == null || element instanceof ISourceModule) {
@@ -1422,7 +1437,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 	/**
 	 * Synchronizes the outliner selection with the given element position in
 	 * the editor.
-	 * 
+	 *
 	 * @param element
 	 *            thescriptelement to select
 	 */
@@ -1433,7 +1448,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 	/**
 	 * Synchronizes the outliner selection with the given element position in
 	 * the editor.
-	 * 
+	 *
 	 * @param element
 	 *            thescriptelement to select
 	 * @param checkIfOutlinePageActive
@@ -1441,6 +1456,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 	 *            done
 	 * @since 2.0
 	 */
+	@Override
 	public void synchronizeOutlinePage(ISourceReference element,
 			boolean checkIfOutlinePageActive) {
 		if (fOutlinePage != null && element != null
@@ -1470,7 +1486,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 	 * <p>
 	 * Overrides the default implementation to handle {@link IJavaAnnotation}.
 	 * </p>
-	 * 
+	 *
 	 * @param offset
 	 *            the region offset
 	 * @param length
@@ -1482,6 +1498,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 	 *            the position of the found annotation
 	 * @return the found annotation
 	 */
+	@Override
 	protected Annotation findAnnotation(final int offset, final int length,
 			boolean forward, Position annotationPosition) {
 
@@ -1572,7 +1589,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 	/**
 	 * Returns the annotation overlapping with the given range or
 	 * <code>null</code>.
-	 * 
+	 *
 	 * @param offset
 	 *            the region offset
 	 * @param length
@@ -1597,9 +1614,10 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 	 * @see
 	 * org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#gotoAnnotation(
 	 * boolean)
-	 * 
+	 *
 	 * @since 3.2
 	 */
+	@Override
 	public Annotation gotoAnnotation(boolean forward) {
 		fSelectionChangedViaGotoAnnotation = true;
 		return super.gotoAnnotation(forward);
@@ -1609,10 +1627,11 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 	 * Computes and returns the source reference that includes the caret and
 	 * serves as provider for the outline page selection and the editor range
 	 * indication.
-	 * 
+	 *
 	 * @return the computed source reference
 	 * @since 2.0
 	 */
+	@Override
 	public ISourceReference computeHighlightRangeSourceReference() {
 		ISourceViewer sourceViewer = getSourceViewer();
 		if (sourceViewer == null)
@@ -1654,19 +1673,17 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 
-		IInformationControlCreator informationControlCreator = new IInformationControlCreator() {
-			public IInformationControl createInformationControl(Shell shell) {
-				boolean cutDown = false;
-				//int style = cutDown ? SWT.NONE : (SWT.V_SCROLL | SWT.H_SCROLL);
-				// return new DefaultInformationControl(shell, SWT.RESIZE
-				// | SWT.TOOL, style, new HTMLTextPresenter(cutDown));
-				if (BrowserInformationControl.isAvailable(shell))
-					return new BrowserInformationControl(shell,
-							JFaceResources.DIALOG_FONT, true);
-				else
-					return new DefaultInformationControl(shell,
-							new HTMLTextPresenter(cutDown));
-			}
+		IInformationControlCreator informationControlCreator = shell -> {
+			boolean cutDown = false;
+			// int style = cutDown ? SWT.NONE : (SWT.V_SCROLL | SWT.H_SCROLL);
+			// return new DefaultInformationControl(shell, SWT.RESIZE
+			// | SWT.TOOL, style, new HTMLTextPresenter(cutDown));
+			if (BrowserInformationControl.isAvailable(shell))
+				return new BrowserInformationControl(shell,
+						JFaceResources.DIALOG_FONT, true);
+			else
+				return new DefaultInformationControl(shell,
+						new HTMLTextPresenter(cutDown));
 		};
 
 		fInformationPresenter = new InformationPresenter(
@@ -1696,8 +1713,8 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 
 	/**
 	 * React to changed selection.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	protected void selectionChanged() {
 		if (getSelectionProvider() == null)
@@ -1729,9 +1746,9 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 
 	/**
 	 * Returns the model element wrapped by this editors input.
-	 * 
+	 *
 	 * @return the model element wrapped by this editors input.
-	 * 
+	 *
 	 */
 	public IModelElement getInputModelElement() {
 		return EditorUtility.getEditorInputModelElement(this, false);
@@ -1740,7 +1757,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 	/**
 	 * Returns thescriptelement of this editor's input corresponding to the
 	 * given IModelElement.
-	 * 
+	 *
 	 * @param element
 	 *            thescriptelement
 	 * @return the corresponding model element
@@ -1751,11 +1768,12 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 
 	/**
 	 * Returns the most narrow model element including the given offset.
-	 * 
+	 *
 	 * @param offset
 	 *            the offset inside of the requested element
 	 * @return the most narrow model element
 	 */
+	@Override
 	public IModelElement getElementAt(int offset) {
 		return getElementAt(offset, true);
 	}
@@ -1766,7 +1784,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 	 * reconciled in advance. If it is <code>false</code> this method only
 	 * returns a result if the editor's input element does not need to be
 	 * reconciled.
-	 * 
+	 *
 	 * @param offset
 	 *            the offset included by the retrieved element
 	 * @param reconcile
@@ -1794,15 +1812,15 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 
 	/**
 	 * The folding runner.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	private ToggleFoldingRunner fFoldingRunner;
 
 	/**
 	 * Tells whether the selection changed event is caused by a call to
 	 * {@link #gotoAnnotation(boolean)}.
-	 * 
+	 *
 	 */
 	private boolean fSelectionChangedViaGotoAnnotation;
 
@@ -1815,8 +1833,8 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 	 * The access to the fFoldingRunner field is not thread-safe, it is assumed
 	 * that <code>runWhenNextVisible</code> is only called from the UI thread.
 	 * </p>
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	protected final class ToggleFoldingRunner implements IPartListener2 {
 		public ToggleFoldingRunner() {
@@ -1886,6 +1904,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 		 * @seeorg.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.
 		 * IWorkbenchPartReference)
 		 */
+		@Override
 		public void partVisible(IWorkbenchPartReference partRef) {
 			if (ScriptEditor.this.equals(partRef.getPart(false))) {
 				cancel();
@@ -1897,27 +1916,34 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 		 * @seeorg.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.
 		 * IWorkbenchPartReference)
 		 */
+		@Override
 		public void partClosed(IWorkbenchPartReference partRef) {
 			if (ScriptEditor.this.equals(partRef.getPart(false))) {
 				cancel();
 			}
 		}
 
+		@Override
 		public void partActivated(IWorkbenchPartReference partRef) {
 		}
 
+		@Override
 		public void partBroughtToTop(IWorkbenchPartReference partRef) {
 		}
 
+		@Override
 		public void partDeactivated(IWorkbenchPartReference partRef) {
 		}
 
+		@Override
 		public void partOpened(IWorkbenchPartReference partRef) {
 		}
 
+		@Override
 		public void partHidden(IWorkbenchPartReference partRef) {
 		}
 
+		@Override
 		public void partInputChanged(IWorkbenchPartReference partRef) {
 		}
 	}
@@ -1927,7 +1953,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 	 * implementation queries the
 	 * <code>org.eclipse.dltk.ui.folding/structureProvider</code> extension
 	 * point.
-	 * 
+	 *
 	 * @return folding structure provider or <code>null</code>.
 	 */
 	protected IFoldingStructureProvider createFoldingStructureProvider() {
@@ -1936,7 +1962,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 
 	/**
 	 * Returns folding structure provider.
-	 * 
+	 *
 	 * @return
 	 */
 	@Deprecated
@@ -1989,6 +2015,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 		}
 	}
 
+	@Override
 	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
 		String property = event.getProperty();
 		try {
@@ -2080,6 +2107,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 		}
 	}
 
+	@Override
 	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
 		return ((ScriptSourceViewerConfiguration) getSourceViewerConfiguration())
 				.affectsTextPresentation(event)
@@ -2112,7 +2140,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 	 * Returns a string array containing the language specific folding
 	 * preference keys that should be handed when a property change event is
 	 * fired.
-	 * 
+	 *
 	 * <p>
 	 * Default implementation returns an empty array. Subclasses should override
 	 * this method to return folding keys that are language specific.
@@ -2124,15 +2152,15 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 
 	/**
 	 * Text navigation action to navigate to the next sub-word.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	protected abstract class NextSubWordAction extends TextNavigationAction {
 		protected DLTKWordIterator fIterator = new DLTKWordIterator();
 
 		/**
 		 * Creates a new next sub-word action.
-		 * 
+		 *
 		 * @param code
 		 *            Action code for the default operation. Must be an action
 		 *            code from
@@ -2145,6 +2173,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 		/*
 		 * @see org.eclipse.jface.action.IAction#run()
 		 */
+		@Override
 		public void run() {
 			// Check whether we are in ascriptcode partition and the preference
 			// is enabled
@@ -2173,7 +2202,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 
 		/**
 		 * Finds the next position after the given position.
-		 * 
+		 *
 		 * @param position
 		 *            the current position
 		 * @return the next position
@@ -2193,7 +2222,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 		/**
 		 * Sets the caret position to the sub-word boundary given with
 		 * <code>position</code>.
-		 * 
+		 *
 		 * @param position
 		 *            Position where the action should move the caret
 		 */
@@ -2260,6 +2289,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 		/*
 		 * @see org.eclipse.ui.texteditor.IUpdate#update()
 		 */
+		@Override
 		public void update() {
 			setEnabled(isEditorInputModifiable());
 		}
@@ -2267,8 +2297,8 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 
 	/**
 	 * Text operation action to select the next sub-word.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	protected class SelectNextSubWordAction extends NextSubWordAction {
 		/**
@@ -2296,15 +2326,15 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 
 	/**
 	 * Text navigation action to navigate to the previous sub-word.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	protected abstract class PreviousSubWordAction extends TextNavigationAction {
 		protected DLTKWordIterator fIterator = new DLTKWordIterator();
 
 		/**
 		 * Creates a new previous sub-word action.
-		 * 
+		 *
 		 * @param code
 		 *            Action code for the default operation. Must be an action
 		 *            code from
@@ -2317,6 +2347,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 		/*
 		 * @see org.eclipse.jface.action.IAction#run()
 		 */
+		@Override
 		public void run() {
 			// Check whether we are in ascriptcode partition and the preference
 			// is enabled
@@ -2345,7 +2376,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 
 		/**
 		 * Finds the previous position before the given position.
-		 * 
+		 *
 		 * @param position
 		 *            the current position
 		 * @return the previous position
@@ -2365,7 +2396,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 		/**
 		 * Sets the caret position to the sub-word boundary given with
 		 * <code>position</code>.
-		 * 
+		 *
 		 * @param position
 		 *            Position where the action should move the caret
 		 */
@@ -2429,6 +2460,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 			return fIterator.preceding(position);
 		}
 
+		@Override
 		public void update() {
 			setEnabled(isEditorInputModifiable());
 		}
@@ -2543,27 +2575,19 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 				.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.warning"); //$NON-NLS-1$
 		final IDLTKLanguageToolkit toolkit = this.getLanguageToolkit();
 		fProjectionSupport
-				.setHoverControlCreator(new IInformationControlCreator() {
-					public IInformationControl createInformationControl(
-							Shell shell) {
-						int shellStyle = SWT.TOOL | SWT.NO_TRIM
-								| getOrientation();
-						String statusFieldText = EditorsUI
-								.getTooltipAffordanceString();
-						return new SourceViewerInformationControl(shell,
-								shellStyle, SWT.NONE, statusFieldText, toolkit);
-					}
+				.setHoverControlCreator(shell -> {
+					int shellStyle = SWT.TOOL | SWT.NO_TRIM | getOrientation();
+					String statusFieldText = EditorsUI
+							.getTooltipAffordanceString();
+					return new SourceViewerInformationControl(shell, shellStyle,
+							SWT.NONE, statusFieldText, toolkit);
 				});
 		fProjectionSupport
-				.setInformationPresenterControlCreator(new IInformationControlCreator() {
-					public IInformationControl createInformationControl(
-							Shell shell) {
-						int shellStyle = SWT.RESIZE | SWT.TOOL
-								| getOrientation();
-						int style = SWT.V_SCROLL | SWT.H_SCROLL;
-						return new SourceViewerInformationControl(shell,
-								shellStyle, style, toolkit);
-					}
+				.setInformationPresenterControlCreator(shell -> {
+					int shellStyle = SWT.RESIZE | SWT.TOOL | getOrientation();
+					int style = SWT.V_SCROLL | SWT.H_SCROLL;
+					return new SourceViewerInformationControl(shell, shellStyle,
+							style, toolkit);
 				});
 
 		fProjectionSupport.install();
@@ -2599,8 +2623,8 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 	/**
 	 * Collapses all foldable members if supported by the folding structure
 	 * provider.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	public void collapseMembers() {
 		if (fProjectionModelUpdater instanceof IFoldingStructureProviderExtension) {
@@ -2612,8 +2636,8 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 	/**
 	 * Collapses all foldable comments if supported by the folding structure
 	 * provider.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	public void collapseComments() {
 		if (fProjectionModelUpdater instanceof IFoldingStructureProviderExtension) {
@@ -2692,6 +2716,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 		return getLanguageToolkit().getNatureId();
 	}
 
+	@Override
 	public abstract IDLTKLanguageToolkit getLanguageToolkit();
 
 	protected IDLTKUILanguageToolkit getUILanguageToolkit() {
@@ -2700,7 +2725,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 
 	/**
 	 * Return identifier of call hierarchy. Used by call hierarchy actions.
-	 * 
+	 *
 	 * @return
 	 */
 	public String getCallHierarchyID() {
@@ -2792,7 +2817,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 	 * <p>
 	 * The selection offset is model based.
 	 * </p>
-	 * 
+	 *
 	 * @param sourceViewer
 	 *            the source viewer
 	 * @return a region denoting the current signed selection, for a resulting
@@ -2840,7 +2865,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 	/**
 	 * Returns the bracket matcher for this editor, delegates to
 	 * {@link #createBracketMatcher()} to actually create it.
-	 * 
+	 *
 	 * @return the bracket matcher or <code>null</code>
 	 */
 	protected final ICharacterPairMatcher getBracketMatcher() {
@@ -2853,7 +2878,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 	/**
 	 * Override in your editor class to create bracket matcher for your
 	 * language.
-	 * 
+	 *
 	 * @return
 	 */
 	protected ICharacterPairMatcher createBracketMatcher() {
@@ -2963,6 +2988,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 	 */
 	private final Object fReconcilerLock = new Object();
 
+	@Override
 	public void aboutToBeReconciled() {
 
 		// Notify AST provider
@@ -2979,9 +3005,10 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 	 * @see
 	 * org.eclipse.jdt.internal.ui.text.java.IJavaReconcilingListener#reconciled
 	 * (CompilationUnit, boolean, IProgressMonitor)
-	 * 
+	 *
 	 * @since 3.0
 	 */
+	@Override
 	public void reconciled(ISourceModule ast, boolean forced,
 			IProgressMonitor progressMonitor) {
 
@@ -3004,11 +3031,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 		if (!forced && !progressMonitor.isCanceled()) {
 			Shell shell = getSite().getShell();
 			if (shell != null && !shell.isDisposed()) {
-				shell.getDisplay().asyncExec(new Runnable() {
-					public void run() {
-						selectionChanged();
-					}
-				});
+				shell.getDisplay().asyncExec(() -> selectionChanged());
 			}
 		}
 	}
@@ -3065,7 +3088,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 
 	/**
 	 * Uninstall Semantic Highlighting.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private void uninstallSemanticHighlighting() {
@@ -3127,6 +3150,7 @@ public abstract class ScriptEditor extends AbstractDecoratedTextEditor
 	 * Increase visibility for this package - called from {@link
 	 * OccurrencesFinder}
 	 */
+	@Override
 	protected IProgressMonitor getProgressMonitor() {
 		return super.getProgressMonitor();
 	}

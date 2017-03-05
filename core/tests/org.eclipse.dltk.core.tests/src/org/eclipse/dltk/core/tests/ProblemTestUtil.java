@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 NumberFour AG
+ * Copyright (c) 2012, 2017 NumberFour AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -13,7 +13,6 @@ package org.eclipse.dltk.core.tests;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -46,13 +45,8 @@ public class ProblemTestUtil extends Assert {
 		final IMarker[] problems = resource.findMarkers(
 				DefaultProblem.MARKER_TYPE_PROBLEM, true,
 				IResource.DEPTH_INFINITE);
-		Arrays.sort(problems, new Comparator<IMarker>() {
-			@Override
-			public int compare(IMarker o1, IMarker o2) {
-				return o1.getAttribute(IMarker.CHAR_START, 0)
-						- o2.getAttribute(IMarker.CHAR_START, 0);
-			}
-		});
+		Arrays.sort(problems, (o1, o2) -> o1.getAttribute(IMarker.CHAR_START, 0)
+				- o2.getAttribute(IMarker.CHAR_START, 0));
 		return problems;
 	}
 

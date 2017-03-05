@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,17 +27,17 @@ import org.eclipse.swt.graphics.Image;
  * </p>
  */
 public class ModelElementLabelProvider extends LabelProvider {
-	
+
 	/**
 	 * Flag (bit mask) indicating that methods labels include the method return type (appended).
 	 */
 	public final static int SHOW_RETURN_TYPE=				0x001;
-	
+
 	/**
 	 * Flag (bit mask) indicating that method label include parameter types.
 	 */
 	public final static int SHOW_PARAMETERS=				0x002;
-	
+
 	/**
 	 * Flag (bit mask) indicating that the label of a member should include the container.
 	 * For example, include the name of the type enclosing a field.
@@ -70,7 +70,7 @@ public class ModelElementLabelProvider extends LabelProvider {
 	 * package fragment root (appended).
 	 */
 	public final static int SHOW_ROOT=					0x040;
-	
+
 	/**
 	 * Flag (bit mask) indicating that the label qualification of a type should
 	 * be shown after the name.
@@ -84,18 +84,18 @@ public class ModelElementLabelProvider extends LabelProvider {
 	 * reserved for overlays.
 	 */
 	public final static int SHOW_SMALL_ICONS= 			0x100;
-	
+
 	/**
 	 * Flag (bit mask) indicating that the package fragment roots from class path variables should
 	 * be rendered with the variable in the name
 	 */
 	public final static int SHOW_VARIABLE= 			0x200;
-	
+
 	/**
 	 * Flag (bit mask) indicating that compilation units, class files, types, declarations and members
 	 * should be rendered qualified.
 	 * Examples: <code>java.lang.String</code>, <code>java.util.Vector.size()</code>
-	 * 
+	 *
 	 *
 	 */
 	public final static int SHOW_QUALIFIED=				0x400;
@@ -104,21 +104,21 @@ public class ModelElementLabelProvider extends LabelProvider {
 	 * Flag (bit mask) indicating that compilation units, class files, types, declarations and members
 	 * should be rendered qualified.The qualification is appended.
 	 * Examples: <code>String - java.lang</code>, <code>size() - java.util.Vector</code>
-	 * 
+	 *
 	 *
 	 */
 	public final static int SHOW_POST_QUALIFIED=	0x800;
-	
-	public final static int SHOW_FILE_QUALIFIED=	0x1000;	
-	
-	
+
+	public final static int SHOW_FILE_QUALIFIED=	0x1000;
+
+
 	/**
-	 * Constant (value <code>0</code>) indicating that the label should show 
+	 * Constant (value <code>0</code>) indicating that the label should show
 	 * the basic images only.
 	 */
 	public final static int SHOW_BASICS= 0x000;
-	
-	
+
+
 	/**
 	 * Constant indicating the default label rendering.
 	 * Currently the default is equivalent to
@@ -127,12 +127,12 @@ public class ModelElementLabelProvider extends LabelProvider {
 	public final static int SHOW_DEFAULT= Integer.valueOf(SHOW_PARAMETERS | SHOW_OVERLAY_ICONS).intValue();
 
 	private ScriptElementImageProvider fImageLabelProvider;
-	
+
 	private StorageLabelProvider fStorageLabelProvider;
 	private int fFlags;
 	private int fImageFlags;
 	private long fTextFlags;
-	
+
 	/**
 	 * Creates a new label provider with <code>SHOW_DEFAULT</code> flag.
 	 *
@@ -153,13 +153,13 @@ public class ModelElementLabelProvider extends LabelProvider {
 		fStorageLabelProvider= new StorageLabelProvider();
 		fFlags= flags;
 		updateImageProviderFlags();
-		updateTextProviderFlags();		
+		updateTextProviderFlags();
 	}
-	
+
 	private boolean getFlag( int flag) {
 		return (fFlags & flag) != 0;
 	}
-	
+
 	/**
 	 * Turns on the rendering options specified in the given flags.
 	 *
@@ -170,7 +170,7 @@ public class ModelElementLabelProvider extends LabelProvider {
 		updateImageProviderFlags();
 		updateTextProviderFlags();
 	}
-	
+
 	/**
 	 * Turns off the rendering options specified in the given flags.
 	 *
@@ -181,7 +181,7 @@ public class ModelElementLabelProvider extends LabelProvider {
 		updateImageProviderFlags();
 		updateTextProviderFlags();
 	}
-	
+
 	private void updateImageProviderFlags() {
 		fImageFlags= 0;
 		if (getFlag(SHOW_OVERLAY_ICONS)) {
@@ -190,8 +190,8 @@ public class ModelElementLabelProvider extends LabelProvider {
 		if (getFlag(SHOW_SMALL_ICONS)) {
 			fImageFlags |= ScriptElementImageProvider.SMALL_ICONS;
 		}
-	}	
-	
+	}
+
 	private void updateTextProviderFlags() {
 		fTextFlags= ScriptElementLabels.T_TYPE_PARAMETERS;
 		if (getFlag(SHOW_RETURN_TYPE)) {
@@ -199,7 +199,7 @@ public class ModelElementLabelProvider extends LabelProvider {
 		}
 		if (getFlag(SHOW_PARAMETERS)) {
 			fTextFlags |= ScriptElementLabels.M_PARAMETER_TYPES;
-		}		
+		}
 		if (getFlag(SHOW_CONTAINER)) {
 			fTextFlags |= ScriptElementLabels.P_POST_QUALIFIED | ScriptElementLabels.T_POST_QUALIFIED | ScriptElementLabels.CF_POST_QUALIFIED  | ScriptElementLabels.CU_POST_QUALIFIED | ScriptElementLabels.M_POST_QUALIFIED | ScriptElementLabels.F_POST_QUALIFIED;
 		}
@@ -213,26 +213,24 @@ public class ModelElementLabelProvider extends LabelProvider {
 		}
 		if (getFlag(SHOW_ROOT)) {
 			fTextFlags |= ScriptElementLabels.APPEND_ROOT_PATH;
-		}			
+		}
 		if (getFlag(SHOW_FILE_QUALIFIED)) {
 			fTextFlags |= ScriptElementLabels.APPEND_FILE | ScriptElementLabels.T_CONTAINER_QUALIFIED | ScriptElementLabels.CU_POST_QUALIFIED;
-		}			
+		}
 		if (getFlag(SHOW_VARIABLE)) {
 			fTextFlags |= ScriptElementLabels.ROOT_VARIABLE;
 		}
 		if (getFlag(SHOW_QUALIFIED)) {
-			fTextFlags |= (ScriptElementLabels.F_FULLY_QUALIFIED | ScriptElementLabels.M_FULLY_QUALIFIED | ScriptElementLabels.I_FULLY_QUALIFIED 
+			fTextFlags |= (ScriptElementLabels.F_FULLY_QUALIFIED | ScriptElementLabels.M_FULLY_QUALIFIED | ScriptElementLabels.I_FULLY_QUALIFIED
 				| ScriptElementLabels.T_FULLY_QUALIFIED | ScriptElementLabels.D_QUALIFIED | ScriptElementLabels.CF_QUALIFIED  | ScriptElementLabels.CU_QUALIFIED);
 		}
 		if (getFlag(SHOW_POST_QUALIFIED)) {
-			fTextFlags |= (ScriptElementLabels.F_POST_QUALIFIED | ScriptElementLabels.M_POST_QUALIFIED | ScriptElementLabels.I_POST_QUALIFIED 
+			fTextFlags |= (ScriptElementLabels.F_POST_QUALIFIED | ScriptElementLabels.M_POST_QUALIFIED | ScriptElementLabels.I_POST_QUALIFIED
 			| ScriptElementLabels.T_POST_QUALIFIED | ScriptElementLabels.D_POST_QUALIFIED | ScriptElementLabels.CF_POST_QUALIFIED  | ScriptElementLabels.CU_POST_QUALIFIED);
-		}		
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see ILabelProvider#getImage
-	 */
+	@Override
 	public Image getImage(Object element) {
 		Image result= fImageLabelProvider.getImageLabel(element, fImageFlags);
 		if (result != null) {
@@ -245,9 +243,7 @@ public class ModelElementLabelProvider extends LabelProvider {
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see ILabelProvider#getText
-	 */
+	@Override
 	public String getText(Object element) {
 		String text= ScriptElementLabels.getDefault().getTextLabel(element, fTextFlags);
 		if (text.length() > 0) {
@@ -260,10 +256,7 @@ public class ModelElementLabelProvider extends LabelProvider {
 		return text;
 	}
 
-	/* (non-Javadoc)
-	 * 
-	 * @see IBaseLabelProvider#dispose
-	 */
+	@Override
 	public void dispose() {
 		fStorageLabelProvider.dispose();
 		fImageLabelProvider.dispose();

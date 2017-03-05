@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.dbgp.internal.commands;
 
@@ -24,8 +23,8 @@ import org.eclipse.dltk.dbgp.internal.utils.DbgpXmlEntityParser;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-public class DbgpBreakpointCommands extends DbgpBaseCommands implements
-		IDbgpBreakpointCommands {
+public class DbgpBreakpointCommands extends DbgpBaseCommands
+		implements IDbgpBreakpointCommands {
 
 	private static final String BREAKPOINT_SET_COMMAND = "breakpoint_set"; //$NON-NLS-1$
 
@@ -56,8 +55,8 @@ public class DbgpBreakpointCommands extends DbgpBaseCommands implements
 
 		NodeList breakpoints = response.getElementsByTagName(BREAKPOINT_TAG);
 		for (int i = 0; i < breakpoints.getLength(); ++i) {
-			list.add(DbgpXmlEntityParser.parseBreakpoint((Element) breakpoints
-					.item(i)));
+			list.add(DbgpXmlEntityParser
+					.parseBreakpoint((Element) breakpoints.item(i)));
 		}
 
 		return (IDbgpBreakpoint[]) list
@@ -118,56 +117,67 @@ public class DbgpBreakpointCommands extends DbgpBaseCommands implements
 		super(communicator);
 	}
 
+	@Override
 	public String setLineBreakpoint(URI uri, int lineNumber,
 			DbgpBreakpointConfig info) throws DbgpException {
 		return setBreakpoint(LINE_BREAKPOINT, uri, Integer.valueOf(lineNumber),
 				null, null, info);
 	}
 
+	@Override
 	public String setCallBreakpoint(URI uri, String function,
 			DbgpBreakpointConfig info) throws DbgpException {
 		return setBreakpoint(CALL_BREAKPOINT, uri, null, function, null, info);
 	}
 
+	@Override
 	public String setReturnBreakpoint(URI uri, String function,
 			DbgpBreakpointConfig info) throws DbgpException {
-		return setBreakpoint(RETURN_BREAKPOINT, uri, null, function, null, info);
+		return setBreakpoint(RETURN_BREAKPOINT, uri, null, function, null,
+				info);
 	}
 
+	@Override
 	public String setExceptionBreakpoint(String exception,
 			DbgpBreakpointConfig info) throws DbgpException {
 		return setBreakpoint(EXCEPTION_BREAKPOINT, null, null, null, exception,
 				info);
 	}
 
+	@Override
 	public String setConditionalBreakpoint(URI uri, DbgpBreakpointConfig info)
 			throws DbgpException {
 		return setBreakpoint(CONDITIONAL_BREAKPOINT, uri, null, null, null,
 				info);
 	}
 
+	@Override
 	public String setConditionalBreakpoint(URI uri, int lineNumber,
 			DbgpBreakpointConfig info) throws DbgpException {
-		return setBreakpoint(CONDITIONAL_BREAKPOINT, uri, Integer.valueOf(
-				lineNumber), null, null, info);
+		return setBreakpoint(CONDITIONAL_BREAKPOINT, uri,
+				Integer.valueOf(lineNumber), null, null, info);
 	}
 
+	@Override
 	public String setWatchBreakpoint(URI uri, int line,
 			DbgpBreakpointConfig info) throws DbgpException {
 		return setBreakpoint(WATCH_BREAKPOINT, uri, Integer.valueOf(line), null,
 				null, info);
 	}
 
+	@Override
 	public IDbgpBreakpoint getBreakpoint(String id) throws DbgpException {
 		DbgpRequest request = createRequest(BREAKPOINT_GET_COMMAND);
 		request.addOption("-d", id); //$NON-NLS-1$
-		IDbgpBreakpoint[] breakpoints = parseBreakpointsResponse(communicate(request));
+		IDbgpBreakpoint[] breakpoints = parseBreakpointsResponse(
+				communicate(request));
 		if (breakpoints.length > 0) {
 			return breakpoints[0];
 		}
 		return null;
 	}
 
+	@Override
 	public void removeBreakpoint(String id) throws DbgpException {
 		if (id == null) {
 			return;
@@ -178,6 +188,7 @@ public class DbgpBreakpointCommands extends DbgpBaseCommands implements
 		communicate(request);
 	}
 
+	@Override
 	public void updateBreakpoint(String id, DbgpBreakpointConfig config)
 			throws DbgpException {
 		DbgpRequest request = createRequest(BREAKPOINT_UPDATE_COMMAND);
@@ -204,7 +215,9 @@ public class DbgpBreakpointCommands extends DbgpBaseCommands implements
 		communicate(request);
 	}
 
+	@Override
 	public IDbgpBreakpoint[] getBreakpoints() throws DbgpException {
-		return parseBreakpointsResponse(communicate(createRequest(BREAKPOINT_LIST_COMMAND)));
+		return parseBreakpointsResponse(
+				communicate(createRequest(BREAKPOINT_LIST_COMMAND)));
 	}
 }

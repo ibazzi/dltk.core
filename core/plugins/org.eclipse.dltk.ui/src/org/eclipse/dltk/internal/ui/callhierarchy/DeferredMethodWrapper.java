@@ -1,12 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
- *          (report 36180: Callers/Callees view)
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.callhierarchy;
 
@@ -33,20 +31,16 @@ public class DeferredMethodWrapper extends MethodWrapperWorkbenchAdapter impleme
             this.id = id;
         }
 
-        /*
-         * @see org.eclipse.core.runtime.jobs.ISchedulingRule#isConflicting(org.eclipse.core.runtime.jobs.ISchedulingRule)
-         */
-        public boolean isConflicting(ISchedulingRule rule) {
+        @Override
+		public boolean isConflicting(ISchedulingRule rule) {
             if (rule instanceof BatchSimilarSchedulingRule) {
                 return ((BatchSimilarSchedulingRule) rule).id.equals(id);
             }
             return false;
         }
 
-        /*
-         * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
-         */
-        public boolean contains(ISchedulingRule rule) {
+        @Override
+		public boolean contains(ISchedulingRule rule) {
             return this == rule;
         }
     }
@@ -60,14 +54,8 @@ public class DeferredMethodWrapper extends MethodWrapperWorkbenchAdapter impleme
         return getMethodWrapper().getCalls(monitor);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#fetchDeferredChildren(java.lang.Object,
-     *      org.eclipse.jface.progress.IElementCollector,
-     *      org.eclipse.core.runtime.IProgressMonitor)
-     */
-    public void fetchDeferredChildren(Object object, IElementCollector collector, IProgressMonitor monitor) {
+    @Override
+	public void fetchDeferredChildren(Object object, IElementCollector collector, IProgressMonitor monitor) {
         try {
             fProvider.startFetching();
             DeferredMethodWrapper methodWrapper = (DeferredMethodWrapper) object;
@@ -76,36 +64,24 @@ public class DeferredMethodWrapper extends MethodWrapperWorkbenchAdapter impleme
         } catch (OperationCanceledException e) {
             collector.add(new Object[] { TreeTermination.SEARCH_CANCELED }, monitor);
         } catch (Exception e) {
-            DLTKUIPlugin.log(e);            
+            DLTKUIPlugin.log(e);
         } finally {
             fProvider.doneFetching();
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#isContainer()
-     */
-    public boolean isContainer() {
+    @Override
+	public boolean isContainer() {
         return true;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#getRule()
-     */
-    public ISchedulingRule getRule(Object o) {
+    @Override
+	public ISchedulingRule getRule(Object o) {
         return new BatchSimilarSchedulingRule("org.eclipse.dltk.ui.callhierarchy.methodwrapper"); //$NON-NLS-1$
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
-     */
-    public Object[] getChildren(Object o) {
+    @Override
+	public Object[] getChildren(Object o) {
         return this.fProvider.fetchChildren(((DeferredMethodWrapper) o).getMethodWrapper());
     }
 

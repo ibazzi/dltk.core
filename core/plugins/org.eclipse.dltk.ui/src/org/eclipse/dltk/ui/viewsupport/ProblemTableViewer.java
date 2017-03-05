@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
-
 package org.eclipse.dltk.ui.viewsupport;
 
 import java.util.ArrayList;
@@ -50,7 +48,7 @@ public class ProblemTableViewer extends TableViewer implements ResourceToItemsMa
 	public ProblemTableViewer(Composite parent, int style) {
 		super(parent, style);
 		initMapper();
-	} 
+	}
 
 	/**
 	 * Constructor for ProblemTableViewer.
@@ -64,14 +62,13 @@ public class ProblemTableViewer extends TableViewer implements ResourceToItemsMa
 	private void initMapper() {
 		fResourceToItemsMapper= new ResourceToItemsMapper(this);
 	}
-		
+
+	@Override
 	public void doUpdateItem(Widget item) {
 		doUpdateItem(item, item.getData(), true);
 	}
-	
-	/*
-	 * @see StructuredViewer#mapElement(Object, Widget)
-	 */
+
+	@Override
 	protected void mapElement(Object element, Widget item) {
 		super.mapElement(element, item);
 		if (item instanceof Item) {
@@ -79,27 +76,21 @@ public class ProblemTableViewer extends TableViewer implements ResourceToItemsMa
 		}
 	}
 
-	/*
-	 * @see StructuredViewer#unmapElement(Object, Widget)
-	 */
+	@Override
 	protected void unmapElement(Object element, Widget item) {
 		if (item instanceof Item) {
 			fResourceToItemsMapper.removeFromMap(element, (Item) item);
-		}		
+		}
 		super.unmapElement(element, item);
 	}
 
-	/*
-	 * @see StructuredViewer#unmapAllElements()
-	 */
+	@Override
 	protected void unmapAllElements() {
 		fResourceToItemsMapper.clearMap();
 		super.unmapAllElements();
 	}
-	
-	/*
-	 * @see ContentViewer#handleLabelProviderChanged(LabelProviderChangedEvent)
-	 */
+
+	@Override
 	protected void handleLabelProviderChanged(LabelProviderChangedEvent event) {
 		if (event instanceof ProblemsLabelChangedEvent) {
 			ProblemsLabelChangedEvent e= (ProblemsLabelChangedEvent) event;
@@ -107,7 +98,7 @@ public class ProblemTableViewer extends TableViewer implements ResourceToItemsMa
 				return;
 			}
 		}
-		
+
 		Object[] changed= event.getElements();
 		if (changed != null && !fResourceToItemsMapper.isEmpty()) {
 			ArrayList others= new ArrayList(changed.length);
@@ -126,7 +117,7 @@ public class ProblemTableViewer extends TableViewer implements ResourceToItemsMa
 		}
 		super.handleLabelProviderChanged(event);
 	}
-	
+
 	/**
 	 * Answers whether this viewer can ignore label provider changes resulting from
 	 * marker changes in annotation models

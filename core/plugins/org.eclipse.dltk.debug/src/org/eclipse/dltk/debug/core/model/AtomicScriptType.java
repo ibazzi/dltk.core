@@ -7,30 +7,37 @@ public class AtomicScriptType implements IScriptType {
 		this.name = name;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public boolean isAtomic() {
 		return true;
 	}
 
+	@Override
 	public boolean isComplex() {
 		return false;
 	}
 
+	@Override
 	public boolean isCollection() {
 		return false;
 	}
 
+	@Override
 	public boolean isString() {
 		return false;
 	}
 
+	@Override
 	public String formatDetails(IScriptValue value) {
 		return formatValue(value);
 	}
 
+	@Override
 	public String formatValue(IScriptValue value) {
 		return value.getRawValue();
 	}

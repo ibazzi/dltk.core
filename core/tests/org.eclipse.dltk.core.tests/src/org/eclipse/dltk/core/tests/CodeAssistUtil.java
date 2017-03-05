@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 NumberFour AG
+ * Copyright (c) 2012, 2017 NumberFour AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -14,7 +14,6 @@ package org.eclipse.dltk.core.tests;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -214,13 +213,7 @@ public class CodeAssistUtil {
 			}
 			final CompletionProposal[] sorted = proposals
 					.toArray(new CompletionProposal[proposals.size()]);
-			Arrays.sort(sorted, new Comparator<CompletionProposal>() {
-				@Override
-				public int compare(CompletionProposal pr, CompletionProposal pr1) {
-					return pr.getName().compareTo(pr1.getName());
-				}
-
-			});
+			Arrays.sort(sorted, (pr, pr1) -> pr.getName().compareTo(pr1.getName()));
 			final String[] sortedNames = new String[names.length];
 			System.arraycopy(names, 0, sortedNames, 0, names.length);
 			Arrays.sort(sortedNames);

@@ -13,22 +13,27 @@ public class ScriptWatchExpressionResult implements IWatchExpressionResult {
 		this.result = result;
 	}
 
+	@Override
 	public String[] getErrorMessages() {
 		return result.getErrorMessages();
 	}
 
+	@Override
 	public DebugException getException() {
 		return result.getException();
 	}
 
+	@Override
 	public String getExpressionText() {
 		return result.getSnippet();
 	}
 
+	@Override
 	public IValue getValue() {
 		return result.getValue();
 	}
 
+	@Override
 	public boolean hasErrors() {
 		return result.hasErrors();
 	}

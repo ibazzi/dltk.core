@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.  
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -26,7 +26,7 @@ public class TestModelProvider implements IModelProvider {
 	}
 
 	@Override
-	public void provideModelChanges(IModelElement parentElement, List children) {
+	public void provideModelChanges(IModelElement parentElement, List<IModelElement> children) {
 		IScriptProject project = parentElement.getScriptProject();
 		if (!"ModelMembersq".equals(project.getElementName())) {
 			return;
@@ -34,8 +34,8 @@ public class TestModelProvider implements IModelProvider {
 		switch (parentElement.getElementType()) {
 		case IModelElement.PROJECT_FRAGMENT:
 			List<TestFolder> addon = new ArrayList<TestFolder>();
-			for (Iterator<TestFolder> iterator = children.iterator(); iterator.hasNext();) {
-				IModelElement el = (IModelElement) iterator.next();
+			for (Iterator<IModelElement> iterator = children.iterator(); iterator.hasNext();) {
+				IModelElement el = iterator.next();
 				if (el.getElementType() == IModelElement.SCRIPT_FOLDER) {
 					addon.add(new TestFolder((ModelElement) parentElement,
 							el.getPath().removeFirstSegments(

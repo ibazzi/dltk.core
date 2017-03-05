@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.search;
 
@@ -110,32 +109,39 @@ abstract class DLTKMatchFilter extends MatchFilter {
 }
 
 class PotentialFilter extends DLTKMatchFilter {
+	@Override
 	public boolean filters(DLTKElementMatch match) {
 		return match.getAccuracy() == SearchMatch.A_INACCURATE;
 	}
 
+	@Override
 	public String getName() {
 		return SearchMessages.MatchFilter_PotentialFilter_name;
 	}
 
+	@Override
 	public String getActionLabel() {
 		return SearchMessages.MatchFilter_PotentialFilter_actionLabel;
 	}
 
+	@Override
 	public String getDescription() {
 		return SearchMessages.MatchFilter_PotentialFilter_description;
 	}
 
+	@Override
 	public boolean isApplicable(DLTKSearchQuery query) {
 		return true;
 	}
 
+	@Override
 	public String getID() {
 		return "filter_potential"; //$NON-NLS-1$
 	}
 }
 
 abstract class FieldFilter extends DLTKMatchFilter {
+	@Override
 	public boolean isApplicable(DLTKSearchQuery query) {
 		QuerySpecification spec = query.getSpecification();
 		if (spec instanceof ElementQuerySpecification) {
@@ -151,70 +157,86 @@ abstract class FieldFilter extends DLTKMatchFilter {
 }
 
 class WriteFilter extends FieldFilter {
+	@Override
 	public boolean filters(DLTKElementMatch match) {
 		return match.isWriteAccess() && !match.isReadAccess();
 	}
 
+	@Override
 	public String getName() {
 		return SearchMessages.MatchFilter_WriteFilter_name;
 	}
 
+	@Override
 	public String getActionLabel() {
 		return SearchMessages.MatchFilter_WriteFilter_actionLabel;
 	}
 
+	@Override
 	public String getDescription() {
 		return SearchMessages.MatchFilter_WriteFilter_description;
 	}
 
+	@Override
 	public String getID() {
 		return "filter_writes"; //$NON-NLS-1$
 	}
 }
 
 class ReadFilter extends FieldFilter {
+	@Override
 	public boolean filters(DLTKElementMatch match) {
 		return match.isReadAccess() && !match.isWriteAccess();
 	}
 
+	@Override
 	public String getName() {
 		return SearchMessages.MatchFilter_ReadFilter_name;
 	}
 
+	@Override
 	public String getActionLabel() {
 		return SearchMessages.MatchFilter_ReadFilter_actionLabel;
 	}
 
+	@Override
 	public String getDescription() {
 		return SearchMessages.MatchFilter_ReadFilter_description;
 	}
 
+	@Override
 	public String getID() {
 		return "filter_reads"; //$NON-NLS-1$
 	}
 }
 
 class ScriptdocFilter extends DLTKMatchFilter {
+	@Override
 	public boolean filters(DLTKElementMatch match) {
 		return match.isScriptdoc();
 	}
 
+	@Override
 	public String getName() {
 		return SearchMessages.MatchFilter_DLTKdocFilter_name;
 	}
 
+	@Override
 	public String getActionLabel() {
 		return SearchMessages.MatchFilter_DLTKdocFilter_actionLabel;
 	}
 
+	@Override
 	public String getDescription() {
 		return SearchMessages.MatchFilter_DLTKdocFilter_description;
 	}
 
+	@Override
 	public boolean isApplicable(DLTKSearchQuery query) {
 		return true;
 	}
 
+	@Override
 	public String getID() {
 		return "filter_javadoc"; //$NON-NLS-1$
 	}

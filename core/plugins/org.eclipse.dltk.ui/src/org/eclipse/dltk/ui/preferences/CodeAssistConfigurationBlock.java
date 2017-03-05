@@ -1,15 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
-/**
- * 
- */
 package org.eclipse.dltk.ui.preferences;
 
 import java.util.ArrayList;
@@ -83,11 +79,12 @@ public class CodeAssistConfigurationBlock extends AbstractConfigurationBlock {
 
 	/**
 	 * Creates page for appearance preferences.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 * @return the control for the preference page
 	 */
+	@Override
 	public Control createControl(Composite parent) {
 		initializeDialogUnits(parent);
 
@@ -154,6 +151,7 @@ public class CodeAssistConfigurationBlock extends AbstractConfigurationBlock {
 				PreferencesMessages.DLTKEditorPreferencePage_enableAutoActivation,
 				PreferenceConstants.CODEASSIST_AUTOACTIVATION, 2);
 		autoactivation.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateAutoactivationControls();
 			}
@@ -195,6 +193,7 @@ public class CodeAssistConfigurationBlock extends AbstractConfigurationBlock {
 		completionComposite.setLayout(ccgl);
 
 		SelectionListener completionSelectionListener = new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean insert = fCompletionInsertsRadioButton.getSelection();
 				getPreferenceStore().setValue(
@@ -234,6 +233,7 @@ public class CodeAssistConfigurationBlock extends AbstractConfigurationBlock {
 				PreferenceConstants.CODEASSIST_SHOW_VISIBLE_PROPOSALS, 2);
 	}
 
+	@Override
 	protected void initializeFields() {
 		super.initializeFields();
 		boolean completionInserts = getPreferenceStore().getBoolean(

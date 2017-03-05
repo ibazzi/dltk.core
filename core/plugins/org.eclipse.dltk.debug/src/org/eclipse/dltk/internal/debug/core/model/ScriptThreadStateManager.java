@@ -131,6 +131,7 @@ public class ScriptThreadStateManager implements IDbgpDebuggerFeedback {
 		handleStatus(e, status, DebugEvent.BREAKPOINT);
 	}
 
+	@Override
 	public void endStepInto(DbgpException e, IDbgpStatus status) {
 		endStep(e, status);
 	}
@@ -160,6 +161,7 @@ public class ScriptThreadStateManager implements IDbgpDebuggerFeedback {
 		return canStep();
 	}
 
+	@Override
 	public void endStepOver(DbgpException e, IDbgpStatus status) {
 		endStep(e, status);
 	}
@@ -174,6 +176,7 @@ public class ScriptThreadStateManager implements IDbgpDebuggerFeedback {
 		return canStep();
 	}
 
+	@Override
 	public void endStepReturn(DbgpException e, IDbgpStatus status) {
 		endStep(e, status);
 	}
@@ -192,6 +195,7 @@ public class ScriptThreadStateManager implements IDbgpDebuggerFeedback {
 		return canSuspend && !terminated && !suspended;
 	}
 
+	@Override
 	public void endSuspend(DbgpException e, IDbgpStatus status) {
 		handleStatus(e, status, DebugEvent.CLIENT_REQUEST);
 	}
@@ -210,6 +214,7 @@ public class ScriptThreadStateManager implements IDbgpDebuggerFeedback {
 		return !terminated && suspended;
 	}
 
+	@Override
 	public void endResume(DbgpException e, IDbgpStatus status) {
 		handleStatus(e, status, DebugEvent.BREAKPOINT);
 	}
@@ -229,6 +234,7 @@ public class ScriptThreadStateManager implements IDbgpDebuggerFeedback {
 		return !terminated;
 	}
 
+	@Override
 	public void endTerminate(DbgpException e, IDbgpStatus status) {
 		handleStatus(e, status, DebugEvent.CLIENT_REQUEST);
 	}

@@ -1,28 +1,31 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.debug.dbgp.tests;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.dltk.dbgp.DbgpRequest;
+import org.junit.Before;
+import org.junit.Test;
 
-public class DbgpRequestTests extends TestCase {
+public class DbgpRequestTests {
 
 	private DbgpRequest request;
 
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() {
 
 		request = new DbgpRequest("test_command");
 	}
 
+	@Test
 	public void testOptions() {
 		request.addOption("-t", 324);
 
@@ -32,11 +35,13 @@ public class DbgpRequestTests extends TestCase {
 		assertEquals("test_command", request.getCommand());
 	}
 
+	@Test
 	public void testData() {
 		request.setData("my_data");
 		assertEquals("my_data", request.getData());
 	}
 
+	@Test
 	public void testStringRepresentation() {
 		request.addOption("-i", 324);
 		request.setData("my_data");
@@ -44,6 +49,7 @@ public class DbgpRequestTests extends TestCase {
 		assertEquals("test_command -i 324 -- bXlfZGF0YQ==", request.toString());
 	}
 
+	@Test
 	public void testEquals() {
 		DbgpRequest r1 = new DbgpRequest("step_command_xxx");
 		r1.addOption("-a", 32);

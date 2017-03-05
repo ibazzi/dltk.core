@@ -1,21 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
- * 			(report 36180: Callers/Callees view)
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.callhierarchy;
 
 import org.eclipse.dltk.internal.corext.callhierarchy.MethodWrapper;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
@@ -50,11 +46,7 @@ class CallHierarchyViewer extends TreeViewer {
         setLabelProvider(new CallHierarchyLabelProvider());
 
         fOpen= new OpenLocationAction(part, part.getSite());
-        addOpenListener(new IOpenListener() {
-            public void open(OpenEvent event) {
-                fOpen.run();
-            }
-        });
+		addOpenListener(event -> fOpen.run());
 
         clearViewer();
     }
@@ -117,12 +109,12 @@ class CallHierarchyViewer extends TreeViewer {
     }
 
     /**
-     * 
+     *
      */
     void clearViewer() {
         setInput(TreeRoot.EMPTY_ROOT);
     }
-    
+
     void cancelJobs() {
     	if (fPart == null)
     		return;

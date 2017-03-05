@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.typehierarchy;
 
@@ -23,25 +22,21 @@ import org.eclipse.ui.IWorkbenchPart;
  * on construction (shared type hierarchy)
  */
 public class SuperTypeHierarchyViewer extends TypeHierarchyViewer {
-	
+
 	public SuperTypeHierarchyViewer(Composite parent, TypeHierarchyLifeCycle lifeCycle, IWorkbenchPart part, IPreferenceStore store) {
 		super(parent, new SuperTypeHierarchyContentProvider(lifeCycle), lifeCycle, part, store);
 	}
 
-	/*
-	 * @see TypeHierarchyViewer#getTitle
-	 */	
+	@Override
 	public String getTitle() {
 		if (isMethodFiltering()) {
-			return TypeHierarchyMessages.SuperTypeHierarchyViewer_filtered_title; 
+			return TypeHierarchyMessages.SuperTypeHierarchyViewer_filtered_title;
 		} else {
-			return TypeHierarchyMessages.SuperTypeHierarchyViewer_title; 
+			return TypeHierarchyMessages.SuperTypeHierarchyViewer_title;
 		}
 	}
 
-	/*
-	 * @see TypeHierarchyViewer#updateContent
-	 */	
+	@Override
 	public void updateContent(boolean expand) {
 		getTree().setRedraw(false);
 		refresh();
@@ -50,7 +45,7 @@ public class SuperTypeHierarchyViewer extends TypeHierarchyViewer {
 		}
 		getTree().setRedraw(true);
 	}
-	
+
 	/*
 	 * Content provider for the supertype hierarchy
 	 */
@@ -58,7 +53,8 @@ public class SuperTypeHierarchyViewer extends TypeHierarchyViewer {
 		public SuperTypeHierarchyContentProvider(TypeHierarchyLifeCycle lifeCycle) {
 			super(lifeCycle);
 		}
-		
+
+		@Override
 		protected final void getTypesInHierarchy(IType type, List res) {
 			ITypeHierarchy hierarchy= getHierarchy();
 			if (hierarchy != null) {
@@ -70,10 +66,11 @@ public class SuperTypeHierarchyViewer extends TypeHierarchyViewer {
 				}
 			}
 		}
-		
+
+		@Override
 		protected IType[] getParentType(IType type) {
 			return null;
 		}
-	}		
+	}
 
 }

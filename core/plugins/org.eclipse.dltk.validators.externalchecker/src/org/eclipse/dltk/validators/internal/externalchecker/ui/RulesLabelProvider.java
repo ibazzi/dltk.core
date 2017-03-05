@@ -5,19 +5,20 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
-public class RulesLabelProvider extends LabelProvider implements
-		ITableLabelProvider {
+public class RulesLabelProvider extends LabelProvider implements ITableLabelProvider {
 
+	@Override
 	public Image getColumnImage(Object element, int columnIndex) {
 		return null;
 	}
 
+	@Override
 	public String getColumnText(Object element, int columnIndex) {
 		switch (columnIndex) {
 		case 0:
-			return ((Rule)element).getDescription();
+			return ((Rule) element).getDescription();
 		case 1:
-			return ((Rule)element).getType();
+			return ((Rule) element).getType();
 		default:
 			return null;
 		}

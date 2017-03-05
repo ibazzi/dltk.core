@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
@@ -48,15 +47,13 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.TextConsoleViewer;
 
-public class ScriptConsoleViewer extends TextConsoleViewer
-		implements IScriptConsoleViewer {
+public class ScriptConsoleViewer extends TextConsoleViewer implements IScriptConsoleViewer {
 	public static class ConsoleDocumentListener implements IDocumentListener {
 
 		private boolean bEnabled = true;
@@ -97,19 +94,16 @@ public class ScriptConsoleViewer extends TextConsoleViewer
 				disconnectListener();
 				doc.set(""); //$NON-NLS-1$
 				ScriptConsoleViewer viewer;
-				for (Iterator<ScriptConsoleViewer> iter = viewerList
-						.iterator(); iter.hasNext();) {
+				for (Iterator<ScriptConsoleViewer> iter = viewerList.iterator(); iter.hasNext();) {
 					viewer = iter.next();
-					IDocumentPartitioner partitioner = viewer.getDocument()
-							.getDocumentPartitioner();
+					IDocumentPartitioner partitioner = viewer.getDocument().getDocumentPartitioner();
 					if (partitioner instanceof ScriptConsolePartitioner) {
 						ScriptConsolePartitioner scriptConsolePartitioner = (ScriptConsolePartitioner) partitioner;
 						scriptConsolePartitioner.clearRanges();
 					}
 				}
 				appendInvitation();
-				for (Iterator<ScriptConsoleViewer> iter = viewerList
-						.iterator(); iter.hasNext();) {
+				for (Iterator<ScriptConsoleViewer> iter = viewerList.iterator(); iter.hasNext();) {
 					iter.next().setCaretPosition(doc.getLength());
 				}
 			} catch (BadLocationException e) {
@@ -119,8 +113,8 @@ public class ScriptConsoleViewer extends TextConsoleViewer
 			}
 		}
 
-		public ConsoleDocumentListener(ICommandHandler handler,
-				ScriptConsolePrompt prompt, ScriptConsoleHistory history) {
+		public ConsoleDocumentListener(ICommandHandler handler, ScriptConsolePrompt prompt,
+				ScriptConsoleHistory history) {
 			this.prompt = prompt;
 			this.handler = handler;
 			this.history = history;
@@ -144,38 +138,25 @@ public class ScriptConsoleViewer extends TextConsoleViewer
 
 		}
 
-		protected void handleCommandLine(final String command)
-				throws BadLocationException, IOException {
+		protected void handleCommandLine(final String command) throws BadLocationException, IOException {
 			if (handleSynchronously) {
 				IScriptExecResult result = handler.handleCommand(command);
-				if (((ScriptConsole) handler)
-						.getState() != IScriptConsoleInterpreter.WAIT_USER_INPUT) {
+				if (((ScriptConsole) handler).getState() != IScriptConsoleInterpreter.WAIT_USER_INPUT) {
 					processResult(result);
 				}
 				return;
 			}
 
-			Thread handlerThread = new Thread(
-					Messages.ScriptConsoleViewer_scriptConsoleCommandHandler) {
+			Thread handlerThread = new Thread(Messages.ScriptConsoleViewer_scriptConsoleCommandHandler) {
 
 				@Override
 				public void run() {
 					try {
-						final IScriptExecResult result = handler
-								.handleCommand(command);
+						final IScriptExecResult result = handler.handleCommand(command);
 
-						if (((ScriptConsole) handler)
-								.getState() != IScriptConsoleInterpreter.WAIT_USER_INPUT) {
-							((ScriptConsole) handler).getPage().getSite()
-									.getShell().getDisplay()
-									.asyncExec(new Runnable() {
-
-										@Override
-										public void run() {
-											processResult(result);
-										}
-
-									});
+						if (((ScriptConsole) handler).getState() != IScriptConsoleInterpreter.WAIT_USER_INPUT) {
+							((ScriptConsole) handler).getPage().getSite().getShell().getDisplay()
+									.asyncExec(() -> processResult(result));
 						}
 					} catch (IOException ixcn) {
 						ixcn.printStackTrace();
@@ -188,49 +169,43 @@ public class ScriptConsoleViewer extends TextConsoleViewer
 			handlerThread.start();
 		}
 
-		protected void appendText(int offset, String text)
-				throws BadLocationException {
+		protected void appendText(int offset, String text) throws BadLocationException {
 			doc.replace(offset, 0, text);
 		}
 
-		protected void processText(int originalOffset, String content,
-				boolean isInput, boolean isError, final boolean shouldReveal,
-				final boolean shouldRedraw) throws BadLocationException {
+		protected void processText(int originalOffset, String content, boolean isInput, boolean isError,
+				final boolean shouldReveal, final boolean shouldRedraw) throws BadLocationException {
 			if (originalOffset == -1) {
 				originalOffset = doc.getLength();
 			}
 
-			ansiHelper.processText(originalOffset, content, isInput, isError,
-					new IAnsiColorHandler() {
+			ansiHelper.processText(originalOffset, content, isInput, isError, new IAnsiColorHandler() {
 
-						@Override
-						public void handleText(int start, String content,
-								boolean isInput, boolean isError)
-								throws BadLocationException {
-							appendText(start, content);
-							addToPartitioner(start, content, isInput, isError);
+				@Override
+				public void handleText(int start, String content, boolean isInput, boolean isError)
+						throws BadLocationException {
+					appendText(start, content);
+					addToPartitioner(start, content, isInput, isError);
+				}
+
+				@Override
+				public void processingComplete(int start, int length) {
+					for (Iterator<ScriptConsoleViewer> iter = viewerList.iterator(); iter.hasNext();) {
+						final ScriptConsoleViewer viewer = iter.next();
+						if (shouldReveal == true) {
+							viewer.setCaretPosition(doc.getLength());
+							viewer.revealEndOfDocument();
 						}
 
-						@Override
-						public void processingComplete(int start, int length) {
-							for (Iterator<ScriptConsoleViewer> iter = viewerList
-									.iterator(); iter.hasNext();) {
-								final ScriptConsoleViewer viewer = iter.next();
-								if (shouldReveal == true) {
-									viewer.setCaretPosition(doc.getLength());
-									viewer.revealEndOfDocument();
-								}
-
-								if (shouldRedraw == true) {
-									if (viewer.getTextWidget() != null) {
-										viewer.getTextWidget().redrawRange(
-												start, length, true);
-									}
-								}
+						if (shouldRedraw == true) {
+							if (viewer.getTextWidget() != null) {
+								viewer.getTextWidget().redrawRange(start, length, true);
 							}
 						}
+					}
+				}
 
-					});
+			});
 		}
 
 		protected void processResult(final IScriptExecResult result) {
@@ -240,8 +215,7 @@ public class ScriptConsoleViewer extends TextConsoleViewer
 					final String output = result.getOutput();
 					if (output != null && output.length() != 0) {
 						ansiHelper.reset();
-						processText(-1, output, false, result.isError(), false,
-								true);
+						processText(-1, output, false, result.isError(), false, true);
 					}
 				}
 				appendInvitation();
@@ -252,46 +226,37 @@ public class ScriptConsoleViewer extends TextConsoleViewer
 			}
 		}
 
-		private void addToPartitioner(ScriptConsoleViewer viewer,
-				StyleRange style) {
-			IDocumentPartitioner partitioner = viewer.getDocument()
-					.getDocumentPartitioner();
+		private void addToPartitioner(ScriptConsoleViewer viewer, StyleRange style) {
+			IDocumentPartitioner partitioner = viewer.getDocument().getDocumentPartitioner();
 			if (partitioner instanceof ScriptConsolePartitioner) {
 				ScriptConsolePartitioner scriptConsolePartitioner = (ScriptConsolePartitioner) partitioner;
 				scriptConsolePartitioner.addRange(style);
 			}
 		}
 
-		protected void addToPartitioner(int start, String content,
-				boolean isInput, boolean isError) {
+		protected void addToPartitioner(int start, String content, boolean isInput, boolean isError) {
 			// ssanders: Content has to be tokenized in order for style and
 			// hyperlinks to display correctly
-			StringTokenizer tokenizer = new StringTokenizer(content,
-					" \t\n\r\f@#=|,()[]{}<>'\"", true); //$NON-NLS-1$
+			StringTokenizer tokenizer = new StringTokenizer(content, " \t\n\r\f@#=|,()[]{}<>'\"", true); //$NON-NLS-1$
 			String token;
 			int tokenStart = start;
 			ScriptConsoleViewer viewer;
 			while (tokenizer.hasMoreTokens() == true) {
 				token = tokenizer.nextToken();
 
-				for (Iterator<ScriptConsoleViewer> iter = viewerList
-						.iterator(); iter.hasNext();) {
+				for (Iterator<ScriptConsoleViewer> iter = viewerList.iterator(); iter.hasNext();) {
 					viewer = iter.next();
 					if (isInput == true) {
-						addToPartitioner(viewer,
-								new StyleRange(tokenStart, token.length(),
-										AnsiColorHelper.COLOR_BLACK, null,
-										SWT.BOLD));
+						addToPartitioner(viewer, new StyleRange(tokenStart, token.length(), AnsiColorHelper.COLOR_BLACK,
+								null, SWT.BOLD));
 					} else {
-						addToPartitioner(viewer, ansiHelper.resolveStyleRange(
-								tokenStart, token.length(), isError));
+						addToPartitioner(viewer, ansiHelper.resolveStyleRange(tokenStart, token.length(), isError));
 					}
 				}
 
 				tokenStart += token.length();
 			}
-			for (Iterator<ScriptConsoleViewer> iter = viewerList
-					.iterator(); iter.hasNext();) {
+			for (Iterator<ScriptConsoleViewer> iter = viewerList.iterator(); iter.hasNext();) {
 				viewer = iter.next();
 				viewer.getTextWidget().redraw();
 			}
@@ -311,9 +276,7 @@ public class ScriptConsoleViewer extends TextConsoleViewer
 				int index;
 				while ((index = text.indexOf(delim, start)) != -1) {
 					if (index > start) {
-						processText(getCommandLineOffset(),
-								text.substring(start, index), true, false,
-								false, true);
+						processText(getCommandLineOffset(), text.substring(start, index), true, false, false, true);
 					}
 					final String commandLine = getCommandLine();
 					processText(-1, delim, true, false, false, true);
@@ -323,8 +286,7 @@ public class ScriptConsoleViewer extends TextConsoleViewer
 					handleCommandLine(commandLine);
 				}
 				if (start < text.length()) {
-					processText(-1, text.substring(start, text.length()), true,
-							false, false, true);
+					processText(-1, text.substring(start, text.length()), true, false, false, true);
 				}
 			} catch (BadLocationException e) {
 				if (DLTKCore.DEBUG) {
@@ -339,31 +301,24 @@ public class ScriptConsoleViewer extends TextConsoleViewer
 
 		@Override
 		public void documentChanged(final DocumentEvent event) {
-			ansiHelper.disableWhile(new Runnable() {
-
-				@Override
-				public void run() {
-					disconnectListener();
-					try {
-						processAddition(event.getOffset(), event.getText());
-					} finally {
-						connectListener();
-					}
+			ansiHelper.disableWhile(() -> {
+				disconnectListener();
+				try {
+					processAddition(event.getOffset(), event.getText());
+				} finally {
+					connectListener();
 				}
-
 			});
 		}
 
 		public void appendInvitation() throws BadLocationException {
 			inviteStart = doc.getLength();
-			processText(inviteStart, prompt.toString(), true, false, true,
-					true);
+			processText(inviteStart, prompt.toString(), true, false, true, true);
 			inviteEnd = doc.getLength();
 		}
 
 		public void appendDelimeter() throws BadLocationException {
-			processText(-1, TextUtilities.getDefaultLineDelimiter(doc), false,
-					false, false, true);
+			processText(-1, TextUtilities.getDefaultLineDelimiter(doc), false, false, false, true);
 		}
 
 		protected int getLastLineLength() throws BadLocationException {
@@ -384,18 +339,12 @@ public class ScriptConsoleViewer extends TextConsoleViewer
 		}
 
 		public void setCommandLine(final String command) {
-			ansiHelper.disableWhile(new Runnable() {
-
-				@Override
-				public void run() {
-					try {
-						doc.replace(getCommandLineOffset(),
-								getCommandLineLength(), command);
-					} catch (BadLocationException bxcn) {
-						bxcn.printStackTrace();
-					}
+			ansiHelper.disableWhile(() -> {
+				try {
+					doc.replace(getCommandLineOffset(), getCommandLineLength(), command);
+				} catch (BadLocationException bxcn) {
+					bxcn.printStackTrace();
 				}
-
 			});
 		}
 
@@ -408,14 +357,12 @@ public class ScriptConsoleViewer extends TextConsoleViewer
 				final int docLen = doc.getLength();
 				if (docLen > inviteEnd) {
 					// clear current command if any
-					doc.replace(inviteEnd, docLen - inviteEnd,
-							Util.EMPTY_STRING);
+					doc.replace(inviteEnd, docLen - inviteEnd, Util.EMPTY_STRING);
 					// TODO should we restore the text after this command
 					// execution?
 				}
-				processText(getCommandLineOffset(),
-						command + TextUtilities.getDefaultLineDelimiter(doc),
-						true, false, true, true);
+				processText(getCommandLineOffset(), command + TextUtilities.getDefaultLineDelimiter(doc), true, false,
+						true, true);
 				inviteStart = inviteEnd = doc.getLength();
 				handleCommandLine(command);
 			} catch (BadLocationException e) {
@@ -438,22 +385,18 @@ public class ScriptConsoleViewer extends TextConsoleViewer
 		public void write(final String text, final boolean isError) {
 			final Display display = PlatformUI.getWorkbench().getDisplay();
 			if (display != null && !display.isDisposed())
-				display.asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						disconnectListener();
-						try {
-							processText(inviteStart, text, false, isError, true,
-									true);
-							inviteStart += text.length();
-							inviteEnd += text.length();
-						} catch (BadLocationException bxcn) {
-							if (DLTKCore.DEBUG) {
-								bxcn.printStackTrace();
-							}
-						} finally {
-							connectListener();
+				display.asyncExec(() -> {
+					disconnectListener();
+					try {
+						processText(inviteStart, text, false, isError, true, true);
+						inviteStart += text.length();
+						inviteEnd += text.length();
+					} catch (BadLocationException bxcn) {
+						if (DLTKCore.DEBUG) {
+							bxcn.printStackTrace();
 						}
+					} finally {
+						connectListener();
 					}
 				});
 		}
@@ -475,8 +418,7 @@ public class ScriptConsoleViewer extends TextConsoleViewer
 				case ST.LINE_UP:
 					updateSelectedLine();
 					if (history.prev()) {
-						console.getDocumentListener()
-								.setCommandLine(history.get());
+						console.getDocumentListener().setCommandLine(history.get());
 						setCaretOffset(getDocument().getLength());
 					} else {
 						beep();
@@ -486,8 +428,7 @@ public class ScriptConsoleViewer extends TextConsoleViewer
 				case ST.LINE_DOWN:
 					updateSelectedLine();
 					if (history.next()) {
-						console.getDocumentListener()
-								.setCommandLine(history.get());
+						console.getDocumentListener().setCommandLine(history.get());
 						setCaretOffset(getDocument().getLength());
 					} else {
 						beep();
@@ -495,8 +436,7 @@ public class ScriptConsoleViewer extends TextConsoleViewer
 					return;
 
 				case ST.DELETE_PREVIOUS:
-					if (getCaretOffset() <= getCommandLineOffset()
-							&& getSelectionCount() == 0) {
+					if (getCaretOffset() <= getCommandLineOffset() && getSelectionCount() == 0) {
 						return;
 					}
 					break;
@@ -535,16 +475,14 @@ public class ScriptConsoleViewer extends TextConsoleViewer
 					break;
 				case ST.COLUMN_PREVIOUS:
 				case ST.SELECT_COLUMN_PREVIOUS:
-					if (isCaretOnLastLine()
-							&& getCaretOffset() == getCommandLineOffset()) {
+					if (isCaretOnLastLine() && getCaretOffset() == getCommandLineOffset()) {
 						return;
 					}
 				}
 
 				super.invokeAction(action);
 
-				if (isCaretOnLastLine()
-						&& getCaretOffset() <= getCommandLineOffset()) {
+				if (isCaretOnLastLine() && getCaretOffset() <= getCommandLineOffset()) {
 					setCaretOffset(getCommandLineOffset());
 				}
 			} else {
@@ -555,8 +493,7 @@ public class ScriptConsoleViewer extends TextConsoleViewer
 
 		private void updateSelectedLine() {
 			try {
-				history.updateSelectedLine(
-						console.getDocumentListener().getCommandLine());
+				history.updateSelectedLine(console.getDocumentListener().getCommandLine());
 			} catch (BadLocationException e) {
 				if (DLTKCore.DEBUG) {
 					e.printStackTrace();
@@ -571,23 +508,14 @@ public class ScriptConsoleViewer extends TextConsoleViewer
 		@Override
 		public void paste() {
 			if (isCaretOnLastLine()) {
-				console.getDocumentListener().ansiHelper
-						.disableWhile(new Runnable() {
-
-							@Override
-							public void run() {
-								checkWidget();
-								Clipboard clipboard = new Clipboard(
-										getDisplay());
-								TextTransfer plainTextTransfer = TextTransfer
-										.getInstance();
-								String text = (String) clipboard.getContents(
-										plainTextTransfer, DND.CLIPBOARD);
-								clipboard.dispose();
-								paste(text);
-							}
-
-						});
+				console.getDocumentListener().ansiHelper.disableWhile(() -> {
+					checkWidget();
+					Clipboard clipboard = new Clipboard(getDisplay());
+					TextTransfer plainTextTransfer = TextTransfer.getInstance();
+					String text = (String) clipboard.getContents(plainTextTransfer, DND.CLIPBOARD);
+					clipboard.dispose();
+					paste(text);
+				});
 			}
 		}
 
@@ -607,8 +535,7 @@ public class ScriptConsoleViewer extends TextConsoleViewer
 						setCaretOffset(selectedRange.x + text.length());
 
 					} else {
-						StringTokenizer tokenizer = new StringTokenizer(text,
-								"\n\r"); //$NON-NLS-1$
+						StringTokenizer tokenizer = new StringTokenizer(text, "\n\r"); //$NON-NLS-1$
 						while (tokenizer.hasMoreTokens() == true) {
 							final String finText = tokenizer.nextToken();
 							insertText(finText + "\n"); //$NON-NLS-1$
@@ -640,13 +567,9 @@ public class ScriptConsoleViewer extends TextConsoleViewer
 
 	public void setCaretPosition(final int offset) {
 		if (getTextWidget() != null) {
-			getTextWidget().getDisplay().asyncExec(new Runnable() {
-
-				@Override
-				public void run() {
-					if (getTextWidget() != null) {
-						getTextWidget().setCaretOffset(offset);
-					}
+			getTextWidget().getDisplay().asyncExec(() -> {
+				if (getTextWidget() != null) {
+					getTextWidget().setCaretOffset(offset);
 				}
 			});
 		}
@@ -705,8 +628,8 @@ public class ScriptConsoleViewer extends TextConsoleViewer
 
 			}
 		});
-		DropTarget target = new DropTarget(styledText, DND.DROP_DEFAULT
-				| DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK);
+		DropTarget target = new DropTarget(styledText,
+				DND.DROP_DEFAULT | DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK);
 		target.setTransfer(new Transfer[] { TextTransfer.getInstance() });
 		target.addDropListener(new DropTargetAdapter() {
 			@Override
@@ -727,75 +650,65 @@ public class ScriptConsoleViewer extends TextConsoleViewer
 			}
 		});
 		styledText.setKeyBinding('X' | SWT.MOD1, ST.COPY);
-		styledText.addVerifyKeyListener(new VerifyKeyListener() {
-			@Override
-			public void verifyKey(VerifyEvent event) {
-				try {
-					if (event.character != '\0') {
-						if ((event.stateMask & SWT.MOD1) == 0) {
-							// Printable character
-							// ssanders: Ensure selection is on last line
-							ConsoleDocumentListener listener = console
-									.getDocumentListener();
-							int selStart = getSelectedRange().x;
-							int selEnd = (getSelectedRange().x
-									+ getSelectedRange().y);
-							int clOffset = listener.getCommandLineOffset();
-							int clLength = listener.getCommandLineLength();
-							if (selStart < clOffset) {
-								int selLength;
+		styledText.addVerifyKeyListener(event -> {
+			try {
+				if (event.character != '\0') {
+					if ((event.stateMask & SWT.MOD1) == 0) {
+						// Printable character
+						// ssanders: Ensure selection is on last line
+						ConsoleDocumentListener listener = console.getDocumentListener();
+						int selStart = getSelectedRange().x;
+						int selEnd = (getSelectedRange().x + getSelectedRange().y);
+						int clOffset = listener.getCommandLineOffset();
+						int clLength = listener.getCommandLineLength();
+						if (selStart < clOffset) {
+							int selLength;
 
-								if (selEnd < clOffset) {
-									selStart = (clOffset + clLength);
-									selLength = 0;
-								} else {
-									selStart = clOffset;
-									selLength = (selEnd - selStart);
-								}
-
-								setSelectedRange(selStart, selLength);
+							if (selEnd < clOffset) {
+								selStart = (clOffset + clLength);
+								selLength = 0;
+							} else {
+								selStart = clOffset;
+								selLength = (selEnd - selStart);
 							}
 
-							if (getCaretPosition() < console
-									.getDocumentListener()
-									.getCommandLineOffset()) {
-								event.doit = false;
-								return;
-							}
+							setSelectedRange(selStart, selLength);
 						}
 
-						if (event.character == SWT.CR) {
-							getTextWidget()
-									.setCaretOffset(getDocument().getLength());
-							return;
-						}
-
-						// ssanders: Avoid outputting " " when invoking
-						// completion on Mac OS X
-						if (event.keyCode == 32
-								&& (event.stateMask & SWT.CTRL) > 0) {
-							event.doit = false;
-							return;
-						}
-
-						// ssanders: Avoid outputting "<Tab>" when invoking
-						// completion on Mac OS X
-						if (event.keyCode == SWT.TAB) {
+						if (getCaretPosition() < console.getDocumentListener().getCommandLineOffset()) {
 							event.doit = false;
 							return;
 						}
 					}
-				} catch (Exception e) {
-					e.printStackTrace();
+
+					if (event.character == SWT.CR) {
+						getTextWidget().setCaretOffset(getDocument().getLength());
+						return;
+					}
+
+					// ssanders: Avoid outputting " " when invoking
+					// completion on Mac OS X
+					if (event.keyCode == 32 && (event.stateMask & SWT.CTRL) > 0) {
+						event.doit = false;
+						return;
+					}
+
+					// ssanders: Avoid outputting "<Tab>" when invoking
+					// completion on Mac OS X
+					if (event.keyCode == SWT.TAB) {
+						event.doit = false;
+						return;
+					}
 				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		});
 
 		styledText.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == SWT.TAB
-						|| (e.keyCode == ' ' && e.stateMask == SWT.CTRL)) {
+				if (e.keyCode == SWT.TAB || (e.keyCode == ' ' && e.stateMask == SWT.CTRL)) {
 					contentHandler.contentAssistRequired();
 				}
 			}
@@ -859,10 +772,8 @@ public class ScriptConsoleViewer extends TextConsoleViewer
 
 	@Override
 	public void activatePlugins() {
-		fHyperlinkManager = new HyperlinkManager(
-				HyperlinkManager.LONGEST_REGION_FIRST);
-		fHyperlinkManager.install(this, fHyperlinkPresenter,
-				fHyperlinkDetectors, fHyperlinkStateMask);
+		fHyperlinkManager = new HyperlinkManager(HyperlinkManager.LONGEST_REGION_FIRST);
+		fHyperlinkManager.install(this, fHyperlinkPresenter, fHyperlinkDetectors, fHyperlinkStateMask);
 
 		super.activatePlugins();
 	}

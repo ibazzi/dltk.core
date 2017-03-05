@@ -1,16 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.dltk.debug.ui.preferences;
 
- 
 /**
  * Model object that represents a single entry in a filter table.
  */
@@ -51,6 +50,7 @@ public class Filter {
 		fChecked = checked;
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		if (o instanceof Filter) {
 			Filter other = (Filter) o;
@@ -61,6 +61,7 @@ public class Filter {
 		return false;
 	}
 
+	@Override
 	public int hashCode() {
 		return getName().hashCode();
 	}

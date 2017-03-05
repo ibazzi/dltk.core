@@ -1,9 +1,9 @@
 /*******************************************************************************
- *
+ * Copyright (c) 2009, 2017 xored software Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html  
+ * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
  *     xored software, Inc. - initial API and Implementation (Alex Panchenko)
@@ -15,7 +15,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -113,12 +112,7 @@ public class ProjectCreator {
 			return;
 		}
 
-		IRunnableWithProgress op = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor)
-					throws InvocationTargetException, InterruptedException {
-				doRemoveProject(monitor);
-			}
-		};
+		IRunnableWithProgress op = monitor -> doRemoveProject(monitor);
 
 		try {
 			getContainer().run(true, true,
@@ -187,10 +181,12 @@ public class ProjectCreator {
 	public static abstract class ProjectCreateStep implements
 			IProjectCreateStep {
 
+		@Override
 		public boolean isCancelable() {
 			return false;
 		}
 
+		@Override
 		public boolean isRecurrent() {
 			return false;
 		}
@@ -231,6 +227,7 @@ public class ProjectCreator {
 		 * @param state
 		 * @return
 		 */
+		@Override
 		public boolean canExecute(StepState state) {
 			return state.step.isRecurrent() || !executed.contains(state);
 		}
@@ -238,6 +235,7 @@ public class ProjectCreator {
 		/**
 		 * @param state
 		 */
+		@Override
 		public void executed(StepState state) {
 			executed.add(state);
 		}
@@ -252,12 +250,14 @@ public class ProjectCreator {
 			this.target = target;
 		}
 
+		@Override
 		public boolean canExecute(StepState state) {
 			return select(state) && target.canExecute(state);
 		}
 
 		protected abstract boolean select(StepState state);
 
+		@Override
 		public void executed(StepState state) {
 			target.executed(state);
 		}
@@ -308,7 +308,7 @@ public class ProjectCreator {
 
 	/**
 	 * Adds the specified step
-	 * 
+	 *
 	 * @param kind
 	 * @param priority
 	 *            the priority of the specified step. steps with greater
@@ -345,14 +345,12 @@ public class ProjectCreator {
 		if (selection.isEmpty()) {
 			return;
 		}
-		Collections.sort(selection, new Comparator<StepState>() {
-			public int compare(StepState a, StepState b) {
-				final int result = a.priority - b.priority;
-				if (result != 0) {
-					return result;
-				}
-				return indexOfPage(a.page) - indexOfPage(b.page);
+		Collections.sort(selection, (a, b) -> {
+			final int result = a.priority - b.priority;
+			if (result != 0) {
+				return result;
 			}
+			return indexOfPage(a.page) - indexOfPage(b.page);
 		});
 		for (StepState state : selection) {
 			if (DEBUG) {
@@ -397,24 +395,21 @@ public class ProjectCreator {
 
 		final boolean cancelable = isCancelable(stepTracker);
 
-		final IRunnableWithProgress op = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor)
-					throws InvocationTargetException, InterruptedException {
-				try {
-					if (fIsAutobuild == null) {
-						fIsAutobuild = Boolean.valueOf(CoreUtility
-								.enableAutoBuild(false));
-					}
-					updateProject(monitor, stepTracker);
-				} catch (CoreException e) {
-					throw new InvocationTargetException(e);
-				} catch (OperationCanceledException e) {
-					throw new InterruptedException();
-				} finally {
-					monitor.done();
-				}
-			}
-		};
+		final IRunnableWithProgress op = monitor -> {
+try {
+		if (fIsAutobuild == null) {
+			fIsAutobuild = Boolean.valueOf(CoreUtility
+					.enableAutoBuild(false));
+		}
+		updateProject(monitor, stepTracker);
+} catch (CoreException e1) {
+		throw new InvocationTargetException(e1);
+} catch (OperationCanceledException e2) {
+		throw new InterruptedException();
+} finally {
+		monitor.done();
+}
+};
 
 		try {
 			getContainer().run(true, cancelable,
@@ -550,7 +545,7 @@ public class ProjectCreator {
 
 	/**
 	 * Called from the wizard on finish.
-	 * 
+	 *
 	 * @param monitor
 	 * @throws CoreException
 	 * @throws InterruptedException
@@ -604,7 +599,7 @@ public class ProjectCreator {
 	/**
 	 * Helper method to create and open a IProject. The project location is
 	 * configured. No natures are added.
-	 * 
+	 *
 	 * @param project
 	 *            The handle of the project to create.
 	 * @param locationURI

@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.scriptview;
 
@@ -22,8 +21,8 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 
 /**
  * Adds view menus to switch between flat and hierarchical layout.
- * 
- * 
+ *
+ *
  */
 public class LayoutActionGroup extends MultiActionGroup {
 
@@ -31,11 +30,7 @@ public class LayoutActionGroup extends MultiActionGroup {
 		super(createActions(packageExplorer), getSelectedState(packageExplorer));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see ActionGroup#fillActionBars(IActionBars)
-	 */
+	@Override
 	public void fillActionBars(IActionBars actionBars) {
 		super.fillActionBars(actionBars);
 		contributeToViewMenu(actionBars.getMenuManager());
@@ -55,7 +50,7 @@ public class LayoutActionGroup extends MultiActionGroup {
 		viewMenu.add(marker);
 		viewMenu.appendToGroup(layoutGroupName, layoutSubMenu);
 		viewMenu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS
-				+ "-end"));//$NON-NLS-1$		
+				+ "-end"));//$NON-NLS-1$
 		addActions(layoutSubMenu);
 	}
 
@@ -103,9 +98,7 @@ class LayoutAction extends Action implements IAction {
 		// IScriptHelpContextIds.LAYOUT_HIERARCHICAL_ACTION);
 	}
 
-	/*
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
+	@Override
 	public void run() {
 		if (fPackageExplorer.isFlatLayout() != fIsFlatLayout)
 			fPackageExplorer.setFlatLayout(fIsFlatLayout);

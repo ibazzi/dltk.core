@@ -1,12 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
- * 			(report 36180: Callers/Callees view)
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.callhierarchy;
 
@@ -26,8 +24,8 @@ class OpenLocationAction extends SelectionDispatchAction {
     public OpenLocationAction(CallHierarchyViewPart part, IWorkbenchSite site) {
         super(site);
         fPart= part;
-        setText(CallHierarchyMessages.OpenLocationAction_label); 
-        setToolTipText(CallHierarchyMessages.OpenLocationAction_tooltip); 
+        setText(CallHierarchyMessages.OpenLocationAction_label);
+        setToolTipText(CallHierarchyMessages.OpenLocationAction_tooltip);
     }
 
     private boolean checkEnabled(IStructuredSelection selection) {
@@ -49,15 +47,14 @@ class OpenLocationAction extends SelectionDispatchAction {
 
         return true;
     }
-    
-    public ISelection getSelection() {
+
+    @Override
+	public ISelection getSelection() {
         return fPart.getSelection();
     }
-    
-    /* (non-Javadoc)
-     * Method declared on SelectionDispatchAction.
-     */
-    public void run(IStructuredSelection selection) {
+
+    @Override
+	public void run(IStructuredSelection selection) {
         if (!checkEnabled(selection)) {
             return;
         }
@@ -69,6 +66,6 @@ class OpenLocationAction extends SelectionDispatchAction {
     }
 
     private String getDialogTitle() {
-        return CallHierarchyMessages.OpenLocationAction_error_title; 
+        return CallHierarchyMessages.OpenLocationAction_error_title;
     }
 }

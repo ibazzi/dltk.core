@@ -1,11 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
+
  *******************************************************************************/
 package org.eclipse.dltk.internal.corext.refactoring.changes;
 
@@ -18,8 +18,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.dltk.core.DLTKCore;
-import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.IProjectFragment;
+import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.internal.corext.refactoring.base.DLTKChange;
 import org.eclipse.dltk.internal.corext.refactoring.reorg.INewNameQuery;
@@ -37,8 +37,8 @@ abstract class ProjectFragmentReorgChange extends DLTKChange {
 	private final IPath fDestinationPath;
 	private final INewNameQuery fNewNameQuery;
 	private final IProjectFragmentManipulationQuery fUpdateBuildpathQuery;
-	
-	ProjectFragmentReorgChange(IProjectFragment root, IProject destination, INewNameQuery newNameQuery, 
+
+	ProjectFragmentReorgChange(IProjectFragment root, IProject destination, INewNameQuery newNameQuery,
 			IProjectFragmentManipulationQuery updateBuildpathQuery) {
 		Assert.isTrue(! root.isExternal());
 		fRootHandle= root.getHandleIdentifier();
@@ -47,6 +47,7 @@ abstract class ProjectFragmentReorgChange extends DLTKChange {
 		fUpdateBuildpathQuery= updateBuildpathQuery;
 	}
 
+	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
 		// we already ask for confirmation of move read only
 		// resources. Furthermore we don't do a validate
@@ -54,7 +55,8 @@ abstract class ProjectFragmentReorgChange extends DLTKChange {
 		// an content
 		return isValid(pm, NONE);
 	}
-	
+
+	@Override
 	public final Change perform(IProgressMonitor pm) throws CoreException {
 		pm.beginTask(getName(), 2);
 		try {
@@ -71,14 +73,15 @@ abstract class ProjectFragmentReorgChange extends DLTKChange {
 
 	protected abstract Change doPerformReorg(IPath destinationPath, IProgressMonitor pm) throws ModelException;
 
+	@Override
 	public Object getModifiedElement() {
 		return getRoot();
 	}
-	
+
 	protected IProjectFragment getRoot(){
 		return (IProjectFragment)DLTKCore.create(fRootHandle);
 	}
-	
+
 	protected IPath getDestinationProjectPath(){
 		return fDestinationPath;
 	}
@@ -86,7 +89,7 @@ abstract class ProjectFragmentReorgChange extends DLTKChange {
 	protected IProject getDestinationProject(){
 		return Utils.getProject(getDestinationProjectPath());
 	}
-	
+
 	private String getNewResourceName(){
 		if (fNewNameQuery == null)
 			return getRoot().getElementName();
@@ -95,7 +98,7 @@ abstract class ProjectFragmentReorgChange extends DLTKChange {
 			return getRoot().getElementName();
 		return name;
 	}
-	
+
 	protected int getUpdateModelFlags(boolean isCopy) throws ModelException{
 		final int destination= IProjectFragment.DESTINATION_PROJECT_BUILDPATH;
 		final int replace= IProjectFragment.REPLACE;
@@ -108,7 +111,7 @@ abstract class ProjectFragmentReorgChange extends DLTKChange {
 			originating= IProjectFragment.ORIGINATING_PROJECT_BUILDPATH;
 			otherProjects= IProjectFragment.OTHER_REFERRING_PROJECTS_BUILDPATH;
 		}
-		
+
 		if (! DLTKCore.create(getDestinationProject()).exists())
 			return replace | originating;
 
@@ -119,17 +122,17 @@ abstract class ProjectFragmentReorgChange extends DLTKChange {
 		if (referencingProjects.length == 0)
 			return replace | originating | destination;
 
-		boolean updateOtherProjectsToo= fUpdateBuildpathQuery.confirmManipulation(getRoot(), referencingProjects);	
+		boolean updateOtherProjectsToo= fUpdateBuildpathQuery.confirmManipulation(getRoot(), referencingProjects);
 		if (updateOtherProjectsToo)
 			return replace | originating | destination | otherProjects;
 		else
 			return replace | originating | destination;
 	}
-	
+
 	protected int getResourceUpdateFlags(){
 		return IResource.KEEP_HISTORY | IResource.SHALLOW;
 	}
-	
+
 	private void markAsExecuted(IProjectFragment root, ResourceMapping mapping) {
 		ReorgExecutionLog log= (ReorgExecutionLog)getAdapter(ReorgExecutionLog.class);
 		if (log != null) {

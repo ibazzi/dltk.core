@@ -7,20 +7,15 @@ import org.eclipse.dltk.debug.core.model.IScriptDebugTarget;
  * Abstract handler implementation that can be used to toggle the display of
  * 'local' debugging variables.
  */
-public abstract class AbstractToggleLocalVariableHandler extends
-		AbstractToggleVariableHandler {
+public abstract class AbstractToggleLocalVariableHandler
+		extends AbstractToggleVariableHandler {
 
-	/*
-	 * @see org.eclipse.dltk.debug.ui.handlers.AbstractToggleVariableHandler#getVariableDisplayPreferenceKey()
-	 */
+	@Override
 	protected String getVariableDisplayPreferenceKey() {
 		return DLTKDebugPreferenceConstants.PREF_DBGP_SHOW_SCOPE_LOCAL;
 	}
 
-	/*
-	 * @see org.eclipse.dltk.debug.ui.handlers.AbstractToggleVariableHandler#toggleVariableDisplay(org.eclipse.dltk.debug.core.model.IScriptDebugTarget,
-	 *      boolean)
-	 */
+	@Override
 	protected final void toggleVariableDisplay(IScriptDebugTarget target,
 			boolean enabled) {
 		target.toggleLocalVariables(enabled);

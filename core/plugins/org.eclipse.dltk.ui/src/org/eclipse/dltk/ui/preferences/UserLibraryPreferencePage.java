@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,7 +90,6 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
@@ -161,13 +160,7 @@ public abstract class UserLibraryPreferencePage extends PreferencePage
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt
-		 * .widgets.Composite)
-		 */
+		@Override
 		protected Control createDialogArea(Composite parent) {
 			Composite composite = (Composite) super.createDialogArea(parent);
 			LayoutUtil.doDefaultLayout(composite, new DialogField[] {
@@ -184,14 +177,7 @@ public abstract class UserLibraryPreferencePage extends PreferencePage
 			return composite;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.jdt.internal.ui.wizards.dialogfields.IDialogFieldListener
-		 * #dialogFieldChanged(org.eclipse.jdt.internal.ui.wizards.dialogfields.
-		 * DialogField)
-		 */
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 			if (field == fNameField) {
 				updateStatus(validateSettings());
@@ -332,15 +318,12 @@ public abstract class UserLibraryPreferencePage extends PreferencePage
 			}
 		}
 
-		/*
-		 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
-		 * 
-		 * @since 3.4
-		 */
+		@Override
 		protected boolean isResizable() {
 			return true;
 		}
 
+		@Override
 		protected Point getInitialSize() {
 			return fInitialSize;
 		}
@@ -349,13 +332,7 @@ public abstract class UserLibraryPreferencePage extends PreferencePage
 			return fIsSave;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt
-		 * .widgets.Composite)
-		 */
+		@Override
 		protected Control createDialogArea(Composite parent) {
 			Composite composite = (Composite) super.createDialogArea(parent);
 			DialogField[] fields;
@@ -384,15 +361,7 @@ public abstract class UserLibraryPreferencePage extends PreferencePage
 			return composite;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.jdt.internal.ui.wizards.dialogfields.IStringButtonAdapter
-		 * #
-		 * changeControlPressed(org.eclipse.jdt.internal.ui.wizards.dialogfields
-		 * .DialogField)
-		 */
+		@Override
 		public void changeControlPressed(DialogField field) {
 			String label = isSave() ? PreferencesMessages.UserLibraryPreferencePage_LoadSaveDialog_filedialog_save_title
 					: PreferencesMessages.UserLibraryPreferencePage_LoadSaveDialog_filedialog_load_title;
@@ -447,14 +416,7 @@ public abstract class UserLibraryPreferencePage extends PreferencePage
 			return status;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.jdt.internal.ui.wizards.dialogfields.IDialogFieldListener
-		 * #dialogFieldChanged(org.eclipse.jdt.internal.ui.wizards.dialogfields.
-		 * DialogField)
-		 */
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 			if (field == fLocationField) {
 				IStatus status = validateSettings();
@@ -467,34 +429,15 @@ public abstract class UserLibraryPreferencePage extends PreferencePage
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @seeorg.eclipse.jdt.internal.ui.wizards.dialogfields.IListAdapter#
-		 * customButtonPressed
-		 * (org.eclipse.jdt.internal.ui.wizards.dialogfields.ListDialogField,
-		 * int)
-		 */
+		@Override
 		public void customButtonPressed(ListDialogField field, int index) {
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @seeorg.eclipse.jdt.internal.ui.wizards.dialogfields.IListAdapter#
-		 * selectionChanged
-		 * (org.eclipse.jdt.internal.ui.wizards.dialogfields.ListDialogField)
-		 */
+		@Override
 		public void selectionChanged(ListDialogField field) {
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @seeorg.eclipse.jdt.internal.ui.wizards.dialogfields.IListAdapter#
-		 * doubleClicked
-		 * (org.eclipse.jdt.internal.ui.wizards.dialogfields.ListDialogField)
-		 */
+		@Override
 		public void doubleClicked(ListDialogField field) {
 			List selectedElements = fExportImportList.getSelectedElements();
 			if (selectedElements.size() == 1) {
@@ -504,11 +447,7 @@ public abstract class UserLibraryPreferencePage extends PreferencePage
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-		 */
+		@Override
 		protected void okPressed() {
 			if (isSave()) {
 				final File file = new File(fLocationField.getText());
@@ -544,18 +483,14 @@ public abstract class UserLibraryPreferencePage extends PreferencePage
 					IRunnableContext context = PlatformUI.getWorkbench()
 							.getProgressService();
 					try {
-						context.run(true, true, new IRunnableWithProgress() {
-							public void run(IProgressMonitor monitor)
-									throws InvocationTargetException,
-									InterruptedException {
-								try {
-									saveLibraries(elements, file, charset,
-											monitor);
-								} catch (IOException e) {
-									throw new InvocationTargetException(e);
-								}
-							}
-						});
+						context.run(true, true, monitor -> {
+try {
+						saveLibraries(elements, file, charset,
+								monitor);
+} catch (IOException e) {
+						throw new InvocationTargetException(e);
+}
+});
 						fSettings.put(PREF_LASTPATH, file.getPath());
 					} catch (InvocationTargetException e) {
 						String errorTitle = PreferencesMessages.UserLibraryPreferencePage_LoadSaveDialog_save_errordialog_title;
@@ -613,11 +548,7 @@ public abstract class UserLibraryPreferencePage extends PreferencePage
 			super.okPressed();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.dialogs.Dialog#close()
-		 */
+		@Override
 		public boolean close() {
 			Point point = getShell().getSize();
 			fSettings.put(PREF_USER_LIBRARY_LOADSAVE_SIZE, StringConverter
@@ -982,12 +913,7 @@ public abstract class UserLibraryPreferencePage extends PreferencePage
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.preference.PreferencePage#applyData(java.lang.Object)
-	 */
+	@Override
 	public void applyData(Object data) {
 		if (data instanceof Map) {
 			Map map = (Map) data;
@@ -1017,22 +943,14 @@ public abstract class UserLibraryPreferencePage extends PreferencePage
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets
-	 * .Composite)
-	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		// PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
 		// IJavaHelpContextIds.CP_USERLIBRARIES_PREFERENCE_PAGE);
 	}
 
-	/*
-	 * @see PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setFont(parent.getFont());
@@ -1043,41 +961,32 @@ public abstract class UserLibraryPreferencePage extends PreferencePage
 		return composite;
 	}
 
-	/*
-	 * @see IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 
-	/*
-	 * @see PreferencePage#performDefaults()
-	 */
+	@Override
 	protected void performDefaults() {
 		super.performDefaults();
 	}
 
-	/*
-	 * @see PreferencePage#performOk()
-	 */
+	@Override
 	public boolean performOk() {
 		try {
 			PlatformUI.getWorkbench().getProgressService().run(true, true,
-					new IRunnableWithProgress() {
-						public void run(IProgressMonitor monitor)
-								throws InvocationTargetException {
-							try {
-								if (monitor != null) {
-									monitor = new NullProgressMonitor();
-								}
+					monitor -> {
+try {
+					if (monitor != null) {
+						monitor = new NullProgressMonitor();
+					}
 
-								updateUserLibararies(monitor);
-							} catch (CoreException e) {
-								throw new InvocationTargetException(e);
-							} finally {
-								monitor.done();
-							}
-						}
-					});
+					updateUserLibararies(monitor);
+} catch (CoreException e) {
+					throw new InvocationTargetException(e);
+} finally {
+					monitor.done();
+}
+});
 		} catch (InterruptedException e) {
 			// cancelled by user
 		} catch (InvocationTargetException e) {
@@ -1664,22 +1573,27 @@ public abstract class UserLibraryPreferencePage extends PreferencePage
 
 		private final Object[] EMPTY = new Object[0];
 
+		@Override
 		public void customButtonPressed(TreeListDialogField field, int index) {
 			doCustomButtonPressed(field, index);
 		}
 
+		@Override
 		public void selectionChanged(TreeListDialogField field) {
 			doSelectionChanged(field);
 		}
 
+		@Override
 		public void doubleClicked(TreeListDialogField field) {
 			doDoubleClicked(field);
 		}
 
+		@Override
 		public void keyPressed(TreeListDialogField field, KeyEvent event) {
 			doKeyPressed(field, event);
 		}
 
+		@Override
 		public Object[] getChildren(TreeListDialogField field, Object element) {
 			if (element instanceof BPUserLibraryElement) {
 				BPUserLibraryElement elem = (BPUserLibraryElement) element;
@@ -1695,6 +1609,7 @@ public abstract class UserLibraryPreferencePage extends PreferencePage
 			return EMPTY;
 		}
 
+		@Override
 		public Object getParent(TreeListDialogField field, Object element) {
 			if (element instanceof BPListElementAttribute) {
 				return ((BPListElementAttribute) element).getParent();
@@ -1704,6 +1619,7 @@ public abstract class UserLibraryPreferencePage extends PreferencePage
 			return null;
 		}
 
+		@Override
 		public boolean hasChildren(TreeListDialogField field, Object element) {
 			return getChildren(field, element).length > 0;
 		}

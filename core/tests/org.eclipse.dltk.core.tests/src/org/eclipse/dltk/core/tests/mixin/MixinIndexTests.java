@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -11,29 +11,33 @@
  *******************************************************************************/
 package org.eclipse.dltk.core.tests.mixin;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-
-import junit.framework.TestCase;
 
 import org.eclipse.dltk.compiler.util.Util;
 import org.eclipse.dltk.core.search.SearchPattern;
 import org.eclipse.dltk.core.search.index.EntryResult;
 import org.eclipse.dltk.core.search.index.MixinIndex;
 import org.eclipse.dltk.core.search.indexing.IIndexConstants;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for the {@link MixinIndex} class.
  */
-public class MixinIndexTests extends TestCase {
+public class MixinIndexTests {
 
 	private File file;
 	private MixinIndex index;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		file = File.createTempFile("mixin", ".index");
 		index = createIndex(true);
 	}
@@ -42,13 +46,13 @@ public class MixinIndexTests extends TestCase {
 		return new MixinIndex(file.getPath(), file.getPath(), !isNew);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		index = null;
 		file.delete();
-		super.tearDown();
 	}
 
+	@Test
 	public void testQuery() throws IOException {
 		index.addIndexEntry(IIndexConstants.MIXIN, "key1".toCharArray(), "A");
 		index.addIndexEntry(IIndexConstants.MIXIN, "key1".toCharArray(), "B");
@@ -62,7 +66,8 @@ public class MixinIndexTests extends TestCase {
 		assertEquals("A", docNames[0]);
 		assertEquals("B", docNames[1]);
 	}
-
+	
+	@Test
 	public void testQueryDocumentNames() throws IOException {
 		index.addIndexEntry(IIndexConstants.MIXIN, "key1".toCharArray(), "A");
 		index.addIndexEntry(IIndexConstants.MIXIN, "key1".toCharArray(), "B");
@@ -76,7 +81,8 @@ public class MixinIndexTests extends TestCase {
 		docNames = index.queryDocumentNames("Z");
 		assertEquals(0, docNames.length);
 	}
-
+	
+	@Test
 	public void testRemove() throws IOException {
 		index.addIndexEntry(IIndexConstants.MIXIN, "key1".toCharArray(), "A");
 		index.addIndexEntry(IIndexConstants.MIXIN, "key1".toCharArray(), "B");
@@ -92,7 +98,8 @@ public class MixinIndexTests extends TestCase {
 		assertEquals(1, docNames.length);
 		assertEquals("B", docNames[0]);
 	}
-
+	
+	@Test
 	public void testDocumentsWithoutKeys() throws IOException {
 		index.addDocumentName("A");
 		assertTrue(index.hasChanged());
@@ -102,7 +109,8 @@ public class MixinIndexTests extends TestCase {
 		assertEquals(1, docNames.length);
 		assertEquals("A", docNames[0]);
 	}
-
+	
+	@Test
 	public void testDocumentsWithoutKeysHasChanged() throws IOException {
 		index.addDocumentName("A");
 		assertTrue(index.hasChanged());

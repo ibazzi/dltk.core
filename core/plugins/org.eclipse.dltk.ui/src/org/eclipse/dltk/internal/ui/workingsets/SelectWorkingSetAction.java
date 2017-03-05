@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.workingsets;
 
@@ -23,10 +22,8 @@ import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 
 
 /**
- * Displays an IWorkingSetSelectionDialog and sets the selected 
- * working set in the action group's view.
- * 
-	 *
+ * Displays an IWorkingSetSelectionDialog and sets the selected working set in
+ * the action group's view.
  */
 public class SelectWorkingSetAction extends Action {
 	private IWorkbenchPartSite fSite;
@@ -34,30 +31,28 @@ public class SelectWorkingSetAction extends Action {
 	private WorkingSetFilterActionGroup fActionGroup;
 
 	public SelectWorkingSetAction(WorkingSetFilterActionGroup actionGroup, IWorkbenchPartSite site) {
-		this(actionGroup); 
+		this(actionGroup);
 		fSite= site;
 	}
-	
+
 	public SelectWorkingSetAction(WorkingSetFilterActionGroup actionGroup, Shell shell) {
-		this(actionGroup); 
+		this(actionGroup);
 		fShell= shell;
 	}
-	
+
 	private SelectWorkingSetAction(WorkingSetFilterActionGroup actionGroup) {
-		super(WorkingSetMessages.SelectWorkingSetAction_text); 
+		super(WorkingSetMessages.SelectWorkingSetAction_text);
 		Assert.isNotNull(actionGroup);
-		setToolTipText(WorkingSetMessages.SelectWorkingSetAction_toolTip); 
+		setToolTipText(WorkingSetMessages.SelectWorkingSetAction_toolTip);
 		fActionGroup= actionGroup;
 		if (DLTKCore.DEBUG) {
 			System.err.println("Add help support here..."); //$NON-NLS-1$
 		}
-		
+
 		//PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IScriptHelpContextIds.SELECT_WORKING_SET_ACTION);
 	}
-	
-	/*
-	 * Overrides method from Action
-	 */
+
+	@Override
 	public void run() {
 		Shell shell= getShell();
 		IWorkingSetManager manager= PlatformUI.getWorkbench().getWorkingSetManager();
@@ -76,7 +71,7 @@ public class SelectWorkingSetAction extends Action {
 				fActionGroup.setWorkingSet(null, true);
 		}
 	}
-	
+
 	private Shell getShell() {
 		if (fSite != null) {
 			return fSite.getShell();

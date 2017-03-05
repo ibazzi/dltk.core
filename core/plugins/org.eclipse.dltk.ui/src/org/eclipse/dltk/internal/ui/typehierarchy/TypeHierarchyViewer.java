@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.typehierarchy;
 
@@ -20,8 +19,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.IOpenListener;
-import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -50,11 +47,7 @@ public abstract class TypeHierarchyViewer extends ProblemTreeViewer {
 		setSorter(new HierarchyViewerSorter(lifeCycle));
 
 		fOpen = new HierarchyOpenAction(part.getSite());
-		addOpenListener(new IOpenListener() {
-			public void open(OpenEvent event) {
-				fOpen.run();
-			}
-		});
+		addOpenListener(event -> fOpen.run());
 
 		// JavaUIHelp.setHelp(this, IJavaHelpContextIds.TYPE_HIERARCHY_VIEW);
 	}
@@ -167,10 +160,7 @@ public abstract class TypeHierarchyViewer extends ProblemTreeViewer {
 	 */
 	public abstract String getTitle();
 
-	/*
-	 * @see StructuredViewer#setContentProvider Content provider must be of type
-	 * TypeHierarchyContentProvider
-	 */
+	@Override
 	public void setContentProvider(IContentProvider cp) {
 		Assert.isTrue(cp instanceof TypeHierarchyContentProvider);
 		super.setContentProvider(cp);

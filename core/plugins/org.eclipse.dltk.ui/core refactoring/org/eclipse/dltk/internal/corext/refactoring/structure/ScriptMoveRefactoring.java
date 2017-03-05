@@ -1,11 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
+
  *******************************************************************************/
 package org.eclipse.dltk.internal.corext.refactoring.structure;
 
@@ -22,14 +22,14 @@ import org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor;
 
 /**
  * A move refactoring which can be initialized with refactoring arguments.
- * 
-	 *
+ *
+ *
  */
 public class ScriptMoveRefactoring extends MoveRefactoring implements IScriptableRefactoring {
 
 	/**
 	 * Creates a new script move refactoring.
-	 * 
+	 *
 	 * @param processor
 	 *            the move processor to use
 	 */
@@ -37,9 +37,7 @@ public class ScriptMoveRefactoring extends MoveRefactoring implements IScriptabl
 		super(processor);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public final RefactoringStatus initialize(final RefactoringArguments arguments) {
 		Assert.isNotNull(arguments);
 		final RefactoringProcessor processor= getProcessor();

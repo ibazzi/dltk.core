@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 xored software, Inc.
+ * Copyright (c) 2009, 2017 xored software, Inc.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -27,20 +27,15 @@ import org.eclipse.jface.text.templates.TemplateVariableResolver;
 
 public class TemplateVariableProcessor implements IContentAssistProcessor {
 
-	private static Comparator<TemplateVariableProposal> fgTemplateVariableProposalComparator = new Comparator<TemplateVariableProposal>() {
-		public int compare(TemplateVariableProposal proposal0,
-				TemplateVariableProposal proposal1) {
-			return proposal0.getDisplayString().compareTo(
-					proposal1.getDisplayString());
-		}
-	};
+	private static Comparator<TemplateVariableProposal> fgTemplateVariableProposalComparator = (proposal0, proposal1) -> proposal0.getDisplayString().compareTo(
+			proposal1.getDisplayString());
 
 	/** the context type */
 	private TemplateContextType fContextType;
 
 	/**
 	 * Sets the context type.
-	 * 
+	 *
 	 * @param contextType
 	 *            the context type
 	 */
@@ -50,16 +45,14 @@ public class TemplateVariableProcessor implements IContentAssistProcessor {
 
 	/**
 	 * Gets the context type.
-	 * 
+	 *
 	 * @return the context type
 	 */
 	public TemplateContextType getContextType() {
 		return fContextType;
 	}
 
-	/*
-	 * @see IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
-	 */
+	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer,
 			int documentOffset) {
 
@@ -135,40 +128,28 @@ public class TemplateVariableProcessor implements IContentAssistProcessor {
 		return end;
 	}
 
-	/*
-	 * @see IContentAssistProcessor#computeContextInformation(ITextViewer, int)
-	 */
+	@Override
 	public IContextInformation[] computeContextInformation(ITextViewer viewer,
 			int documentOffset) {
 		return null;
 	}
 
-	/*
-	 * @see
-	 * IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
-	 */
+	@Override
 	public char[] getCompletionProposalAutoActivationCharacters() {
 		return new char[] { '$' };
 	}
 
-	/*
-	 * @see
-	 * IContentAssistProcessor#getContextInformationAutoActivationCharacters()
-	 */
+	@Override
 	public char[] getContextInformationAutoActivationCharacters() {
 		return null;
 	}
 
-	/*
-	 * @see IContentAssistProcessor#getErrorMessage()
-	 */
+	@Override
 	public String getErrorMessage() {
 		return null;
 	}
 
-	/*
-	 * @see IContentAssistProcessor#getContextInformationValidator()
-	 */
+	@Override
 	public IContextInformationValidator getContextInformationValidator() {
 		return null;
 	}

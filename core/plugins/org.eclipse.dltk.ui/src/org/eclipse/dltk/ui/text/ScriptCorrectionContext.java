@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -27,10 +27,10 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * Default implementation of the {@link IScriptCorrectionContext}.
- * 
- * 
+ *
+ *
  * XXX This class will be moved to the internal package
- * 
+ *
  * @noinstantiate
  * @noextend
  */
@@ -38,6 +38,7 @@ public class ScriptCorrectionContext implements IScriptCorrectionContext {
 
 	private List<ICompletionProposal> proposals = null;
 
+	@Override
 	public void addProposal(ICompletionProposal proposal) {
 		if (proposals == null) {
 			proposals = new ArrayList<ICompletionProposal>();
@@ -45,15 +46,18 @@ public class ScriptCorrectionContext implements IScriptCorrectionContext {
 		proposals.add(proposal);
 	}
 
+	@Override
 	public void addResolution(IMarkerResolution resolution, IMarker marker) {
 		addProposal(new MarkerResolutionProposal(resolution, marker));
 	}
 
+	@Override
 	public void addResolution(IAnnotationResolution resolution,
 			IScriptAnnotation annotation) {
 		addProposal(new AnnotationResolutionProposal(resolution, annotation));
 	}
 
+	@Override
 	public ICompletionProposal[] getProposals() {
 		if (proposals != null) {
 			return proposals.toArray(new ICompletionProposal[proposals.size()]);
@@ -78,24 +82,29 @@ public class ScriptCorrectionContext implements IScriptCorrectionContext {
 		this.module = module;
 	}
 
+	@Override
 	public ITextEditor getEditor() {
 		return editor;
 	}
 
+	@Override
 	public ISourceModule getModule() {
 		return module;
 	}
 
+	@Override
 	public IScriptProject getProject() {
 		return module.getScriptProject();
 	}
 
+	@Override
 	public IQuickAssistInvocationContext getInvocationContext() {
 		return invocationContext;
 	}
 
 	private Map<String, Object> attributes = null;
 
+	@Override
 	public Object getAttribute(String attributeName) {
 		if (attributes == null) {
 			return null;
@@ -104,6 +113,7 @@ public class ScriptCorrectionContext implements IScriptCorrectionContext {
 		}
 	}
 
+	@Override
 	public void setAttribute(String attributeName, Object value) {
 		if (value != null) {
 			if (attributes == null) {

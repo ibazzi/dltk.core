@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.dialogs;
 
@@ -33,20 +32,29 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.ViewForm;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.WorkbenchException;
@@ -85,6 +93,7 @@ public class MethodSelectionComponent extends Composite implements ITypeSelectio
 			super(DLTKUIMessages.TypeSelectionComponent_show_status_line_label, IAction.AS_CHECK_BOX);
 		}
 
+		@Override
 		public void run() {
 			if (fForm == null)
 				return;
@@ -98,13 +107,13 @@ public class MethodSelectionComponent extends Composite implements ITypeSelectio
 	}
 
 	/**
-	 * Special interface to access a title lable in 
+	 * Special interface to access a title lable in
 	 * a generic fashion.
 	 */
 	public interface ITitleLabel {
 		/**
 		 * Sets the title to the given text
-		 * 
+		 *
 		 * @param text the title text
 		 */
 		public void setText(String text);
@@ -130,6 +139,7 @@ public class MethodSelectionComponent extends Composite implements ITypeSelectio
 		createContent(message, elementKind);
 	}
 
+	@Override
 	public void triggerSearch() {
 		fViewer.forceSearch();
 	}
@@ -163,15 +173,13 @@ public class MethodSelectionComponent extends Composite implements ITypeSelectio
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fFilter.setLayoutData(gd);
-		fFilter.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				patternChanged((Text) e.widget);
-			}
-		});
+		fFilter.addModifyListener(e -> patternChanged((Text) e.widget));
 		fFilter.addKeyListener(new KeyListener() {
+			@Override
 			public void keyReleased(KeyEvent e) {
 			}
 
+			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == SWT.ARROW_DOWN) {
 					fViewer.setFocus();
@@ -179,6 +187,7 @@ public class MethodSelectionComponent extends Composite implements ITypeSelectio
 			}
 		});
 		fFilter.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
 			public void getName(AccessibleEvent e) {
 				e.result = Strings.removeMnemonicIndicator(message);
 			}
@@ -188,12 +197,10 @@ public class MethodSelectionComponent extends Composite implements ITypeSelectio
 		Label label = new Label(this, SWT.NONE);
 		label.setFont(font);
 		label.setText(DLTKUIMessages.MethodSelectionComponent_label);
-		label.addTraverseListener(new TraverseListener() {
-			public void keyTraversed(TraverseEvent e) {
-				if (e.detail == SWT.TRAVERSE_MNEMONIC && e.doit) {
-					e.detail = SWT.TRAVERSE_NONE;
-					fViewer.setFocus();
-				}
+		label.addTraverseListener(e -> {
+			if (e.detail == SWT.TRAVERSE_MNEMONIC && e.doit) {
+				e.detail = SWT.TRAVERSE_NONE;
+				fViewer.setFocus();
 			}
 		});
 		label = new Label(this, SWT.RIGHT);
@@ -209,6 +216,7 @@ public class MethodSelectionComponent extends Composite implements ITypeSelectio
 		gd.horizontalSpan = 2;
 		table.setLayoutData(gd);
 		table.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
 			public void getName(AccessibleEvent e) {
 				if (table.getSelectionCount() == 0) {
 					e.result = Strings.removeMnemonicIndicator(DLTKUIMessages.MethodSelectionComponent_label);
@@ -231,6 +239,7 @@ public class MethodSelectionComponent extends Composite implements ITypeSelectio
 			table.addSelectionListener(new SelectionAdapter() {
 				private MethodNameMatchLabelProvider fLabelProvider = new MethodNameMatchLabelProvider(MethodNameMatchLabelProvider.SHOW_TYPE_CONTAINER_ONLY + MethodNameMatchLabelProvider.SHOW_ROOT_POSTFIX, fToolkit);
 
+				@Override
 				public void widgetSelected(SelectionEvent event) {
 					MethodNameMatch[] selection = fViewer.getSelection();
 					if (selection.length != 1) {
@@ -244,11 +253,7 @@ public class MethodSelectionComponent extends Composite implements ITypeSelectio
 				}
 			});
 		}
-		addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent event) {
-				disposeComponent();
-			}
-		});
+		addDisposeListener(event -> disposeComponent());
 	}
 
 	public void addSelectionListener(SelectionListener listener) {
@@ -285,12 +290,10 @@ public class MethodSelectionComponent extends Composite implements ITypeSelectio
 		Label label = new Label(header, SWT.NONE);
 		label.setText(message);
 		label.setFont(font);
-		label.addTraverseListener(new TraverseListener() {
-			public void keyTraversed(TraverseEvent e) {
-				if (e.detail == SWT.TRAVERSE_MNEMONIC && e.doit) {
-					e.detail = SWT.TRAVERSE_NONE;
-					fFilter.setFocus();
-				}
+		label.addTraverseListener(e -> {
+			if (e.detail == SWT.TRAVERSE_MNEMONIC && e.doit) {
+				e.detail = SWT.TRAVERSE_NONE;
+				fFilter.setFocus();
 			}
 		});
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -314,6 +317,7 @@ public class MethodSelectionComponent extends Composite implements ITypeSelectio
 				.get(DLTKPluginImages.DESC_DLCL_VIEW_MENU));
 		fToolItem.setToolTipText(DLTKUIMessages.TypeSelectionComponent_menu);
 		fToolItem.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				showViewMenu();
 			}
@@ -342,18 +346,21 @@ public class MethodSelectionComponent extends Composite implements ITypeSelectio
 			viewMenu.add(showStatusLineAction);
 		}
 		if (fScope == null) {
-			fFilterActionGroup = new WorkingSetFilterActionGroup(getShell(), DLTKUIPlugin.getActivePage(), new IPropertyChangeListener() {
-				public void propertyChange(PropertyChangeEvent event) {
-					IWorkingSet ws = (IWorkingSet) event.getNewValue();
-					if (ws == null || (ws.isAggregateWorkingSet() && ws.isEmpty())) {
-						fScope = SearchEngine.createWorkspaceScope(fToolkit.getCoreToolkit());
-						fTitleLabel.setText(null);
-					} else {
-						fScope = DLTKSearchScopeFactory.getInstance().createSearchScope(ws, true, fToolkit.getCoreToolkit());
-						fTitleLabel.setText(ws.getLabel());
-					}
-					fViewer.setSearchScope(fScope, true);
+			fFilterActionGroup = new WorkingSetFilterActionGroup(getShell(),
+					DLTKUIPlugin.getActivePage(), event -> {
+						IWorkingSet ws = (IWorkingSet) event.getNewValue();
+						if (ws == null || (ws.isAggregateWorkingSet()
+								&& ws.isEmpty())) {
+							fScope = SearchEngine.createWorkspaceScope(
+									fToolkit.getCoreToolkit());
+							fTitleLabel.setText(null);
+						} else {
+							fScope = DLTKSearchScopeFactory.getInstance()
+									.createSearchScope(ws, true,
+											fToolkit.getCoreToolkit());
+							fTitleLabel.setText(ws.getLabel());
 				}
+						fViewer.setSearchScope(fScope, true);
 			});
 			String setting = fSettings.get(WORKINGS_SET_SETTINGS);
 			if (setting != null) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -27,7 +27,8 @@ public class ScriptDebugLogItem {
 		this.message = message;
 	}
 
-	public ScriptDebugLogItem(String type, int sessionId, IDbgpRawPacket message) {
+	public ScriptDebugLogItem(String type, int sessionId,
+			IDbgpRawPacket message) {
 		this(System.currentTimeMillis(), type, sessionId, message);
 	}
 
@@ -60,11 +61,7 @@ public class ScriptDebugLogItem {
 		return message;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
+	@Override
 	public String toString() {
 		return type + '\t' + message;
 	}

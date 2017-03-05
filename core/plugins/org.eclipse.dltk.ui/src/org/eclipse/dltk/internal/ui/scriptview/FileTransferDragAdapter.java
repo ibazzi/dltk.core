@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,10 +59,12 @@ public class FileTransferDragAdapter extends DragSourceAdapter implements
 		Assert.isNotNull(fProvider);
 	}
 
+	@Override
 	public Transfer getTransfer() {
 		return FileTransfer.getInstance();
 	}
 
+	@Override
 	public void dragStart(DragSourceEvent event) {
 		event.doit = isDragable(fProvider.getSelection());
 	}
@@ -98,6 +100,7 @@ public class FileTransferDragAdapter extends DragSourceAdapter implements
 		return resources.size() == selection.size();
 	}
 
+	@Override
 	public void dragSetData(DragSourceEvent event) {
 		List elements = getResources();
 		if (elements == null || elements.size() == 0) {
@@ -113,6 +116,7 @@ public class FileTransferDragAdapter extends DragSourceAdapter implements
 				.toArray(new IResource[resources.size()]));
 	}
 
+	@Override
 	public void dragFinished(DragSourceEvent event) {
 		if (!event.doit) {
 			return;
@@ -133,6 +137,7 @@ public class FileTransferDragAdapter extends DragSourceAdapter implements
 		}
 
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
+			@Override
 			public void execute(IProgressMonitor monitor) throws CoreException {
 				try {
 					monitor.beginTask(ScriptMessages.DragAdapter_deleting,
@@ -168,6 +173,7 @@ public class FileTransferDragAdapter extends DragSourceAdapter implements
 		final Set roots = collectRoots(getResources());
 
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
+			@Override
 			public void execute(IProgressMonitor monitor) throws CoreException {
 				try {
 					monitor.beginTask(ScriptMessages.DragAdapter_refreshing,

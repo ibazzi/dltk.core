@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,7 +79,7 @@ import org.eclipse.ui.dialogs.WorkingSetConfigurationBlock;
 
 /**
  * The first page of the <code>SimpleProjectWizard</code>.
- * 
+ *
  * @since 2.0
  */
 public abstract class ProjectWizardFirstPage extends WizardPage implements
@@ -132,6 +132,7 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 			fNameField.setText(name);
 		}
 
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 			fireEvent();
 		}
@@ -180,11 +181,7 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 			fEnvironment
 					.setLabelText(NewWizardMessages.ProjectWizardFirstPage_host);
 			fEnvironment.setDialogFieldListener(this);
-			fEnvironment.setDialogFieldListener(new IDialogFieldListener() {
-				public void dialogFieldChanged(DialogField field) {
-					updateInterpreters();
-				}
-			});
+			fEnvironment.setDialogFieldListener(field -> updateInterpreters());
 		}
 
 		public void createControls(Composite composite) {
@@ -230,14 +227,12 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 			environmentChangedListener = new EnvironmentChangedListener() {
 				@Override
 				public void environmentsModified() {
-					Display.getDefault().asyncExec(new Runnable() {
-						public void run() {
-							try {
-								initEnvironments(false);
-							} catch (Exception e) {
-								if (DLTKCore.DEBUG) {
-									e.printStackTrace();
-								}
+					Display.getDefault().asyncExec(() -> {
+						try {
+							initEnvironments(false);
+						} catch (Exception e) {
+							if (DLTKCore.DEBUG) {
+								e.printStackTrace();
 							}
 						}
 					});
@@ -300,12 +295,7 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 			return Platform.getLocation().append(name).toOSString();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.util.Observer#update(java.util.Observable,
-		 * java.lang.Object)
-		 */
+		@Override
 		public void update(Observable o, Object arg) {
 			if (!canChangeEnvironment()) {
 				selectLocalEnvironment();
@@ -376,6 +366,7 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 			return EnvironmentManager.getLocalEnvironment();
 		}
 
+		@Override
 		public void changeControlPressed(DialogField field) {
 			final IEnvironment environment = getEnvironment();
 			final IEnvironmentUI environmentUI = environment
@@ -444,6 +435,7 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 			}
 		}
 
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 			if (isModeField(field, ANY)) {
 				if (field instanceof SelectionButtonDialogField) {
@@ -538,7 +530,7 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 		IInterpreterInstall getSelectedInterpreter();
 
 		/**
-		 * 
+		 *
 		 */
 		void handlePossibleInterpreterChange();
 
@@ -549,7 +541,7 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 
 		/**
 		 * Returns the control to be decorated if error occurs
-		 * 
+		 *
 		 * @since 2.0
 		 */
 		Control getDecorationTarget();
@@ -687,6 +679,7 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 							getDefaultInterpreterName());
 		}
 
+		@Override
 		public void update(Observable o, Object arg) {
 			updateEnableState();
 		}
@@ -704,20 +697,14 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 			fGroup.setEnabled(!detect);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse
-		 * .swt.events.SelectionEvent)
-		 */
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			widgetDefaultSelected(e);
 		}
 
 		/**
 		 * Shows window with appropriate language preference page.
-		 * 
+		 *
 		 */
 		void showInterpreterPreferencePage() {
 			final String pageId = getIntereprtersPreferencePageId();
@@ -740,13 +727,7 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 			return getScriptNature();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org
-		 * .eclipse.swt.events.SelectionEvent)
-		 */
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 			showInterpreterPreferencePage();
 			handlePossibleInterpreterChange();
@@ -754,6 +735,7 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 			// fDetectGroup.handlePossibleJInterpreterChange();
 		}
 
+		@Override
 		public void handlePossibleInterpreterChange() {
 			refreshInterpreters();
 		}
@@ -765,6 +747,7 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 			notifyObservers();
 		}
 
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 			if (field == fUseDefaultInterpreter
 					|| field == fUseProjectInterpreter) {
@@ -779,6 +762,7 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 			return fUseProjectInterpreter.isSelected();
 		}
 
+		@Override
 		public IInterpreterInstall getSelectedInterpreter() {
 			if (fUseProjectInterpreter.isSelected()) {
 				int index = fInterpreterCombo.getSelectionIndex();
@@ -792,6 +776,7 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 		/**
 		 * @since 2.0
 		 */
+		@Override
 		public boolean isInterpreterPresent() {
 			return interpretersPresent;
 		}
@@ -799,6 +784,7 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 		/**
 		 * @since 2.0
 		 */
+		@Override
 		public Control getDecorationTarget() {
 			if (fUseDefaultInterpreter.isSelected()) {
 				return fUseDefaultInterpreter.getSelectionButton();
@@ -842,7 +828,7 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 
 		/**
 		 * Create child control.
-		 * 
+		 *
 		 * @param composite
 		 */
 		void createControl(Composite composite);
@@ -870,6 +856,7 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 					DLTKUIPlugin.getDefault().getDialogSettings());
 		}
 
+		@Override
 		public void createControl(Composite composite) {
 			Group workingSetGroup = new Group(composite, SWT.NONE);
 			workingSetGroup.setFont(composite.getFont());
@@ -881,10 +868,12 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 			fWorkingSetBlock.createContent(workingSetGroup);
 		}
 
+		@Override
 		public void setWorkingSets(IWorkingSet[] workingSets) {
 			fWorkingSetBlock.setWorkingSets(workingSets);
 		}
 
+		@Override
 		public IWorkingSet[] getSelectedWorkingSets() {
 			return fWorkingSetBlock.getSelectedWorkingSets();
 		}
@@ -957,6 +946,7 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 			}
 		}
 
+		@Override
 		public void update(Observable o, Object arg) {
 			if (o instanceof LocationGroup) {
 				final boolean oldDetectState = fDetect;
@@ -988,24 +978,12 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 			return fDetect;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse
-		 * .swt.events.SelectionEvent)
-		 */
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			widgetDefaultSelected(e);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org
-		 * .eclipse.swt.events.SelectionEvent)
-		 */
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 			if (DLTKCore.DEBUG) {
 				System.err
@@ -1020,7 +998,7 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 	/**
 	 * Validates project fields. Returns {@link IStatus} or <code>null</code> if
 	 * there are no any problems.
-	 * 
+	 *
 	 * @return
 	 */
 	protected IStatus validateProject() {
@@ -1071,7 +1049,7 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 
 	/**
 	 * Tests if valid project is specified.
-	 * 
+	 *
 	 * @return
 	 */
 	protected boolean isValidProject() {
@@ -1085,6 +1063,7 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 	 * NewWizardMessages.
 	 */
 	private final class Validator implements Observer {
+		@Override
 		public void update(Observable o, Object arg) {
 			final IControlDecorationManager manager = fDecorationManager
 					.beginReporting();
@@ -1180,7 +1159,7 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 
 	/**
 	 * Return true if some interpreters are available for selection.
-	 * 
+	 *
 	 * @return true if interpreters are available for selection
 	 */
 	public boolean isInterpretersPresent() {
@@ -1190,6 +1169,7 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public final String getScriptNature() {
 		return ((ProjectWizard) getWizard()).getScriptNature();
 	}
@@ -1227,6 +1207,7 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public IInterpreterInstall getInterpreter() {
 		return fInterpreterGroup != null ? fInterpreterGroup
 				.getSelectedInterpreter() : null;
@@ -1234,6 +1215,7 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 
 	private IInterpreterGroup fInterpreterGroup;
 
+	@Override
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
 		final Composite composite = new Composite(parent, SWT.NULL);
@@ -1327,18 +1309,21 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 	 * Returns the current project location path as entered by the user, or its
 	 * anticipated initial value. Note that if the default has been returned the
 	 * path in a project description used to create a project should not be set.
-	 * 
+	 *
 	 * @return the project location path or its anticipated initial value.
 	 */
+	@Override
 	public URI getLocationURI() {
 		IEnvironment environment = getEnvironment();
 		return environment.getURI(fLocationGroup.getLocation());
 	}
 
+	@Override
 	public IEnvironment getEnvironment() {
 		return fLocationGroup.getEnvironment();
 	}
 
+	@Override
 	public IPath getLocation() {
 		return fLocationGroup.getLocation();
 	}
@@ -1351,22 +1336,26 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 	 * responsibility of <code>IProject::create</code> invoked by the new
 	 * project resource wizard.
 	 * </p>
-	 * 
+	 *
 	 * @return the new project resource handle
 	 */
+	@Override
 	public IProject getProjectHandle() {
 		return ResourcesPlugin.getWorkspace().getRoot().getProject(
 				fNameGroup.getName());
 	}
 
+	@Override
 	public boolean isInWorkspace() {
 		return fLocationGroup.isInWorkspace();
 	}
 
+	@Override
 	public String getProjectName() {
 		return fNameGroup.getName();
 	}
 
+	@Override
 	public boolean getDetect() {
 		return isExistingLocation();
 	}
@@ -1374,18 +1363,17 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public boolean isExistingLocation() {
 		return fDetectGroup.mustDetect();
 	}
 
+	@Override
 	public boolean isSrc() {
 		return false;
 		// return true;//fLayoutGroup.isSrcBin();
 	}
 
-	/*
-	 * see @DialogPage.setVisible(boolean)
-	 */
 	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
@@ -1394,9 +1382,6 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
-	 */
 	@Override
 	public void dispose() {
 		fDecorationManager.dispose();
@@ -1422,7 +1407,7 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 
 	/**
 	 * Returns the working sets to which the new project should be added.
-	 * 
+	 *
 	 * @return the selected working sets to which the new project should be
 	 *         added
 	 * @since 2.0
@@ -1433,7 +1418,7 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 
 	/**
 	 * Sets the working sets to which the new project should be added.
-	 * 
+	 *
 	 * @param workingSets
 	 *            the initial selected working sets
 	 * @since 2.0
@@ -1446,6 +1431,7 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public void initProjectWizardPage() {
 		final IProjectWizard wizard = (IProjectWizard) getWizard();
 		setWorkingSets(createWorkingSetDetector().detect(wizard.getSelection(),
@@ -1455,6 +1441,7 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public void updateProjectWizardPage() {
 		// empty
 	}
@@ -1462,6 +1449,7 @@ public abstract class ProjectWizardFirstPage extends WizardPage implements
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public void resetProjectWizardPage() {
 		// empty
 	}

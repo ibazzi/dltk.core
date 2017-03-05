@@ -20,6 +20,7 @@ public class DeclarativeLightweightLabelDecorator extends LabelProvider
 
 	private ImageDescriptor descriptor;
 
+	@Override
 	public void decorate(Object element, IDecoration decoration) {
 		if (descriptor == null) {
 			URL url = FileLocator.find(Platform.getBundle(bundleId), new Path(
@@ -32,6 +33,7 @@ public class DeclarativeLightweightLabelDecorator extends LabelProvider
 		decoration.addOverlay(descriptor);
 	}
 
+	@Override
 	public void setInitializationData(IConfigurationElement config,
 			String propertyName, Object data) throws CoreException {
 		bundleId = config.getContributor().getName();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,22 +22,17 @@ import org.eclipse.jface.text.templates.TemplateCompletionProcessor;
 /**
  * An template completion proposal computer can generate template completion
  * proposals from a given TemplateEngine.
- * 
+ *
  * Subclasses must implement
  * {@link #createCompletionProcessor(ScriptContentAssistInvocationContext)}
- * 
+ *
  * @since 4.1
  */
 public abstract class ScriptTemplateCompletionProposalComputer extends
 		AbstractScriptCompletionProposalComputer implements
 		IScriptCompletionProposalComputer {
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalComputer#
-	 * computeCompletionProposals
-	 * (org.eclipse.jface.text.contentassist.TextContentAssistInvocationContext,
-	 * org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	public List<ICompletionProposal> computeCompletionProposals(
 			ContentAssistInvocationContext context, IProgressMonitor monitor) {
 		if (!(context instanceof ScriptContentAssistInvocationContext))
@@ -65,7 +60,7 @@ public abstract class ScriptTemplateCompletionProposalComputer extends
 	/**
 	 * Compute the engine used to retrieve completion proposals in the given
 	 * context
-	 * 
+	 *
 	 * @param context
 	 *            the context where proposals will be made
 	 * @return the engine or <code>null</code> if no engine available in the
@@ -74,33 +69,22 @@ public abstract class ScriptTemplateCompletionProposalComputer extends
 	protected abstract TemplateCompletionProcessor createCompletionProcessor(
 			ScriptContentAssistInvocationContext context);
 
-	/*
-	 * @see ICompletionProposalComputer#computeContextInformation(
-	 * ContentAssistInvocationContext, IProgressMonitor)
-	 */
+	@Override
 	public List<IContextInformation> computeContextInformation(
 			ContentAssistInvocationContext context, IProgressMonitor monitor) {
 		return Collections.emptyList();
 	}
 
-	/*
-	 * @see ICompletionProposalComputer#getErrorMessage()
-	 */
+	@Override
 	public String getErrorMessage() {
 		return null;
 	}
 
-	/*
-	 * @see IScriptCompletionProposalComputer#sessionStarted()
-	 */
+	@Override
 	public void sessionStarted() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see IScriptCompletionProposalComputer#sessionEnded()
-	 */
+	@Override
 	public void sessionEnded() {
 	}
 

@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.actions;
 
@@ -25,25 +24,25 @@ import org.eclipse.ui.actions.ActionGroup;
 
 /**
  * A MultiActionGroup will display a list of IActions in a menu by transforming them
- * into MenuItems. The list of labels given will be what is displayed in the ViewMenu for 
+ * into MenuItems. The list of labels given will be what is displayed in the ViewMenu for
  * the corresponding action (the action at the same position in the action array).
  * The actions are currently implemented as state based
  * so that after an action is executed the label will have a selection check.
- * 
+ *
 	 *
  */
 public class MultiActionGroup extends ActionGroup {
-	
+
 	public IAction[] NO_ACTIONS = new IAction[0];
-	
-	private IAction[] fActions; 
-	
+
+	private IAction[] fActions;
+
 	private int fCurrentSelection;
 	private MenuItem[] fItems;
 
 	/**
 	 * Creates a new action group with a given set of actions.
-	 * 
+	 *
 	 * @param actions			the actions for this multi group
 	 * @param currentSelection	decides which action is selected in the menu on start up.
 	 * 							Denotes the location in the actions array of the current
@@ -53,7 +52,7 @@ public class MultiActionGroup extends ActionGroup {
 		super();
 		setActions(actions, currentSelection);
 	}
-	
+
 	/**
 	 * Creates a new action group. Clients using this constructor must set the actions
 	 * immediately after creating the multi action group by calling {@link #setActions(IAction[], int)}.
@@ -61,10 +60,10 @@ public class MultiActionGroup extends ActionGroup {
 	protected MultiActionGroup() {
 		super();
 	}
-	
+
 	/**
 	 * Sets the given actions.
-	 * 
+	 *
 	 * @param actions			the actions for this multi group, at least one
 	 * @param currentSelection	decides which action is selected in the menu on start up.
 	 * 							Denotes the location in the actions array of the current
@@ -88,12 +87,13 @@ public class MultiActionGroup extends ActionGroup {
 
 			viewMenu.add(new ContributionItem() {
 
+				@Override
 				public void fill(Menu menu, int index) {
-					
+
 					int style= SWT.CHECK;
 					if ((fActions[j].getStyle() & IAction.AS_RADIO_BUTTON) != 0)
 						style= SWT.RADIO;
-					
+
 					MenuItem mi= new MenuItem(menu, style, index);
 					ImageDescriptor d= fActions[j].getImageDescriptor();
 					mi.setImage(DLTKUIPlugin.getImageDescriptorRegistry().get(d));
@@ -102,6 +102,7 @@ public class MultiActionGroup extends ActionGroup {
 					mi.setSelection(fCurrentSelection == j);
 					mi.addSelectionListener(new SelectionAdapter() {
 
+						@Override
 						public void widgetSelected(SelectionEvent e) {
 							if (fCurrentSelection == j) {
 								fItems[fCurrentSelection].setSelection(true);
@@ -117,6 +118,8 @@ public class MultiActionGroup extends ActionGroup {
 
 					});
 				}
+
+				@Override
 				public boolean isDynamic() {
 					return false;
 				}

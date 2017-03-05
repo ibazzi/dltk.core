@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,8 +20,6 @@ import org.eclipse.dltk.ui.dialogs.StatusInfo;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -102,11 +100,7 @@ public class CreateProfileDialog extends StatusDialog {
 		gd.horizontalSpan = numColumns;
 		fNameText = new Text(composite, SWT.SINGLE | SWT.BORDER);
 		fNameText.setLayoutData(gd);
-		fNameText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				doValidation();
-			}
-		});
+		fNameText.addModifyListener(e -> doValidation());
 
 		// Create "Initialize settings ..." label
 		gd = new GridData();
@@ -128,10 +122,12 @@ public class CreateProfileDialog extends StatusDialog {
 		fEditCheckbox
 				.setText(FormatterMessages.CreateProfileDialog_openEditDialog);
 		fEditCheckbox.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fOpenEditDialog = ((Button) e.widget).getSelection();
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});

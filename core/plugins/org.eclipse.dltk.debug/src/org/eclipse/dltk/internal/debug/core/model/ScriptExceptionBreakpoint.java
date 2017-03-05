@@ -5,7 +5,6 @@ import java.util.Map;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.dltk.debug.core.DLTKDebugPlugin;
@@ -17,112 +16,119 @@ public class ScriptExceptionBreakpoint extends AbstractScriptBreakpoint
 	private static final String SCRIPT_EXCEPTION_BREAKPOINT = "org.eclipse.dltk.debug.scriptExceptionBreakpointMarker"; //$NON-NLS-1$
 
 	/**
-	 * Breakpoint attribute storing the fully qualified name of the type
-	 * this breakpoint is located in.
-	 * (value <code>"org.eclipse.jdt.debug.core.typeName"</code>). This attribute is a <code>String</code>.
+	 * Breakpoint attribute storing the fully qualified name of the type this
+	 * breakpoint is located in. (value
+	 * <code>"org.eclipse.jdt.debug.core.typeName"</code>). This attribute is a
+	 * <code>String</code>.
 	 */
-	protected static final String TYPE_NAME = DLTKDebugPlugin.PLUGIN_ID + ".typeName"; //$NON-NLS-1$	
+	protected static final String TYPE_NAME = DLTKDebugPlugin.PLUGIN_ID
+			+ ".typeName"; //$NON-NLS-1$
 	/**
-	 * Exception breakpoint attribute storing the suspend on caught value
-	 * (value <code>"org.eclipse.dltk.debug.core.caught"</code>). This attribute is stored as a <code>boolean</code>.
-	 * When this attribute is <code>true</code>, a caught exception of the associated
-	 * type will cause excecution to suspend .
+	 * Exception breakpoint attribute storing the suspend on caught value (value
+	 * <code>"org.eclipse.dltk.debug.core.caught"</code>). This attribute is
+	 * stored as a <code>boolean</code>. When this attribute is
+	 * <code>true</code>, a caught exception of the associated type will cause
+	 * excecution to suspend .
 	 */
-	protected static final String CAUGHT = DLTKDebugPlugin.PLUGIN_ID + ".caught"; //$NON-NLS-1$
+	protected static final String CAUGHT = DLTKDebugPlugin.PLUGIN_ID
+			+ ".caught"; //$NON-NLS-1$
 	/**
 	 * Exception breakpoint attribute storing the suspend on uncaught value
-	 * (value <code>"org.eclipse.dltk.debug.core.uncaught"</code>). This attribute is stored as a
-	 * <code>boolean</code>. When this attribute is <code>true</code>, an uncaught
-	 * exception of the associated type will cause excecution to suspend.
+	 * (value <code>"org.eclipse.dltk.debug.core.uncaught"</code>). This
+	 * attribute is stored as a <code>boolean</code>. When this attribute is
+	 * <code>true</code>, an uncaught exception of the associated type will
+	 * cause excecution to suspend.
 	 */
-	protected static final String UNCAUGHT = DLTKDebugPlugin.PLUGIN_ID + ".uncaught"; //$NON-NLS-1$	
+	protected static final String UNCAUGHT = DLTKDebugPlugin.PLUGIN_ID
+			+ ".uncaught"; //$NON-NLS-1$
 	/**
-	 * Allows the user to specify whether we should suspend if subclasses of the specified exception are thrown/caught
+	 * Allows the user to specify whether we should suspend if subclasses of the
+	 * specified exception are thrown/caught
 	 */
-	protected static final String SUSPEND_ON_SUBCLASSES = DLTKDebugPlugin.PLUGIN_ID + ".suspend_on_subclasses"; //$NON-NLS-1$
+	protected static final String SUSPEND_ON_SUBCLASSES = DLTKDebugPlugin.PLUGIN_ID
+			+ ".suspend_on_subclasses"; //$NON-NLS-1$
 
 	/**
-	 * Name of the exception that was actually hit (could be a
-	 * subtype of the type that is being caught).
+	 * Name of the exception that was actually hit (could be a subtype of the
+	 * type that is being caught).
 	 */
 	protected String fExceptionName = null;
 
-	
-	
 	public ScriptExceptionBreakpoint() {
 	}
-	
+
 	/**
-	 * Creates and returns an exception breakpoint for the
-	 * given type. Caught and uncaught specify where the exception
-	 * should cause thread suspensions - that is, in caught and/or uncaught locations.
-	 * Checked indicates if the given exception is a checked exception.
-	 * @param resource the resource on which to create the associated
-	 *  breakpoint marker 
-	 * @param exceptionName the fully qualified name of the exception for
-	 *  which to create the breakpoint
-	 * @param caught whether to suspend in caught locations
-	 * @param uncaught whether to suspend in uncaught locations
-	 * @param checked whether the exception is a checked exception
-	 * @param add whether to add this breakpoint to the breakpoint manager
+	 * Creates and returns an exception breakpoint for the given type. Caught
+	 * and uncaught specify where the exception should cause thread suspensions
+	 * - that is, in caught and/or uncaught locations. Checked indicates if the
+	 * given exception is a checked exception.
+	 * 
+	 * @param resource
+	 *            the resource on which to create the associated breakpoint
+	 *            marker
+	 * @param exceptionName
+	 *            the fully qualified name of the exception for which to create
+	 *            the breakpoint
+	 * @param caught
+	 *            whether to suspend in caught locations
+	 * @param uncaught
+	 *            whether to suspend in uncaught locations
+	 * @param checked
+	 *            whether the exception is a checked exception
+	 * @param add
+	 *            whether to add this breakpoint to the breakpoint manager
 	 * @return a Java exception breakpoint
-	 * @exception DebugException if unable to create the associated marker due
-	 *  to a lower level exception.
+	 * @exception DebugException
+	 *                if unable to create the associated marker due to a lower
+	 *                level exception.
 	 */
 	public ScriptExceptionBreakpoint(final String debugModelId,
 			final IResource resource, final String exceptionName,
 			final boolean caught, final boolean uncaught, final boolean add,
 			final Map attributes) throws DebugException {
-		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				// create the marker
-				setMarker(resource.createMarker(SCRIPT_EXCEPTION_BREAKPOINT));
+		IWorkspaceRunnable wr = monitor -> {
+			// create the marker
+			setMarker(resource.createMarker(SCRIPT_EXCEPTION_BREAKPOINT));
 
-				// add general breakpoint attributes
-				addScriptBreakpointAttributes(attributes, debugModelId, true);
+			// add general breakpoint attributes
+			addScriptBreakpointAttributes(attributes, debugModelId, true);
 
-				// add exception breakpoint attributes
-				attributes.put(TYPE_NAME, exceptionName);
-				attributes.put(CAUGHT, Boolean.valueOf(caught));
-				attributes.put(UNCAUGHT, Boolean.valueOf(uncaught));
+			// add exception breakpoint attributes
+			attributes.put(TYPE_NAME, exceptionName);
+			attributes.put(CAUGHT, Boolean.valueOf(caught));
+			attributes.put(UNCAUGHT, Boolean.valueOf(uncaught));
 
-				ensureMarker().setAttributes(attributes);
+			ensureMarker().setAttributes(attributes);
 
-				register(add);
-			}
-
+			register(add);
 		};
 		run(getMarkerRule(resource), wr);
 	}
 
 	/**
 	 * Enable this exception breakpoint.
-	 * 
-	 * If the exception breakpoint is not catching caught or uncaught,
-	 * turn both modes on. If this isn't done, the resulting
-	 * state (enabled with caught and uncaught both disabled)
-	 * is ambiguous.
+	 *
+	 * If the exception breakpoint is not catching caught or uncaught, turn both
+	 * modes on. If this isn't done, the resulting state (enabled with caught
+	 * and uncaught both disabled) is ambiguous.
 	 */
+	@Override
 	public void setEnabled(boolean enabled) throws CoreException {
 		if (enabled) {
 			if (!(isCaught() || isUncaught())) {
-				setAttributes(new String[] { CAUGHT, UNCAUGHT }, new Object[] {
-						Boolean.TRUE, Boolean.TRUE });
+				setAttributes(new String[] { CAUGHT, UNCAUGHT },
+						new Object[] { Boolean.TRUE, Boolean.TRUE });
 			}
 		}
 		super.setEnabled(enabled);
 	}
 
-	/**
-	 * @see IScriptExceptionBreakpoint#isCaught()
-	 */
+	@Override
 	public boolean isCaught() throws CoreException {
 		return ensureMarker().getAttribute(CAUGHT, false);
 	}
 
-	/**
-	 * @see IscriptExceptionBreakpoint#setCaught(boolean)
-	 */
+	@Override
 	public void setCaught(boolean caught) throws CoreException {
 		if (caught == isCaught()) {
 			return;
@@ -135,32 +141,24 @@ public class ScriptExceptionBreakpoint extends AbstractScriptBreakpoint
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.dltk.debug.core.IJavaExceptionBreakpoint#setSuspendOnSubclasses(boolean)
-	 */
+	@Override
 	public void setSuspendOnSubclasses(boolean suspend) throws CoreException {
 		if (suspend != isSuspendOnSubclasses()) {
 			setAttribute(SUSPEND_ON_SUBCLASSES, suspend);
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.dltk.debug.core.IJavaExceptionBreakpoint#isSuspendOnSubclasses()
-	 */
+	@Override
 	public boolean isSuspendOnSubclasses() throws CoreException {
 		return ensureMarker().getAttribute(SUSPEND_ON_SUBCLASSES, false);
 	}
 
-	/**
-	 * @see IJavaExceptionBreakpoint#isUncaught()
-	 */
+	@Override
 	public boolean isUncaught() throws CoreException {
 		return ensureMarker().getAttribute(UNCAUGHT, false);
 	}
 
-	/**
-	 * @see IJavaExceptionBreakpoint#setUncaught(boolean)
-	 */
+	@Override
 	public void setUncaught(boolean uncaught) throws CoreException {
 		if (uncaught == isUncaught()) {
 			return;
@@ -175,16 +173,15 @@ public class ScriptExceptionBreakpoint extends AbstractScriptBreakpoint
 
 	/**
 	 * Sets the name of the exception that was last hit
-	 * 
-	 * @param name fully qualified exception name
+	 *
+	 * @param name
+	 *            fully qualified exception name
 	 */
 	protected void setExceptionTypeName(String name) {
 		fExceptionName = name;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.dltk.debug.core.IJavaExceptionBreakpoint#getExceptionTypeName()
-	 */
+	@Override
 	public String getExceptionTypeName() {
 		return fExceptionName;
 	}
@@ -194,10 +191,12 @@ public class ScriptExceptionBreakpoint extends AbstractScriptBreakpoint
 			AbstractScriptBreakpoint.HIT_VALUE, CAUGHT, UNCAUGHT,
 			SUSPEND_ON_SUBCLASSES };
 
+	@Override
 	public String[] getUpdatableAttributes() {
 		return UPDATABLE_ATTRS;
 	}
 
+	@Override
 	public String getTypeName() throws CoreException {
 		return (String) ensureMarker().getAttribute(TYPE_NAME);
 	}

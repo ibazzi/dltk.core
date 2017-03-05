@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.corext.refactoring.rename;
 
@@ -53,9 +52,9 @@ public class RenameResourceProcessor extends RenameProcessor implements IScripta
 	private String fNewElementName;
 	private String fComment;
 	private RenameModifications fRenameModifications;
-		
+
 	public static final String IDENTIFIER= "org.eclipse.dltk.ui.renameResourceProcessor"; //$NON-NLS-1$
-	
+
 	/**
 	 * Creates a new rename resource processor.
 	 * @param resource the resource, or <code>null</code> if invoked by scripting
@@ -68,42 +67,50 @@ public class RenameResourceProcessor extends RenameProcessor implements IScripta
 	}
 
 	//---- INameUpdating ---------------------------------------------------
-	
+
+	@Override
 	public void setNewElementName(String newName) {
 		Assert.isNotNull(newName);
 		fNewElementName= newName;
 	}
 
+	@Override
 	public String getNewElementName() {
 		return fNewElementName;
 	}
-	
+
 	//---- IRenameProcessor methods ---------------------------------------
-		
+
+	@Override
 	public String getIdentifier() {
 		return IDENTIFIER;
 	}
-	
+
+	@Override
 	public boolean isApplicable() throws ModelException {
 		return RefactoringAvailabilityTester.isRenameAvailable(fResource);
 	}
-	
+
+	@Override
 	public String getProcessorName() {
 		return RefactoringCoreMessages.RenameResourceProcessor_name;
 	}
-	
+
+	@Override
 	public Object[] getElements() {
 		return new Object[] {fResource};
 	}
-	
+
+	@Override
 	public String getCurrentElementName() {
 		return fResource.getName();
 	}
-	
+
 	public String[] getAffectedProjectNatures() throws CoreException {
 		return ResourceProcessors.computeAffectedNatures(fResource);
 	}
 
+	@Override
 	public Object getNewElement() {
 		return ResourcesPlugin.getWorkspace().getRoot().findMember(createNewPath(getNewElementName()));
 	}
@@ -111,63 +118,62 @@ public class RenameResourceProcessor extends RenameProcessor implements IScripta
 	public boolean getUpdateReferences() {
 		return true;
 	}
-	
+
+	@Override
 	public RefactoringParticipant[] loadParticipants(RefactoringStatus status, SharableParticipants shared) throws CoreException {
 		return fRenameModifications.loadParticipants(status, this, getAffectedProjectNatures(), shared);
 	}
-	
+
 	//--- Condition checking --------------------------------------------
 
+	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException {
 		return RefactoringStatus.create(Resources.checkInSync(fResource));
 	}
-	
-	/* non java-doc
-	 * @see IRenameRefactoring#checkNewName()
-	 */
+
+	@Override
 	public RefactoringStatus checkNewElementName(String newName) throws ModelException {
 		Assert.isNotNull(newName, "new name"); //$NON-NLS-1$
 		IContainer c= fResource.getParent();
 		if (c == null)
-			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.RenameResourceRefactoring_Internal_Error); 
-						
+			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.RenameResourceRefactoring_Internal_Error);
+
 		if (c.findMember(newName) != null)
-			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.RenameResourceRefactoring_alread_exists); 
-			
+			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.RenameResourceRefactoring_alread_exists);
+
 		if (!c.getFullPath().isValidSegment(newName))
-			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.RenameResourceRefactoring_invalidName); 
-	
+			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.RenameResourceRefactoring_invalidName);
+
 		RefactoringStatus result= RefactoringStatus.create(c.getWorkspace().validateName(newName, fResource.getType()));
 		if (! result.hasFatalError())
-			result.merge(RefactoringStatus.create(c.getWorkspace().validatePath(createNewPath(newName), fResource.getType())));		
-		return result;		
+			result.merge(RefactoringStatus.create(c.getWorkspace().validatePath(createNewPath(newName), fResource.getType())));
+		return result;
 	}
-	
-	/* non java-doc
-	 * @see Refactoring#checkInput(IProgressMonitor)
-	 */
+
+	@Override
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext context) throws ModelException {
 		pm.beginTask("", 1); //$NON-NLS-1$
 		try{
 			fRenameModifications= new RenameModifications();
 			fRenameModifications.rename(fResource, new RenameArguments(getNewElementName(), getUpdateReferences()));
-			
+
 			ResourceChangeChecker checker= (ResourceChangeChecker) context.getChecker(ResourceChangeChecker.class);
 			IResourceChangeDescriptionFactory deltaFactory= checker.getDeltaFactory();
 			fRenameModifications.buildDelta(deltaFactory);
-			
+
 			return new RefactoringStatus();
 		} finally{
 			pm.done();
-		}	
+		}
 	}
 
 	private String createNewPath(String newName){
 		return fResource.getFullPath().removeLastSegments(1).append(newName).toString();
 	}
-		
-	//--- changes 
 
+	//--- changes
+
+	@Override
 	public Change createChange(IProgressMonitor pm) throws ModelException {
 		pm.beginTask("", 1); //$NON-NLS-1$
 		try {
@@ -187,6 +193,7 @@ public class RenameResourceProcessor extends RenameProcessor implements IScripta
 		}
 	}
 
+	@Override
 	public RefactoringStatus initialize(final RefactoringArguments arguments) {
 		if (arguments instanceof ScriptRefactoringArguments) {
 			final ScriptRefactoringArguments extended= (ScriptRefactoringArguments) arguments;
@@ -207,14 +214,17 @@ public class RenameResourceProcessor extends RenameProcessor implements IScripta
 		return new RefactoringStatus();
 	}
 
+	@Override
 	public boolean canEnableComment() {
 		return true;
 	}
 
+	@Override
 	public String getComment() {
 		return fComment;
 	}
 
+	@Override
 	public void setComment(final String comment) {
 		fComment= comment;
 	}

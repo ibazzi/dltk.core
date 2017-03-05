@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,6 @@
  *
  *******************************************************************************/
 package org.eclipse.dltk.ui.viewsupport;
-
 
 import java.util.HashSet;
 
@@ -42,12 +41,13 @@ public class ProblemMarkerManager implements IResourceChangeListener, IAnnotatio
 	 */
 	private static class ProjectErrorVisitor implements IResourceDeltaVisitor {
 
-		private HashSet fChangedElements; 
-		
+		private HashSet fChangedElements;
+
 		public ProjectErrorVisitor(HashSet changedElements) {
 			fChangedElements= changedElements;
 		}
-			
+
+		@Override
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			IResource res= delta.getResource();
 			if (res instanceof IProject && delta.getKind() == IResourceDelta.CHANGED) {
@@ -60,7 +60,7 @@ public class ProblemMarkerManager implements IResourceChangeListener, IAnnotatio
 			checkInvalidate(delta, res);
 			return true;
 		}
-		
+
 		private void checkInvalidate(IResourceDelta delta, IResource resource) {
 			int kind= delta.getKind();
 			if (kind == IResourceDelta.REMOVED || kind == IResourceDelta.ADDED || (kind == IResourceDelta.CHANGED && isErrorDelta(delta))) {
@@ -68,10 +68,10 @@ public class ProblemMarkerManager implements IResourceChangeListener, IAnnotatio
 				while (resource.getType() != IResource.ROOT && fChangedElements.add(resource)) {
 					resource= resource.getParent();
 				}
-			} 
-		}	
-		
-		private boolean isErrorDelta(IResourceDelta delta) {	
+			}
+		}
+
+		private boolean isErrorDelta(IResourceDelta delta) {
 			if ((delta.getFlags() & IResourceDelta.MARKERS) != 0) {
 				IMarkerDelta[] markerDeltas= delta.getMarkerDeltas();
 				for (int i= 0; i < markerDeltas.length; i++) {
@@ -82,7 +82,7 @@ public class ProblemMarkerManager implements IResourceChangeListener, IAnnotatio
 						int severity= markerDeltas[i].getAttribute(IMarker.SEVERITY, -1);
 						int newSeverity= markerDeltas[i].getMarker().getAttribute(IMarker.SEVERITY, -1);
 						if (newSeverity != severity)
-							return true; 
+							return true;
 					}
 				}
 			}
@@ -91,18 +91,16 @@ public class ProblemMarkerManager implements IResourceChangeListener, IAnnotatio
 	}
 
 	private ListenerList fListeners;
-	
-	
+
+
 	public ProblemMarkerManager() {
 		fListeners= new ListenerList();
 	}
 
-	/*
-	 * @see IResourceChangeListener#resourceChanged
-	 */	
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		HashSet<IResource> changedElements = new HashSet<IResource>();
-		
+
 		try {
 			IResourceDelta delta= event.getDelta();
 			if (delta != null)
@@ -117,17 +115,13 @@ public class ProblemMarkerManager implements IResourceChangeListener, IAnnotatio
 			fireChanges(changes, true);
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see IAnnotationModelListener#modelChanged(IAnnotationModel)
-	 */
+
+	@Override
 	public void modelChanged(IAnnotationModel model) {
 		// no action
 	}
 
-	/* (non-Javadoc)
-	 * @see IAnnotationModelListenerExtension#modelChanged(AnnotationModelEvent)
-	 */
+	@Override
 	public void modelChanged(AnnotationModelEvent event) {
 		if (event instanceof SourceModuleAnnotationModelEvent) {
 			SourceModuleAnnotationModelEvent cuEvent= (SourceModuleAnnotationModelEvent) event;
@@ -136,14 +130,14 @@ public class ProblemMarkerManager implements IResourceChangeListener, IAnnotatio
 				fireChanges(changes, false);
 			}
 		}
-	}	
-	
-	
+	}
+
+
 	/**
 	 * Adds a listener for problem marker changes.
 	 */
 	public void addListener(IProblemChangedListener listener) {
-		if (fListeners.isEmpty()) { 
+		if (fListeners.isEmpty()) {
 			DLTKUIPlugin.getWorkspace().addResourceChangeListener(this);
 			DLTKUIPlugin.getDefault().getSourceModuleDocumentProvider().addGlobalAnnotationModelListener(this);
 		}
@@ -152,7 +146,7 @@ public class ProblemMarkerManager implements IResourceChangeListener, IAnnotatio
 
 	/**
 	 * Removes a <code>IProblemChangedListener</code>.
-	 */	
+	 */
 	public void removeListener(IProblemChangedListener listener) {
 		fListeners.remove(listener);
 		if (fListeners.isEmpty()) {
@@ -160,20 +154,18 @@ public class ProblemMarkerManager implements IResourceChangeListener, IAnnotatio
 			DLTKUIPlugin.getDefault().getSourceModuleDocumentProvider().removeGlobalAnnotationModelListener(this);
 		}
 	}
-	
+
 	private void fireChanges(final IResource[] changes, final boolean isMarkerChange) {
 		Display display= SWTUtil.getStandardDisplay();
 		if (display != null && !display.isDisposed()) {
-			display.asyncExec(new Runnable() {
-				public void run() {		
-					Object[] listeners= fListeners.getListeners();
-					for (int i= 0; i < listeners.length; i++) {
-						IProblemChangedListener curr= (IProblemChangedListener) listeners[i];
-						curr.problemsChanged(changes, isMarkerChange);
-					}	
+			display.asyncExec(() -> {
+				Object[] listeners= fListeners.getListeners();
+				for (int i= 0; i < listeners.length; i++) {
+					IProblemChangedListener curr= (IProblemChangedListener) listeners[i];
+					curr.problemsChanged(changes, isMarkerChange);
 				}
 			});
-		}	
+		}
 	}
 
 }

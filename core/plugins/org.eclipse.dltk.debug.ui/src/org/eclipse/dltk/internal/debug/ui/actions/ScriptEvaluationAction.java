@@ -1,19 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  *******************************************************************************/
-
 package org.eclipse.dltk.internal.debug.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.ui.DebugUITools;
@@ -242,6 +240,7 @@ public class ScriptEvaluationAction implements IWorkbenchWindowActionDelegate,
 	}
 
 	// IWorkbenchWindowActionDelegate
+	@Override
 	public void init(IWorkbenchWindow window) {
 		setWindow(window);
 
@@ -254,6 +253,7 @@ public class ScriptEvaluationAction implements IWorkbenchWindowActionDelegate,
 		update();
 	}
 
+	@Override
 	public void dispose() {
 		// disposeDebugModelPresentation();
 
@@ -264,6 +264,7 @@ public class ScriptEvaluationAction implements IWorkbenchWindowActionDelegate,
 	}
 
 	// IObjectActionDelegate
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		setAction(action);
 		setPart(targetPart);
@@ -271,34 +272,41 @@ public class ScriptEvaluationAction implements IWorkbenchWindowActionDelegate,
 	}
 
 	// IActionDelegate
+	@Override
 	public void run(IAction action) {
 		update();
 		run();
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		setAction(action);
 	}
 
 	// IPartListener
+	@Override
 	public void partActivated(IWorkbenchPart part) {
 		setPart(part);
 	}
 
+	@Override
 	public void partBroughtToTop(IWorkbenchPart part) {
 
 	}
 
+	@Override
 	public void partClosed(IWorkbenchPart part) {
 		if (part == getPart()) {
 			setPart(null);
 		}
 	}
 
+	@Override
 	public void partDeactivated(IWorkbenchPart part) {
 
 	}
 
+	@Override
 	public void partOpened(IWorkbenchPart part) {
 
 	}
@@ -396,25 +404,22 @@ public class ScriptEvaluationAction implements IWorkbenchWindowActionDelegate,
 		// setNewTargetPart(getTargetPart());
 
 		// Preparing runnable
-		IRunnableWithProgress runnable = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor)
-					throws InvocationTargetException, InterruptedException {
-				if (stackFrame.isSuspended()) {
-					Object selection = getSelectedObject();
-					if (!(selection instanceof String)) {
-						return;
-					}
-					String expression = (String) selection;
-
-					IScriptEvaluationEngine engine = stackFrame
-							.getScriptThread().getEvaluationEngine();
-					setEvaluating(true);
-					engine.asyncEvaluate(expression, stackFrame,
-							ScriptEvaluationAction.this);
-				} else {
-					throw new InvocationTargetException(null,
-							Messages.ScriptEvaluationAction_threadIsNotSuspended);
+		IRunnableWithProgress runnable = monitor -> {
+			if (stackFrame.isSuspended()) {
+				Object selection = getSelectedObject();
+				if (!(selection instanceof String)) {
+					return;
 				}
+				String expression = (String) selection;
+
+				IScriptEvaluationEngine engine = stackFrame.getScriptThread()
+						.getEvaluationEngine();
+				setEvaluating(true);
+				engine.asyncEvaluate(expression, stackFrame,
+						ScriptEvaluationAction.this);
+			} else {
+				throw new InvocationTargetException(null,
+						Messages.ScriptEvaluationAction_threadIsNotSuspended);
 			}
 		};
 
@@ -498,6 +503,7 @@ public class ScriptEvaluationAction implements IWorkbenchWindowActionDelegate,
 	}
 
 	// IScriptEvaluationListener
+	@Override
 	public void evaluationComplete(IScriptEvaluationResult result) {
 		// if plug-in has shutdown, ignore - see bug# 8693
 		if (DLTKDebugUIPlugin.getDefault() == null) {
@@ -522,11 +528,13 @@ public class ScriptEvaluationAction implements IWorkbenchWindowActionDelegate,
 	}
 
 	// IEditorActionDelegate
+	@Override
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		setEditor((ScriptEditor) targetEditor);
 	}
 
 	// IViewActionDelegate
+	@Override
 	public void init(IViewPart view) {
 		setPart(view);
 	}

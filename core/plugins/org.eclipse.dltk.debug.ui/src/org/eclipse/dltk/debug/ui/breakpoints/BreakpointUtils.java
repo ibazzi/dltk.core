@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -154,6 +154,7 @@ public class BreakpointUtils {
 			this.resource = resource;
 		}
 
+		@Override
 		public boolean evaluate(IBreakpoint breakpoint) {
 			return resource.equals(breakpoint.getMarker().getResource());
 		}
@@ -171,6 +172,7 @@ public class BreakpointUtils {
 			this.path = path.toPortableString();
 		}
 
+		@Override
 		public boolean evaluate(IBreakpoint breakpoint) throws CoreException {
 			final IResource bpResource = breakpoint.getMarker().getResource();
 			if (bpResource.equals(getWorkspaceRoot())) {
@@ -248,9 +250,9 @@ public class BreakpointUtils {
 	}
 
 	/**
-	 * 
+	 *
 	 * ...assume we already know debugModelId
-	 * 
+	 *
 	 * @since 2.0
 	 * @param editor
 	 * @param lineNumber

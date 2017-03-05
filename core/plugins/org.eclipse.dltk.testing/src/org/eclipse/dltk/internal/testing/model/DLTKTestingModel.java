@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,8 +72,7 @@ public final class DLTKTestingModel implements ITestingModel {
 		 * a TestRunner once to a launch. Once a test runner is connected, it is
 		 * removed from the set.
 		 */
-		private final HashSet<ILaunch> fTrackedLaunches = new HashSet<ILaunch>(
-				20);
+		private final HashSet<ILaunch> fTrackedLaunches = new HashSet<>(20);
 
 		protected void initialize(ILaunchManager launchManager) {
 			fTrackedLaunches.clear();
@@ -91,16 +90,6 @@ public final class DLTKTestingModel implements ITestingModel {
 		@Override
 		public void launchRemoved(final ILaunch launch) {
 			fTrackedLaunches.remove(launch);
-			// TODO: story for removing old test runs?
-			// getDisplay().asyncExec(new Runnable() {
-			// public void run() {
-			// TestRunnerViewPart testRunnerViewPart=
-			// findTestRunnerViewPartInActivePage();
-			// if (testRunnerViewPart != null && testRunnerViewPart.isCreated()
-			// && launch.equals(testRunnerViewPart.getLastLaunch()))
-			// testRunnerViewPart.reset();
-			// }
-			// });
 		}
 
 		@Override
@@ -124,12 +113,8 @@ public final class DLTKTestingModel implements ITestingModel {
 				try {
 					final int port = Integer.parseInt(portStr);
 					fTrackedLaunches.remove(launch);
-					getDisplay().asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							connectTestRunner(launch, javaProject, port);
-						}
-					});
+					getDisplay().asyncExec(
+							() -> connectTestRunner(launch, javaProject, port));
 				} catch (NumberFormatException e) {
 					return;
 				}
@@ -138,12 +123,8 @@ public final class DLTKTestingModel implements ITestingModel {
 						.getAttribute(DLTKTestingConstants.LAUNCH_ATTR_KEY);
 				if (atr != null) {
 					fTrackedLaunches.remove(launch);
-					getDisplay().asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							connectTestRunner(launch, javaProject);
-						}
-					});
+					getDisplay().asyncExec(
+							() -> connectTestRunner(launch, javaProject));
 				}
 			}
 		}
@@ -194,7 +175,8 @@ public final class DLTKTestingModel implements ITestingModel {
 	}
 
 	public TestRunnerViewPart showTestRunnerViewPartInActivePage() {
-		return showTestRunnerViewPartInActivePage(findTestRunnerViewPartInActivePage());
+		return showTestRunnerViewPartInActivePage(
+				findTestRunnerViewPartInActivePage());
 	}
 
 	private TestRunnerViewPart showTestRunnerViewPartInActivePage(
@@ -248,7 +230,7 @@ public final class DLTKTestingModel implements ITestingModel {
 	/**
 	 * Active test run sessions, youngest first.
 	 */
-	private final LinkedList<TestRunSession> fTestRunSessions = new LinkedList<TestRunSession>();
+	private final LinkedList<TestRunSession> fTestRunSessions = new LinkedList<>();
 	private final DLTKTestingLaunchListener fLaunchListener = new DLTKTestingLaunchListener();
 
 	private boolean started = false;
@@ -311,17 +293,6 @@ public final class DLTKTestingModel implements ITestingModel {
 			}
 		}
 
-		// for (Iterator iter= fTestRunSessions.iterator(); iter.hasNext();) {
-		// final TestRunSession session= (TestRunSession) iter.next();
-		// SafeRunner.run(new ISafeRunnable() {
-		// public void run() throws Exception {
-		// session.swapOut();
-		// }
-		// public void handleException(Throwable exception) {
-		// JUnitPlugin.log(exception);
-		// }
-		// });
-		// }
 		started = false;
 	}
 
@@ -344,7 +315,7 @@ public final class DLTKTestingModel implements ITestingModel {
 	@Override
 	public List<TestRunSession> getTestRunSessions() {
 		synchronized (fTestRunSessions) {
-			return new ArrayList<TestRunSession>(fTestRunSessions);
+			return new ArrayList<>(fTestRunSessions);
 		}
 	}
 
@@ -367,7 +338,7 @@ public final class DLTKTestingModel implements ITestingModel {
 	 * <p>
 	 * <b>To be called in the UI thread only!</b>
 	 * </p>
-	 * 
+	 *
 	 * @param testRunSession
 	 *            the session to add
 	 */
@@ -383,7 +354,7 @@ public final class DLTKTestingModel implements ITestingModel {
 
 	/**
 	 * Imports a test run session from the given file.
-	 * 
+	 *
 	 * @param file
 	 *            a file containing a test run session transcript
 	 * @return the imported test run session
@@ -432,7 +403,7 @@ public final class DLTKTestingModel implements ITestingModel {
 
 	/**
 	 * Exports the given test run session.
-	 * 
+	 *
 	 * @param testRunSession
 	 *            the test run session
 	 * @param file
@@ -464,14 +435,14 @@ public final class DLTKTestingModel implements ITestingModel {
 	}
 
 	public static void exportTestRunSession(TestRunSession testRunSession,
-			OutputStream out) throws TransformerFactoryConfigurationError,
-			TransformerException {
+			OutputStream out)
+			throws TransformerFactoryConfigurationError, TransformerException {
 
 		Transformer transformer = TransformerFactory.newInstance()
 				.newTransformer();
 		InputSource inputSource = new InputSource();
-		SAXSource source = new SAXSource(new TestRunSessionSerializer(
-				testRunSession), inputSource);
+		SAXSource source = new SAXSource(
+				new TestRunSessionSerializer(testRunSession), inputSource);
 		StreamResult result = new StreamResult(out);
 		transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
 		transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
@@ -479,7 +450,7 @@ public final class DLTKTestingModel implements ITestingModel {
 		 * Bug in Xalan: Only indents if proprietary property
 		 * org.apache.xalan.templates.OutputProperties.S_KEY_INDENT_AMOUNT is
 		 * set.
-		 * 
+		 *
 		 * Bug in Xalan as shipped with J2SE 5.0: Does not read the
 		 * indent-amount property at all >:-(.
 		 */
@@ -497,7 +468,8 @@ public final class DLTKTestingModel implements ITestingModel {
 		throw new CoreException(new org.eclipse.core.runtime.Status(
 				IStatus.ERROR, DLTKTestingPlugin.getPluginId(),
 				Messages.format(ModelMessages.JUnitModel_could_not_write,
-						file.getAbsolutePath()), e));
+						file.getAbsolutePath()),
+				e));
 	}
 
 	private static void throwImportError(File file, Exception e)
@@ -505,7 +477,8 @@ public final class DLTKTestingModel implements ITestingModel {
 		throw new CoreException(new org.eclipse.core.runtime.Status(
 				IStatus.ERROR, DLTKTestingPlugin.getPluginId(),
 				Messages.format(ModelMessages.JUnitModel_could_not_read,
-						file.getAbsolutePath()), e));
+						file.getAbsolutePath()),
+				e));
 	}
 
 	/**
@@ -514,7 +487,7 @@ public final class DLTKTestingModel implements ITestingModel {
 	 * <p>
 	 * <b>To be called in the UI thread only!</b>
 	 * </p>
-	 * 
+	 *
 	 * @param testRunSession
 	 *            the session to remove
 	 */

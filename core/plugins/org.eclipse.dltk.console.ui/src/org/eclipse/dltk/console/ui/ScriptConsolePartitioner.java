@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@ package org.eclipse.dltk.console.ui;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
@@ -27,20 +26,15 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.ui.console.IConsoleDocumentPartitioner;
 
-public class ScriptConsolePartitioner extends FastPartitioner
-		implements IConsoleDocumentPartitioner {
+public class ScriptConsolePartitioner extends FastPartitioner implements IConsoleDocumentPartitioner {
 
-	private SortedSet<StyleRange> ranges = new TreeSet<StyleRange>(
-			new Comparator<StyleRange>() {
-				@Override
-				public int compare(StyleRange sr1, StyleRange sr2) {
-					int start = sr1.start - sr2.start;
-					if (start == 0) {
-						return sr1.length - sr2.length;
-					}
-					return start;
-				}
-			});
+	private SortedSet<StyleRange> ranges = new TreeSet<>((sr1, sr2) -> {
+		int start = sr1.start - sr2.start;
+		if (start == 0) {
+			return sr1.length - sr2.length;
+		}
+		return start;
+	});
 
 	private static class Constants {
 		public static final String MY_DOUBLE_QUOTED = "__my_double"; //$NON-NLS-1$
@@ -53,7 +47,7 @@ public class ScriptConsolePartitioner extends FastPartitioner
 			IToken myDouble = new Token(Constants.MY_DOUBLE_QUOTED);
 			IToken mySingle = new Token(Constants.MY_SINGLE_QUOTED);
 
-			List<IRule> rules = new ArrayList<IRule>();
+			List<IRule> rules = new ArrayList<>();
 
 			rules.add(new MultiLineRule("\'", "\'", mySingle, '\\')); //$NON-NLS-1$ //$NON-NLS-2$
 			rules.add(new MultiLineRule("\"", "\"", myDouble, '\\')); //$NON-NLS-1$ //$NON-NLS-2$
@@ -67,8 +61,7 @@ public class ScriptConsolePartitioner extends FastPartitioner
 
 	public ScriptConsolePartitioner() {
 
-		super(new MyPartitionScanner(), new String[] {
-				Constants.MY_DOUBLE_QUOTED, Constants.MY_SINGLE_QUOTED });
+		super(new MyPartitionScanner(), new String[] { Constants.MY_DOUBLE_QUOTED, Constants.MY_SINGLE_QUOTED });
 	}
 
 	public void addRange(StyleRange r) {
@@ -85,12 +78,11 @@ public class ScriptConsolePartitioner extends FastPartitioner
 
 	@Override
 	public StyleRange[] getStyleRanges(int offset, int length) {
-		List<StyleRange> result = new ArrayList<StyleRange>();
+		List<StyleRange> result = new ArrayList<>();
 		// get the sublist with length = 0 so that it will return all with that
 		// offset.
 		StyleRange sr = new StyleRange(offset, 0, null, null, SWT.NO);
-		for (Iterator<StyleRange> iterator = ranges.tailSet(sr)
-				.iterator(); iterator.hasNext();) {
+		for (Iterator<StyleRange> iterator = ranges.tailSet(sr).iterator(); iterator.hasNext();) {
 			StyleRange r = iterator.next();
 			if (r.start >= offset && r.start + r.length <= offset + length)
 				result.add((StyleRange) r.clone());

@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.corext.refactoring.rename;
 
@@ -50,7 +49,7 @@ public class RenameScriptProjectProcessor extends ScriptRenameProcessor implemen
 
 	private static final String ID_RENAME_SCRIPT_PROJECT= "org.eclipse.dltk.ui.rename.script.project"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_REFERENCES= "references"; //$NON-NLS-1$
-	
+
 	private IScriptProject fProject;
 	private boolean fUpdateReferences;
 
@@ -67,37 +66,45 @@ public class RenameScriptProjectProcessor extends ScriptRenameProcessor implemen
 		fUpdateReferences= true;
 	}
 
+	@Override
 	public String getIdentifier() {
 		return IDENTIFIER;
 	}
-	
+
+	@Override
 	public boolean isApplicable() throws CoreException {
 		return RefactoringAvailabilityTester.isRenameAvailable(fProject);
 	}
-	
+
+	@Override
 	public String getProcessorName() {
 		return RefactoringCoreMessages.RenameScriptProjectRefactoring_rename;
 	}
-	
+
+	@Override
 	protected String[] getAffectedProjectNatures() throws CoreException {
 		return ScriptProcessors.computeAffectedNatures(fProject);
 	}
-	
+
+	@Override
 	public Object[] getElements() {
 		return new Object[] {fProject};
 	}
 
+	@Override
 	public Object getNewElement() throws CoreException {
 		IPath newPath= fProject.getPath().removeLastSegments(1).append(getNewElementName());
 		return DLTKCore.create(ResourcesPlugin.getWorkspace().getRoot().findMember(newPath));
 	}
-	
+
+	@Override
 	protected RenameModifications computeRenameModifications() throws CoreException {
 		RenameModifications result= new RenameModifications();
 		result.rename(fProject, new RenameArguments(getNewElementName(), getUpdateReferences()));
 		return result;
 	}
-	
+
+	@Override
 	protected IFile[] getChangedFiles() throws CoreException {
 		IFile projectFile = fProject.getProject().getFile(
 				IScriptProjectFilenames.PROJECT_FILENAME);
@@ -106,63 +113,70 @@ public class RenameScriptProjectProcessor extends ScriptRenameProcessor implemen
 		}
 		return new IFile[0];
 	}
-	
+
 	//---- IReferenceUpdating --------------------------------------
-		
+
+	@Override
 	public boolean canEnableUpdateReferences() {
 		return true;
 	}
 
+	@Override
 	public void setUpdateReferences(boolean update) {
 		fUpdateReferences= update;
 	}
 
+	@Override
 	public boolean getUpdateReferences() {
 		return fUpdateReferences;
 	}
-		
+
 	//---- IRenameProcessor ----------------------------------------------
-	
+
+	@Override
 	public String getCurrentElementName() {
 		return fProject.getElementName();
 	}
-	
+
+	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException {
 		return new RefactoringStatus();
 	}
-	
+
+	@Override
 	public RefactoringStatus checkNewElementName(String newName) throws CoreException {
 		Assert.isNotNull(newName, "new name"); //$NON-NLS-1$
 		RefactoringStatus result= RefactoringStatus.create(ResourcesPlugin.getWorkspace().validateName(newName, IResource.PROJECT));
 		if (result.hasFatalError())
 			return result;
-		
+
 		if (projectNameAlreadyExists(newName))
-			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.RenameScriptProjectRefactoring_already_exists); 
+			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.RenameScriptProjectRefactoring_already_exists);
 		if (projectFolderAlreadyExists(newName))
-			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.RenameScriptProjectProcessor_folder_already_exists); 
-		
+			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.RenameScriptProjectProcessor_folder_already_exists);
+
 		return new RefactoringStatus();
 	}
-	
+
+	@Override
 	protected RefactoringStatus doCheckFinalConditions(IProgressMonitor pm, CheckConditionsContext context) throws CoreException {
 		pm.beginTask("", 1); //$NON-NLS-1$
 		try{
 			if (isReadOnly()){
-				String message= Messages.format(RefactoringCoreMessages.RenameScriptProjectRefactoring_read_only, 
+				String message= Messages.format(RefactoringCoreMessages.RenameScriptProjectRefactoring_read_only,
 									fProject.getElementName());
 				return RefactoringStatus.createErrorStatus(message);
 			}
 			return new RefactoringStatus();
 		} finally{
 			pm.done();
-		}	
+		}
 	}
-	
+
 	private boolean isReadOnly() {
 		return Resources.isReadOnly(fProject.getResource());
 	}
-	
+
 	private boolean projectNameAlreadyExists(String newName){
 		return ResourcesPlugin.getWorkspace().getRoot().getProject(newName).exists();
 	}
@@ -176,9 +190,10 @@ public class RenameScriptProjectProcessor extends ScriptRenameProcessor implemen
 		IFileStore newProjectStore= projectStore.getParent().getChild(newName);
 		return newProjectStore.fetchInfo().exists();
 	}
-	
-	//--- changes 
-	
+
+	//--- changes
+
+	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException {
 		pm.beginTask("", 1); //$NON-NLS-1$
 		try {
@@ -196,6 +211,7 @@ public class RenameScriptProjectProcessor extends ScriptRenameProcessor implemen
 		}
 	}
 
+	@Override
 	public RefactoringStatus initialize(RefactoringArguments arguments) {
 		if (arguments instanceof ScriptRefactoringArguments) {
 			final ScriptRefactoringArguments extended= (ScriptRefactoringArguments) arguments;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,13 +72,9 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.OpenEvent;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.search.internal.ui.Messages;
@@ -116,8 +112,8 @@ import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-public abstract class ScriptBrowsingPart extends ViewPart implements
-		IMenuListener, ISelectionListener, IViewPartInputProvider,
+public abstract class ScriptBrowsingPart extends ViewPart
+		implements IMenuListener, ISelectionListener, IViewPartInputProvider,
 		IExecutableExtension {
 
 	private static final String TAG_SELECTED_ELEMENTS = "selectedElements"; //$NON-NLS-1$
@@ -210,7 +206,8 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 	 * Implements method from IViewPart.
 	 */
 	@Override
-	public void init(IViewSite site, IMemento memento) throws PartInitException {
+	public void init(IViewSite site, IMemento memento)
+			throws PartInitException {
 		super.init(site, memento);
 		fMemento = memento;
 	}
@@ -248,10 +245,9 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 						.createChild(TAG_SELECTED_ELEMENT);
 				Object o = elements[i];
 				if (o instanceof IModelElement)
-					elementMem
-							.putString(TAG_SELECTED_ELEMENT_PATH,
-									((IModelElement) elements[i])
-											.getHandleIdentifier());
+					elementMem.putString(TAG_SELECTED_ELEMENT_PATH,
+							((IModelElement) elements[i])
+									.getHandleIdentifier());
 				else if (o instanceof LogicalPackage) {
 					IScriptFolder[] packages = ((LogicalPackage) o)
 							.getScriptFolders();
@@ -330,10 +326,9 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets
-	 * .Composite)
+	 *
+	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.
+	 * widgets .Composite)
 	 */
 	@Override
 	public void createPartControl(Composite parent) {
@@ -392,8 +387,8 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 		getViewSite().getPage().addPartListener(fPartListener);
 
 		fillActionBars(getViewSite().getActionBars());
-		IContextService ctxService = getSite().getService(
-				IContextService.class);
+		IContextService ctxService = getSite()
+				.getService(IContextService.class);
 		if (ctxService != null) {
 			fContextActivation = ctxService
 					.activateContext(DLTKUIPlugin.CONTEXT_VIEWS);
@@ -415,17 +410,12 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 
 	/**
 	 * Returns the <code>IShowInSource</code> for this view.
-	 * 
+	 *
 	 * @return returns the <code>IShowInSource</code>
 	 */
 	protected IShowInSource getShowInSource() {
-		return new IShowInSource() {
-			@Override
-			public ShowInContext getShowInContext() {
-				return new ShowInContext(null, getSite().getSelectionProvider()
-						.getSelection());
-			}
-		};
+		return () -> new ShowInContext(null,
+				getSite().getSelectionProvider().getSelection());
 	}
 
 	/**
@@ -433,7 +423,8 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 	 */
 	protected ILabelProvider createDelegatingLabelProvider(
 			ScriptUILabelProvider provider) {
-		DecoratingModelLabelProvider labelprovider = createDecoratingLabelProvider(provider);
+		DecoratingModelLabelProvider labelprovider = createDecoratingLabelProvider(
+				provider);
 		if (labelprovider != null)
 			return labelprovider;
 		return new StyledDecoratingModelLabelProvider(provider);
@@ -441,7 +432,8 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 
 	/**
 	 * @deprecated override
-	 *              org.eclipse.dltk.ui.browsing.ScriptBrowsingPart.createDelegatingLabelProvider (ScriptUILabelProvider) instead
+	 *             org.eclipse.dltk.ui.browsing.ScriptBrowsingPart.createDelegatingLabelProvider
+	 *             (ScriptUILabelProvider) instead
 	 */
 	@Deprecated
 	protected DecoratingModelLabelProvider createDecoratingLabelProvider(
@@ -499,8 +491,8 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 		fillToolBar(toolBar);
 
 		if (fHasWorkingSetFilter)
-			fWorkingSetFilterActionGroup.fillActionBars(getViewSite()
-					.getActionBars());
+			fWorkingSetFilterActionGroup
+					.fillActionBars(getViewSite().getActionBars());
 
 		actionBars.updateActionBars();
 
@@ -576,7 +568,7 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jface.action.IMenuListener#menuAboutToShow(org.eclipse.jface
 	 * .action.IMenuManager)
@@ -626,16 +618,12 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 		if (fHasWorkingSetFilter) {
 			String viewId = getConfigurationElement().getAttribute("id"); //$NON-NLS-1$
 			Assert.isNotNull(viewId);
-			IPropertyChangeListener workingSetListener = new IPropertyChangeListener() {
-				@Override
-				public void propertyChange(PropertyChangeEvent event) {
-					doWorkingSetChanged(event);
-				}
-			};
+			IPropertyChangeListener workingSetListener = event -> doWorkingSetChanged(
+					event);
 			fWorkingSetFilterActionGroup = new WorkingSetFilterActionGroup(
 					getSite(), workingSetListener);
-			fViewer.addFilter(fWorkingSetFilterActionGroup
-					.getWorkingSetFilter());
+			fViewer.addFilter(
+					fWorkingSetFilterActionGroup.getWorkingSetFilter());
 		}
 
 		// Custom filter group
@@ -663,7 +651,7 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 	/**
 	 * Returns the shell to use for opening dialogs. Used in this class, and in
 	 * the actions.
-	 * 
+	 *
 	 * @return returns the shell
 	 */
 	Shell getShell() {
@@ -676,7 +664,7 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 
 	/**
 	 * Returns the selection provider.
-	 * 
+	 *
 	 * @return the selection provider
 	 */
 	ISelectionProvider getSelectionProvider() {
@@ -685,7 +673,7 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 
 	/**
 	 * Answers if the given <code>element</code> is a valid input for this part.
-	 * 
+	 *
 	 * @param element
 	 *            the object to test
 	 * @return <code>true</code> if the given element is a valid input
@@ -695,7 +683,7 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 	/**
 	 * Answers if the given <code>element</code> is a valid element for this
 	 * part.
-	 * 
+	 *
 	 * @param element
 	 *            the object to test
 	 * @return <code>true</code> if the given element is a valid element
@@ -751,9 +739,8 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 	protected boolean isAncestorOf(Object ancestor, Object element) {
 		if (element instanceof IModelElement
 				&& ancestor instanceof IModelElement)
-			return !element.equals(ancestor)
-					&& internalIsAncestorOf((IModelElement) ancestor,
-							(IModelElement) element);
+			return !element.equals(ancestor) && internalIsAncestorOf(
+					(IModelElement) ancestor, (IModelElement) element);
 		if (element instanceof IModelElement && ancestor instanceof List) {
 			List l = (List) ancestor;
 			for (Iterator iterator = l.iterator(); iterator.hasNext();) {
@@ -783,8 +770,8 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 
 	protected boolean needsToProcessSelectionChanged(IWorkbenchPart part,
 			ISelection selection) {
-		if (!fProcessSelectionEvents || part == this
-				|| isSearchResultView(part) || part instanceof AbstractInfoView) {
+		if (!fProcessSelectionEvents || part == this || isSearchResultView(part)
+				|| part instanceof AbstractInfoView) {
 			if (part == this)
 				fPreviousSelectionProvider = part;
 			return false;
@@ -818,9 +805,8 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 		Object currentInput = getViewer().getInput();
 		if (selectedElement != null && selectedElement.equals(currentInput)) {
 			Object elementToSelect = findElementToSelect(selectedElement);
-			if (elementToSelect != null
-					&& getTypeComparator().compare(selectedElement,
-							elementToSelect) < 0)
+			if (elementToSelect != null && getTypeComparator()
+					.compare(selectedElement, elementToSelect) < 0)
 				setSelection(new StructuredSelection(elementToSelect), true);
 			else if (elementToSelect == null && (this instanceof MembersView)) {
 				setSelection(StructuredSelection.EMPTY, true);
@@ -891,7 +877,7 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 
 	/**
 	 * Returns the tool tip text for the given element.
-	 * 
+	 *
 	 * @param element
 	 *            the element
 	 * @return the tooltip for the element
@@ -920,14 +906,13 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 				new String[] { ws.getLabel() });
 		if (result.length() == 0)
 			return wsstr;
-		return Messages.format(
-				ScriptBrowsingMessages.JavaBrowsingPart_toolTip2, new String[] {
-						result, ws.getLabel() });
+		return Messages.format(ScriptBrowsingMessages.JavaBrowsingPart_toolTip2,
+				new String[] { result, ws.getLabel() });
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.part.WorkbenchPart#getTitleToolTip()
 	 */
 	@Override
@@ -949,8 +934,8 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 		return new AppearanceAwareLabelProvider(
 				AppearanceAwareLabelProvider.DEFAULT_TEXTFLAGS,
 				AppearanceAwareLabelProvider.DEFAULT_IMAGEFLAGS
-						| ScriptElementImageProvider.SMALL_ICONS, DLTKUIPlugin
-						.getDefault().getPreferenceStore());
+						| ScriptElementImageProvider.SMALL_ICONS,
+				DLTKUIPlugin.getDefault().getPreferenceStore());
 	}
 
 	protected ILabelProvider createTitleProvider() {
@@ -969,7 +954,7 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 
 	/**
 	 * Creates the viewer of this part.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent for the viewer
 	 * @return the created viewer
@@ -995,7 +980,7 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 
 	/**
 	 * Creates the content provider of this part.
-	 * 
+	 *
 	 * @return the content provider
 	 */
 	protected IContentProvider createContentProvider() {
@@ -1062,14 +1047,14 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 
 	/**
 	 * Returns the context ID for the Help system
-	 * 
+	 *
 	 * @return the string used as ID for the Help context
 	 */
 	abstract protected String getHelpContextId();
 
 	/**
 	 * Returns the preference key for the link to editor setting.
-	 * 
+	 *
 	 * @return the string used as key into the preference store
 	 */
 	abstract protected String getLinkToEditorKey();
@@ -1079,37 +1064,28 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 	 * should call super.
 	 */
 	protected void hookViewerListeners() {
-		fViewer
-				.addPostSelectionChangedListener(new ISelectionChangedListener() {
-							@Override
-					public void selectionChanged(SelectionChangedEvent event) {
-						if (!fProcessSelectionEvents)
-							return;
+		fViewer.addPostSelectionChangedListener(event -> {
+			if (!fProcessSelectionEvents)
+				return;
 
-						fPreviousSelectedElement = getSingleElementFromSelection(event
-								.getSelection());
+			fPreviousSelectedElement = getSingleElementFromSelection(
+					event.getSelection());
 
-						IWorkbenchPage page = getSite().getPage();
-						if (page == null)
-							return;
+			IWorkbenchPage page = getSite().getPage();
+			if (page == null)
+				return;
 
-						if (page.equals(DLTKUIPlugin.getActivePage())
-								&& ScriptBrowsingPart.this.equals(page
-										.getActivePart())) {
-							linkToEditor((IStructuredSelection) event
-									.getSelection());
-						}
-					}
-				});
+			if (page.equals(DLTKUIPlugin.getActivePage())
+					&& ScriptBrowsingPart.this.equals(page.getActivePart())) {
+				linkToEditor((IStructuredSelection) event.getSelection());
+			}
+		});
 
-		fViewer.addOpenListener(new IOpenListener() {
-			@Override
-			public void open(OpenEvent event) {
-				IAction open = fOpenEditorGroup.getOpenAction();
-				if (open.isEnabled()) {
-					open.run();
-					restoreSelection();
-				}
+		fViewer.addOpenListener(event -> {
+			IAction open = fOpenEditorGroup.getOpenAction();
+			if (open.isEnabled()) {
+				open.run();
+				restoreSelection();
 			}
 		});
 	}
@@ -1154,7 +1130,7 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 
 	/**
 	 * Compute if a new input must be set.
-	 * 
+	 *
 	 * @param elementToSelect
 	 *            the element to select
 	 * @param oldInput
@@ -1167,16 +1143,18 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 	private boolean mustSetNewInput(IModelElement elementToSelect,
 			IModelElement oldInput, IModelElement newInput) {
 		return (newInput == null || !newInput.equals(oldInput))
-				&& (elementToSelect == null || oldInput == null || (!((elementToSelect instanceof IPackageDeclaration)
-						&& (elementToSelect.getParent().equals(oldInput
-								.getParent())) && (!isAncestorOf(
-						getViewPartInput(), elementToSelect)))));
+				&& (elementToSelect == null || oldInput == null
+						|| (!((elementToSelect instanceof IPackageDeclaration)
+								&& (elementToSelect.getParent()
+										.equals(oldInput.getParent()))
+								&& (!isAncestorOf(getViewPartInput(),
+										elementToSelect)))));
 	}
 
 	/**
 	 * Finds the closest Java element which can be used as input for this part
 	 * and has the given Java element as child
-	 * 
+	 *
 	 * @param je
 	 *            the Java element for which to search the closest input
 	 * @return the closest Java element used as input for this part
@@ -1200,7 +1178,7 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 
 	/**
 	 * Finds the element which has to be selected in this part.
-	 * 
+	 *
 	 * @param je
 	 *            the Java element which has the focus
 	 * @return returns the element to select
@@ -1233,9 +1211,8 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 		}
 		Object currentInput = getViewer().getInput();
 		List elements = new ArrayList();
-		if (currentInput == null
-				|| !currentInput
-						.equals(findInputForJavaElement((IModelElement) firstElement)))
+		if (currentInput == null || !currentInput
+				.equals(findInputForJavaElement((IModelElement) firstElement)))
 			if (iter.hasNext() && selection instanceof StructuredSelection) {
 				// multi-selection and view is empty
 				return ((StructuredSelection) selection).toList();
@@ -1257,7 +1234,7 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 
 	/**
 	 * Gets the typeComparator.
-	 * 
+	 *
 	 * @return Returns a JavaElementTypeComparator
 	 */
 	protected Comparator getTypeComparator() {
@@ -1266,7 +1243,7 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 
 	/**
 	 * Links to editor (if option enabled)
-	 * 
+	 *
 	 * @param selection
 	 *            the selection
 	 */
@@ -1317,14 +1294,12 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 			}
 			if (ei instanceof IFileEditorInput) {
 				IFile file = ((IFileEditorInput) ei).getFile();
-				IModelElement je = file
-						.getAdapter(IModelElement.class);
+				IModelElement je = file.getAdapter(IModelElement.class);
 				if (je == null) {
 					IContainer container = ((IFileEditorInput) ei).getFile()
 							.getParent();
 					if (container != null)
-						je = container
-								.getAdapter(IModelElement.class);
+						je = container.getAdapter(IModelElement.class);
 				}
 				if (je == null) {
 					setSelection(null, false);
@@ -1332,16 +1307,16 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 				}
 				adjustInputAndSetSelection(je);
 			} /*
-			 * else if (ei instanceof IClassFileEditorInput) { IClassFile cf =
-			 * ((IClassFileEditorInput) ei).getClassFile();
-			 * adjustInputAndSetSelection(cf); }
-			 */
+				 * else if (ei instanceof IClassFileEditorInput) { IClassFile cf
+				 * = ((IClassFileEditorInput) ei).getClassFile();
+				 * adjustInputAndSetSelection(cf); }
+				 */
 		}
 	}
 
 	/**
 	 * Returns the element contained in the EditorInput
-	 * 
+	 *
 	 * @param input
 	 *            the editor input
 	 * @return the input element
@@ -1415,7 +1390,7 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seeorg.eclipse.jdt.internal.ui.viewsupport.IViewPartInputProvider#
 	 * getViewPartInput()
 	 */
@@ -1474,8 +1449,8 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 
 	public void setLinkingEnabled(boolean enabled) {
 		fLinkingEnabled = enabled;
-		DLTKUIPlugin.getDefault().getPreferenceStore().setValue(
-				getLinkToEditorKey(), enabled);
+		DLTKUIPlugin.getDefault().getPreferenceStore()
+				.setValue(getLinkToEditorKey(), enabled);
 		if (enabled) {
 			IEditorPart editor = getSite().getPage().getActiveEditor();
 			if (editor != null) {

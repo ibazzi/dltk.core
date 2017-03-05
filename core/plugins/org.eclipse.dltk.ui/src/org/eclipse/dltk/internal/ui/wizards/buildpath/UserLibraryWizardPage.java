@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,9 +59,6 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 
 import com.ibm.icu.text.Collator;
 
-/**
- * 
- */
 public class UserLibraryWizardPage extends NewElementWizardPage implements
 		IBuildpathContainerPage, IBuildpathContainerPageExtension,
 		IBuildpathContainerPageExtension2 {
@@ -256,11 +253,7 @@ public class UserLibraryWizardPage extends NewElementWizardPage implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setFont(parent.getFont());
@@ -273,20 +266,12 @@ public class UserLibraryWizardPage extends NewElementWizardPage implements
 		setControl(composite);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jdt.ui.wizards.IBuildpathContainerPage#finish()
-	 */
+	@Override
 	public boolean finish() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jdt.ui.wizards.IBuildpathContainerPage#getSelection()
-	 */
+	@Override
 	public IBuildpathEntry getSelection() {
 		if (fEditResult != null) {
 			return DLTKCore.newContainerEntry(fEditResult.getPath(),
@@ -295,11 +280,7 @@ public class UserLibraryWizardPage extends NewElementWizardPage implements
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jdt.ui.wizards.IBuildpathContainerPageExtension2#getNewContainers()
-	 */
+	@Override
 	public IBuildpathEntry[] getNewContainers() {
 		List selected = fLibrarySelector.getCheckedElements();
 		IBuildpathEntry[] res = new IBuildpathEntry[selected.size()];
@@ -310,11 +291,7 @@ public class UserLibraryWizardPage extends NewElementWizardPage implements
 		return res;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jdt.ui.wizards.IBuildpathContainerPage#setSelection(org.eclipse.jdt.core.IBuildpathEntry)
-	 */
+	@Override
 	public void setSelection(IBuildpathEntry containerEntry) {
 		fIsExported = containerEntry != null && containerEntry.isExported();
 
@@ -351,28 +328,27 @@ public class UserLibraryWizardPage extends NewElementWizardPage implements
 		public LibraryListAdapter() {
 		}
 
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 			doDialogFieldChanged(field);
 		}
 
+		@Override
 		public void customButtonPressed(ListDialogField field, int index) {
 			doButtonPressed(index);
 		}
 
+		@Override
 		public void selectionChanged(ListDialogField field) {
 		}
 
+		@Override
 		public void doubleClicked(ListDialogField field) {
 			doDoubleClicked(field);
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jdt.ui.wizards.IBuildpathContainerPageExtension#initialize(org.eclipse.jdt.core.IJavaProject,
-	 *      org.eclipse.jdt.core.IBuildpathEntry[])
-	 */
+	@Override
 	public void initialize(IScriptProject project,
 			IBuildpathEntry[] currentEntries) {
 		this.languageToolkit = DLTKLanguageManager

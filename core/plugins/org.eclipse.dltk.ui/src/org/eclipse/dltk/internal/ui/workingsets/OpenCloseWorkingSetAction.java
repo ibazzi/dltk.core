@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.workingsets;
 
@@ -18,7 +17,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -50,25 +48,37 @@ public abstract class OpenCloseWorkingSetAction extends SelectionDispatchAction 
 				fProjectAction= actionBars.getGlobalActionHandler(IDEActionFactory.CLOSE_PROJECT.getId());
 			}
 		}
+
+		@Override
 		protected boolean validate(IProject project) {
 			return project.isOpen();
 		}
+
+		@Override
 		protected void performOperation(IProject project, IProgressMonitor monitor) throws CoreException {
 			project.close(monitor);
 		}
+
+		@Override
 		protected void connectToActionBar(IActionBars actionBars) {
 			actionBars.setGlobalActionHandler(IDEActionFactory.CLOSE_PROJECT.getId(), this);
 			actionBars.updateActionBars();
 		}
+
+		@Override
 		protected void disconnectFromActionBar(IActionBars actionBars) {
 			actionBars.setGlobalActionHandler(IDEActionFactory.CLOSE_PROJECT.getId(), fProjectAction);
 			actionBars.updateActionBars();
 		}
+
+		@Override
 		protected String getErrorTitle() {
-			return WorkingSetMessages.OpenCloseWorkingSetAction_close_error_title; 
+			return WorkingSetMessages.OpenCloseWorkingSetAction_close_error_title;
 		}
+
+		@Override
 		protected String getErrorMessage() {
-			return WorkingSetMessages.OpenCloseWorkingSetAction_close_error_message; 
+			return WorkingSetMessages.OpenCloseWorkingSetAction_close_error_message;
 		}
 	}
 
@@ -81,34 +91,46 @@ public abstract class OpenCloseWorkingSetAction extends SelectionDispatchAction 
 				fProjectAction= actionBars.getGlobalActionHandler(IDEActionFactory.OPEN_PROJECT.getId());
 			}
 		}
+
+		@Override
 		protected boolean validate(IProject project) {
 			return !project.isOpen();
 		}
+
+		@Override
 		protected void performOperation(IProject project, IProgressMonitor monitor) throws CoreException {
 			project.open(monitor);
 		}
+
+		@Override
 		protected void connectToActionBar(IActionBars actionBars) {
 			actionBars.setGlobalActionHandler(IDEActionFactory.OPEN_PROJECT.getId(), this);
 			actionBars.updateActionBars();
 		}
+
+		@Override
 		protected void disconnectFromActionBar(IActionBars actionBars) {
 			actionBars.setGlobalActionHandler(IDEActionFactory.OPEN_PROJECT.getId(), fProjectAction);
 			actionBars.updateActionBars();
 		}
+
+		@Override
 		protected String getErrorTitle() {
-			return WorkingSetMessages.OpenCloseWorkingSetAction_open_error_title; 
+			return WorkingSetMessages.OpenCloseWorkingSetAction_open_error_title;
 		}
+
+		@Override
 		protected String getErrorMessage() {
-			return WorkingSetMessages.OpenCloseWorkingSetAction_open_error_message; 
+			return WorkingSetMessages.OpenCloseWorkingSetAction_open_error_message;
 		}
 	}
-	
+
 	private OpenCloseWorkingSetAction(IWorkbenchSite site, String label) {
 		super(site);
 		setText(label);
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 	}
-	
+
 	public static OpenCloseWorkingSetAction createCloseAction(IWorkbenchSite site) {
 		return new CloseWorkingSetAction(site, WorkingSetMessages.OpenCloseWorkingSetAction_close_label);
 	}
@@ -116,11 +138,12 @@ public abstract class OpenCloseWorkingSetAction extends SelectionDispatchAction 
 	public static OpenCloseWorkingSetAction createOpenAction(IWorkbenchSite site) {
 		return new OpenWorkingSetAction(site, WorkingSetMessages.OpenCloseWorkingSetAction_open_label);
 	}
-	
+
 	public void dispose() {
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 	}
 
+	@Override
 	public void selectionChanged(IStructuredSelection selection) {
 		List projects= getProjects(selection);
 		IActionBars actionBars= getActionBars();
@@ -136,21 +159,22 @@ public abstract class OpenCloseWorkingSetAction extends SelectionDispatchAction 
 			}
 		}
 	}
-	
+
+	@Override
 	public void run(IStructuredSelection selection) {
 		final List projects= getProjects(selection);
 		if (projects != null && projects.size() > 0) {
 			try {
 				PlatformUI.getWorkbench().getProgressService().busyCursorWhile(
-					new WorkbenchRunnableAdapter(new IWorkspaceRunnable() {
-						public void run(IProgressMonitor monitor) throws CoreException {
+						new WorkbenchRunnableAdapter(monitor -> {
 							monitor.beginTask("", projects.size()); //$NON-NLS-1$
-							for (Iterator iter= projects.iterator(); iter.hasNext();) {
-								IProject project= (IProject)iter.next();
-								performOperation(project, new SubProgressMonitor(monitor, 1));
-							}
-							monitor.done();
+							for (Iterator iter = projects.iterator(); iter
+									.hasNext();) {
+								IProject project = (IProject) iter.next();
+								performOperation(project,
+										new SubProgressMonitor(monitor, 1));
 						}
+							monitor.done();
 					}));
 			} catch (InvocationTargetException e) {
 				ExceptionHandler.handle(e, getShell(), getErrorTitle(), getErrorMessage());
@@ -159,19 +183,19 @@ public abstract class OpenCloseWorkingSetAction extends SelectionDispatchAction 
 			}
 		}
 	}
-	
+
 	protected abstract boolean validate(IProject project);
-	
+
 	protected abstract void performOperation(IProject project, IProgressMonitor monitor) throws CoreException;
-	
+
 	protected abstract void connectToActionBar(IActionBars actionBars);
-	
+
 	protected abstract void disconnectFromActionBar(IActionBars actionBars);
-	
+
 	protected abstract String getErrorTitle();
 
 	protected abstract String getErrorMessage();
-	
+
 	private List getProjects(IStructuredSelection selection) {
 		List result= new ArrayList();
 		List elements= selection.toList();
@@ -203,7 +227,7 @@ public abstract class OpenCloseWorkingSetAction extends SelectionDispatchAction 
 		}
 		return result;
 	}
-	
+
 	protected IActionBars getActionBars() {
 		if (getSite() instanceof IViewSite) {
 			return ((IViewSite)getSite()).getActionBars();
@@ -211,10 +235,11 @@ public abstract class OpenCloseWorkingSetAction extends SelectionDispatchAction 
 			return null;
 		}
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		IResourceDelta delta = event.getDelta();
 		if (delta != null) {
@@ -224,11 +249,8 @@ public abstract class OpenCloseWorkingSetAction extends SelectionDispatchAction 
 				if ((projDelta.getFlags() & IResourceDelta.OPEN) != 0) {
 					Shell shell= getShell();
 					if (!shell.isDisposed()) {
-						shell.getDisplay().asyncExec(new Runnable() {
-							public void run() {
-								update(getSelection());
-							}
-						});
+						shell.getDisplay()
+								.asyncExec(() -> update(getSelection()));
 					}
 					return;
 				}

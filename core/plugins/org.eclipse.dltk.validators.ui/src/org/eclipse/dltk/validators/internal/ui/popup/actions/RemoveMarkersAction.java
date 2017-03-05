@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -38,10 +38,11 @@ public class RemoveMarkersAction extends Action {
 		setText(NLS.bind(
 				Messages.DLTKValidatorsEditorContextMenu_validatorCleanup,
 				validator.getName()));
-		setImageDescriptor(ValidatorsUI.getDefault().getImageDescriptor(
-				CLEANUP_IMAGE));
+		setImageDescriptor(
+				ValidatorsUI.getDefault().getImageDescriptor(CLEANUP_IMAGE));
 	}
 
+	@Override
 	public void run() {
 		final String message = NLS.bind(
 				Messages.DLTKValidatorsEditorContextMenu_validatorCleanup,
@@ -49,10 +50,12 @@ public class RemoveMarkersAction extends Action {
 		final AbstractConsoleValidateJob delegate = new AbstractConsoleValidateJob(
 				message) {
 
+			@Override
 			protected boolean isConsoleRequired() {
 				return false;
 			}
 
+			@Override
 			protected void invokeValidationFor(IValidatorOutput out,
 					IScriptProject project, ISourceModule[] modules,
 					IResource[] resources, IProgressMonitor monitor) {

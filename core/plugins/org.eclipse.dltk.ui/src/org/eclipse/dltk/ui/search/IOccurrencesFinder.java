@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,6 +52,7 @@ public interface IOccurrencesFinder {
 			return fDescription;
 		}
 
+		@Override
 		public String toString() {
 			return "[" + fOffset + " / " + fLength + "] " + fDescription; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 		}
@@ -60,7 +61,7 @@ public interface IOccurrencesFinder {
 
 	/**
 	 * Initialize this finder with the specified selection.
-	 * 
+	 *
 	 * @param module
 	 * @param root
 	 * @param offset
@@ -82,7 +83,7 @@ public interface IOccurrencesFinder {
 	 * <li>{1} for the number of results found</li>
 	 * <li>{2} for the scope (name of the compilation unit)</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return the unformatted label
 	 */
 	// public String getUnformattedPluralLabel();
@@ -93,7 +94,7 @@ public interface IOccurrencesFinder {
 	 * <li>{0} for the {@link #getElementName() element name}</li>
 	 * <li>{1} for the scope (name of the compilation unit)</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return the unformatted label
 	 */
 	// public String getUnformattedSingularLabel();
@@ -101,21 +102,21 @@ public interface IOccurrencesFinder {
 	/**
 	 * Returns the name of the element to look for or <code>null</code> if the
 	 * finder hasn't been initialized yet.
-	 * 
+	 *
 	 * @return the name of the element
 	 */
 	// public String getElementName();
 
 	/**
 	 * Returns the AST root.
-	 * 
+	 *
 	 * @return the AST root
 	 */
 	// public CompilationUnit getASTRoot();
 
 	/**
 	 * Returns the occurrences found or <code>null</code>
-	 * 
+	 *
 	 * @return the occurrences
 	 */
 	public OccurrenceLocation[] getOccurrences();
@@ -124,7 +125,7 @@ public interface IOccurrencesFinder {
 
 	/**
 	 * Returns the id of this finder.
-	 * 
+	 *
 	 * @return returns the id of this finder.
 	 */
 	// public String getID();

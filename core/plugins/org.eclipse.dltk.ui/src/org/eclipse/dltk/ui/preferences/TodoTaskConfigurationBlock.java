@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.Control;
 
 /**
  * @deprecated use an implementation of {@link AbstractTodoTaskOptionsBlock}
- * 
+ *
  * @see AbstractConfigurationBlockPropertyAndPreferencePage
  */
 @Deprecated
@@ -48,44 +48,22 @@ public class TodoTaskConfigurationBlock extends AbstractConfigurationBlock {
 	private class TodoTaskLabelProvider extends LabelProvider implements
 			ITableLabelProvider {
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
-		 */
+		@Override
 		public Image getImage(Object element) {
 			return null;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-		 */
+		@Override
 		public String getText(Object element) {
 			return getColumnText(element, 0);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java
-		 * .lang.Object, int)
-		 */
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.
-		 * lang.Object, int)
-		 */
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			final TodoTask task = (TodoTask) element;
 			if (columnIndex == 0) {
@@ -105,6 +83,7 @@ public class TodoTaskConfigurationBlock extends AbstractConfigurationBlock {
 	}
 
 	private static class TodoTaskSorter extends ViewerSorter {
+		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			return getComparator().compare(((TodoTask) e1).name,
 					((TodoTask) e2).name);
@@ -145,21 +124,25 @@ public class TodoTaskConfigurationBlock extends AbstractConfigurationBlock {
 			return selectedElements.size() == 1;
 		}
 
+		@Override
 		public void customButtonPressed(ListDialogField field, int index) {
 			doTodoButtonPressed(index);
 		}
 
+		@Override
 		public void selectionChanged(ListDialogField field) {
 			List selectedElements = field.getSelectedElements();
 			field.enableButton(IDX_EDIT, canEdit(selectedElements));
 		}
 
+		@Override
 		public void doubleClicked(ListDialogField field) {
 			if (canEdit(field.getSelectedElements())) {
 				doTodoButtonPressed(IDX_EDIT);
 			}
 		}
 
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 			updateModel(field);
 		}
@@ -188,6 +171,7 @@ public class TodoTaskConfigurationBlock extends AbstractConfigurationBlock {
 		}
 	}
 
+	@Override
 	public Control createControl(Composite parent) {
 		final TaskTagAdapter adapter = new TaskTagAdapter();
 		final String[] buttons = new String[] {
@@ -236,6 +220,7 @@ public class TodoTaskConfigurationBlock extends AbstractConfigurationBlock {
 
 		enableCheckbox.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				final boolean enabled = ((Button) e.widget).getSelection();
 				updateEnableState(enabled);
@@ -251,6 +236,7 @@ public class TodoTaskConfigurationBlock extends AbstractConfigurationBlock {
 		fCaseSensitiveCheckbox.setEnabled(enabled);
 	}
 
+	@Override
 	protected void initializeFields() {
 		super.initializeFields();
 		fTodoTasksList.setElements(preferences.getTaskTags());

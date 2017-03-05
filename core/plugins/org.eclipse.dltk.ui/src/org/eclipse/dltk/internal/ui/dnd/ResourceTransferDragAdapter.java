@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,7 +37,7 @@ import org.eclipse.ui.part.ResourceTransfer;
 
 /**
  * A drag adapter that transfers the current selection as </code>
- * IResource</code>. Only those elements in the selection are part 
+ * IResource</code>. Only those elements in the selection are part
  * of the transfer which can be converted into an <code>IResource
  * </code>.
  */
@@ -50,35 +50,39 @@ public class ResourceTransferDragAdapter extends DragSourceAdapter implements Tr
 	/**
 	 * Creates a new ResourceTransferDragAdapter for the given selection
 	 * provider.
-	 * 
+	 *
 	 * @param provider the selection provider to access the viewer's selection
 	 */
 	public ResourceTransferDragAdapter(ISelectionProvider provider) {
 		fProvider= provider;
 	}
-	
+
+	@Override
 	public Transfer getTransfer() {
 		return ResourceTransfer.getInstance();
 	}
-	
+
+	@Override
 	public void dragStart(DragSourceEvent event) {
 		event.doit= convertSelection().size() > 0;
 	}
-	
+
+	@Override
 	public void dragSetData(DragSourceEvent event) {
 		List<IResource> resources = convertSelection();
 		event.data= resources.toArray(new IResource[resources.size()]);
 	}
-	
+
+	@Override
 	public void dragFinished(DragSourceEvent event) {
 		if (!event.doit)
 			return;
 
 		if (event.detail == DND.DROP_MOVE) {
 			handleFinishedDropMove(event);
-		}	
+		}
 	}
-	
+
 	private List<IResource> convertSelection() {
 		ISelection s= fProvider.getSelection();
 		if (!(s instanceof IStructuredSelection))
@@ -99,12 +103,12 @@ public class ResourceTransferDragAdapter extends DragSourceAdapter implements Tr
 		}
 		return result;
 	}
-	
+
 	private void handleFinishedDropMove(DragSourceEvent event) {
 		MultiStatus status= new MultiStatus(
-			DLTKUIPlugin.PLUGIN_ID, 
-			IModelStatusConstants.INTERNAL_ERROR, 
-			DLTKUIMessages.ResourceTransferDragAdapter_cannot_delete_resource,  
+			DLTKUIPlugin.PLUGIN_ID,
+			IModelStatusConstants.INTERNAL_ERROR,
+			DLTKUIMessages.ResourceTransferDragAdapter_cannot_delete_resource,
 			null);
 		List<IResource> resources = convertSelection();
 		for (Iterator<IResource> iter = resources.iterator(); iter.hasNext();) {
@@ -117,9 +121,9 @@ public class ResourceTransferDragAdapter extends DragSourceAdapter implements Tr
 		}
 		if (status.getChildren().length > 0) {
 			Shell parent= SWTUtil.getShell(event.widget);
-			ErrorDialog error= new ErrorDialog(parent, 
-				DLTKUIMessages.ResourceTransferDragAdapter_moving_resource,  
-				DLTKUIMessages.ResourceTransferDragAdapter_cannot_delete_files,  
+			ErrorDialog error= new ErrorDialog(parent,
+				DLTKUIMessages.ResourceTransferDragAdapter_moving_resource,
+				DLTKUIMessages.ResourceTransferDragAdapter_cannot_delete_files,
 				status, IStatus.ERROR);
 			error.open();
 		}

@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.editor;
 
@@ -25,7 +24,7 @@ import org.eclipse.ui.texteditor.IAnnotationImageProvider;
 
 /**
  * Image provider for annotations based on Java problem markers.
- * 
+ *
  * @since 3.0
  */
 public class ScriptAnnotationImageProvider implements IAnnotationImageProvider {
@@ -46,9 +45,7 @@ public class ScriptAnnotationImageProvider implements IAnnotationImageProvider {
 	public ScriptAnnotationImageProvider() {
 	}
 
-	/*
-	 * @see IAnnotationImageProvider#getManagedImage(Annotation)
-	 */
+	@Override
 	public Image getManagedImage(Annotation annotation) {
 		if (annotation instanceof IScriptAnnotation) {
 			IScriptAnnotation javaAnnotation = (IScriptAnnotation) annotation;
@@ -58,17 +55,13 @@ public class ScriptAnnotationImageProvider implements IAnnotationImageProvider {
 		return null;
 	}
 
-	/*
-	 * @see IAnnotationImageProvider#getImageDescriptorId(Annotation)
-	 */
+	@Override
 	public String getImageDescriptorId(Annotation annotation) {
 		// unmanaged images are not supported
 		return null;
 	}
 
-	/*
-	 * @see IAnnotationImageProvider#getImageDescriptor(String)
-	 */
+	@Override
 	public ImageDescriptor getImageDescriptor(String symbolicName) {
 		// unmanaged images are not supported
 		return null;

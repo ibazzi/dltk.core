@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 NumberFour AG
+ * Copyright (c) 2011, 2017 NumberFour AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -17,6 +17,7 @@ import org.eclipse.dltk.ui.DLTKUIPlugin;
 public enum SpellingProblems implements IProblemIdentifier {
 	SPELLING_PROBLEM;
 
+	@Override
 	public String contributor() {
 		return DLTKUIPlugin.PLUGIN_ID;
 	}

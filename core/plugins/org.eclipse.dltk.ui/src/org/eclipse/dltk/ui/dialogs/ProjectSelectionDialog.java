@@ -14,11 +14,7 @@ import org.eclipse.dltk.ui.ModelElementLabelProvider;
 import org.eclipse.dltk.ui.preferences.PreferencesMessages;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -61,6 +57,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 		fProjectsWithSpecifics = projectsWithSpecifics;
 
 		fFilter = new ViewerFilter() {
+			@Override
 			public boolean select(Viewer viewer, Object parentElement,
 					Object element) {
 				return fProjectsWithSpecifics.contains(element);
@@ -68,9 +65,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 		};
 	}
 
-	/*
-	 * Method declared on Dialog.
-	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		// page group
 		Composite composite = (Composite) super.createDialogArea(parent);
@@ -83,17 +78,9 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 		fTableViewer = new TableViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL
 				| SWT.BORDER);
 		fTableViewer
-				.addSelectionChangedListener(new ISelectionChangedListener() {
-					public void selectionChanged(SelectionChangedEvent event) {
-						doSelectionChanged(((IStructuredSelection) event
-								.getSelection()).toArray());
-					}
-				});
-		fTableViewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-				okPressed();
-			}
-		});
+				.addSelectionChangedListener(event -> doSelectionChanged(((IStructuredSelection) event
+						.getSelection()).toArray()));
+		fTableViewer.addDoubleClickListener(event -> okPressed());
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
 		data.widthHint = SIZING_SELECTION_WIDGET_WIDTH;
@@ -106,6 +93,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 		fTableViewer.getControl().setFont(font);
 		if (natureId != null) {
 			fTableViewer.addFilter(new ViewerFilter() {
+				@Override
 				public boolean select(Viewer viewer, Object parentElement,
 						Object element) {
 					if (element instanceof IScriptProject) {
@@ -123,10 +111,12 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 		checkbox.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, true,
 				false));
 		checkbox.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateFilter(((Button) e.widget).getSelection());
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				updateFilter(((Button) e.widget).getSelection());
 			}
@@ -167,9 +157,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#computeResult()
-	 */
+	@Override
 	protected void computeResult() {
 	}
 }

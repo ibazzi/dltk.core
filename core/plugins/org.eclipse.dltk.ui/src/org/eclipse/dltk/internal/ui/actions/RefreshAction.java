@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,7 +46,7 @@ import org.eclipse.ui.IWorkingSet;
  * <p>
  * Action is applicable to selections containing resources and Script elements
  * down to compilation units.
- * 
+ *
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
@@ -128,7 +128,7 @@ public class RefreshAction extends SelectionDispatchAction {
 	 * Creates a new <code>RefreshAction</code>. The action requires that the
 	 * selection provided by the site's selection provider is of type
 	 * {@link org.eclipse.jface.viewers.IStructuredSelection} .
-	 * 
+	 *
 	 * @param site
 	 *            the site providing context information for this action
 	 */
@@ -224,11 +224,8 @@ public class RefreshAction extends SelectionDispatchAction {
 	 */
 	@Override
 	public void run(final IStructuredSelection selection) {
-		IWorkspaceRunnable operation = new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				performRefresh(selection, monitor);
-			}
-		};
+		IWorkspaceRunnable operation = monitor -> performRefresh(selection,
+				monitor);
 		new WorkbenchRunnableAdapter(operation).runAsUserJob(
 				ActionMessages.RefreshAction_refresh_operation_label, null);
 	}

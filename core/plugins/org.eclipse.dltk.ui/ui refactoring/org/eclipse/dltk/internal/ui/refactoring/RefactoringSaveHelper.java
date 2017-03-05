@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.refactoring;
 
@@ -41,11 +40,11 @@ public class RefactoringSaveHelper {
 	private boolean fFilesSaved;
 	private boolean fAllowSaveAlways;
 
-	
+
 	public RefactoringSaveHelper(boolean allowSaveAlways) {
 		fAllowSaveAlways= allowSaveAlways;
 	}
-	
+
 	public RefactoringSaveHelper() {
 		this(true);
 	}
@@ -73,8 +72,8 @@ public class RefactoringSaveHelper {
 			}
 			return true;
 		} catch (CoreException e) {
-			ExceptionHandler.handle(e, shell, 
-				RefactoringMessages.RefactoringStarter_saving, RefactoringMessages.RefactoringStarter_unexpected_exception);  
+			ExceptionHandler.handle(e, shell,
+				RefactoringMessages.RefactoringStarter_saving, RefactoringMessages.RefactoringStarter_unexpected_exception);
 			return false;
 		}
 	}
@@ -84,18 +83,20 @@ public class RefactoringSaveHelper {
 			new GlobalBuildAction(DLTKUIPlugin.getActiveWorkbenchWindow(), IncrementalProjectBuilder.INCREMENTAL_BUILD).run();
 		}
 	}
-	
+
 	private boolean saveAllDirtyEditors(Shell shell, IEditorPart[] dirtyEditors) {
 		if (fAllowSaveAlways && RefactoringSavePreferences.getSaveAllEditors()) //must save everything
 			return true;
 		ListDialog dialog= new ListDialog(shell) {
+			@Override
 			protected Control createDialogArea(Composite parent) {
 				Composite result= (Composite) super.createDialogArea(parent);
 				if (fAllowSaveAlways) {
 					final Button check= new Button(result, SWT.CHECK);
-					check.setText(RefactoringMessages.RefactoringStarter_always_save); 
+					check.setText(RefactoringMessages.RefactoringStarter_always_save);
 					check.setSelection(RefactoringSavePreferences.getSaveAllEditors());
 					check.addSelectionListener(new SelectionAdapter() {
+						@Override
 						public void widgetSelected(SelectionEvent e) {
 							RefactoringSavePreferences.setSaveAllEditors(check.getSelection());
 						}
@@ -105,27 +106,29 @@ public class RefactoringSaveHelper {
 				return result;
 			}
 		};
-		dialog.setTitle(RefactoringMessages.RefactoringStarter_save_all_resources); 
+		dialog.setTitle(RefactoringMessages.RefactoringStarter_save_all_resources);
 		dialog.setAddCancelButton(true);
 		dialog.setLabelProvider(createDialogLabelProvider());
-		dialog.setMessage(RefactoringMessages.RefactoringStarter_must_save); 
+		dialog.setMessage(RefactoringMessages.RefactoringStarter_must_save);
 		dialog.setContentProvider(new ArrayContentProvider());
 		dialog.setInput(Arrays.asList(dirtyEditors));
 		return dialog.open() == Window.OK;
 	}
-	
+
 	public boolean hasFilesSaved() {
 		return fFilesSaved;
 	}
-	
+
 	private ILabelProvider createDialogLabelProvider() {
 		return new LabelProvider() {
+			@Override
 			public Image getImage(Object element) {
 				return ((IEditorPart) element).getTitleImage();
 			}
+			@Override
 			public String getText(Object element) {
 				return ((IEditorPart) element).getTitle();
 			}
 		};
-	}	
+	}
 }

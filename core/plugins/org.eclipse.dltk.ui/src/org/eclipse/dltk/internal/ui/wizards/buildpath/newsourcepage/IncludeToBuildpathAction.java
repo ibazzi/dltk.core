@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,22 +59,19 @@ public class IncludeToBuildpathAction extends Action implements ISelectionChange
 		fSelectedElements= new ArrayList();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void run() {
 		IResource resource= (IResource)fSelectedElements.get(0);
 		final IScriptProject project= DLTKCore.create(resource.getProject());
 
 		try {
-			final IRunnableWithProgress runnable= new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					try {
-						List result= unExclude(fSelectedElements, project, monitor);
-						selectAndReveal(new StructuredSelection(result));
-					} catch (CoreException e) {
-						throw new InvocationTargetException(e);
-					}
+			final IRunnableWithProgress runnable = monitor -> {
+				try {
+					List result = unExclude(fSelectedElements, project,
+							monitor);
+					selectAndReveal(new StructuredSelection(result));
+				} catch (CoreException e) {
+					throw new InvocationTargetException(e);
 				}
 			};
 			PlatformUI.getWorkbench().getProgressService().run(true, false, runnable);
@@ -92,7 +89,7 @@ public class IncludeToBuildpathAction extends Action implements ISelectionChange
 		if (monitor == null)
 			monitor= new NullProgressMonitor();
 		try {
-			monitor.beginTask(NewWizardMessages.BuildpathModifier_Monitor_Including, 2 * elements.size()); 
+			monitor.beginTask(NewWizardMessages.BuildpathModifier_Monitor_Including, 2 * elements.size());
 
 			List entries= BuildpathModifier.getExistingEntries(project);
 			for (int i= 0; i < elements.size(); i++) {
@@ -112,9 +109,7 @@ public class IncludeToBuildpathAction extends Action implements ISelectionChange
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void selectionChanged(final SelectionChangedEvent event) {
 		final ISelection selection = event.getSelection();
 		if (selection instanceof IStructuredSelection) {
@@ -163,7 +158,7 @@ public class IncludeToBuildpathAction extends Action implements ISelectionChange
 			MessageDialog.openError(shell, title, message);
 		}
 	}
-	
+
 	private void selectAndReveal(final ISelection selection) {
 		// validate the input
 		IWorkbenchPage page= fSite.getPage();
@@ -196,11 +191,8 @@ public class IncludeToBuildpathAction extends Action implements ISelectionChange
 			if (target != null) {
 				// select and reveal resource
 				final ISetSelectionTarget finalTarget= target;
-				page.getWorkbenchWindow().getShell().getDisplay().asyncExec(new Runnable() {
-					public void run() {
-						finalTarget.selectReveal(selection);
-					}
-				});
+				page.getWorkbenchWindow().getShell().getDisplay()
+						.asyncExec(() -> finalTarget.selectReveal(selection));
 			}
 		}
 	}

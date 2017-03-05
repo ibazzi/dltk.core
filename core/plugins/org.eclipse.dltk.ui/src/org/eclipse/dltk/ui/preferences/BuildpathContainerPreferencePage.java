@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.dltk.core.IBuildpathEntry;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.ModelException;
@@ -24,7 +23,6 @@ import org.eclipse.dltk.internal.ui.wizards.buildpath.BuildpathContainerWizard;
 import org.eclipse.dltk.ui.util.ExceptionHandler;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.preferences.WizardPropertyPage;
@@ -32,7 +30,7 @@ import org.eclipse.ui.preferences.WizardPropertyPage;
 /**
  * Wraps a PropertyPage around a ClasspathContainerWizard. It is required, that
  * the wizard consists of exactly one page.
- * 
+ *
  * @since 2.0
  */
 public class BuildpathContainerPreferencePage extends WizardPropertyPage {
@@ -104,24 +102,21 @@ public class BuildpathContainerPreferencePage extends WizardPropertyPage {
 
 			IRunnableContext context = new ProgressMonitorDialog(getShell());
 			context = PlatformUI.getWorkbench().getProgressService();
-			context.run(true, true, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor)
-						throws InvocationTargetException, InterruptedException {
-					try {
-						// if (result.getEntryKind() ==
-						// IBuildpathEntry.BPE_CONTAINER) {
-						// IPath path = result.getPath();
-						// String eeID = JavaRuntime
-						// .getExecutionEnvironmentId(path);
-						// if (eeID != null) {
-						// BuildPathSupport.setEEComplianceOptions(
-						// fJavaProject, eeID, null);
-						// }
-						// }
-						fJavaProject.setRawBuildpath(newEntries, monitor);
-					} catch (CoreException e) {
-						throw new InvocationTargetException(e);
-					}
+			context.run(true, true, monitor -> {
+				try {
+					// if (result.getEntryKind() ==
+					// IBuildpathEntry.BPE_CONTAINER) {
+					// IPath path = result.getPath();
+					// String eeID = JavaRuntime
+					// .getExecutionEnvironmentId(path);
+					// if (eeID != null) {
+					// BuildPathSupport.setEEComplianceOptions(
+					// fJavaProject, eeID, null);
+					// }
+					// }
+					fJavaProject.setRawBuildpath(newEntries, monitor);
+				} catch (CoreException e) {
+					throw new InvocationTargetException(e);
 				}
 			});
 

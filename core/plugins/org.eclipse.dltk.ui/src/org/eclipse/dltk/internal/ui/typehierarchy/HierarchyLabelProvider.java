@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.typehierarchy;
 
@@ -48,6 +47,7 @@ public class HierarchyLabelProvider extends AppearanceAwareLabelProvider {
 			fBase = base;
 		}
 
+		@Override
 		protected void drawCompositeImage(int width, int height) {
 			drawImage(getImageData(fBase), 0, 0);
 			// drawImage(getImageData(DLTKPluginImages.DESC_OVR_FOCUS), 0, 0);
@@ -66,14 +66,17 @@ public class HierarchyLabelProvider extends AppearanceAwareLabelProvider {
 			return data;
 		}
 
+		@Override
 		protected Point getSize() {
 			return ScriptElementImageProvider.BIG_SIZE;
 		}
 
+		@Override
 		public int hashCode() {
 			return fBase.hashCode();
 		}
 
+		@Override
 		public boolean equals(Object object) {
 			return object != null
 					&& FocusDescriptor.class.equals(object.getClass())
@@ -133,9 +136,7 @@ public class HierarchyLabelProvider extends AppearanceAwareLabelProvider {
 		return true;
 	}
 
-	/*
-	 * @see ILabelProvider#getText
-	 */
+	@Override
 	public String getText(Object element) {
 		if (element instanceof CumulativeType) {
 			CumulativeType cType = (CumulativeType) element;
@@ -164,9 +165,7 @@ public class HierarchyLabelProvider extends AppearanceAwareLabelProvider {
 		return fScriptLabelProvider;
 	}
 
-	/*
-	 * @see ILabelProvider#getImage
-	 */
+	@Override
 	public Image getImage(Object element) {
 		Image result = null;
 		if (element instanceof IType) {
@@ -243,10 +242,7 @@ public class HierarchyLabelProvider extends AppearanceAwareLabelProvider {
 				ScriptElementImageProvider.BIG_SIZE);
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
-	 */
+	@Override
 	public Color getForeground(Object element) {
 		if (element instanceof IMethod) {
 			if (fSpecialColor == null) {

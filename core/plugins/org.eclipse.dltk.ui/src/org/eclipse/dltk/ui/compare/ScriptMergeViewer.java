@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Composite;
 
 /**
  * Abstract base class for compare viewers.
- * 
+ *
  * Note: {@link TextMergeViewer} uses current class name as font symbolic name,
  * so it descendants should not be anonymous classes, because their class name
  * is unpredictable.
@@ -85,16 +85,13 @@ public class ScriptMergeViewer extends TextMergeViewer {
 		return getToolkit().getPreferenceStore();
 	}
 
+	@Override
 	public String getTitle() {
 		return NLS.bind("{0} Compare", getToolkit().getCoreToolkit()
 				.getLanguageName());
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.compare.contentmergeviewer.TextMergeViewer#configureTextViewer
-	 * (org.eclipse.jface.text.TextViewer)
-	 */
+	@Override
 	protected void configureTextViewer(TextViewer textViewer) {
 		if (!(textViewer instanceof SourceViewer)) {
 			return;
@@ -108,11 +105,13 @@ public class ScriptMergeViewer extends TextMergeViewer {
 				getPreferenceStore(), null));
 	}
 
+	@Override
 	protected IDocumentPartitioner getDocumentPartitioner() {
 		final ScriptTextTools tools = getTextTools();
 		return tools != null ? tools.createDocumentPartitioner() : null;
 	}
 
+	@Override
 	protected String getDocumentPartitioning() {
 		final ScriptTextTools tools = getTextTools();
 		return tools != null ? tools.getDefaultPartitioning() : null;

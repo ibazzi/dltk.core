@@ -8,39 +8,31 @@ import org.eclipse.dltk.ui.preferences.PreferenceKey;
 import org.eclipse.dltk.ui.util.IStatusChangeListener;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
-public abstract class AbstractDebuggingEngineOptionsBlock extends
-		ContributedExtensionOptionsBlock {
+public abstract class AbstractDebuggingEngineOptionsBlock
+		extends ContributedExtensionOptionsBlock {
 
 	public AbstractDebuggingEngineOptionsBlock(IStatusChangeListener context,
 			IProject project, PreferenceKey[] allKeys,
 			IWorkbenchPreferenceContainer container) {
 		super(context, project, allKeys, container);
 	}
-	
-	/*
-	 * @see org.eclipse.dltk.ui.preferences.DLTKContributedExtensionOptionsBlock#getExtensionManager()
-	 */
+
+	@Override
 	protected DLTKContributionExtensionManager getExtensionManager() {
 		return DebuggingEngineManager.getInstance();
 	}
 
-	/*
-	 * @see org.eclipse.dltk.ui.preferences.DLTKContributedExtensionOptionsBlock#getSelectorGroupLabel()
-	 */
+	@Override
 	protected String getSelectorGroupLabel() {
 		return ScriptDebugPreferencesMessages.DebuggingEngine;
 	}
 
-	/*
-	 * @see org.eclipse.dltk.ui.preferences.DLTKContributedExtensionOptionsBlock#getSelectorNameLabel()
-	 */
+	@Override
 	protected String getSelectorNameLabel() {
 		return ScriptDebugPreferencesMessages.NameLabel;
 	}
 
-	/*
-	 * @see org.eclipse.dltk.ui.preferences.ContributedExtensionOptionsBlock#getPreferenceLinkMessage()
-	 */
+	@Override
 	protected String getPreferenceLinkMessage() {
 		return ScriptDebugPreferencesMessages.LinkToDebuggingEnginePreferences;
 	}

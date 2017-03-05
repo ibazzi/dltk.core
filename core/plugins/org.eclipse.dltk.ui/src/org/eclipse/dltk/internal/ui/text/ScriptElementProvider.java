@@ -1,14 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.text;
-
 
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.ModelException;
@@ -22,7 +20,6 @@ import org.eclipse.jface.text.information.IInformationProvider;
 import org.eclipse.jface.text.information.IInformationProviderExtension;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
-
 
 /**
  * Provides a Script element to be displayed in by an information presenter.
@@ -43,9 +40,7 @@ public class ScriptElementProvider implements IInformationProvider, IInformation
 		fUseCodeResolve= useCodeResolve;
 	}
 
-	/*
-	 * @see IInformationProvider#getSubject(ITextViewer, int)
-	 */
+	@Override
 	public IRegion getSubject(ITextViewer textViewer, int offset) {
 		if (textViewer != null && fEditor != null) {
 			IRegion region= ScriptWordFinder.findWord(textViewer.getDocument(), offset);
@@ -57,16 +52,12 @@ public class ScriptElementProvider implements IInformationProvider, IInformation
 		return null;
 	}
 
-	/*
-	 * @see IInformationProvider#getInformation(ITextViewer, IRegion)
-	 */
+	@Override
 	public String getInformation(ITextViewer textViewer, IRegion subject) {
 		return getInformation2(textViewer, subject).toString();
 	}
 
-	/*
-	 * @see IInformationProviderExtension#getElement(ITextViewer, IRegion)
-	 */
+	@Override
 	public Object getInformation2(ITextViewer textViewer, IRegion subject) {
 		if (fEditor == null)
 			return null;
@@ -80,7 +71,7 @@ public class ScriptElementProvider implements IInformationProvider, IInformation
 			IModelElement element= SelectionConverter.getElementAtOffset(fEditor);
 			if (element != null)
 				return element;
-			
+
 			return EditorUtility.getEditorInputModelElement(fEditor, false);
 		} catch (ModelException e) {
 			return null;

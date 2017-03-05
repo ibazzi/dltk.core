@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,8 +17,6 @@ import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IInformationControlCreatorExtension;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Shell;
 
 final public class TemplateInformationControlCreator implements
@@ -29,7 +27,7 @@ final public class TemplateInformationControlCreator implements
 	/**
 	 * The orientation to be used by this hover. Allowed values are:
 	 * SWT#RIGHT_TO_LEFT or SWT#LEFT_TO_RIGHT
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private int fOrientation;
@@ -49,30 +47,20 @@ final public class TemplateInformationControlCreator implements
 		fToolkit = toolkit;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlCreator#createInformationControl(org.eclipse.swt.widgets.Shell)
-	 */
+	@Override
 	public IInformationControl createInformationControl(Shell parent) {
 		fControl = new SourceViewerInformationControl(parent, SWT.TOOL
 				| fOrientation, SWT.NONE, fToolkit);
-		fControl.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				fControl = null;
-			}
-		});
+		fControl.addDisposeListener(e -> fControl = null);
 		return fControl;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlCreatorExtension#canReuse(org.eclipse.jface.text.IInformationControl)
-	 */
+	@Override
 	public boolean canReuse(IInformationControl control) {
 		return fControl == control && fControl != null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlCreatorExtension#canReplace(org.eclipse.jface.text.IInformationControlCreator)
-	 */
+	@Override
 	public boolean canReplace(IInformationControlCreator creator) {
 		return (creator != null && getClass() == creator.getClass());
 	}

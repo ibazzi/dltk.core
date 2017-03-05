@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 xored software, Inc.
+ * Copyright (c) 2009, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -26,7 +26,7 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 /*
  * The page to configure the code templates.
- * 
+ *
  * TODO extends AbstractConfigurationBlockPropertyAndPreferencePage?
  */
 public abstract class CodeTemplatesPreferencePage extends
@@ -46,9 +46,7 @@ public abstract class CodeTemplatesPreferencePage extends
 		setTitle(PreferencesMessages.CodeTemplatesPreferencePage_title);
 	}
 
-	/*
-	 * @see PreferencePage#createControl(Composite)
-	 */
+	@Override
 	public void createControl(Composite parent) {
 		IWorkbenchPreferenceContainer container = (IWorkbenchPreferenceContainer) getContainer();
 		fCodeTemplateConfigurationBlock = new CodeTemplateBlock(
@@ -60,16 +58,12 @@ public abstract class CodeTemplatesPreferencePage extends
 		// IJavaHelpContextIds.CODE_TEMPLATES_PREFERENCE_PAGE);
 	}
 
-	/*
-	 * @see PropertyAndPreferencePage#createPreferenceContent(Composite)
-	 */
+	@Override
 	protected Control createPreferenceContent(Composite composite) {
 		return fCodeTemplateConfigurationBlock.createContents(composite);
 	}
 
-	/*
-	 * @see PropertyAndPreferencePage#enableProjectSpecificSettings(boolean)
-	 */
+	@Override
 	protected void enableProjectSpecificSettings(
 			boolean useProjectSpecificSettings) {
 		super.enableProjectSpecificSettings(useProjectSpecificSettings);
@@ -79,9 +73,7 @@ public abstract class CodeTemplatesPreferencePage extends
 		}
 	}
 
-	/*
-	 * @see IPreferencePage#performOk()
-	 */
+	@Override
 	public boolean performOk() {
 		if (fCodeTemplateConfigurationBlock != null) {
 			return fCodeTemplateConfigurationBlock
@@ -90,9 +82,7 @@ public abstract class CodeTemplatesPreferencePage extends
 		return true;
 	}
 
-	/*
-	 * @see PreferencePage#performDefaults()
-	 */
+	@Override
 	protected void performDefaults() {
 		super.performDefaults();
 		if (fCodeTemplateConfigurationBlock != null) {
@@ -100,9 +90,7 @@ public abstract class CodeTemplatesPreferencePage extends
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
-	 */
+	@Override
 	public void dispose() {
 		if (fCodeTemplateConfigurationBlock != null) {
 			fCodeTemplateConfigurationBlock.dispose();
@@ -110,17 +98,12 @@ public abstract class CodeTemplatesPreferencePage extends
 		super.dispose();
 	}
 
-	/*
-	 * @see IStatusChangeListener#statusChanged(IStatus)
-	 */
 	public void statusChanged(IStatus status) {
 		setValid(!status.matches(IStatus.ERROR));
 		StatusUtil.applyToStatusLine(this, status);
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferencePage#performCancel()
-	 */
+	@Override
 	public boolean performCancel() {
 		if (fCodeTemplateConfigurationBlock != null) {
 			fCodeTemplateConfigurationBlock.performCancel();
@@ -128,19 +111,13 @@ public abstract class CodeTemplatesPreferencePage extends
 		return super.performCancel();
 	}
 
-	/*
-	 * @see
-	 * PropertyAndPreferencePage#hasProjectSpecificOptions(org.eclipse.core.
-	 * resources.IProject)
-	 */
+	@Override
 	protected boolean hasProjectSpecificOptions(IProject project) {
 		return fCodeTemplateConfigurationBlock
 				.hasProjectSpecificOptions(project);
 	}
 
-	/*
-	 * @see PreferencePage#applyData(java.lang.Object)
-	 */
+	@Override
 	public void applyData(Object data) {
 		if (data instanceof Map) {
 			Object id = ((Map) data).get(DATA_SELECT_TEMPLATE);
@@ -161,16 +138,12 @@ public abstract class CodeTemplatesPreferencePage extends
 		super.applyData(data);
 	}
 
-	/*
-	 * @see PropertyAndPreferencePage#getPreferencePageId()
-	 */
+	@Override
 	protected String getPreferencePageId() {
 		return codeTemplateArea.getTemplatePreferencePageId();
 	}
 
-	/*
-	 * @see PropertyAndPreferencePage#getPropertyPageId()
-	 */
+	@Override
 	protected String getPropertyPageId() {
 		return codeTemplateArea.getTemplatePropertyPageId();
 	}

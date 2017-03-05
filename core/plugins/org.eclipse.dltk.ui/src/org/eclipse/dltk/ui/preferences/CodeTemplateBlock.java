@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 xored software, Inc. and others.
+ * Copyright (c) 2009, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -81,10 +81,12 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 
 		private final Object[] NO_CHILDREN = new Object[0];
 
+		@Override
 		public void customButtonPressed(TreeListDialogField field, int index) {
 			doButtonPressed(index, field.getSelectedElements());
 		}
 
+		@Override
 		public void selectionChanged(TreeListDialogField field) {
 			List selected = field.getSelectedElements();
 			field.enableButton(IDX_ADD, canAdd(selected));
@@ -95,6 +97,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 			updateSourceViewerInput(selected);
 		}
 
+		@Override
 		public void doubleClicked(TreeListDialogField field) {
 			List selected = field.getSelectedElements();
 			if (canEdit(selected)) {
@@ -102,6 +105,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 			}
 		}
 
+		@Override
 		public Object[] getChildren(TreeListDialogField field, Object element) {
 			if (element instanceof ICodeTemplateCategory) {
 				ICodeTemplateCategory category = (ICodeTemplateCategory) element;
@@ -117,6 +121,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 			return NO_CHILDREN;
 		}
 
+		@Override
 		public Object getParent(TreeListDialogField field, Object element) {
 			if (element instanceof TemplatePersistenceData) {
 				final TemplatePersistenceData data = (TemplatePersistenceData) element;
@@ -141,23 +146,24 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 			return null;
 		}
 
+		@Override
 		public boolean hasChildren(TreeListDialogField field, Object element) {
 			return element instanceof ICodeTemplateCategory
 					|| element instanceof TemplateContextType;
 		}
 
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 			// if (field == fGenerateComments) {
 			// setValue(PREF_GENERATE_COMMENTS, fGenerateComments.isSelected());
 			// }
 		}
 
+		@Override
 		public void keyPressed(TreeListDialogField field, KeyEvent event) {
 		}
 
-		/*
-		 * @see ViewerSorter#category(java.lang.Object)
-		 */
+		@Override
 		public int category(Object element) {
 			if (element instanceof ICodeTemplateCategory) {
 				return ((ICodeTemplateCategory) element).getPriority();
@@ -168,9 +174,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 
 	private static class CodeTemplateLabelProvider extends LabelProvider {
 
-		/*
-		 * @see ILabelProvider#getText(java.lang.Object)
-		 */
+		@Override
 		public String getText(Object element) {
 			if (element instanceof ICodeTemplateCategory) {
 				return ((ICodeTemplateCategory) element).getName();
@@ -272,6 +276,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 		fCodeTemplateTree.postSetSelection(new StructuredSelection(element));
 	}
 
+	@Override
 	public boolean hasProjectSpecificOptions(IProject project) {
 		if (super.hasProjectSpecificOptions(project))
 			return true;
@@ -282,15 +287,14 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 		return false;
 	}
 
-	/*
-	 * @see OptionsConfigurationBlock# useProjectSpecificSettings(boolean)
-	 */
+	@Override
 	public void useProjectSpecificSettings(boolean enable) {
 		fCodeTemplateTree.setEnabled(enable);
 		// need to set because super implementation only updates controls
 		super.useProjectSpecificSettings(enable);
 	}
 
+	@Override
 	protected Control createContents(Composite parent) {
 		fPixelConverter = new PixelConverter(parent);
 
@@ -318,9 +322,6 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 		return composite;
 	}
 
-	/*
-	 * @see OptionsConfigurationBlock#updateControls()
-	 */
 	protected void updateControls() {
 		// fGenerateComments.setSelection(getBooleanValue(PREF_GENERATE_COMMENTS));
 	}
@@ -736,6 +737,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 										BasicElementLabels.getPathLabel(file)));
 	}
 
+	@Override
 	public void performDefaults() {
 		fTemplateStore.restoreDefaults();
 

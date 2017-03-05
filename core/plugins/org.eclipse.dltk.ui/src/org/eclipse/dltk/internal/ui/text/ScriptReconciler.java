@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.text;
 
@@ -30,7 +29,6 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
 import org.eclipse.jface.text.reconciler.MonoReconciler;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
@@ -49,7 +47,7 @@ public class ScriptReconciler extends MonoReconciler {
 
 	/**
 	 * Creates a new reconciler.
-	 * 
+	 *
 	 * @param editor
 	 *            the editor
 	 * @param strategy
@@ -88,9 +86,7 @@ public class ScriptReconciler extends MonoReconciler {
 	 */
 	private class PartListener implements IPartListener {
 
-		/*
-		 * @see IPartListener#partActivated(IWorkbenchPart)
-		 */
+		@Override
 		public void partActivated(IWorkbenchPart part) {
 			if (part == fTextEditor) {
 				if (hasModelChanged())
@@ -99,21 +95,15 @@ public class ScriptReconciler extends MonoReconciler {
 			}
 		}
 
-		/*
-		 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
-		 */
+		@Override
 		public void partBroughtToTop(IWorkbenchPart part) {
 		}
 
-		/*
-		 * @see IPartListener#partClosed(IWorkbenchPart)
-		 */
+		@Override
 		public void partClosed(IWorkbenchPart part) {
 		}
 
-		/*
-		 * @see IPartListener#partDeactivated(IWorkbenchPart)
-		 */
+		@Override
 		public void partDeactivated(IWorkbenchPart part) {
 			if (part == fTextEditor) {
 				setModelChanged(false);
@@ -121,9 +111,7 @@ public class ScriptReconciler extends MonoReconciler {
 			}
 		}
 
-		/*
-		 * @see IPartListener#partOpened(IWorkbenchPart)
-		 */
+		@Override
 		public void partOpened(IWorkbenchPart part) {
 		}
 	}
@@ -160,13 +148,11 @@ public class ScriptReconciler extends MonoReconciler {
 
 	/**
 	 * Internal script element changed listener
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private class ElementChangedListener implements IElementChangedListener {
-		/*
-		 * @see IElementChangedListener#elementChanged(ElementChangedEvent)
-		 */
+		@Override
 		public void elementChanged(ElementChangedEvent event) {
 			if (isRunningInReconcilerThread())
 				return;
@@ -182,7 +168,7 @@ public class ScriptReconciler extends MonoReconciler {
 		/**
 		 * Check whether the given delta has been sent when saving this
 		 * reconciler's editor.
-		 * 
+		 *
 		 * @param delta
 		 *            the deltas
 		 * @return <code>true</code> if the given delta
@@ -208,7 +194,7 @@ public class ScriptReconciler extends MonoReconciler {
 
 	/**
 	 * Internal resource change listener.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	class ResourceChangeListener implements IResourceChangeListener {
@@ -222,9 +208,7 @@ public class ScriptReconciler extends MonoReconciler {
 			return null;
 		}
 
-		/*
-		 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
-		 */
+		@Override
 		public void resourceChanged(IResourceChangeEvent e) {
 			if (isRunningInReconcilerThread())
 				return;
@@ -259,31 +243,31 @@ public class ScriptReconciler extends MonoReconciler {
 	private Object fMutex;
 	/**
 	 * The script element changed listener.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private IElementChangedListener fScriptElementChangedListener;
 	/**
 	 * Tells whether the script model sent out a changed event.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private volatile boolean fHasModelChanged = true;
 	/**
 	 * Tells whether this reconciler's editor is active.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private volatile boolean fIsEditorActive = true;
 	/**
 	 * The resource change listener.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private IResourceChangeListener fResourceChangeListener;
 	/**
 	 * The property change listener.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	private IPropertyChangeListener fPropertyChangeListener;
@@ -292,7 +276,7 @@ public class ScriptReconciler extends MonoReconciler {
 
 	/**
 	 * The element that this reconciler reconciles.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	private ISourceModule fReconciledElement;
@@ -319,14 +303,12 @@ public class ScriptReconciler extends MonoReconciler {
 
 		final IPreferenceStore store = getCombinedPreferenceStore();
 		if (store != null) {
-			fPropertyChangeListener = new IPropertyChangeListener() {
-				public void propertyChange(PropertyChangeEvent event) {
-					if (SpellingService.PREFERENCE_SPELLING_ENABLED
-							.equals(event.getProperty())
-							|| SpellingService.PREFERENCE_SPELLING_ENGINE
-									.equals(event.getProperty()))
-						forceReconciling();
-				}
+			fPropertyChangeListener = event -> {
+				if (SpellingService.PREFERENCE_SPELLING_ENABLED
+						.equals(event.getProperty())
+						|| SpellingService.PREFERENCE_SPELLING_ENGINE
+								.equals(event.getProperty()))
+					forceReconciling();
 			};
 			store.addPropertyChangeListener(fPropertyChangeListener);
 		}
@@ -405,7 +387,7 @@ public class ScriptReconciler extends MonoReconciler {
 
 	/**
 	 * Tells whether the script Model has changed or not.
-	 * 
+	 *
 	 * @return <code>true</code> iff the script Model has changed
 	 * @since 3.0
 	 */
@@ -415,7 +397,7 @@ public class ScriptReconciler extends MonoReconciler {
 
 	/**
 	 * Sets whether the script Model has changed or not.
-	 * 
+	 *
 	 * @param state
 	 *            <code>true</code> iff the script model has changed
 	 * @since 3.0
@@ -426,7 +408,7 @@ public class ScriptReconciler extends MonoReconciler {
 
 	/**
 	 * Tells whether this reconciler's editor is active.
-	 * 
+	 *
 	 * @return <code>true</code> iff the editor is active
 	 * @since 3.1
 	 */
@@ -436,7 +418,7 @@ public class ScriptReconciler extends MonoReconciler {
 
 	/**
 	 * Sets whether this reconciler's editor is active.
-	 * 
+	 *
 	 * @param state
 	 *            <code>true</code> iff the editor is active
 	 * @since 3.1

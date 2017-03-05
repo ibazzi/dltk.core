@@ -5,11 +5,13 @@ import org.eclipse.jface.viewers.ViewerComparator;
 
 public class ModelElementComparator extends ViewerComparator {
 
+	@Override
 	public int category(Object element) {
 		// TODO: provide real implementation
 		return super.category(element);
 	}
-	
+
+	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
 		// TODO: provide real implementation
 		return super.compare(viewer, e1, e2);

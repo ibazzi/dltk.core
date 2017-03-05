@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,17 +23,11 @@ import org.eclipse.dltk.validators.core.IValidator;
 import org.eclipse.dltk.validators.core.IValidatorType;
 import org.eclipse.dltk.validators.core.ValidatorRuntime;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -50,9 +44,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -76,7 +68,7 @@ public class ValidatorBlock implements IAddValidatorDialogRequestor {
 	/**
 	 * Validators being displayed
 	 */
-	protected List fValidators = new ArrayList();
+	protected List<IValidator> fValidators = new ArrayList<>();
 
 	/**
 	 * The main list control
@@ -97,15 +89,19 @@ public class ValidatorBlock implements IAddValidatorDialogRequestor {
 	/**
 	 * Content provider to show a list of InterpreterEnvironments
 	 */
-	private static class ValidatorContentProvider implements
-			IStructuredContentProvider {
+	private static class ValidatorContentProvider
+			implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object input) {
 			return ((List) input).toArray();
 		}
 
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		@Override
+		public void inputChanged(Viewer viewer, Object oldInput,
+				Object newInput) {
 		}
 
+		@Override
 		public void dispose() {
 		}
 	}
@@ -113,12 +109,13 @@ public class ValidatorBlock implements IAddValidatorDialogRequestor {
 	/**
 	 * Label provider for installed InterpreterEnvironments table.
 	 */
-	private static class ValidatorLabelProvider extends LabelProvider implements
-			ITableLabelProvider {
+	private static class ValidatorLabelProvider extends LabelProvider
+			implements ITableLabelProvider {
 
 		/**
 		 * @see ITableLabelProvider#getColumnText(Object, int)
 		 */
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			if (element instanceof IValidator) {
 				IValidator validator = (IValidator) element;
@@ -146,6 +143,7 @@ public class ValidatorBlock implements IAddValidatorDialogRequestor {
 		/**
 		 * @see ITableLabelProvider#getColumnImage(Object, int)
 		 */
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			if (columnIndex == 0) {
 				// TODO: insert validator logo here
@@ -157,7 +155,7 @@ public class ValidatorBlock implements IAddValidatorDialogRequestor {
 
 	/**
 	 * Creates this block's control in the given control.
-	 * 
+	 *
 	 * @param ancestor
 	 *            containing control
 	 * @param useManageButton
@@ -195,8 +193,8 @@ public class ValidatorBlock implements IAddValidatorDialogRequestor {
 		TableLayoutComposite tblComposite = new TableLayoutComposite(parent,
 				SWT.NONE);
 		tblComposite.setLayoutData(data);
-		fTable = new Table(tblComposite, SWT.CHECK | SWT.BORDER | SWT.MULTI
-				| SWT.FULL_SELECTION);
+		fTable = new Table(tblComposite,
+				SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
 
 		data = new GridData(GridData.FILL_BOTH);
 		data.widthHint = 450;
@@ -209,6 +207,7 @@ public class ValidatorBlock implements IAddValidatorDialogRequestor {
 		TableColumn column1 = new TableColumn(fTable, SWT.NULL);
 		column1.setText(ValidatorMessages.InstalledValidatorBlock_0);
 		column1.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				sortByName();
 			}
@@ -217,6 +216,7 @@ public class ValidatorBlock implements IAddValidatorDialogRequestor {
 		TableColumn column2 = new TableColumn(fTable, SWT.NULL);
 		column2.setText(ValidatorMessages.InstalledValidatorBlock_2);
 		column2.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				sortByType();
 			}
@@ -233,31 +233,23 @@ public class ValidatorBlock implements IAddValidatorDialogRequestor {
 		fValidatorList = new CheckboxTableViewer(fTable);
 		fValidatorList.setLabelProvider(new ValidatorLabelProvider());
 		fValidatorList.setContentProvider(new ValidatorContentProvider());
-		fValidatorList.addCheckStateListener(new ICheckStateListener() {
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				IValidator validator = (IValidator) event.getElement();
-				validator.setAutomatic(event.getChecked());
-			}
+		fValidatorList.addCheckStateListener(event -> {
+			IValidator validator = (IValidator) event.getElement();
+			validator.setAutomatic(event.getChecked());
 		});
 
 		// by default, sort by name
 		sortByName();
 
-		fValidatorList
-				.addSelectionChangedListener(new ISelectionChangedListener() {
-					public void selectionChanged(SelectionChangedEvent evt) {
-						enableButtons();
-					}
-				});
+		fValidatorList.addSelectionChangedListener(evt -> enableButtons());
 
-		fValidatorList.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent e) {
-				if (!fValidatorList.getSelection().isEmpty()) {
-					editValidator();
-				}
+		fValidatorList.addDoubleClickListener(e -> {
+			if (!fValidatorList.getSelection().isEmpty()) {
+				editValidator();
 			}
 		});
 		fTable.addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyPressed(KeyEvent event) {
 				if (event.character == SWT.DEL && event.stateMask == 0) {
 					if (fRemoveButton.getEnabled())
@@ -276,35 +268,19 @@ public class ValidatorBlock implements IAddValidatorDialogRequestor {
 
 		fAddButton = createPushButton(buttons,
 				ValidatorMessages.InstalledValidatorBlock_3);
-		fAddButton.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event evt) {
-				addValidator();
-			}
-		});
+		fAddButton.addListener(SWT.Selection, evt -> addValidator());
 
 		fEditButton = createPushButton(buttons,
 				ValidatorMessages.InstalledValidatorBlock_4);
-		fEditButton.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event evt) {
-				editValidator();
-			}
-		});
+		fEditButton.addListener(SWT.Selection, evt -> editValidator());
 
 		fCopyButton = createPushButton(buttons,
 				ValidatorMessages.InstalledValidatorBlock_16);
-		fCopyButton.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event evt) {
-				copyValidator();
-			}
-		});
+		fCopyButton.addListener(SWT.Selection, evt -> copyValidator());
 
 		fRemoveButton = createPushButton(buttons,
 				ValidatorMessages.InstalledValidatorBlock_5);
-		fRemoveButton.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event evt) {
-				removeValidator();
-			}
-		});
+		fRemoveButton.addListener(SWT.Selection, evt -> removeValidator());
 
 		// copied from ListDialogField.CreateSeparator()
 		Label separator = new Label(buttons, SWT.NONE);
@@ -324,6 +300,7 @@ public class ValidatorBlock implements IAddValidatorDialogRequestor {
 	 */
 	private void sortByType() {
 		fValidatorList.setSorter(new ViewerSorter() {
+			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				if ((e1 instanceof IValidator) && (e2 instanceof IValidator)) {
 					IValidator left = (IValidator) e1;
@@ -339,6 +316,7 @@ public class ValidatorBlock implements IAddValidatorDialogRequestor {
 				return super.compare(viewer, e1, e2);
 			}
 
+			@Override
 			public boolean isSorterProperty(Object element, String property) {
 				return true;
 			}
@@ -351,6 +329,7 @@ public class ValidatorBlock implements IAddValidatorDialogRequestor {
 	 */
 	private void sortByName() {
 		fValidatorList.setSorter(new ViewerSorter() {
+			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				if ((e1 instanceof IValidator) && (e2 instanceof IValidator)) {
 					IValidator left = (IValidator) e1;
@@ -364,6 +343,7 @@ public class ValidatorBlock implements IAddValidatorDialogRequestor {
 				return super.compare(viewer, e1, e2);
 			}
 
+			@Override
 			public boolean isSorterProperty(Object element, String property) {
 				return true;
 			}
@@ -376,7 +356,8 @@ public class ValidatorBlock implements IAddValidatorDialogRequestor {
 				.getSelection();
 		int selectionCount = selection.size();
 
-		boolean addEnabled = ValidatorRuntime.getPossibleValidatorTypes().length > 0;
+		boolean addEnabled = ValidatorRuntime
+				.getPossibleValidatorTypes().length > 0;
 		boolean editEnabled = selectionCount == 1;
 		boolean removeEnabled = true;
 		boolean copyEnabled = false && selectionCount > 0;// not implemented
@@ -409,7 +390,7 @@ public class ValidatorBlock implements IAddValidatorDialogRequestor {
 
 	/**
 	 * Returns this block's control
-	 * 
+	 *
 	 * @return control
 	 */
 	public Control getControl() {
@@ -418,13 +399,13 @@ public class ValidatorBlock implements IAddValidatorDialogRequestor {
 
 	/**
 	 * Sets the InterpreterEnvironments to be displayed in this block
-	 * 
+	 *
 	 * @param validators
 	 *            InterpreterEnvironments to be displayed
 	 */
 	protected void setValidators(IValidator[] validators) {
 		fValidators.clear();
-		List automatic = new ArrayList();
+		List<IValidator> automatic = new ArrayList<>();
 		for (int i = 0; i < validators.length; i++) {
 			if (validators[i].isAutomatic()) {
 				automatic.add(validators[i]);
@@ -439,20 +420,20 @@ public class ValidatorBlock implements IAddValidatorDialogRequestor {
 	/**
 	 * Returns the InterpreterEnvironments currently being displayed in this
 	 * block
-	 * 
+	 *
 	 * @return InterpreterEnvironments currently being displayed in this block
 	 */
 	public IValidator[] getValidators() {
-		return (IValidator[]) fValidators.toArray(new IValidator[fValidators
-				.size()]);
+		return fValidators.toArray(new IValidator[fValidators.size()]);
 	}
 
 	/**
 	 * @see IAddValidatorDialogRequestor#isDuplicateName(String)
 	 */
+	@Override
 	public boolean isDuplicateName(String name) {
 		for (int i = 0; i < fValidators.size(); i++) {
-			IValidator validator = (IValidator) fValidators.get(i);
+			IValidator validator = fValidators.get(i);
 			String validatorName = validator.getName();
 			if (validatorName == null) {
 				return true;
@@ -477,7 +458,7 @@ public class ValidatorBlock implements IAddValidatorDialogRequestor {
 
 	/**
 	 * Removes the given {@link IValidator}s from the table.
-	 * 
+	 *
 	 * @param validators
 	 */
 	public void removeValidators(IValidator[] validators) {
@@ -494,7 +475,7 @@ public class ValidatorBlock implements IAddValidatorDialogRequestor {
 	/**
 	 * Persist table settings into the give dialog store, prefixed with the
 	 * given key.
-	 * 
+	 *
 	 * @param settings
 	 *            dialog store
 	 * @param qualifier
@@ -503,22 +484,22 @@ public class ValidatorBlock implements IAddValidatorDialogRequestor {
 	public void saveColumnSettings(IDialogSettings settings, String qualifier) {
 		int columnCount = fTable.getColumnCount();
 		for (int i = 0; i < columnCount; i++) {
-			settings
-					.put(
-							qualifier + ".columnWidth" + i, fTable.getColumn(i).getWidth()); //$NON-NLS-1$
+			settings.put(qualifier + ".columnWidth" + i, //$NON-NLS-1$
+					fTable.getColumn(i).getWidth());
 		}
 		settings.put(qualifier + ".sortColumn", fSortColumn); //$NON-NLS-1$
 	}
 
 	/**
 	 * Restore table settings from the given dialog store using the given key.
-	 * 
+	 *
 	 * @param settings
 	 *            dialog settings store
 	 * @param qualifier
 	 *            key to restore settings from
 	 */
-	public void restoreColumnSettings(IDialogSettings settings, String qualifier) {
+	public void restoreColumnSettings(IDialogSettings settings,
+			String qualifier) {
 		fValidatorList.getTable().layout(true);
 		restoreColumnWidths(settings, qualifier);
 		try {
@@ -539,7 +520,8 @@ public class ValidatorBlock implements IAddValidatorDialogRequestor {
 		}
 	}
 
-	private void restoreColumnWidths(IDialogSettings settings, String qualifier) {
+	private void restoreColumnWidths(IDialogSettings settings,
+			String qualifier) {
 		int columnCount = fTable.getColumnCount();
 		for (int i = 0; i < columnCount; i++) {
 			int width = -1;
@@ -562,7 +544,7 @@ public class ValidatorBlock implements IAddValidatorDialogRequestor {
 	 * InterpreterEnvironments defined in the workspace.
 	 */
 	protected void fillWithWorkspaceValidators() {
-		List all = new ArrayList();
+		List<IValidator> all = new ArrayList<>();
 		IValidatorType[] types = ValidatorRuntime.getValidatorTypes();
 		for (int i = 0; i < types.length; i++) {
 			final IValidatorType type = types[i];
@@ -575,9 +557,10 @@ public class ValidatorBlock implements IAddValidatorDialogRequestor {
 				}
 			}
 		}
-		setValidators((IValidator[]) all.toArray(new IValidator[all.size()]));
+		setValidators(all.toArray(new IValidator[all.size()]));
 	}
 
+	@Override
 	public void validatorAdded(IValidator validator) {
 		fValidators.add(validator);
 		fValidatorList.add(validator);
@@ -607,11 +590,11 @@ public class ValidatorBlock implements IAddValidatorDialogRequestor {
 	/**
 	 * Compares the given name against current names and adds the appropriate
 	 * numerical suffix to ensure that it is unique.
-	 * 
+	 *
 	 * @param name
 	 *            the name with which to ensure uniqueness
 	 * @return the unique version of the given name
-	 * 
+	 *
 	 */
 	protected String generateName(String name) {
 		if (!isDuplicateName(name)) {
@@ -635,11 +618,11 @@ public class ValidatorBlock implements IAddValidatorDialogRequestor {
 		// IStructuredSelection selection = (IStructuredSelection)
 		// fValidatorList.getSelection();
 		// Iterator it = selection.iterator();
-		//	
+		//
 		// ArrayList newEntries = new ArrayList();
 		// while (it.hasNext()) {
 		// IValidator selectedInterpreter = (IValidator) it.next();
-		//	
+		//
 		// // duplicate & add Interpreter
 		// IValidator standin = new IValidator(selectedInterpreter,
 		// createUniqueId(selectedInterpreter.getValidatorType()));

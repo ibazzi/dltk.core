@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2008 xored software, Inc.  
+ * Copyright (c) 2008, 2017 xored software, Inc. and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html  
+ * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
  *     xored software, Inc. - initial API and Implementation (Andrei Sobolev)
@@ -45,6 +45,7 @@ final class ScriptCorePreferenceBlock extends
 		ImprovedAbstractConfigurationBlock {
 
 	private final class ReindexOperation implements IRunnableWithProgress {
+		@Override
 		public void run(IProgressMonitor monitor) {
 			try {
 				ResourcesPlugin.getWorkspace().build(
@@ -69,6 +70,7 @@ final class ScriptCorePreferenceBlock extends
 
 	private Combo circularBuildPathCombo;
 
+	@Override
 	public Control createControl(Composite parent) {
 		Composite composite = SWTFactory.createComposite(parent,
 				parent.getFont(), 1, 1, GridData.FILL_BOTH);
@@ -134,9 +136,11 @@ final class ScriptCorePreferenceBlock extends
 			reCreateIndex.setText(Messages.ScriptCorePreferencePage_reindex);
 			reCreateIndex.addSelectionListener(new SelectionListener() {
 
+				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
 				}
 
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					IndexManager indexManager = ModelManager.getModelManager()
 							.getIndexManager();

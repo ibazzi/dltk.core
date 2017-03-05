@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.ui.workingsets;
 
@@ -33,7 +32,7 @@ public class WorkingSetMenuContributionItem extends ContributionItem {
 
 	/**
 	 * Constructor for WorkingSetMenuContributionItem.
-	 * 
+	 *
 	 * @param id the id
 	 * @param actionGroup the action group
 	 * @param workingSet the working set
@@ -48,11 +47,12 @@ public class WorkingSetMenuContributionItem extends ContributionItem {
 	/*
 	 * Overrides method from ContributionItem.
 	 */
+	@Override
 	public void fill(Menu menu, int index) {
 		MenuItem mi= new MenuItem(menu, SWT.RADIO, index);
-		
+
 		String name= fWorkingSet.getLabel();
-		
+
 		mi.setText("&" + fId + " " + name);  //$NON-NLS-1$  //$NON-NLS-2$
 		if (fImage == null) {
 			ImageDescriptor imageDescriptor= fWorkingSet.getImageDescriptor();
@@ -62,6 +62,7 @@ public class WorkingSetMenuContributionItem extends ContributionItem {
 		mi.setImage(fImage);
 		mi.setSelection(fWorkingSet.equals(fActionGroup.getWorkingSet()));
 		mi.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				IWorkingSetManager manager= PlatformUI.getWorkbench().getWorkingSetManager();
 				fActionGroup.setWorkingSet(fWorkingSet, true);
@@ -69,22 +70,17 @@ public class WorkingSetMenuContributionItem extends ContributionItem {
 			}
 		});
 	}
-	
-	/*
-	 * @see org.eclipse.jface.action.ContributionItem#dispose()
-	 *
-	 */
+
+	@Override
 	public void dispose() {
 		if (fImage != null && !fImage.isDisposed())
 			fImage.dispose();
 		fImage= null;
-		
+
 		super.dispose();
 	}
-	
-	/*
-	 * @see org.eclipse.jface.action.IContributionItem#isDynamic()
-	 */
+
+	@Override
 	public boolean isDynamic() {
 		return true;
 	}

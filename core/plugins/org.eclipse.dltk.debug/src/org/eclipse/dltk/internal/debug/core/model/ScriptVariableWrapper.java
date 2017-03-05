@@ -45,6 +45,7 @@ public class ScriptVariableWrapper extends ScriptDebugElement
 		return name;
 	}
 
+	@Override
 	public String getId() {
 		return null;
 	}
@@ -60,38 +61,47 @@ public class ScriptVariableWrapper extends ScriptDebugElement
 		return children.length > 0;
 	}
 
+	@Override
 	public boolean isConstant() {
 		return false;
 	}
 
+	@Override
 	public String getName() throws DebugException {
 		return name;
 	}
 
+	@Override
 	public String getReferenceTypeName() throws DebugException {
 		return "getReferenceTypeName"; //$NON-NLS-1$
 	}
 
+	@Override
 	public boolean hasValueChanged() throws DebugException {
 		return false;
 	}
 
+	@Override
 	public void setValue(String expression) throws DebugException {
 
 	}
 
+	@Override
 	public void setValue(IValue value) throws DebugException {
 
 	}
 
+	@Override
 	public boolean supportsValueModification() {
 		return false;
 	}
 
+	@Override
 	public boolean verifyValue(String expression) throws DebugException {
 		return false;
 	}
 
+	@Override
 	public boolean verifyValue(IValue value) throws DebugException {
 		return false;
 	}
@@ -108,6 +118,7 @@ public class ScriptVariableWrapper extends ScriptDebugElement
 		return null;
 	}
 
+	@Override
 	public IValue getValue() throws DebugException {
 		if (value == null) {
 			value = new ScriptVariableWrapperValue(this);
@@ -115,6 +126,7 @@ public class ScriptVariableWrapper extends ScriptDebugElement
 		return value;
 	}
 
+	@Override
 	public IDebugTarget getDebugTarget() {
 		return target;
 	}

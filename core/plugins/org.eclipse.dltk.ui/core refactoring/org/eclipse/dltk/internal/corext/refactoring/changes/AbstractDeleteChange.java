@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.internal.corext.refactoring.changes;
 
@@ -23,23 +22,21 @@ import org.eclipse.ltk.core.refactoring.Change;
 
 
 abstract class AbstractDeleteChange extends DLTKChange {
-	
+
 	protected abstract Change doDelete(IProgressMonitor pm)
 			throws CoreException;
-	
-	/* non java-doc
-	 * @see IChange#perform(ChangeContext, IProgressMonitor)
-	 */
+
+	@Override
 	public final Change perform(IProgressMonitor pm) throws CoreException {
 		try {
-			pm.beginTask(RefactoringCoreMessages.AbstractDeleteChange_deleting, 1); 
+			pm.beginTask(RefactoringCoreMessages.AbstractDeleteChange_deleting, 1);
 			Change undo = doDelete(pm);
 			return undo;
 		} finally {
 			pm.done();
 		}
 	}
-	
+
 	protected static void saveFileIfNeeded(IFile file, IProgressMonitor pm) throws CoreException {
 		ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getFullPath(), LocationKind.NORMALIZE);
 		if (buffer != null && buffer.isDirty() &&  buffer.isStateValidated() && buffer.isSynchronized()) {

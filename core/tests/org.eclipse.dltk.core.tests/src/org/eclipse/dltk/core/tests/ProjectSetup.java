@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 NumberFour AG
+ * Copyright (c) 2012, 2017 NumberFour AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -25,11 +25,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.dltk.core.tests.model.AbstractModelTests;
 import org.eclipse.dltk.internal.core.ModelManager;
 import org.eclipse.dltk.utils.ResourceUtil;
@@ -220,13 +218,10 @@ public class ProjectSetup extends AbstractProjectSetup {
 		FileUtil.copyDirectory(source, target, excludes);
 		final IProject project = getWorkspaceRoot().getProject(
 				workspaceProjectName);
-		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				project.create(null);
-				if (!hasOption(Option.CLOSED)) {
-					project.open(null);
-				}
+		ResourcesPlugin.getWorkspace().run(monitor -> {
+			project.create(null);
+			if (!hasOption(Option.CLOSED)) {
+				project.open(null);
 			}
 		}, null);
 		return project;

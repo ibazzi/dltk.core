@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.wizards;
 
@@ -13,7 +12,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,7 +78,7 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
  * Wizard page that acts as a base class for wizard pages that create new source
  * module elements, such as types. The class provides provides an input field
  * for the source module name along with validation methods.
- * 
+ *
  * @see NewSourceModuleInPackagePage
  */
 public abstract class NewSourceModulePage extends NewContainerWizardPage {
@@ -137,7 +135,7 @@ public abstract class NewSourceModulePage extends NewContainerWizardPage {
 	 * The wizard owning this page is responsible for calling this method with
 	 * the current selection. The selection is used to initialize the fields of
 	 * the wizard page.
-	 * 
+	 *
 	 * @param selection
 	 *            used to initialize the fields
 	 */
@@ -257,11 +255,7 @@ public abstract class NewSourceModulePage extends NewContainerWizardPage {
 			final String[] contextTypeIds = getCodeTemplateContextTypeIds();
 			for (int i = 0; i < contextTypeIds.length; ++i) {
 				Template[] templates = store.getTemplates(contextTypeIds[i]);
-				Arrays.sort(templates, new Comparator<Template>() {
-					public int compare(Template t0, Template t1) {
-						return t0.getName().compareToIgnoreCase(t1.getName());
-					}
-				});
+				Arrays.sort(templates, (t0, t1) -> t0.getName().compareToIgnoreCase(t1.getName()));
 				for (int j = 0; j < templates.length; ++j) {
 					result.add(templates[j]);
 				}
@@ -285,7 +279,7 @@ public abstract class NewSourceModulePage extends NewContainerWizardPage {
 
 	/**
 	 * Saves the name of the last used template.
-	 * 
+	 *
 	 * @param name
 	 *            the name of a template, or an empty string for no template.
 	 */
@@ -316,11 +310,9 @@ public abstract class NewSourceModulePage extends NewContainerWizardPage {
 		// fileDialogField
 		fileDialogField = new StringDialogField();
 		fileDialogField.setLabelText(Messages.NewSourceModulePage_file);
-		fileDialogField.setDialogFieldListener(new IDialogFieldListener() {
-			public void dialogFieldChanged(DialogField field) {
-				sourceModuleStatus = fileChanged();
-				handleFieldChanged(FILE);
-			}
+		fileDialogField.setDialogFieldListener(field -> {
+			sourceModuleStatus = fileChanged();
+			handleFieldChanged(FILE);
 		});
 	}
 
@@ -378,6 +370,7 @@ public abstract class NewSourceModulePage extends NewContainerWizardPage {
 			this.sourceModule = sourceModule;
 		}
 
+		@Override
 		public IEnvironment getEnvironment() {
 			IEnvironment environment = EnvironmentManager
 					.getEnvironment(getScriptFolder());
@@ -387,14 +380,17 @@ public abstract class NewSourceModulePage extends NewContainerWizardPage {
 			return environment;
 		}
 
+		@Override
 		public IScriptFolder getScriptFolder() {
 			return scriptFolder;
 		}
 
+		@Override
 		public IScriptProject getScriptProject() {
 			return getScriptFolder().getScriptProject();
 		}
 
+		@Override
 		public ISourceModule getSourceModule() {
 			return sourceModule;
 		}
@@ -414,10 +410,12 @@ public abstract class NewSourceModulePage extends NewContainerWizardPage {
 
 		final List<StepEntry> entries = new ArrayList<StepEntry>();
 
+		@Override
 		public void addStep(String kind, int priority, ICreateStep step) {
 			entries.add(new StepEntry(kind, priority, step));
 		}
 
+		@Override
 		public ICreateStep[] getSteps(String kind) {
 			final List<StepEntry> selection = new ArrayList<StepEntry>();
 			for (StepEntry entry : entries) {
@@ -425,11 +423,7 @@ public abstract class NewSourceModulePage extends NewContainerWizardPage {
 					selection.add(entry);
 				}
 			}
-			Collections.sort(selection, new Comparator<StepEntry>() {
-				public int compare(StepEntry e1, StepEntry e2) {
-					return e1.priority - e1.priority;
-				}
-			});
+			Collections.sort(selection, (e1, e2) -> e1.priority - e1.priority);
 			final ICreateStep[] steps = new ICreateStep[selection.size()];
 			for (int i = 0; i < selection.size(); ++i) {
 				steps[i] = selection.get(i).step;
@@ -439,10 +433,12 @@ public abstract class NewSourceModulePage extends NewContainerWizardPage {
 
 		private String content = Util.EMPTY_STRING;
 
+		@Override
 		public String getContent() {
 			return content;
 		}
 
+		@Override
 		public void setContent(String content) {
 			this.content = content;
 		}
@@ -451,6 +447,7 @@ public abstract class NewSourceModulePage extends NewContainerWizardPage {
 
 	class InitializeFileContent implements ICreateStep {
 
+		@Override
 		public void execute(ICreateContext context, IProgressMonitor monitor)
 				throws CoreException {
 			context.setContent(getFileContent(context.getSourceModule()));
@@ -460,6 +457,7 @@ public abstract class NewSourceModulePage extends NewContainerWizardPage {
 
 	static class CreateSourceModuleStep implements ICreateStep {
 
+		@Override
 		public void execute(ICreateContext context, IProgressMonitor monitor)
 				throws CoreException {
 			context.getScriptFolder().createSourceModule(
@@ -499,6 +497,7 @@ public abstract class NewSourceModulePage extends NewContainerWizardPage {
 		return module;
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
 
@@ -525,18 +524,22 @@ public abstract class NewSourceModulePage extends NewContainerWizardPage {
 		public WorkspaceMode() {
 		}
 
+		@Override
 		public void createControl(Composite parent, int columns) {
 			// empty
 		}
 
+		@Override
 		public String getId() {
 			return ISourceModuleWizard.MODE_WORKSPACE;
 		}
 
+		@Override
 		public String getName() {
 			return "&workspace";
 		}
 
+		@Override
 		public void setEnabled(boolean enabled) {
 			// empty
 		}
@@ -585,26 +588,24 @@ public abstract class NewSourceModulePage extends NewContainerWizardPage {
 		throw new IllegalStateException("No modes");
 	}
 
-	private final IDialogFieldListener modeSelectionUpdater = new IDialogFieldListener() {
-		public void dialogFieldChanged(DialogField field) {
-			ModeEntry selection = null;
-			for (ModeEntry f : modes) {
-				if (f.field != null && f.field.isSelected()) {
-					selection = f;
-				}
+	private final IDialogFieldListener modeSelectionUpdater = field -> {
+		ModeEntry selection = null;
+		for (ModeEntry f1 : modes) {
+			if (f1.field != null && f1.field.isSelected()) {
+				selection = f1;
 			}
-			if (selection != null) {
-				for (ModeEntry f : modes) {
-					f.setSelection(f == selection);
-				}
-			}
-			handleFieldChanged(TEMPLATE);
 		}
+		if (selection != null) {
+			for (ModeEntry f2 : modes) {
+				f2.setSelection(f2 == selection);
+			}
+		}
+		handleFieldChanged(TEMPLATE);
 	};
 
 	/**
 	 * Creates content controls on the specified composite.
-	 * 
+	 *
 	 * @param composite
 	 * @param nColumns
 	 */
@@ -681,7 +682,7 @@ public abstract class NewSourceModulePage extends NewContainerWizardPage {
 	/**
 	 * Sets the file input field's text (simple name without path or extension)
 	 * to the given value. Method doesn't update the model.
-	 * 
+	 *
 	 * @param name
 	 *            the new file name
 	 * @param canBeModified
