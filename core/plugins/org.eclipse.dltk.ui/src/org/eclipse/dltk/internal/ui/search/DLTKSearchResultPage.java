@@ -34,7 +34,6 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.LocalSelectionTransfer;
-import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -117,6 +116,8 @@ public class DLTKSearchResultPage extends AbstractTextSearchViewPage
 	private GroupAction fGroupFileAction;
 	private GroupAction fGroupPackageAction;
 	private GroupAction fGroupProjectAction;
+
+	private SortingLabelProvider fSortingLabelProvider;
 	private int fCurrentGrouping;
 
 	private static final String[] SHOW_IN_TARGETS = new String[] {
@@ -319,15 +320,14 @@ public class DLTKSearchResultPage extends AbstractTextSearchViewPage
 	@Override
 	protected void configureTableViewer(TableViewer viewer) {
 		viewer.setUseHashlookup(true);
-		SortingLabelProvider sortingLabelProvider = new SortingLabelProvider(
-				this);
+		fSortingLabelProvider = new SortingLabelProvider(this);
 		viewer.setLabelProvider(new ColorDecoratingLabelProvider(
-				sortingLabelProvider, PlatformUI.getWorkbench()
+				fSortingLabelProvider, PlatformUI.getWorkbench()
 						.getDecoratorManager().getLabelDecorator()));
 		fContentProvider = new DLTKSearchTableContentProvider(this);
 		viewer.setContentProvider(fContentProvider);
 		viewer.setComparator(
-				new DecoratorIgnoringViewerSorter(sortingLabelProvider));
+				new DecoratorIgnoringViewerSorter(fSortingLabelProvider));
 		setSortOrder(fCurrentSortOrder);
 		addDragAdapters(viewer);
 	}
@@ -360,15 +360,16 @@ public class DLTKSearchResultPage extends AbstractTextSearchViewPage
 	}
 
 	void setSortOrder(int order) {
-		fCurrentSortOrder = order;
-		StructuredViewer viewer = getViewer();
-		viewer.getControl().setRedraw(false);
-		DecoratingLabelProvider dlp = (DecoratingLabelProvider) viewer
-				.getLabelProvider();
-		((SortingLabelProvider) dlp.getLabelProvider()).setOrder(order);
-		viewer.getControl().setRedraw(true);
-		viewer.refresh();
-		getSettings().put(KEY_SORTING, fCurrentSortOrder);
+		if (fSortingLabelProvider != null) {
+			fCurrentSortOrder = order;
+			StructuredViewer viewer = getViewer();
+			// TODO
+			// viewer.getControl().setRedraw(false);
+			fSortingLabelProvider.setOrder(order);
+			// viewer.getControl().setRedraw(true);
+			viewer.refresh();
+			getSettings().put(KEY_SORTING, fCurrentSortOrder);
+		}
 	}
 
 	@Override

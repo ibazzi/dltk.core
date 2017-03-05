@@ -17,6 +17,7 @@ import org.eclipse.dltk.compiler.CharOperation;
 import org.eclipse.dltk.compiler.util.ScannerHelper;
 import org.eclipse.dltk.core.DLTKLanguageManager;
 import org.eclipse.dltk.core.IDLTKLanguageToolkit;
+import org.eclipse.dltk.core.IField;
 import org.eclipse.dltk.core.ILocalVariable;
 import org.eclipse.dltk.core.IMember;
 import org.eclipse.dltk.core.IMethod;
@@ -525,11 +526,18 @@ public abstract class SearchPattern extends InternalSearchPattern {
 		return null;
 	}
 
+	private static SearchPattern createFieldPattern(String patternString,
+			int limitTo, int matchRule, IDLTKLanguageToolkit toolkit) {
+		return createFieldPattern(patternString, null, null, limitTo, matchRule,
+				toolkit);
+	}
+
 	/**
 	 * Field pattern are formed by [declaringType.]name[ type] e.g.
 	 * java.lang.String.serialVersionUID long field*
 	 */
 	private static SearchPattern createFieldPattern(String patternString,
+			char[] declaringTypeSimpleName, char[] declaringTypeQualification,
 			int limitTo, int matchRule, IDLTKLanguageToolkit toolkit) {
 		// Signatures
 		char[] declaringTypeSignature = null;
@@ -549,8 +557,6 @@ public abstract class SearchPattern extends InternalSearchPattern {
 			break;
 		}
 		char[] selectorChars = patternString.toCharArray();
-		char declaringTypeQualification[] = null;
-		char declaringTypeSimpleName[] = null;
 
 		return new FieldPattern(findDeclarations, findReferences,
 				findReferences, selectorChars, declaringTypeQualification,
@@ -1035,18 +1041,12 @@ public abstract class SearchPattern extends InternalSearchPattern {
 				if (declaringClass != null) {
 					declaringSimpleName = declaringClass.getElementName()
 							.toCharArray();
-					// IModelElement parent = declaringClass.getParent();
-					// if (parent.getElementType() == IModelElement.TYPE) {
-					// declaringQualification =
-					// ((IType)parent).getTypeQualifiedName().toCharArray();
-					// }
-					enclosingNames = enclosingTypeNames(element);
-					if (enclosingNames.length > 0) {
-						declaringSimpleName = CharOperation.concat(
-								declaringQualification,
-								CharOperation.concatWith(enclosingNames, '$'),
-								'$');
+					IModelElement parent = declaringClass.getParent();
+					if (parent.getElementType() == IModelElement.TYPE) {
+						declaringQualification = ((IType) parent)
+								.getTypeQualifiedName().toCharArray();
 					}
+					enclosingNames = enclosingTypeNames(element);
 				}
 			}
 			char[] selector = method.getElementName().toCharArray();
@@ -1114,7 +1114,22 @@ public abstract class SearchPattern extends InternalSearchPattern {
 					maskedLimitTo, matchRule);
 			break;
 		case IModelElement.FIELD:
+			IField field = (IField) element;
+			IType declaringType = field.getDeclaringType();
+			char[] declaringTypeQualification = null;
+			char[] declaringTypeSimpleName = null;
+			if (declaringType != null) {
+				enclosingNames = enclosingTypeNames(element);
+				if (enclosingNames.length == 1) {
+					declaringTypeSimpleName = enclosingNames[0];
+				} else if (enclosingNames.length == 2) {
+					declaringTypeQualification = enclosingNames[0];
+					declaringTypeSimpleName = enclosingNames[1];
+				}
+			}
+
 			searchPattern = createFieldPattern(element.getElementName(),
+					declaringTypeSimpleName, declaringTypeQualification,
 					maskedLimitTo, matchRule, toolkit);
 			break;
 		case IModelElement.LOCAL_VARIABLE:

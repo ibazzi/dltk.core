@@ -252,8 +252,11 @@ public class LuceneSearchEngine implements ISearchEngineExtension {
 			} else if (matchRule == MatchRule.EXACT) {
 				nameQuery = new TermQuery(nameCaseInsensitiveTerm);
 			} else if (matchRule == MatchRule.CAMEL_CASE) {
-				nameQuery = new PrefixQuery(new Term(F_CC_NAME,
-						Utils.getCamelCaseName(elementName)));
+				String name = Utils.getCamelCaseName(elementName);
+				if (name == null) {
+					name = elementName;
+				}
+				nameQuery = new PrefixQuery(new Term(F_CC_NAME, name));
 			} else if (matchRule == MatchRule.PATTERN) {
 				nameQuery = new WildcardQuery(nameCaseInsensitiveTerm);
 			} else {
