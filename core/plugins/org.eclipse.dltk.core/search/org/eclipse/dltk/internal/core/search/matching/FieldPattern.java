@@ -15,8 +15,8 @@ import org.eclipse.dltk.core.search.indexing.IIndexConstants;
 
 public class FieldPattern extends VariablePattern implements IIndexConstants {
 	// declaring type
-	protected char[] declaringQualification;
-	protected char[] declaringSimpleName;
+	public char[] declaringQualification;
+	public char[] declaringSimpleName;
 	// type
 	protected char[] typeQualification;
 	protected char[] typeSimpleName;

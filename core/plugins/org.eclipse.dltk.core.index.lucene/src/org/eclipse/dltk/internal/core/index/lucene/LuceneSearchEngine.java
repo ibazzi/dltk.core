@@ -10,7 +10,22 @@
  *******************************************************************************/
 package org.eclipse.dltk.internal.core.index.lucene;
 
-import static org.eclipse.dltk.internal.core.index.lucene.IndexFields.*;
+import static org.eclipse.dltk.internal.core.index.lucene.IndexFields.BDV_DOC;
+import static org.eclipse.dltk.internal.core.index.lucene.IndexFields.BDV_ELEMENT_NAME;
+import static org.eclipse.dltk.internal.core.index.lucene.IndexFields.BDV_METADATA;
+import static org.eclipse.dltk.internal.core.index.lucene.IndexFields.BDV_PARENT;
+import static org.eclipse.dltk.internal.core.index.lucene.IndexFields.BDV_PATH;
+import static org.eclipse.dltk.internal.core.index.lucene.IndexFields.BDV_QUALIFIER;
+import static org.eclipse.dltk.internal.core.index.lucene.IndexFields.F_CC_NAME;
+import static org.eclipse.dltk.internal.core.index.lucene.IndexFields.F_ELEMENT_NAME_LC;
+import static org.eclipse.dltk.internal.core.index.lucene.IndexFields.F_PARENT;
+import static org.eclipse.dltk.internal.core.index.lucene.IndexFields.F_PATH;
+import static org.eclipse.dltk.internal.core.index.lucene.IndexFields.F_QUALIFIER;
+import static org.eclipse.dltk.internal.core.index.lucene.IndexFields.NDV_FLAGS;
+import static org.eclipse.dltk.internal.core.index.lucene.IndexFields.NDV_LENGTH;
+import static org.eclipse.dltk.internal.core.index.lucene.IndexFields.NDV_NAME_LENGTH;
+import static org.eclipse.dltk.internal.core.index.lucene.IndexFields.NDV_NAME_OFFSET;
+import static org.eclipse.dltk.internal.core.index.lucene.IndexFields.NDV_OFFSET;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -237,8 +252,11 @@ public class LuceneSearchEngine implements ISearchEngineExtension {
 			} else if (matchRule == MatchRule.EXACT) {
 				nameQuery = new TermQuery(nameCaseInsensitiveTerm);
 			} else if (matchRule == MatchRule.CAMEL_CASE) {
-				nameQuery = new PrefixQuery(new Term(F_CC_NAME,
-						Utils.getCamelCaseName(elementName)));
+				String name = Utils.getCamelCaseName(elementName);
+				if (name == null) {
+					name = elementName;
+				}
+				nameQuery = new PrefixQuery(new Term(F_CC_NAME, name));
 			} else if (matchRule == MatchRule.PATTERN) {
 				nameQuery = new WildcardQuery(nameCaseInsensitiveTerm);
 			} else {

@@ -10,7 +10,23 @@
  *******************************************************************************/
 package org.eclipse.dltk.internal.core.index.lucene;
 
-import static org.eclipse.dltk.internal.core.index.lucene.IndexFields.*;
+import static org.eclipse.dltk.internal.core.index.lucene.IndexFields.BDV_DOC;
+import static org.eclipse.dltk.internal.core.index.lucene.IndexFields.BDV_ELEMENT_NAME;
+import static org.eclipse.dltk.internal.core.index.lucene.IndexFields.BDV_METADATA;
+import static org.eclipse.dltk.internal.core.index.lucene.IndexFields.BDV_PARENT;
+import static org.eclipse.dltk.internal.core.index.lucene.IndexFields.BDV_PATH;
+import static org.eclipse.dltk.internal.core.index.lucene.IndexFields.BDV_QUALIFIER;
+import static org.eclipse.dltk.internal.core.index.lucene.IndexFields.F_CC_NAME;
+import static org.eclipse.dltk.internal.core.index.lucene.IndexFields.F_ELEMENT_NAME_LC;
+import static org.eclipse.dltk.internal.core.index.lucene.IndexFields.F_PARENT;
+import static org.eclipse.dltk.internal.core.index.lucene.IndexFields.F_PATH;
+import static org.eclipse.dltk.internal.core.index.lucene.IndexFields.F_QUALIFIER;
+import static org.eclipse.dltk.internal.core.index.lucene.IndexFields.NDV_FLAGS;
+import static org.eclipse.dltk.internal.core.index.lucene.IndexFields.NDV_LENGTH;
+import static org.eclipse.dltk.internal.core.index.lucene.IndexFields.NDV_NAME_LENGTH;
+import static org.eclipse.dltk.internal.core.index.lucene.IndexFields.NDV_NAME_OFFSET;
+import static org.eclipse.dltk.internal.core.index.lucene.IndexFields.NDV_OFFSET;
+import static org.eclipse.dltk.internal.core.index.lucene.IndexFields.NDV_TIMESTAMP;
 
 import org.apache.lucene.document.BinaryDocValuesField;
 import org.apache.lucene.document.Document;
@@ -49,6 +65,7 @@ public final class DocumentFactory {
 		Document doc = new Document();
 		// Fields for search (no store, doc values will be used instead)
 		addStringEntry(doc, F_PATH, source, false);
+		addStringEntry(doc, F_PARENT, info.parent, false);
 		addStringEntry(doc, F_QUALIFIER, info.qualifier, false);
 		addStringLCEntry(doc, F_ELEMENT_NAME_LC, info.elementName, false);
 		// Add numeric doc values

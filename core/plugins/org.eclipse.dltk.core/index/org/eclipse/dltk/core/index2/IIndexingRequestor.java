@@ -47,8 +47,12 @@ public interface IIndexingRequestor {
 		/** Element qualifier */
 		public String qualifier;
 
+		/** Element parent information */
+		public String parent;
+
 		public ReferenceInfo(int elementType, int offset, int length,
-				String elementName, String metadata, String qualifier) {
+				String elementName, String metadata, String qualifier,
+				String parent) {
 			super();
 			this.elementType = elementType;
 			this.offset = offset;
@@ -56,6 +60,7 @@ public interface IIndexingRequestor {
 			this.elementName = elementName;
 			this.metadata = metadata;
 			this.qualifier = qualifier;
+			this.parent = parent;
 		}
 	}
 
@@ -73,9 +78,6 @@ public interface IIndexingRequestor {
 		/** Element name length in document */
 		public int nameLength;
 
-		/** Element parent information */
-		public String parent;
-
 		/**
 		 * DOC information
 		 * 
@@ -90,12 +92,12 @@ public interface IIndexingRequestor {
 				int length, int nameOffset, int nameLength, String elementName,
 				String metadata, String doc, String qualifier, String parent) {
 
-			super(elementType, offset, length, elementName, metadata, qualifier);
+			super(elementType, offset, length, elementName, metadata, qualifier,
+					parent);
 
 			this.flags = flags;
 			this.nameOffset = nameOffset;
 			this.nameLength = nameLength;
-			this.parent = parent;
 			this.doc = doc;
 		}
 	}
