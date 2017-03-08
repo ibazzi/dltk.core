@@ -74,8 +74,8 @@ import org.eclipse.ui.texteditor.link.EditorLinkedModeUI;
 import org.osgi.framework.Bundle;
 
 @SuppressWarnings("restriction")
-public abstract class AbstractScriptCompletionProposal implements
-		IScriptCompletionProposal, ICompletionProposalExtension,
+public abstract class AbstractScriptCompletionProposal
+		implements IScriptCompletionProposal, ICompletionProposalExtension,
 		ICompletionProposalExtension2, ICompletionProposalExtension3,
 		ICompletionProposalExtension5, ICompletionProposalExtension6 {
 
@@ -135,7 +135,7 @@ public abstract class AbstractScriptCompletionProposal implements
 		}
 	}
 
-	protected static final class ExitPolicy implements IExitPolicy {
+	protected static class ExitPolicy implements IExitPolicy {
 
 		final char fExitCharacter;
 		private final IDocument fDocument;
@@ -154,7 +154,8 @@ public abstract class AbstractScriptCompletionProposal implements
 					return new ExitFlags(ILinkedModeListener.UPDATE_CARET,
 							false);
 				else
-					return new ExitFlags(ILinkedModeListener.UPDATE_CARET, true);
+					return new ExitFlags(ILinkedModeListener.UPDATE_CARET,
+							true);
 			}
 
 			switch (event.character) {
@@ -267,8 +268,8 @@ public abstract class AbstractScriptCompletionProposal implements
 	@Override
 	public final void apply(IDocument document) {
 		// not used any longer
-		apply(document, (char) 0, getReplacementOffset()
-				+ getReplacementLength());
+		apply(document, (char) 0,
+				getReplacementOffset() + getReplacementLength());
 	}
 
 	@Override
@@ -473,7 +474,8 @@ public abstract class AbstractScriptCompletionProposal implements
 
 	@Override
 	public String getAdditionalProposalInfo() {
-		final Object info = getAdditionalProposalInfo(new NullProgressMonitor());
+		final Object info = getAdditionalProposalInfo(
+				new NullProgressMonitor());
 		return info != null ? info.toString() : null;
 	}
 
@@ -557,7 +559,8 @@ public abstract class AbstractScriptCompletionProposal implements
 	}
 
 	@Override
-	public int getPrefixCompletionStart(IDocument document, int completionOffset) {
+	public int getPrefixCompletionStart(IDocument document,
+			int completionOffset) {
 		return getReplacementOffset();
 	}
 
@@ -632,7 +635,8 @@ public abstract class AbstractScriptCompletionProposal implements
 	}
 
 	@Override
-	public boolean validate(IDocument document, int offset, DocumentEvent event) {
+	public boolean validate(IDocument document, int offset,
+			DocumentEvent event) {
 
 		if (offset < getReplacementOffset())
 			return false;
@@ -727,9 +731,8 @@ public abstract class AbstractScriptCompletionProposal implements
 			return false;
 		String start = string.substring(0, prefix.length());
 		return start.equalsIgnoreCase(prefix)
-				|| isCamelCaseMatching()
-				&& CharOperation.camelCaseMatch(prefix.toCharArray(),
-						string.toCharArray());
+				|| isCamelCaseMatching() && CharOperation.camelCaseMatch(
+						prefix.toCharArray(), string.toCharArray());
 	}
 
 	/**
@@ -740,7 +743,8 @@ public abstract class AbstractScriptCompletionProposal implements
 	 * <ul>
 	 * <li>getCamelCompound("NuPo", "NullPointerException") ->
 	 * "NuPointerException"</li>
-	 * <li>getCamelCompound("NuPoE", "NullPointerException") -> "NuPoException"</li>
+	 * <li>getCamelCompound("NuPoE", "NullPointerException") ->
+	 * "NuPoException"</li>
 	 * <li>getCamelCompound("hasCod", "hashCode") -> "hasCode"</li>
 	 * </ul>
 	 *
@@ -787,8 +791,8 @@ public abstract class AbstractScriptCompletionProposal implements
 	}
 
 	protected boolean insertCompletion() {
-		return getPreferenceStore().getBoolean(
-				PreferenceConstants.CODEASSIST_INSERT_COMPLETION);
+		return getPreferenceStore()
+				.getBoolean(PreferenceConstants.CODEASSIST_INSERT_COMPLETION);
 	}
 
 	protected Color getForegroundColor(StyledText text) {
@@ -825,9 +829,8 @@ public abstract class AbstractScriptCompletionProposal implements
 				if (viewer instanceof ITextViewerExtension5) {
 
 					ITextViewerExtension5 extension = (ITextViewerExtension5) viewer;
-					IRegion modelRange = extension
-							.widgetRange2ModelRange(new Region(
-									fRememberedStyleRange.start,
+					IRegion modelRange = extension.widgetRange2ModelRange(
+							new Region(fRememberedStyleRange.start,
 									fRememberedStyleRange.length));
 					if (modelRange != null)
 						viewer2.invalidateTextPresentation(
@@ -974,7 +977,8 @@ public abstract class AbstractScriptCompletionProposal implements
 				model.addGroup(group);
 				model.forceInstall();
 
-				LinkedModeUI ui = new EditorLinkedModeUI(model, getTextViewer());
+				LinkedModeUI ui = new EditorLinkedModeUI(model,
+						getTextViewer());
 				ui.setSimpleMode(true);
 				ui.setExitPolicy(new ExitPolicy(closingCharacter, document));
 				ui.setExitPosition(getTextViewer(), exit, 0, Integer.MAX_VALUE);
@@ -987,8 +991,8 @@ public abstract class AbstractScriptCompletionProposal implements
 	}
 
 	protected boolean autocloseBrackets() {
-		return getPreferenceStore().getBoolean(
-				PreferenceConstants.EDITOR_CLOSE_BRACKETS);
+		return getPreferenceStore()
+				.getBoolean(PreferenceConstants.EDITOR_CLOSE_BRACKETS);
 	}
 
 	protected void setDisplayString(String string) {
