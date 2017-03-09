@@ -846,6 +846,9 @@ public abstract class ScriptCompletionProposalCollector
 					length, image, label, relevance, false);
 		}
 
+		if (fScriptProject != null)
+			scriptProposal.setProposalInfo(
+					new FieldProposalInfo(fScriptProject, proposal));
 		scriptProposal.setTriggerCharacters(getVarTrigger());
 		return scriptProposal;
 	}
