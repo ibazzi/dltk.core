@@ -426,23 +426,23 @@ public class PreferenceConstants {
 
 		store.setDefault(PreferenceConstants.CODEASSIST_AUTOINSERT, true);
 		PreferenceConverter.setDefault(store,
-				PreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND, new RGB(
-						255, 255, 255));
+				PreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND,
+				new RGB(255, 255, 255));
 		PreferenceConverter.setDefault(store,
-				PreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND, new RGB(0,
-						0, 0));
+				PreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND,
+				new RGB(0, 0, 0));
 		PreferenceConverter.setDefault(store,
-				PreferenceConstants.CODEASSIST_PARAMETERS_BACKGROUND, new RGB(
-						255, 255, 255));
+				PreferenceConstants.CODEASSIST_PARAMETERS_BACKGROUND,
+				new RGB(255, 255, 255));
 		PreferenceConverter.setDefault(store,
-				PreferenceConstants.CODEASSIST_PARAMETERS_FOREGROUND, new RGB(
-						0, 0, 0));
+				PreferenceConstants.CODEASSIST_PARAMETERS_FOREGROUND,
+				new RGB(0, 0, 0));
 		PreferenceConverter.setDefault(store,
-				PreferenceConstants.CODEASSIST_REPLACEMENT_BACKGROUND, new RGB(
-						255, 255, 0));
+				PreferenceConstants.CODEASSIST_REPLACEMENT_BACKGROUND,
+				new RGB(255, 255, 0));
 		PreferenceConverter.setDefault(store,
-				PreferenceConstants.CODEASSIST_REPLACEMENT_FOREGROUND, new RGB(
-						255, 0, 0));
+				PreferenceConstants.CODEASSIST_REPLACEMENT_FOREGROUND,
+				new RGB(255, 0, 0));
 		store.setDefault(PreferenceConstants.CODEASSIST_SHOW_VISIBLE_PROPOSALS,
 				true);
 
@@ -454,45 +454,49 @@ public class PreferenceConstants {
 																		// of
 																		// completion
 																		// proposals
-		store.setDefault(PreferenceConstants.CODEASSIST_CASE_SENSITIVITY, false);
+		store.setDefault(PreferenceConstants.CODEASSIST_CASE_SENSITIVITY,
+				false);
 		store.setDefault(PreferenceConstants.CODEASSIST_ADDIMPORT, true);
-		store.setDefault(PreferenceConstants.CODEASSIST_INSERT_COMPLETION, true);
+		store.setDefault(PreferenceConstants.CODEASSIST_INSERT_COMPLETION,
+				true);
 		store.setDefault(PreferenceConstants.CODEASSIST_FILL_ARGUMENT_NAMES,
 				true);
 		store.setDefault(PreferenceConstants.CODEASSIST_GUESS_METHOD_ARGUMENTS,
 				false);
 		store.setDefault(PreferenceConstants.CODEASSIST_PREFIX_COMPLETION,
 				false);
-		store.setDefault(
-				PreferenceConstants.CODEASSIST_CATEGORY_ORDER,
+		store.setDefault(PreferenceConstants.CODEASSIST_CATEGORY_ORDER,
 				"org.eclipse.dltk.javascript.ui.javascriptDocProposalCategory:65546\0org.eclipse.dltk.ui.spellingProposalCategory:65545\0org.eclipse.dltk.ui.scriptTypeProposalCategory:65540\0org.eclipse.dltk.ui.scriptNoTypeProposalCategory:65539\0org.eclipse.dltk.ui.textProposalCategory:65541\0org.eclipse.dltk.ui.templateProposalCategory:2\0"); //$NON-NLS-1$
 		store.setDefault(PreferenceConstants.CODEASSIST_LRU_HISTORY, ""); //$NON-NLS-1$
 		store.setDefault(PreferenceConstants.CODEASSIST_SORTER,
 				"org.eclipse.dltk.ui.RelevanceSorter"); //$NON-NLS-1$
 
-		store.setDefault(PreferenceConstants.DOUBLE_CLICK, DOUBLE_CLICK_EXPANDS);
+		store.setDefault(PreferenceConstants.DOUBLE_CLICK,
+				DOUBLE_CLICK_EXPANDS);
 
 		final int sourceHoverModifier = SWT.MOD2;
 		final String sourceHoverModifierName = Action
 				.findModifierString(sourceHoverModifier); // Shift
-		store.setDefault(
-				PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIERS,
-				"org.eclipse.dltk.ui.BestMatchHover;0;org.eclipse.dltk.ui.ScriptSourceHover;" + sourceHoverModifierName); //$NON-NLS-1$
-		store.setDefault(
-				PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIER_MASKS,
-				"org.eclipse.dltk.ui.BestMatchHover;0;org.eclipse.dltk.ui.ScriptSourceHover;" + sourceHoverModifier); //$NON-NLS-1$
+		store.setDefault(PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIERS,
+				"org.eclipse.dltk.ui.BestMatchHover;0;org.eclipse.dltk.ui.ScriptSourceHover;" //$NON-NLS-1$
+						+ sourceHoverModifierName);
+		store.setDefault(PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIER_MASKS,
+				"org.eclipse.dltk.ui.BestMatchHover;0;org.eclipse.dltk.ui.ScriptSourceHover;" //$NON-NLS-1$
+						+ sourceHoverModifier);
 
 		store.setDefault(PreferenceConstants.EDITOR_MATCHING_BRACKETS, true);
 		store.setDefault(PreferenceConstants.EDITOR_TAB_ALWAYS_INDENT, false);
 		PreferenceConverter.setDefault(store,
-				PreferenceConstants.EDITOR_MATCHING_BRACKETS_COLOR, new RGB(
-						192, 192, 192));
+				PreferenceConstants.EDITOR_MATCHING_BRACKETS_COLOR,
+				new RGB(192, 192, 192));
 		if (isDLTKUI) {
 			store.setDefault(
-					PreferenceConstants.EDITOR_EVALUTE_TEMPORARY_PROBLEMS, true);
+					PreferenceConstants.EDITOR_EVALUTE_TEMPORARY_PROBLEMS,
+					true);
 			store.setDefault(RESOURCE_SHOW_ERROR_INVALID_RESOURCE_NAME, false);
 		}
-		store.setDefault(PreferenceConstants.EDITOR_CORRECTION_INDICATION, true);
+		store.setDefault(PreferenceConstants.EDITOR_CORRECTION_INDICATION,
+				true);
 
 		initializeEditorHoverBackgroundColor(store);
 
@@ -513,6 +517,11 @@ public class PreferenceConstants {
 					PreferenceConstants.EDITOR_SYNC_OUTLINE_ON_CURSOR_MOVE,
 					true);
 		}
+
+		store.setDefault(APPEARANCE_METHOD_RETURNTYPE, true);
+		store.setDefault(APPEARANCE_METHOD_TYPEPARAMETERS, true);
+		store.setDefault(APPEARANCE_METHOD_PARAMETER_TYPES, false);
+		store.setDefault(APPEARANCE_METHOD_PARAMETER_NAMES, true);
 	}
 
 	private static void initializeEditorHoverBackgroundColor(
@@ -528,8 +537,8 @@ public class PreferenceConstants {
 			return;
 		}
 		final RGB rgb[] = new RGB[1];
-		display.syncExec(() -> rgb[0] = display.getSystemColor(SWT.COLOR_INFO_BACKGROUND)
-				.getRGB());
+		display.syncExec(() -> rgb[0] = display
+				.getSystemColor(SWT.COLOR_INFO_BACKGROUND).getRGB());
 		PreferenceConverter.setValue(store,
 				PreferenceConstants.EDITOR_SOURCE_HOVER_BACKGROUND_COLOR,
 				rgb[0]);
