@@ -252,7 +252,10 @@ public class LuceneSearchEngine implements ISearchEngineExtension {
 			} else if (matchRule == MatchRule.EXACT) {
 				nameQuery = new TermQuery(nameCaseInsensitiveTerm);
 			} else if (matchRule == MatchRule.CAMEL_CASE) {
-				nameQuery = new PrefixQuery(new Term(F_CC_NAME, elementName));
+				String ccName = Utils.getCamelCaseName(elementName);
+				if (ccName == null)
+					ccName = elementName;
+				nameQuery = new PrefixQuery(new Term(F_CC_NAME, ccName));
 			} else if (matchRule == MatchRule.PATTERN) {
 				nameQuery = new WildcardQuery(nameCaseInsensitiveTerm);
 			} else {
@@ -263,8 +266,17 @@ public class LuceneSearchEngine implements ISearchEngineExtension {
 			}
 		}
 		if (qualifier != null && !qualifier.isEmpty()) {
-			queryBuilder.add(new TermQuery(new Term(F_QUALIFIER, qualifier)),
-					Occur.FILTER);
+			Query qualifierQuery = null;
+			if (matchRule == MatchRule.PATTERN) {
+				qualifierQuery = new WildcardQuery(
+						new Term(F_QUALIFIER, qualifier.toLowerCase()));
+			} else {
+				qualifierQuery = new TermQuery(
+						new Term(F_QUALIFIER, qualifier.toLowerCase()));
+			}
+			if (qualifierQuery != null) {
+				queryBuilder.add(qualifierQuery, Occur.FILTER);
+			}
 		}
 		if (parent != null && !parent.isEmpty()) {
 			queryBuilder.add(new TermQuery(new Term(F_PARENT, parent)),

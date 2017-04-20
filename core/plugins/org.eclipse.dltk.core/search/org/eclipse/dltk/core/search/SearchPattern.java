@@ -352,6 +352,81 @@ public abstract class SearchPattern extends InternalSearchPattern {
 	}
 
 	/**
+	 * Answers true if the pattern matches the given name using CamelCase rules, or
+	 * false otherwise. char[] CamelCase matching does NOT accept explicit wild-cards
+	 * '*' and '?' and is inherently case sensitive.
+	 * <p>
+	 * CamelCase denotes the convention of writing compound names without spaces,
+	 * and capitalizing every term. This function recognizes both upper and lower
+	 * CamelCase, depending whether the leading character is capitalized or not.
+	 * The leading part of an upper CamelCase pattern is assumed to contain a
+	 * sequence of capitals which are appearing in the matching name; e.g. 'NPE' will
+	 * match 'NullPointerException', but not 'NewPerfData'. A lower CamelCase pattern
+	 * uses a lowercase first character. In Java, type names follow the upper
+	 * CamelCase convention, whereas method or field names follow the lower
+	 * CamelCase convention.
+	 * <p>
+	 * The pattern may contain lowercase characters, which will be matched in a case
+	 * sensitive way. These characters must appear in sequence in the name.
+	 * For instance, 'NPExcep' will match 'NullPointerException', but not
+	 * 'NullPointerExCEPTION' or 'NuPoEx' will match 'NullPointerException', but not
+	 * 'NoPointerException'.
+	 * <p>
+	 * Digit characters are treated in a special way. They can be used in the pattern
+	 * but are not always considered as leading character. For instance, both
+	 * 'UTF16DSS' and 'UTFDSS' patterns will match 'UTF16DocumentScannerSupport'.
+	 * <p>
+	 * CamelCase can be restricted to match only the same count of parts. When this
+	 * restriction is specified the given pattern and the given name must have <b>exactly</b>
+	 * the same number of parts (i.e. the same number of uppercase characters).<br>
+	 * For instance, 'HM' , 'HaMa' and  'HMap' patterns will match 'HashMap' and
+	 * 'HatMapper' <b>but not</b> 'HashMapEntry'.
+	 * <p>
+	 * <pre>
+	 * Examples:
+	 * <ol><li>  pattern = "NPE"
+	 *  name = NullPointerException / NoPermissionException
+	 *  result => true</li>
+	 * <li>  pattern = "NuPoEx"
+	 *  name = NullPointerException
+	 *  result => true</li>
+	 * <li>  pattern = "npe"
+	 *  name = NullPointerException
+	 *  result => false</li>
+	 * <li>  pattern = "IPL3"
+	 *  name = "IPerspectiveListener3"
+	 *  result => true</li>
+	 * <li>  pattern = "HM"
+	 *  name = "HashMapEntry"
+	 *  result => (samePartCount == false)</li>
+	 * </ol></pre>
+	 *
+	 * @see #camelCaseMatch(String, int, int, String, int, int, boolean) for algorithm
+	 * 	implementation
+	 *
+	 * @param pattern the given pattern
+	 * @param name the given name
+	 * @param samePartCount flag telling whether the pattern and the name should
+	 * 	have the same count of parts or not.<br>
+	 * 	&nbsp;&nbsp;For example:
+	 * 	<ul>
+	 * 		<li>'HM' type string pattern will match 'HashMap' and 'HtmlMapper' types,
+	 * 				but not 'HashMapEntry'</li>
+	 * 		<li>'HMap' type string pattern will still match previous 'HashMap' and
+	 * 				'HtmlMapper' types, but not 'HighMagnitude'</li>
+	 * 	</ul>
+	 * @return true if the pattern matches the given name, false otherwise
+	 */
+	public static final boolean camelCaseMatch(String pattern, String name, boolean samePartCount) {
+		if (pattern == null)
+			return true; // null pattern is equivalent to '*'
+		if (name == null)
+			return false; // null name cannot match
+
+		return camelCaseMatch(pattern, 0, pattern.length(), name, 0, name.length(), samePartCount);
+	}
+
+	/**
 	 * Answers true if a sub-pattern matches the subpart of the given name using
 	 * CamelCase rules, or false otherwise. CamelCase matching does NOT accept
 	 * explicit wild-cards '*' and '?' and is inherently case sensitive. Can
@@ -554,6 +629,118 @@ public abstract class SearchPattern extends InternalSearchPattern {
 			// uppercase letter.
 			// Since pattern is also at an uppercase letter
 		}
+	}
+
+	/**
+	 * Answers true if a sub-pattern matches the sub-part of the given name using
+	 * CamelCase rules, or false otherwise.  char[] CamelCase matching does NOT
+	 * accept explicit wild-cards '*' and '?' and is inherently case sensitive.
+	 * Can match only subset of name/pattern, considering end positions as
+	 * non-inclusive. The sub-pattern is defined by the patternStart and patternEnd
+	 * positions.
+	 * <p>
+	 * CamelCase denotes the convention of writing compound names without spaces,
+	 * and capitalizing every term. This function recognizes both upper and lower
+	 * CamelCase, depending whether the leading character is capitalized or not.
+	 * The leading part of an upper CamelCase pattern is assumed to contain
+	 * a sequence of capitals which are appearing in the matching name; e.g. 'NPE' will
+	 * match 'NullPointerException', but not 'NewPerfData'. A lower CamelCase pattern
+	 * uses a lowercase first character. In Java, type names follow the upper
+	 * CamelCase convention, whereas method or field names follow the lower
+	 * CamelCase convention.
+	 * <p>
+	 * The pattern may contain lowercase characters, which will be matched in a case
+	 * sensitive way. These characters must appear in sequence in the name.
+	 * For instance, 'NPExcep' will match 'NullPointerException', but not
+	 * 'NullPointerExCEPTION' or 'NuPoEx' will match 'NullPointerException', but not
+	 * 'NoPointerException'.
+	 * <p>
+	 * Digit characters are treated in a special way. They can be used in the pattern
+	 * but are not always considered as leading character. For instance, both
+	 * 'UTF16DSS' and 'UTFDSS' patterns will match 'UTF16DocumentScannerSupport'.
+	 * <p>
+	 * CamelCase can be restricted to match only the same count of parts. When this
+	 * restriction is specified the given pattern and the given name must have <b>exactly</b>
+	 * the same number of parts (i.e. the same number of uppercase characters).<br>
+	 * For instance, 'HM' , 'HaMa' and  'HMap' patterns will match 'HashMap' and
+	 * 'HatMapper' <b>but not</b> 'HashMapEntry'.
+	 * <p>
+	 * <pre>Examples:<ol>
+	 * <li>  pattern = "NPE"
+	 *  patternStart = 0
+	 *  patternEnd = 3
+	 *  name = NullPointerException
+	 *  nameStart = 0
+	 *  nameEnd = 20
+	 *  result => true</li>
+	 * <li>  pattern = "NPE"
+	 *  patternStart = 0
+	 *  patternEnd = 3
+	 *  name = NoPermissionException
+	 *  nameStart = 0
+	 *  nameEnd = 21
+	 *  result => true</li>
+	 * <li>  pattern = "NuPoEx"
+	 *  patternStart = 0
+	 *  patternEnd = 6
+	 *  name = NullPointerException
+	 *  nameStart = 0
+	 *  nameEnd = 20
+	 *  result => true</li>
+	 * <li>  pattern = "NuPoEx"
+	 *  patternStart = 0
+	 *  patternEnd = 6
+	 *  name = NoPermissionException
+	 *  nameStart = 0
+	 *  nameEnd = 21
+	 *  result => false</li>
+	 * <li>  pattern = "npe"
+	 *  patternStart = 0
+	 *  patternEnd = 3
+	 *  name = NullPointerException
+	 *  nameStart = 0
+	 *  nameEnd = 20
+	 *  result => false</li>
+	 * <li>  pattern = "IPL3"
+	 *  patternStart = 0
+	 *  patternEnd = 3
+	 *  name = "IPerspectiveListener3"
+	 *  nameStart = 0
+	 *  nameEnd = 21
+	 *  result => true</li>
+	 * <li>  pattern = "HM"
+	 *  patternStart = 0
+	 *  patternEnd = 2
+	 *  name = "HashMapEntry"
+	 *  nameStart = 0
+	 *  nameEnd = 12
+	 *  result => (samePartCount == false)</li>
+	 * </ol></pre>
+	 *
+	 * @see CharOperation#camelCaseMatch(char[], int, int, char[], int, int, boolean)
+	 * 	from which algorithm implementation has been entirely copied.
+	 *
+	 * @param pattern the given pattern
+	 * @param patternStart the start index of the pattern, inclusive
+	 * @param patternEnd the end index of the pattern, exclusive
+	 * @param name the given name
+	 * @param nameStart the start index of the name, inclusive
+	 * @param nameEnd the end index of the name, exclusive
+	 * @param samePartCount flag telling whether the pattern and the name should
+	 * 	have the same count of parts or not.<br>
+	 * 	&nbsp;&nbsp;For example:
+	 * 	<ul>
+	 * 		<li>'HM' type string pattern will match 'HashMap' and 'HtmlMapper' types,
+	 * 				but not 'HashMapEntry'</li>
+	 * 		<li>'HMap' type string pattern will still match previous 'HashMap' and
+	 * 				'HtmlMapper' types, but not 'HighMagnitude'</li>
+	 * 	</ul>
+	 * @return true if a sub-pattern matches the sub-part of the given name, false otherwise
+	 */
+	public static final boolean camelCaseMatch(String pattern, int patternStart, int patternEnd, String name,
+			int nameStart, int nameEnd, boolean samePartCount) {
+		return StringOperation.getCamelCaseMatchingRegions(pattern, patternStart, patternEnd, name, nameStart, nameEnd,
+				samePartCount) != null;
 	}
 
 	/**
