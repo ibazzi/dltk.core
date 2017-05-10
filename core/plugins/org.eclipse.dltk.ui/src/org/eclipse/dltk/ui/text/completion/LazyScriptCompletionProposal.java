@@ -201,7 +201,7 @@ public abstract class LazyScriptCompletionProposal extends
 	}
 
 	@Override
-	public final StyledString getStyledDisplayString() {
+	public StyledString getStyledDisplayString() {
 		if (!fDisplayStyledStringComputed) {
 			setStyledDisplayString(computeStyledDisplayString());
 		}
@@ -266,7 +266,7 @@ public abstract class LazyScriptCompletionProposal extends
 	}
 
 	@Override
-	public final int getPrefixCompletionStart(IDocument document,
+	public int getPrefixCompletionStart(IDocument document,
 			int completionOffset) {
 		return getReplacementOffset();
 	}

@@ -244,6 +244,27 @@ public class DLTKCore extends Plugin {
 	 */
 	public static final String CODEASSIST_CAMEL_CASE_MATCH = PLUGIN_ID
 			+ ".codeComplete.camelCaseMatch"; //$NON-NLS-1$
+
+	/**
+	 * Code assist option ID: Activate Substring Code Completion.
+	 * <p>
+	 * When enabled, completion shows proposals in which the pattern can be
+	 * found as a substring in a case-insensitive way.
+	 * </p>
+	 * <dl>
+	 * <dt>Option id:</dt>
+	 * <dd><code>"org.eclipse.jdt.core.codeComplete.substringMatch"</code></dd>
+	 * <dt>Possible values:</dt>
+	 * <dd><code>{ "enabled", "disabled" }</code></dd>
+	 * <dt>Default:</dt>
+	 * <dd><code>"enabled"</code></dd>
+	 * </dl>
+	 *
+	 * @category CodeAssistOptionID
+	 */
+	public static final String CODEASSIST_SUBSTRING_MATCH = PLUGIN_ID
+			+ ".codeComplete.substringMatch"; //$NON-NLS-1$
+
 	/**
 	 * Possible configurable option ID.public static final boolean DEBUG_PARSER
 	 * = false;

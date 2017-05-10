@@ -16,12 +16,16 @@ import java.net.URL;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.dltk.compiler.CharOperation;
 import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.ModelException;
+import org.eclipse.dltk.core.search.SearchPattern;
+import org.eclipse.dltk.internal.corext.util.Strings;
 import org.eclipse.dltk.internal.ui.text.hover.DocumentationHover;
 import org.eclipse.dltk.ui.DLTKUIPlugin;
 import org.eclipse.dltk.ui.PreferenceConstants;
@@ -43,11 +47,13 @@ import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.contentassist.BoldStylerProvider;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension2;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension3;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension5;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension6;
+import org.eclipse.jface.text.contentassist.ICompletionProposalExtension7;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.link.ILinkedModeListener;
 import org.eclipse.jface.text.link.LinkedModeModel;
@@ -57,6 +63,8 @@ import org.eclipse.jface.text.link.LinkedModeUI.IExitPolicy;
 import org.eclipse.jface.text.link.LinkedPosition;
 import org.eclipse.jface.text.link.LinkedPositionGroup;
 import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.jface.viewers.StyledString.Styler;
+import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
@@ -66,6 +74,7 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.TextStyle;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -77,7 +86,8 @@ import org.osgi.framework.Bundle;
 public abstract class AbstractScriptCompletionProposal implements
 		IScriptCompletionProposal, ICompletionProposalExtension,
 		ICompletionProposalExtension2, ICompletionProposalExtension3,
-		ICompletionProposalExtension5, ICompletionProposalExtension6 {
+		ICompletionProposalExtension5, ICompletionProposalExtension6,
+		ICompletionProposalExtension7 {
 
 	/**
 	 * A class to simplify tracking a reference position in a document.
@@ -135,7 +145,7 @@ public abstract class AbstractScriptCompletionProposal implements
 		}
 	}
 
-	protected static final class ExitPolicy implements IExitPolicy {
+	protected static class ExitPolicy implements IExitPolicy {
 
 		final char fExitCharacter;
 		private final IDocument fDocument;
@@ -192,6 +202,7 @@ public abstract class AbstractScriptCompletionProposal implements
 	private String fSortString;
 	private int fRelevance;
 	private boolean fIsInDoc;
+	private int fPatternMatchRule = -1;
 
 	private StyleRange fRememberedStyleRange;
 	private boolean fToggleEating;
@@ -472,6 +483,84 @@ public abstract class AbstractScriptCompletionProposal implements
 	}
 
 	@Override
+	public StyledString getStyledDisplayString(IDocument document, int offset,
+			BoldStylerProvider boldStylerProvider) {
+		StyledString styledDisplayString = new StyledString();
+		styledDisplayString.append(getStyledDisplayString());
+
+		String pattern = getPatternToEmphasizeMatch(document, offset);
+		if (pattern != null && pattern.length() > 0) {
+			String displayString = styledDisplayString.getString();
+			boolean isJavadocTag = isInDoc() && displayString.charAt(0) == '@'
+					&& pattern.charAt(0) == '@';
+			if (isJavadocTag) {
+				displayString = displayString.substring(1);
+				pattern = pattern.substring(1);
+			}
+			int patternMatchRule = getPatternMatchRule(pattern, displayString);
+			int[] matchingRegions = SearchPattern.getMatchingRegions(pattern,
+					displayString, patternMatchRule);
+			if (isJavadocTag && matchingRegions != null) {
+				Strings.markMatchingRegions(styledDisplayString, 0,
+						new int[] { 0, 1 }, boldStylerProvider.getBoldStyler());
+				for (int i = 0; i < matchingRegions.length; i += 2) {
+					matchingRegions[i]++;
+				}
+			}
+			Strings.markMatchingRegions(styledDisplayString, 0, matchingRegions,
+					boldStylerProvider.getBoldStyler());
+		}
+		return styledDisplayString;
+	}
+
+	protected int getPatternMatchRule(String pattern, String string) {
+		String start;
+		try {
+			start = string.substring(0, pattern.length());
+		} catch (StringIndexOutOfBoundsException e) {
+			String message = "Error retrieving proposal text.\nDisplay string:\n" //$NON-NLS-1$
+					+ string + "\nPattern:\n" + pattern; //$NON-NLS-1$
+			DLTKUIPlugin.log(new Status(IStatus.ERROR,
+					DLTKUIPlugin.getPluginId(), IStatus.OK, message, e));
+			return -1;
+		}
+		if (start.equalsIgnoreCase(pattern)) {
+			return SearchPattern.R_PREFIX_MATCH;
+		} else if (isCamelCaseMatching() && CharOperation
+				.camelCaseMatch(pattern.toCharArray(), string.toCharArray())) {
+			return SearchPattern.R_CAMELCASE_MATCH;
+		} else if (isSubstringMatching() && CharOperation
+				.substringMatch(pattern.toCharArray(), string.toCharArray())) {
+			return SearchPattern.R_SUBSTRING_MATCH;
+		} else {
+			return -1;
+		}
+	}
+
+	protected String getPatternToEmphasizeMatch(IDocument document,
+			int offset) {
+		int start = getPrefixCompletionStart(document, offset);
+		int patternLength = offset - start;
+		String pattern = null;
+		try {
+			pattern = document.get(start, patternLength);
+		} catch (BadLocationException e) {
+			// return null
+		}
+		return pattern;
+	}
+
+	/**
+	 * Returns true if substring matching is enabled.
+	 *
+	 * @return <code>true</code> if substring matching is enabled
+	 */
+	protected boolean isSubstringMatching() {
+		String value = DLTKCore.getOption(DLTKCore.CODEASSIST_SUBSTRING_MATCH);
+		return DLTKCore.ENABLED.equals(value);
+	}
+
+	@Override
 	public String getAdditionalProposalInfo() {
 		final Object info = getAdditionalProposalInfo(new NullProgressMonitor());
 		return info != null ? info.toString() : null;
@@ -673,7 +762,7 @@ public abstract class AbstractScriptCompletionProposal implements
 		 * See http://dev.eclipse.org/bugs/show_bug.cgi?id=17667 why we do not
 		 * use the replacement string. String word= fReplacementString;
 		 */
-		return isPrefix(prefix, getDisplayString());
+		return isPrefix(prefix, TextProcessor.deprocess(getDisplayString()));
 	}
 
 	/**
@@ -683,6 +772,9 @@ public abstract class AbstractScriptCompletionProposal implements
 	 */
 	@Override
 	public int getRelevance() {
+		if (fPatternMatchRule == SearchPattern.R_SUBSTRING_MATCH) {
+			return fRelevance - 400;
+		}
 		return fRelevance;
 	}
 
@@ -725,11 +817,8 @@ public abstract class AbstractScriptCompletionProposal implements
 		if (prefix == null || string == null
 				|| prefix.length() > string.length())
 			return false;
-		String start = string.substring(0, prefix.length());
-		return start.equalsIgnoreCase(prefix)
-				|| isCamelCaseMatching()
-				&& CharOperation.camelCaseMatch(prefix.toCharArray(),
-						string.toCharArray());
+		fPatternMatchRule = getPatternMatchRule(prefix, string);
+		return fPatternMatchRule != -1;
 	}
 
 	/**
@@ -1017,5 +1106,27 @@ public abstract class AbstractScriptCompletionProposal implements
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Returns a deep copy of the given styles string.
+	 */
+	public static StyledString copyStyledString(
+			final StyledString displayString) {
+		final StyledString copy = new StyledString(displayString.getString());
+		for (final StyleRange range : displayString.getStyleRanges()) {
+			copy.setStyle(range.start, range.length, new Styler() {
+
+				@Override
+				public void applyStyles(final TextStyle textStyle) {
+					textStyle.background = range.background;
+					textStyle.borderColor = range.borderColor;
+					textStyle.borderStyle = range.borderStyle;
+					textStyle.font = range.font;
+					textStyle.foreground = range.foreground;
+				}
+			});
+		}
+		return copy;
 	}
 }
