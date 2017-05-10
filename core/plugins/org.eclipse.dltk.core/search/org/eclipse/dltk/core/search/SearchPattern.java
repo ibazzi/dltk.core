@@ -190,6 +190,54 @@ public abstract class SearchPattern extends InternalSearchPattern {
 	 * 
 	 */
 	public static final int R_CAMELCASE_MATCH = 0x0080;
+
+	/**
+	 * Match rule: The search pattern contains a Camel Case expression with a
+	 * strict expected number of parts. <br>
+	 * Examples:
+	 * <ul>
+	 * <li>'HM' type string pattern will match 'HashMap' and 'HtmlMapper' types,
+	 * but not 'HashMapEntry'</li>
+	 * <li>'HMap' type string pattern will still match previous 'HashMap' and
+	 * 'HtmlMapper' types, but not 'HighMagnitude'</li>
+	 * </ul>
+	 *
+	 * This rule is not intended to be combined with any other match rule. In
+	 * case of other match rule flags are combined with this one, then match
+	 * rule validation will return a modified rule in order to perform a better
+	 * appropriate search request (see {@link #validateMatchRule(String, int)}
+	 * for more details).
+	 * <p>
+	 *
+	 * @see CharOperation#camelCaseMatch(char[], char[], boolean) for a detailed
+	 *      explanation of Camel Case matching.
+	 *      <p>
+	 */
+	public static final int R_CAMELCASE_SAME_PART_COUNT_MATCH = 0x0100;
+
+	/**
+	 * Match rule: The search pattern contains a substring expression in a
+	 * case-insensitive way.
+	 * <p>
+	 * Examples:
+	 * <ul>
+	 * <li>'bar' string pattern will match 'bar1', 'Bar' and 'removeBar'
+	 * types,</li>
+	 * </ul>
+	 *
+	 * This rule is not intended to be combined with any other match rule. In
+	 * case of other match rule flags are combined with this one, then match
+	 * rule validation will return a modified rule in order to perform a better
+	 * appropriate search request (see {@link #validateMatchRule(String, int)}
+	 * for more details).
+	 *
+	 * <p>
+	 * This is implemented only for code assist and not available for normal
+	 * search.
+	 *
+	 */
+	public static final int R_SUBSTRING_MATCH = 0x0200;
+
 	private static final int MODE_MASK = R_EXACT_MATCH | R_PREFIX_MATCH
 			| R_PATTERN_MATCH | R_REGEXP_MATCH;
 	private int matchRule;
@@ -1523,6 +1571,81 @@ public abstract class SearchPattern extends InternalSearchPattern {
 			}
 		}
 		return matchRule;
+	}
+
+	public static final int[] getMatchingRegions(String pattern, String name,
+			int matchRule) {
+		if (name == null)
+			return null;
+		final int nameLength = name.length();
+		if (pattern == null) {
+			return new int[] { 0, nameLength };
+		}
+		final int patternLength = pattern.length();
+		boolean countMatch = false;
+		switch (matchRule) {
+		case SearchPattern.R_EXACT_MATCH:
+			if (patternLength == nameLength && pattern.equalsIgnoreCase(name)) {
+				return new int[] { 0, patternLength };
+			}
+			break;
+		case SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE:
+			if (patternLength == nameLength && pattern.equals(name)) {
+				return new int[] { 0, patternLength };
+			}
+			break;
+		case SearchPattern.R_PREFIX_MATCH:
+			if (patternLength <= nameLength && name.substring(0, patternLength)
+					.equalsIgnoreCase(pattern)) {
+				return new int[] { 0, patternLength };
+			}
+			break;
+		case SearchPattern.R_PREFIX_MATCH | SearchPattern.R_CASE_SENSITIVE:
+			if (name.startsWith(pattern)) {
+				return new int[] { 0, patternLength };
+			}
+			break;
+		case SearchPattern.R_CAMELCASE_SAME_PART_COUNT_MATCH:
+			countMatch = true;
+			// $FALL-THROUGH$
+		case SearchPattern.R_CAMELCASE_MATCH:
+			if (patternLength <= nameLength) {
+				int[] regions = StringOperation.getCamelCaseMatchingRegions(
+						pattern, 0, patternLength, name, 0, nameLength,
+						countMatch);
+				if (regions != null)
+					return regions;
+				if (name.substring(0, patternLength)
+						.equalsIgnoreCase(pattern)) {
+					return new int[] { 0, patternLength };
+				}
+			}
+			break;
+		case SearchPattern.R_CAMELCASE_SAME_PART_COUNT_MATCH
+				| SearchPattern.R_CASE_SENSITIVE:
+			countMatch = true;
+			// $FALL-THROUGH$
+		case SearchPattern.R_CAMELCASE_MATCH | SearchPattern.R_CASE_SENSITIVE:
+			if (patternLength <= nameLength) {
+				return StringOperation.getCamelCaseMatchingRegions(pattern, 0,
+						patternLength, name, 0, nameLength, countMatch);
+			}
+			break;
+		case SearchPattern.R_PATTERN_MATCH:
+			return StringOperation.getPatternMatchingRegions(pattern, 0,
+					patternLength, name, 0, nameLength, false);
+		case SearchPattern.R_PATTERN_MATCH | SearchPattern.R_CASE_SENSITIVE:
+			return StringOperation.getPatternMatchingRegions(pattern, 0,
+					patternLength, name, 0, nameLength, true);
+		case SearchPattern.R_SUBSTRING_MATCH:
+			if (patternLength <= nameLength) {
+				int next = CharOperation.indexOf(pattern.toCharArray(),
+						name.toCharArray(), false);
+				return next >= 0 ? new int[] { next, patternLength } : null;
+			}
+			break;
+		}
+		return null;
 	}
 
 	@Override
